@@ -133,9 +133,9 @@ window.FIG = window.FIG || {};
     const N = 64, K = 8, G = 4, BLK = 16;
     const r = rng('papers-a-selectors');
     const bump = (t, c, w) => Math.exp(-0.5 * ((t - c) / w) ** 2);
-    const s = range(N).map(t => 0.1 + 0.12 * r() + 0.85 * bump(t, 10, 1.6) + 0.7 * bump(t, 33, 2.4) + 0.55 * bump(t, 50, 1.2) + (t >= 61 ? 0.42 : 0));
-    s[22] += 0.62; s[41] += 0.5;
-    const scorer = s.map(v => v + r.normal(0, 0.08));                    // DSA: a cheap separate scorer
+    const s = range(N).map(t => 0.1 + 0.12 * r() + 0.85 * bump(t, 10, 1.1) + 0.7 * bump(t, 33, 1.8) + 0.55 * bump(t, 50, 1.0) + (t >= 61 ? 0.42 : 0));
+    s[22] += 0.62; s[41] += 0.5; s[57] += 0.55;                          // a few isolated relevant positions
+    const scorer = s.map(v => v + r.normal(0, 0.03));                    // DSA: a cheap separate scorer, close to the truth
     const topIdx = (arr, n) => range(arr.length).sort((a, b) => arr[b] - arr[a]).slice(0, n);
     const groups = fn => range(N / G).map(g => fn(s.slice(g * G, g * G + G)));
     const expand = gs => gs.flatMap(g => range(g * G, g * G + G)).sort((a, b) => a - b);

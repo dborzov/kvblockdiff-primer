@@ -267,7 +267,7 @@ window.FIG = window.FIG || {};
       seg([['orig', 'original'], ['shuf', 'shuffled'], ['both', 'both']], show, v => { show = v; draw(); }, 'data'),
     ), legend([['block scope, original', series(0), 'line'], ['block scope, shuffled', series(1), 'dash'], ['global scope', series(2), 'dash'], ['request scope', series(4), 'dot']]), box, ro);
     const T = J.synthetic.T, bs = J.bs;
-    const P = Plot(box, { x: [200, T * 1.25], xlog: 2, y: [5, 9], h: 340, xlabel: 'block size b (entries)', ylabel: 'bits per element (bpe)', xticks: [256, 512, 1024, 2048, 4096, 8192], xfmt: v => (v === T ? `${fmtB(v)} = T` : fmtB(v)), label: 'bits per element against block size, synthetic data' });
+    const P = Plot(box, { x: [200, T * 1.25], xlog: 2, y: [5, 9], h: 340, xlabel: 'block size b (entries)', ylabel: 'bits per element (bpe)', xticks: [256, 512, 1024, 2048, 4096, 8192], xfmt: v => (v === T ? `${fmtB(v)} (all)` : fmtB(v)), label: 'bits per element against block size, synthetic data' });
     function draw() {
       const L = J.ladder[fmtSel]['loc+flag'], i = rate === 'entropy' ? 0 : 1;
       const vals = [];
@@ -282,7 +282,7 @@ window.FIG = window.FIG || {};
       tags.forEach(t => {
         const c = t === 'orig' ? series(0) : series(1);
         const pts = bs.map(b => [b, L[t].block[b][i]]).concat([[T, L[t].request[i]]]);
-        line(P, pts, { color: c, dash: t === 'shuf' ? '6 5' : false, markers: 4, tip: ([b, v]) => `<b>${t === 'orig' ? 'original' : 'shuffled'}</b>, ${b === T ? 'request scope (b = T)' : 'block of ' + fmtB(b)}<br>${fmt(v, 3)} bpe` });
+        line(P, pts, { color: c, dash: t === 'shuf' ? '6 5' : false, markers: 4, tip: ([b, v]) => `<b>${t === 'orig' ? 'original' : 'shuffled'}</b>, ${b === T ? 'request scope (the whole sequence)' : 'block of ' + fmtB(b)}<br>${fmt(v, 3)} bpe` });
         line(P, [[200, L[t].global[i]], [T * 1.25, L[t].global[i]]], { color: series(2), dash: t === 'shuf' ? '2 4' : '7 4', width: 1.6 });
         const ry = L[t].request[i];
         dot(P.g.top, P.x(T), P.y(ry), 6 * P.fs, series(4));

@@ -88,7 +88,7 @@ window.FIG = window.FIG || {};
     const f = D.fs;
     const g = el('g', {}, D.svg);
     const C = { glob: 'var(--t-scope-global)', req: 'var(--t-scope-request)', blk: 'var(--t-scope-block)' };
-    const rowX = 150, rowW = 470;
+    const chipW = 60 + 52 * f, rowX = chipW + 38, rowW = 620 - rowX;   // the left column grows with phone text
 
     function chip(x, y, w, hh, color, label, on) {
       const gg = el('g', {}, g);
@@ -105,13 +105,13 @@ window.FIG = window.FIG || {};
       D.svg.setAttribute('viewBox', `0 0 640 ${Math.round(bottom + 6)}`);
       // global scope
       el('rect', { x: 6, y: top, width: 628, height: bottom - top, rx: 16, style: `fill:${C.glob};fill-opacity:.06;stroke:${C.glob};stroke-width:1.5` }, g);
-      chip(18, top + pad, 120, chipH, C.glob, 'global', true);
-      svgText(g, 150, top + pad + chipH / 2 + 4 * f, 'one dictionary for every request', { class: 'annot' });
+      chip(18, top + pad, chipW + 8, chipH, C.glob, 'global', true);
+      svgText(g, rowX, top + pad + chipH / 2 + 4 * f, 'one dictionary for every request', { class: 'annot' });
       const blk = Math.floor(t / b);
       [[1, L, y1], [2, Math.round(L * 0.55), y2]].forEach(([r, len, y]) => {
         const sel = r === 1;
         el('rect', { x: 14, y, width: 612, height: reqH, rx: 12, style: `fill:${C.req};fill-opacity:.07;stroke:${C.req};stroke-width:${sel ? 1.8 : 1}` }, g);
-        chip(22, y + 10 * f, 112, chipH, C.req, `request ${r}`, sel);
+        chip(22, y + 10 * f, chipW, chipH, C.req, `request ${r}`, sel);
         const w = rowW * len / L, n = Math.ceil(len / b), cw = rowW * b / L;
         const by = y + 10 * f, bh = reqH - 20 * f;
         for (let j = 0; j < n; j++) {

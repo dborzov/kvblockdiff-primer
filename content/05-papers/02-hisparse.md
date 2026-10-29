@@ -56,13 +56,13 @@ The paper's headline claim is up to **4.7× higher peak generation throughput** 
 The figure shows the evidence for why such a small desk works.
 
 ::: figure fig-papers-hisparse-points paHisparsePoints
-**Seven numbers from one trace.** Horizontal axis: hot-cache size $\vB$ in entry slots per layer (log scale, base 2). Vertical axis: [[miss-rate-curve|miss rate]] — the share of each step's selections not found in the hot cache (log scale), averaged over the first 1,000 decode steps and 78 layers of HiSparse's GLM-5.1 trace. Dots: LRU at three sizes (the one at $\vB = \vk = 2048$ is "keep only the current picks"), FIFO, random replacement and Bélády's clairvoyant policy at 4096. Line: a power law $\vm(\vB) \propto \vB^{-\alpha}$ fitted in log space; it is solid where there are data and dashed beyond 8192, where it is a guess. The switch chooses which points the line is fitted through. Hover a dot for its source.
+**Seven numbers from one trace.** Horizontal axis: hot-cache size $\vB$ in entry slots per layer (log scale, base 2). Vertical axis: [[miss-rate-curve|miss rate]] — the share of each step's selections not found in the hot cache (log scale), averaged over the first 1,000 decode steps and 78 layers of HiSparse's GLM-5.1 trace. Dots: LRU at three sizes (the one at $\vB = \vk = 2048$ is "keep only the current picks"), FIFO, random replacement and Bélády's clairvoyant policy at 4096 (FIFO and random are nudged sideways so the dots do not overlap). Line: a power law $\vm(\vB) \propto \vB^{-\alpha}$ fitted in log space; it is solid where there are data and dashed beyond 8192, where it is a guess. The switch chooses which points the line is fitted through. Hover a dot for its source.
 :::
 
 ::: try
 1. Fit through all three LRU points: $\alpha \approx 1.08$. Now fit through the two larger caches only: $\alpha = 1.00$ exactly, because 13.4 % → 6.7 % is a clean halving.
 2. Read the extrapolation at 16384 slots in both fits: 3.1 % against 3.4 %. Small difference — and both are guesses.
-3. Compare the three dots at 4096: random replacement (16.1 %) is only 2.7 points worse than LRU. Recency helps, but most of the work is done by the selections themselves repeating.
+3. Compare the dots at 4096: random replacement (16.1 %) is only 2.7 points worse than LRU. Recency helps, but most of the work is done by the selections themselves repeating.
 :::
 
 ::: takeaway

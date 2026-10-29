@@ -57,13 +57,13 @@ All of them follow one recipe: split each number into exponent and the rest, cod
 In our vocabulary, ZipNN and DFloat11 are [[entropy-coder|entropy coders]] with one table per tensor or model; ZipServ and SplitZip are fixed-length coders, chosen for parallel decoding and known addresses; LZ4 is the tool from Part I that looks for repeated byte strings. All of them are context-free: each number is coded as if it had no neighbours.
 
 ::: figure fig-papers-float-ratios paFloatRatios
-**Six lossless coders on one KV workload, and two bell curves.** Each bar is a compression ratio (original size ÷ compressed size; 1 = no gain) on the BF16 KV tensors SplitZip's authors used for their comparison (Qwen3-32B, 256 million values); colours group coders by how they code the exponent. The two hatched bars are our own exact calculations: an ideal entropy coder on the exponents of one bell curve, and on the toy KV mixture of [[#papers-splitzip]], with sign and mantissa kept raw. Dashed lines: no compression (1×), the ceiling of any 4-bit exponent code (16/12 = 1.33×) and the ceiling of any exponent-only coder at the measured 3.29 bits of exponent entropy (16/11.29 = 1.42×). The switch shows bits per BF16 number instead. Hover a bar for its source and speed.
+**Six lossless coders on one KV workload, and two bell curves.** Each bar is a compression ratio (original size ÷ compressed size; 1 = no gain) on the BF16 KV tensors SplitZip's authors used for their comparison (Qwen3-32B, 256 million values); colours group coders by how they code the exponent. The two pale, dashed-outline bars are our own exact calculations: an ideal entropy coder on the exponents of one bell curve, and on the toy KV mixture of [[#papers-splitzip]], with sign and mantissa kept raw. Dashed lines: no compression (1×), the ceiling of any 4-bit exponent code (16/12 = 1.33×) and the ceiling of any exponent-only coder at the measured 3.29 bits of exponent entropy (16/11.29 = 1.42×). The switch shows bits per BF16 number instead. Hover a bar for its source and speed.
 :::
 
 ::: try
 1. Find the two ceilings. SplitZip sits just under the 4-bit line; DFloat11 and Falcon sit on the exponent-entropy line.
 2. Look at ZipNN: it is above the exponent-only ceiling. Keep that in mind for the last section.
-3. Compare the hatched "one bell curve" bar (1.52×) with the KV bars: a plain bell curve is *more* compressible than real KV, because real KV channels have different widths and so spread over more binades.
+3. Compare the pale "one bell curve" bar (1.52×) with the KV bars: a plain bell curve is *more* compressible than real KV, because real KV channels have different widths and so spread over more binades.
 :::
 
 ::: takeaway

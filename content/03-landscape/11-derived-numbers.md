@@ -59,10 +59,10 @@ So a 50 GB/s link can feed about **110 requests** per GPU on misses alone.
 $$
 \underbrace{\vB \times \vNL \times \ve}_{4096 \times 78 \times 640\ \text{B} \;\approx\; 204\ \text{MB}}
 \quad\Longrightarrow\quad
-\frac{\vMhbm}{204\ \text{MB}} = \frac{30\ \text{GB}}{204\ \text{MB}} \approx 146\ \text{requests}
+\frac{\vMhbm}{204\ \text{MB}} = \frac{30\ \text{GB}}{204\ \text{MB}} \approx 147\ \text{requests}
 $$ {#eq-landscape-memory-bound}
 
-So 30 GB of GPU memory holds the hot caches of about **146 requests**. With $\vB = 8192$ each request needs 409 MB, and only about 73 fit.
+So 30 GB of GPU memory holds the hot caches of about **147 requests**. With $\vB = 8192$ each request needs 409 MB, and only about 73 fit.
 
 ::: aside reminder Bandwidth (II.23)
 [[bandwidth|Bandwidth]] is how many bytes per second a link carries once data flows. Dividing the link's bandwidth by what one request needs per second gives how many requests it can serve side by side.
@@ -70,7 +70,7 @@ So 30 GB of GPU memory holds the hot caches of about **146 requests**. With $\vB
 
 ::: takeaway
 - At $\vB = 4096$: about 274 misses per layer per step, 13.7 MB of misses per request per step, 0.46 GB/s per request.
-- The link can feed about 110 requests per GPU; the GPU memory can hold about 146 (73 at $\vB = 8192$).
+- The link can feed about 110 requests per GPU; the GPU memory can hold about 147 (73 at $\vB = 8192$).
 :::
 
 ## Which wall binds {#which-wall}
@@ -90,7 +90,7 @@ A GPU can serve only as many requests as *both* limits allow, so the smaller one
 | slots $\vB$ | miss rate | link can feed | memory can hold | binding wall |
 |---|---|---|---|---|
 | 2048 | 30 % | 49 | 293 | link, 49 |
-| 4096 | 13.4 % | 110 | 146 | link, 110 |
+| 4096 | 13.4 % | 110 | 147 | link, 110 |
 | 8192 | 6.7 % | 219 | 73 | memory, 73 |
 
 Read the table together with the reuse curve of [[#landscape-reuse-curve]]. Inside HiSparse, the only dial is $\vB$, and it trades one wall against the other. Any proposal to do better must say which of the two walls it moves. [[#idea-two-levers]] gives the two counts names and asks exactly that.

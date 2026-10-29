@@ -650,21 +650,22 @@ window.FIG = window.FIG || {};
     area(P, Bs.map((B, i) => [B, Math.min(lk[i][1], mm[i][1])]), { color: 'var(--c)', opacity: 0.16, base: 0 });
     line(P, lk, { color: series(0) });
     line(P, mm, { color: series(1) });
-    [2048, 4096, 8192].forEach(B => { const d = dot(P.g.data, P.x(B), P.y(linkBound(B, REF.miss[B])), 5.5 * P.fs, series(0)); hover(d, () => `<b>${B} slots, measured miss rate ${fmtPct(REF.miss[B], 1)}</b><br>the link can feed ${fmt(linkBound(B, REF.miss[B]), 0)} requests`); });
+    [2048, 4096, 8192].forEach(B => { const nB = linkBound(B, Math.round(REF.miss[B] * REF.k) / REF.k); const d = dot(P.g.data, P.x(B), P.y(nB), 5.5 * P.fs, series(0)); hover(d, () => `<b>${B} slots, measured miss rate ${fmtPct(REF.miss[B], 1)}</b><br>the link can feed ${fmt(nB, 0)} requests`); });
     let best = Bs[0], bestN = 0;
     Bs.forEach(B => { const n = Math.min(linkBound(B, FIT.m(B)), memBound(B)); if (n > bestN) { bestN = n; best = B; } });
     annotate(P, best, bestN, `best: ≈ ${fmt(bestN, 0)} requests\nat ≈ ${fmtInt(Math.round(best / 100) * 100)} slots`, { dx: 46, dy: -34 });
     const guide = el('g', {}, P.g.top);
     const knob = el('circle', { class: 'handle', r: 8 * P.fs }, P.g.top);
-    const cur = () => { const B = Math.round(2 ** lb), m = REF.miss[B] != null ? REF.miss[B] : FIT.m(B); return { B, m, nl: linkBound(B, m), nm: memBound(B) }; };
+    // misses per layer per step are rounded to whole misses before the chain continues, as in the prose
+    const cur = () => { const B = Math.round(2 ** lb), m = REF.miss[B] != null ? REF.miss[B] : FIT.m(B), mk = Math.round(m * REF.k); return { B, m, mk, nl: linkBound(B, mk / REF.k), nm: memBound(B) }; };
     draggable(knob, P, ([x]) => { lb = clamp(Math.log2(x), 11, 14); sl.set(lb); draw(); }, null, { get: () => [2 ** lb, Math.min(cur().nl, cur().nm)], step: [2 ** lb * 0.04, 0], label: 'hot-cache size' });
     function draw() {
-      const { B, m, nl, nm } = cur(), measured = REF.miss[B] != null;
+      const { B, m, mk, nl, nm } = cur(), measured = REF.miss[B] != null;
       const n = Math.min(nl, nm);
       knob.setAttribute('cx', P.x(B)); knob.setAttribute('cy', P.y(n));
       guide.replaceChildren();
       el('line', { x1: P.x(B), x2: P.x(B), y1: P.y(0), y2: P.y(320), style: 'stroke:var(--c);stroke-dasharray:3 4;stroke-width:1.4' }, guide);
-      const missPer = m * REF.k, stepBytes = missPer * REF.NL * REF.e, perReq = stepBytes / REF.tpot, hot = B * REF.NL * REF.e;
+      const missPer = mk, stepBytes = missPer * REF.NL * REF.e, perReq = stepBytes / REF.tpot, hot = B * REF.NL * REF.e;
       chainL.replaceChildren(
         chip(`${tex('\\vk')} = 2048 × ${tex('\\vm')} = ${fmtPct(m, 1)}${measured ? '' : ' (fit)'}`), arrow(),
         chip(`${fmtInt(missPer)} misses per layer per step`), arrow(),
@@ -698,7 +699,7 @@ window.FIG = window.FIG || {};
       P.domain({ x: [0, Math.max(420, decUs * 1.08)] });
       P.clear();
       el('rect', { x: P.x(0), y: P.m.t, width: P.x(window_us) - P.x(0), height: P.ph, style: `fill:${mix('var(--c)', 7)}` }, P.g.data);
-      bars(P, [linkUs, decUs], { horizontal: true, colors: i => (i ? (decUs > window_us / 10 ? 'var(--bad)' : 'var(--good)') : 'var(--t-hot-cache)'), labels: v => `${fmt(v, 0)} µs`,
+      bars(P, [linkUs, decUs], { horizontal: true, colors: i => (i ? (decUs > window_us / 10 * 1.02 ? 'var(--bad)' : 'var(--good)') : 'var(--t-hot-cache)'), labels: v => `${fmt(v, 0)} µs`,
         tip: (v, i) => (i ? `<b>decoder at ${fmtInt(SPEEDS[si])} GB/s</b><br>${fmt(v, 0)} µs for ${fmt(bytes / MB, 1)} MB` : `<b>link at 50 GB/s</b><br>${fmt(v, 0)} µs for ${fmt(bytes / MB, 1)} MB`) });
       rule(P, { x: window_us, label: '0.38 ms window ends', dash: false, color: 'var(--ink)' });
       rule(P, { x: window_us / 10, label: 'a tenth', color: 'var(--ink-3)' });

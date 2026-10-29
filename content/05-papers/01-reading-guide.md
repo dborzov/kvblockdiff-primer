@@ -68,23 +68,20 @@ nodes:
   - {id: kivi, col: 3, row: 2, title: "KIVI", text: "Lossy. 2-bit keys and values.", link: papers-kivi, emblem: gauge, color: "var(--vermilion)"}
   - {id: kvquant, col: 3, row: 3, title: "KVQuant", text: "Lossy. Keys before RoPE, outliers apart.", link: papers-kvquant, emblem: sigma, color: "var(--vermilion)"}
   - {id: lexico, col: 3, row: 4, title: "Lexico", text: "Lossy. One universal dictionary.", link: papers-lexico, emblem: scroll, color: "var(--vermilion)"}
-  - {id: hisparse, col: 4, row: 1, title: "HiSparse", text: "Exact. No coding: a cache that moves raw entries.", link: papers-hisparse, term: hisparse, color: "var(--lapis)"}
-  - {id: selectors, col: 4, row: 2, title: "DSA, NSA, Quest, CSA", text: "Exact. They decide which entries are read.", link: papers-sparse-selectors, term: indexer, color: "var(--lapis)"}
-  - {id: new, col: 4, row: 3, title: "What would be new", text: "Lossless deltas on the miss path.", link: papers-what-would-be-new, term: kv-blockdiff, color: "var(--emerald)"}
+  - {id: new, col: 4, row: 1, title: "What would be new", text: "Lossless deltas on the miss path.", link: papers-what-would-be-new, term: kv-blockdiff, color: "var(--emerald)"}
+  - {id: hisparse, col: 4, row: 2, title: "HiSparse", text: "Exact. No coding: a cache that moves raw entries.", link: papers-hisparse, term: hisparse, color: "var(--lapis)"}
+  - {id: selectors, col: 4, row: 3, title: "DSA, NSA, Quest, CSA", text: "Exact. They decide which entries are read.", link: papers-sparse-selectors, term: indexer, color: "var(--lapis)"}
   - {id: classics, col: 5, row: 1, title: "The classics", text: "Side information, stack distances, integer rotations.", link: papers-classics, emblem: quill, color: "var(--amethyst)"}
 edges:
-  - [floats, splitzip, "same trick"]
+  - [splitzip, floats, "same trick"]
+  - [kvcodec, cachegen, "token axis"]
   - [splitzip, new, "decoder shape"]
-  - [selectors, hisparse, "demand"]
-  - [hisparse, new, "sits under"]
-  - [cachegen, kvcodec, "token axis"]
-  - [kvtc, new, "rotation bound"]
-  - [lexico, new, "global structure"]
-  - [kvquant, new, "keys before RoPE"]
-  - [classics, new, "theory"]
+  - [new, hisparse, "builds on"]
+  - [hisparse, selectors, "serves"]
+  - [new, classics, "leans on"]
 ```
 
-Read the map column by column. Almost everything lossless sits on the bulk path. Almost everything on the GPU-memory path is lossy. The miss path holds one system that moves raw bytes and the selectors that feed it. Nobody has put a lossless coder there yet; that empty corner is the subject of [[#papers-what-would-be-new]].
+Read the map column by column. Almost everything lossless sits on the bulk path. Almost everything on the GPU-memory path is lossy. The miss path holds one system that moves raw bytes and the selectors that feed it. Nobody has put a lossless coder there yet; the card at the top of that column — the gap — is the subject of [[#papers-what-would-be-new]].
 
 ::: theme access-pattern
 Every column of the map is an access pattern. Bulk paths allow coders that carry state across megabytes; the miss path allows only coders where any single entry decodes alone. A paper's ratio transfers to us only after its codec survives that change of road.

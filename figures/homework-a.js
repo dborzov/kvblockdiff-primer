@@ -270,5 +270,82 @@ window.FIG = window.FIG || {};
     host.append(legend([['solo', 'var(--slate)', 'box'], ['residual bits', series(2), 'box'], ['per-entry tax', BRAND.vq, 'box'], ['dictionary, amortized', 'var(--gold)', 'box']]));
   };
 
+  // ================================================================== VI.5  loc: the Anchor
+  FIG.hwaLocGain = (host) => {
+    const NB = 8, PER = 48, r = rng('hwa-loc-3');
+    // fixed draws, standardized so the drift share is exactly what the slider says (in the population)
+    const zb = range(NB).map(() => r.normal());
+    const zm = mean(zb), zs = Math.sqrt(variance(zb));
+    const off = zb.map(z => (z - zm) / zs);
+    const noise = range(NB * PER).map(() => r.normal());
+    const nm = mean(noise), ns = Math.sqrt(variance(noise));
+    const eps = noise.map(z => (z - nm) / ns);
+    let R2 = 0.75;
+    const box = h('div');
+    const kT = kpi(tex('\\vsigma^2_{\\text{total}}'), '', 'all blocks together', 'var(--ink-3)');
+    const kW = kpi(tex('\\vsigma^2_{\\text{within}}'), '', 'average inside a block', BRAND.loc);
+    const kG = kpi('gain of loc', '', 'bits per element', BRAND.loc);
+    host.append(controls(slider('share of variance from drift between blocks', 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0))),
+      legend([['the Hermit: global mean ± 1 sd', 'var(--ink-3)', 'band'], ['the Anchor: block median ± 1 within-block sd', BRAND.loc, 'band'], ['values', 'var(--ink-2)', 'dot']]),
+      box, h('div', { class: 'kpis' }, kT, kW, kG));
+    const P = Plot(box, { x: [0, NB * PER], y: [-3.6, 3.6], h: 300, xlabel: 'token position (8 blocks of 48)', ylabel: 'value (global sd = 1)', grid: 'y', label: 'One channel over eight blocks with block medians' });
+    function draw() {
+      const a = Math.sqrt(R2), b = Math.sqrt(1 - R2);
+      const xs = range(NB * PER).map(i => a * off[Math.floor(i / PER)] + b * eps[i]);
+      const vt = variance(xs), mt = mean(xs);
+      let vw = 0;
+      const meds = range(NB).map(j => { const blk = xs.slice(j * PER, (j + 1) * PER); vw += variance(blk) / NB; return [quantile(blk, 0.5), Math.sqrt(variance(blk))]; });
+      P.clear();
+      area(P, [[0, mt - Math.sqrt(vt), mt + Math.sqrt(vt)], [NB * PER, mt - Math.sqrt(vt), mt + Math.sqrt(vt)]], { color: 'var(--ink-3)', opacity: 0.12 });
+      line(P, [[0, mt], [NB * PER, mt]], { color: 'var(--ink-3)', dash: '6 4', width: 1.6 });
+      meds.forEach(([m, sd], j) => {
+        area(P, [[j * PER, m - sd, m + sd], [(j + 1) * PER, m - sd, m + sd]], { color: BRAND.loc, opacity: 0.18 });
+        line(P, [[j * PER, m], [(j + 1) * PER, m]], { color: BRAND.loc, width: 3 });
+        if (j) el('line', { x1: P.x(j * PER), x2: P.x(j * PER), y1: P.m.t, y2: P.H - P.m.b, style: 'stroke:var(--rule);stroke-dasharray:2 3' }, P.g.data);
+      });
+      const g = el('g', {}, P.g.data);
+      xs.forEach((v, i) => el('circle', { cx: P.x(i + 0.5), cy: P.y(v), r: 1.7 * P.fs, style: 'fill:var(--ink-2);opacity:.55' }, g));
+      kT.set(fmt(vt, 2), 'all blocks together');
+      kW.set(fmt(vw, 2), 'average inside a block');
+      kG.set(fmt(0.5 * Math.log2(vt / vw), 2), 'bits per element: ½ log₂(total / within)');
+    }
+    draw();
+  };
+
+  // ================================================================== VI.6  KLT: the Compass
+  FIG.hwaKltSpectrum = (host) => {
+    const D = 64;
+    let ns = 8, lgS = 1, lgW = 0;        // strong count, log10 strong variance, log10 weak variance
+    const box = h('div');
+    const kG = kpi('KLT gain', '', 'bits per element', BRAND.klt);
+    const kB = kpi('full basis pays off when', '', '', 'var(--gold)');
+    const kB2 = kpi('same shape at d = 640', '', '', 'var(--gold)');
+    host.append(controls(
+      slider('strong directions', 1, 32, 1, ns, v => { ns = v; draw(); }, v => `${v} of ${D}`),
+      slider('their variance', -0, 2, 0.05, lgS, v => { lgS = v; draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 1 : 0)),
+      slider('variance of the rest', -2, 0, 0.05, lgW, v => { lgW = v; draw(); }, v => fmt(10 ** v, 10 ** v < 0.1 ? 3 : 2)),
+    ), legend([['eigenvalues (spread along each KLT axis)', BRAND.klt, 'box'], ['AM: arithmetic average', series(3), 'dash'], ['GM: geometric average', series(1), 'dash']]), box, h('div', { class: 'kpis' }, kG, kB, kB2));
+    const P = Plot(box, { x: [0.5, D + 0.5], y: [0.01, 200], ylog: 10, h: 300, xlabel: 'KLT direction, strongest first', ylabel: 'variance (λ)', grid: 'y', label: 'Sorted eigenvalue spectrum with arithmetic and geometric averages', xticks: [1, 8, 16, 24, 32, 40, 48, 56, 64] });
+    function draw() {
+      const s = 10 ** lgS, w = 10 ** lgW;
+      const lam = range(D).map(i => (i < ns ? s : w));
+      const AM = mean(lam), GM = Math.exp(mean(lam.map(Math.log)));
+      const gain = 0.5 * Math.log2(AM / GM);
+      P.clear();
+      const g = el('g', {}, P.g.data), bw = (P.x(2) - P.x(1)) * 0.8;
+      lam.forEach((v, i) => {
+        const r_ = el('rect', { x: P.x(i + 1) - bw / 2, y: P.y(v), width: bw, height: P.y(0.01) - P.y(v), style: `fill:${BRAND.klt};opacity:${i < ns ? 0.95 : 0.55}` }, g);
+        hover(r_, () => `<b>direction ${i + 1}</b><br>variance λ = ${fmt(v, 3)}`);
+      });
+      rule(P, { y: AM, label: `AM = ${fmt(AM, 3)}`, color: series(3) });
+      rule(P, { y: GM, label: `GM = ${fmt(GM, 3)}`, color: series(1) });
+      kG.set(fmt(gain, 2), 'bits per element: ½ log₂(AM/GM)');
+      const be = n => (gain > 1e-6 ? fmtSI(8 * 2 * n / gain, 1) : '∞');
+      kB.set(`b > ${be(D)}`, `d = ${D}: 8·(2d)/b below the gain`);
+      kB2.set(`b > ${be(640)}`, 'entries per block, basis w = 1280');
+    }
+    draw();
+  };
+
   window.HWA = hwa;
 })();

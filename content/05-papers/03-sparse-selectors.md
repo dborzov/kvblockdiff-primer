@@ -32,8 +32,8 @@ Here is one decode step at one layer, as a toy: 64 past positions, each with a r
 :::
 
 ::: try
-1. Start with DSA: its picks are scattered single positions, spread over several blocks.
-2. Switch to Quest or NSA: the same budget arrives as two runs of 4, inside at most two blocks.
+1. Start with DSA: its 8 picks catch 7 of the true top 8, but they are scattered — four runs, spread over all four blocks.
+2. Switch to Quest or NSA: the same budget arrives as two runs of 4, inside two blocks. The price is precision: only 5 of the true top 8, and 90 % of the relevance DSA collects.
 3. Switch to CSA: attention now reads 2 entries, not 8 — each a blend of 4 tokens. The thing a cache would store has changed.
 :::
 
@@ -84,7 +84,7 @@ The half that does not:
 - Each miss is one entry, decoded alone.
 :::
 ::: col Group picks (NSA, Quest)
-- Picks come in runs of consecutive positions, so misses pile into few blocks *by construction*.
+- Picks come in runs of consecutive positions, so misses pile into few blocks *by construction* — at some cost in precision (the toy above).
 - A run arrives together, so the neighbour of an entry arrives with it — a natural place to use [[fallen-apple]] similarity.
 - A whole run could be one small stream: coder state within a run becomes allowed.
 :::

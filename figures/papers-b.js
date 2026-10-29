@@ -234,8 +234,8 @@ window.FIG = window.FIG || {};
     };
     host.append(
       controls(
-        slider('how steep the spectrum is', 0.3, 2.5, 0.1, alpha, v => { alpha = v; draw(); }, v => fmt(v, 1)),
-        slider('allowed error', -2.5, -0.5, 0.05, logD, v => { logD = v; draw(); }, v => `${fmt(100 * Math.pow(10, v), Math.pow(10, v) < 0.01 ? 2 : 1)} % of the variance`),
+        slider('steepness', 0.3, 2.5, 0.1, alpha, v => { alpha = v; draw(); }, v => fmt(v, 1)),
+        slider('allowed error', -2.5, -0.5, 0.05, logD, v => { logD = v; draw(); }, v => `${fmt(100 * Math.pow(10, v), Math.pow(10, v) < 0.01 ? 2 : 1)} %`),
         seg([[0, 'no grid noise'], [1 / 12 / 1024, 'INT8 grid'], [7e-4, 'E4M3 grid'], [0.01, 'coarse (1 %)']], nu, v => { nu = +v; draw(); }, 'rounding noise of the stored grid'),
       ),
       legend([['gets bits (above the water)', series(0), 'box'], ['dropped: zero bits', 'color-mix(in srgb, var(--ink-3) 35%, transparent)', 'box'], ['water level', 'var(--c)'], ['noise floor of the stored grid', series(2), 'dash']]),
@@ -365,7 +365,7 @@ window.FIG = window.FIG || {};
     const box1 = h('div'), box2 = h('div'), ro = readout();
     host.append(
       controls(
-        slider('share of the variance that is slow drift', 0, 0.98, 0.01, f, v => { f = v; draw(); }, v => pct(v)),
+        slider('drift share', 0, 0.98, 0.01, f, v => { f = v; draw(); }, v => pct(v)),
         seg([[10, '10 tokens'], [100, '100 tokens'], [1000, '1000 tokens']], tau, v => { tau = +v; draw(); }, 'how slowly the drift moves'),
       ),
       legend([['one channel, token by token', series(0)], ['group anchors (every 10th token)', series(1), 'dot'], ["the channel's typical value", 'var(--ink-3)', 'dash']]),
@@ -422,7 +422,7 @@ window.FIG = window.FIG || {};
     const H0 = xs.map(h0);
     const box1 = h('div'), box2 = h('div'), ro = readout();
     host.append(
-      controls(slider(texify('variance the predictor explains, $\\vRsq$'), 0.1, 0.95, 0.05, R2, v => { R2 = v; draw(); }, v => pct(v))),
+      controls(slider(texify('explained, $\\vRsq$'), 0.1, 0.95, 0.05, R2, v => { R2 = v; draw(); }, v => pct(v))),
       legend([['no predictor (order-0)', series(0)], ['with the predictor', series(1)], ['bits saved', series(2)]]),
       box1, box2, ro,
     );

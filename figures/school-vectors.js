@@ -818,7 +818,7 @@ window.FIG = window.FIG || {};
     const tiles = { x: kpi('value', '', '', 'var(--c)'), xh: kpi('prediction', '', '', series(2)), r: kpi('residual in E4M3 steps', '', ''), ri: kpi('same on an INT8 grid', '', '', series(0)) };
     const sz = seg([['s', 'zoom −0.5 … 0.5'], ['m', '−16 … 16'], ['l', 'all: −448 … 448']], zoom, v => { zoom = v; build(); }, 'Zoom');
     const preset = (a, b, z) => btn(`${a} vs ${b}`, () => { x = a; xh = b; zoom = z; sz.set(z); build(); }, { cls: 'sm' });
-    host.append(controls(sz), controls(h('span', { class: 'fig-note', text: 'Try:' }), preset(12, 11, 'm'), preset(0.1, -0.1, 's'), preset(0.25, 0.2, 's'), preset(100, 96, 'l')),
+    host.append(controls(sz), controls(h('span', { class: 'fig-note', text: 'Try:' }), preset(12, 11, 'm'), preset(0.1, -0.1, 's'), preset(0.25, 0.2, 's'), preset(200, 100, 'l')),
       legend([['E4M3 grid points', series(1), 'dot'], ['INT8 grid with the same range', series(0), 'dot'], ['value (drag)', 'var(--c)', 'dot'], ['prediction (drag)', series(2), 'dot']]),
       box, h('div', { class: 'kpis' }, tiles.x, tiles.xh, tiles.r, tiles.ri));
     let P, kx, kh, gDyn;

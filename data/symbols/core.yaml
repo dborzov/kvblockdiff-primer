@@ -126,9 +126,9 @@ r:     { tex: "r", fam: object, name: residual, unit: "", home: school-predictio
 E:     { tex: "E", fam: object, name: entry, unit: "", home: landscape-kv-cache,
          short: "One entry as a vector of $\\vd$ numbers: $\\vE_{\\vl,\\vt}$ is token $\\vt$ at layer $\\vl$." }
 D:     { tex: "D", fam: object, name: dictionary, unit: "", home: tiny-files-trained-dictionary,
-         short: "A dictionary; $\\vD_{\\vj}$ is the dictionary of block $\\vj$." }
+         short: "A dictionary: side information both ends hold before any item is sent. Later, $\\vD_{\\vj}$ is the dictionary of block $\\vj$." }
 delta: { tex: "\\delta", fam: object, name: delta, unit: "", home: tiny-files-trained-dictionary,
-         short: "A delta; $\\vdelta_{\\vt}$ rebuilds entry $\\vt$ exactly given its dictionary." }
+         short: "A delta: what is sent for one item once the receiver holds the dictionary; item and dictionary together rebuild the original exactly." }
 K:     { tex: "K", fam: object, name: keys, unit: "", home: landscape-kv-cache,
          short: "The stored key vectors, $\\vK[\\vl, \\vh, \\vt, \\vc]$." }
 V:     { tex: "V", fam: object, name: values, unit: "", home: landscape-kv-cache,
