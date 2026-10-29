@@ -17,7 +17,7 @@ cards:
   - q: What is random access?
     a: Being able to decode any single item without decoding the items before it
     wrong: ["Reading the items in a random order to improve compression", "Choosing the code width at random", "Storing the items at random positions"]
-    why: With $\vn$-bit slots, item $k$ starts at bit $k\vn$. With an entropy-coded stream, you must decode from the start to find it.
+    why: With $\vn$-bit slots, item $\vi$ starts at bit $\vi\,\vn$. With an entropy-coded stream, you must decode from the start to find it.
     sec: fixed
   - q: 'With $\vn = 5$, ε = 3.0 % and 18 bits per escape, what is the cost per reading?'
     a: About 5.54 bits
@@ -47,7 +47,7 @@ The station's 8-bit chip stores each reading in one byte, which holds 0 to 255. 
 - **Easy to confuse with:** an entropy coder. A fixed-length code ignores which values are common: a calm 9 knots and a rare 30 knots cost the same.
 :::
 
-Because every slot has the same width, the position of any reading is known in advance. Reading number $k$ (counting from 0) starts at bit $k\vn$. With 5-bit slots, reading 500 starts at bit 2,500 — no need to look at the 500 readings before it.
+Because every slot has the same width, the position of any reading is known in advance. Reading number $\vi$ (counting from 0) starts at bit $\vi\,\vn$. With 5-bit slots, reading 500 starts at bit 2,500 — no need to look at the 500 readings before it.
 
 ::: define random-access
 - **What it is:** being able to decode any single item on its own, without decoding what comes before it.
@@ -57,7 +57,7 @@ Because every slot has the same width, the position of any reading is known in a
 
 ::: takeaway
 - A fixed-length code gives every value $\vn$ bits; an $\vn$-bit slot holds $2^{\vn}$ codes.
-- Item $k$ starts at bit $k\vn$, so any item can be read on its own: random access.
+- Item $\vi$ starts at bit $\vi\,\vn$, so any item can be read on its own: random access.
 - It ignores which values are common, so it cannot reach the entropy.
 :::
 
@@ -67,7 +67,7 @@ Five bits cannot hold a 47-knot gale. One answer is to widen every slot to 6 bit
 
 1. Reserve the top 5-bit code, 31 (`11111`), as a marker meaning “look elsewhere”. Ordinary readings 0–30 go in their slots as usual.
 2. For each gale, write the marker in its slot and append a pair (position, value) to a separate **escape stream**: a 10-bit position (enough for 1,024 readings) and the raw 8-bit value.
-3. To read reading $k$: read its slot. If it holds the marker, look $k$ up in the escape stream, which is sorted by position.
+3. To read reading $\vi$: read its slot. If it holds the marker, look $\vi$ up in the escape stream, which is sorted by position.
 
 ::: define escape
 - **What it is:** a value too big for the fixed width is marked in its slot and stored in full, with its position, in a separate escape stream. The share of escaped values is written $\veps$.

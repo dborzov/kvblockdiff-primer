@@ -12,7 +12,7 @@ cards:
   - q: 'Under LRU with $\vB$ slots, exactly when does a request miss?'
     a: When its reuse distance is at least $\vB$ (or it is a first request)
     wrong: ['When its reuse distance is at most $\vB$', 'When its reuse distance is exactly $\vB$', 'When more than $\vB$ requests have passed since its last use']
-    why: 'LRU keeps the $\vB$ most recently used items. An item with distance $D$ sits at position $D + 1$ in recency order, so it is on the desk only if $D + 1 \le \vB$.'
+    why: 'LRU keeps the $\vB$ most recently used items. An item with distance $u$ sits at position $u + 1$ in recency order, so it is on the desk only if $u + 1 \le \vB$.'
     sec: reuse
   - q: What does the miss-rate curve m(B) give you?
     a: The LRU miss rate for every cache size at once, read off one histogram of reuse distances
@@ -52,7 +52,7 @@ The third request, G, has distance 1: only S was used since the first G. The thi
 - **Easy to confuse with:** the number of requests in between. G S S S G gives the second G a distance of 1, not 3.
 :::
 
-Why the rule holds: keep the logbooks in a pile ordered by last use, most recent on top. A logbook with reuse distance $D$ has exactly $D$ others above it, so it sits at position $D + 1$. An LRU desk with $\vB$ slots holds exactly the top $\vB$ of the pile. So the logbook is on the desk if $D + 1 \le \vB$, that is $D < \vB$; it misses if $D \ge \vB$.
+Why the rule holds: keep the logbooks in a pile ordered by last use, most recent on top. A logbook with reuse distance $u$ has exactly $u$ others above it, so it sits at position $u + 1$. An LRU desk with $\vB$ slots holds exactly the top $\vB$ of the pile. So the logbook is on the desk if $u + 1 \le \vB$, that is $u < \vB$; it misses if $u \ge \vB$.
 
 We write $\vB$ for the number of slots. In Part III the same letter counts the slots of the GPU's cache.
 

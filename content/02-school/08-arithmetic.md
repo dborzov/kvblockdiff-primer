@@ -7,7 +7,7 @@ cards:
   - q: About how many bits does arithmetic coding need for a whole message?
     a: About the sum of the surprisals of its symbols
     wrong: ["One whole bit per symbol, at least", "The number of symbols times the entropy of the alphabet's largest symbol", "Exactly the Huffman length"]
-    why: 'Each symbol shrinks the interval by its probability; naming a number in an interval of width $w$ takes about $\log_2(1/w)$ bits — the sum of the surprisals.'
+    why: 'Each symbol shrinks the interval by its probability; naming a number in an interval of width $u$ takes about $\log_2(1/u)$ bits — the sum of the surprisals.'
     sec: interval
   - q: 'A summer fortnight of noon reports (12 sunny, 2 cloudy, 1 rain, 1 fog). Huffman needs 22 bits. Arithmetic coding with the summer model needs about…'
     a: 19 bits
@@ -43,7 +43,7 @@ Picture all the numbers from 0 to 1 as a ruler. Cut it into four slices whose wi
 2. Cut *that* slice into the same four proportions. The second report is sunny again: keep its first ¾, $[0, 9/16)$.
 3. Carry on. Every report keeps its own share of the current interval.
 
-After the last report, the interval's width is the product of all the reports' probabilities. Any number inside the interval identifies the whole message, because no other message leads to the same interval. And naming a number inside an interval of width $w$ takes about $\log_2(1/w)$ binary digits — which is the sum of the reports' surprisals.
+After the last report, the interval's width is the product of all the reports' probabilities. Any number inside the interval identifies the whole message, because no other message leads to the same interval. And naming a number inside an interval of width $u$ takes about $\log_2(1/u)$ binary digits — which is the sum of the reports' surprisals.
 
 ::: figure fig-arith-interval siArith wide
 **Arithmetic coding, one report at a time.** Top row: the message, a summer fortnight of 16 noon reports (S = sunny, C = cloudy, R = rain, F = fog; 12, 2, 1 and 1 of them), each lit as it is coded. Middle: the current interval, drawn full width and cut into the four reports' slices in proportion to the model's probabilities; the slice of the report being coded is outlined. Bottom: that slice, zoomed to full width — the interval for the next report. The readout gives the interval's ends and width, and the binary digits that every number in the interval already shares. Tiles: bits so far for this model, $\log_2(1/\text{width})$, and for the Huffman code `0`, `10`, `110`, `111`. Switch between the summer model and the year model (sunny ½, cloudy ¼, rain and fog ⅛).

@@ -43,7 +43,7 @@ Think of an ordinary lookup first. A Python dictionary maps a key to a value: as
 2. **The new token asks a question**, its query vector $\vq$. Every key gets a **score**: how well it matches the query, measured by the dot product (multiply element by element, add up).
 3. **The scores become weights, and the answer is a weighted mix of all values.** Nothing is picked outright; everything contributes a little, the good matches a lot.
 
-The function that turns scores into weights is the **softmax**: raise $e$ to the power of each score, then divide by the total, so the weights are positive and add up to 1.
+The function that turns scores into weights is the **softmax**: apply the exponential function to each score (raise Euler's number, 2.718…, to that power; the plain $e$ in these formulas is that number, not the entry size $\ve$), then divide by the total, so the weights are positive and add up to 1.
 
 $$
 \begin{aligned}
