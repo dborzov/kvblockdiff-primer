@@ -77,12 +77,14 @@ Write each element of an entry as three parts: what the whole block shares, what
 Independent variances add, so a random sibling doubles the residual's variance — half a bit per element *worse* than the Anchor, by the exchange rate of [[#homework-exchange-rate]]:
 
 $$
-\underbrace{\tfrac12 \log_2 \frac{2(\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}})}{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}}}_{\text{random sibling: lost vs the Anchor}} = \tfrac12 \text{ bit},
-\qquad
-\underbrace{\tfrac12 \log_2 \frac{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}}{2\,\vsigma^2_{\text{noise}}}}_{\text{true twin: saved vs the Anchor}} > 0 \iff \vsigma^2_{\text{own}} > \vsigma^2_{\text{noise}}
+\text{random sibling:}\quad \tfrac12 \log_2 \frac{2(\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}})}{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}} = \tfrac12 \text{ bit lost}
 $$ {#eq-hwa-sib}
 
-A twin helps only when what the two entries share is bigger than the noise each one carries.
+$$
+\text{true twin:}\quad \tfrac12 \log_2 \frac{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}}{2\,\vsigma^2_{\text{noise}}} \text{ saved}
+$$ {#eq-hwa-twin}
+
+The second is positive only when $\vsigma^2_{\text{own}} > \vsigma^2_{\text{noise}}$: a twin helps only when what the two entries share is bigger than the noise each one carries.
 
 ::: figure fig-hwa-sib-twins hwaSibTwins
 **When does the Twin beat the Anchor?** Horizontal axis: the noise share of what is left after the block's shared part, $\vsigma^2_{\text{noise}}/(\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}})$. Curves, in bits per element against the Anchor: an entry with a true twin in its block (solid), and an entry with no twin, predicted from a random sibling (dashed, a flat half-bit loss). **Slide** the share of entries that have a twin and the noise share. The tiles give the net saving per element against the Anchor for the whole block, when each entry may choose the Anchor or the Twin (one flag bit per entry) and twinned entries pay the 12-bit pointer ($\vb = 4096$, $\vd = 640$). Illustrative: Gaussian parts, formulas only.

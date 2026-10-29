@@ -78,13 +78,16 @@ A [[block]] is $\vb$ consecutive entries. A dictionary of [[weight]] $\vw$ is $\
 :::
 
 $$
-\vbpe \;=\; \underbrace{\vH(\vr)}_{\text{residual bits}} \;+\; \underbrace{\vtax}_{\text{per-entry tax}} \;+\; \underbrace{\frac{8\,\vw}{\vb}}_{\text{dictionary, amortized}}
+\vbpe = \underbrace{\vH(\vr)}_{\text{residual}} + \underbrace{\vtax}_{\text{per entry}} + \underbrace{\frac{8\,\vw}{\vb}}_{\text{dictionary}}
 $$ {#eq-hwa-accounting}
 
 Here $\vH(\vr)$ is the [[entropy]] of the residual per element — what an ideal coder pays for it ([[#homework-two-rates]] adds the realistic, fixed-length version). Subtract this bill from the solo rate $\vH(\vx)$, the cost of coding the element alone, and give the first difference a name, the $\vgain$:
 
 $$
-\text{saved against solo} \;=\; \underbrace{\vH(\vx) - \vH(\vr)}_{\vgain:\ \text{what the prediction buys}} \;-\; \underbrace{\vtax}_{\text{per entry}} \;-\; \underbrace{\frac{8\,\vw}{\vb}}_{\text{per block}}
+\begin{aligned}
+\text{saved vs solo} &= \underbrace{\vH(\vx) - \vH(\vr)}_{\vgain:\ \text{what the prediction buys}} \\
+&\quad - \underbrace{\vtax}_{\text{per entry}} - \underbrace{\frac{8\,\vw}{\vb}}_{\text{per block}}
+\end{aligned}
 $$ {#eq-hwa-net}
 
 For bell-shaped data the gain is the exchange rate of [[#homework-exchange-rate]]: $\vgain = \tfrac12\log_2\frac{1}{1-\vRsq}$. In the toy: gain 1.00, tax 0.009, dictionary 0.125, so 0.87 bit saved per element.

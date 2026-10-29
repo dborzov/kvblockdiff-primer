@@ -1,7 +1,7 @@
 ---
 title: Wires and memories
 nav: Wires and memories
-lede: The archive's lift is slow in two different ways — each trip takes two minutes, and each trip carries at most fifty logbooks. Those are latency and bandwidth. Then the toy gets its real names: HBM next to the GPU, host DRAM far away, and the PCIe link between them, about a hundred times slower.
+lede: The archive's lift is slow in two different ways — each trip takes two minutes, and each trip carries at most fifty logbooks. Those are latency and bandwidth. Then the toy gets its real names — HBM next to the GPU, host DRAM far away, and the PCIe link between them, about a hundred times slower.
 group: Machines
 cards:
   - q: What is the difference between bandwidth and latency?

@@ -62,14 +62,14 @@ print(round(turn, 2), a_rope.round(1), b_rope.round(1))
 KVQuant ([[lossy]]) starts where [[#papers-kivi|KIVI]] stops: keys rounded with one ruler per channel, values with one ruler per token. Then it makes four changes.
 
 1. **Round the keys before RoPE.** The per-channel rulers are laid on the keys as they come out of the layer, before the position-dependent turn. RoPE is applied after the keys are read back.
-2. **Put the marks where the numbers are.** Instead of evenly spaced marks, each layer gets its own 3-bit grid, fitted offline on calibration text: a one-dimensional k-means whose eight centroids are weighted by how much each number matters to the model's output. In our words, it is a tiny one-dimensional [[codebook]] per layer.
-3. **Let the largest numbers escape.** In every vector, the largest ~1 % of numbers are taken out and stored in full precision with their positions. The paper calls it dense-and-sparse quantization; we know it as [[escape|escapes]]. The cut-off is per channel for keys (fixed offline) and per token for values (computed on the fly).
-4. **Smaller things.** A normalisation of the grid for 2-bit runs, and — added later in the code — the first few tokens (for example 5) kept at full precision, because attention leans on them heavily.
+2. **Put the marks where the numbers are.** Each layer gets its own 3-bit grid, fitted offline by a one-dimensional k-means that weights each number by how much it matters to the model's output — a tiny one-dimensional [[codebook]] per layer.
+3. **Let the largest numbers escape.** In every vector the largest ~1 % are stored in full precision with their positions — the paper's "dense-and-sparse quantization", our [[escape|escapes]]. The cut-off is per channel for keys (fixed offline) and per token for values (computed on the fly).
+4. **Smaller things.** A grid normalisation for 2-bit runs and, in the later code, the first few tokens (e.g. 5) kept at full precision.
 
 The first change is easiest to see by sliding along RoPE's pairs. Each pair turns at its own speed, from one radian per token for the first pair to one full turn every ~54,000 tokens for the last.
 
 ::: figure fig-pb-kvq-rope pbKvqRope
-**One pair of key channels, before and after RoPE, over a window of 64 tokens.** Horizontal: tokens into the window. Vertical: the key value. Lapis: the first channel of the pair before RoPE (a steady value near 9 plus a little noise, illustrative). Vermilion: the same channel after RoPE (solid) and its partner (dashed). Shaded bands: the range a per-channel ruler must cover, before (lapis) and after (vermilion). The slider picks the pair (0 turns fastest, 63 slowest, for a head of 128 channels and the usual base of 10,000); the buttons pick where in the text the window starts. The read-out gives the turn per token, the spread (standard deviation) of the channel before and after, the step of a 3-bit min–max ruler, and a rough count of the extra bits an exact per-channel code would need, $\log_2$ of the ratio of spreads.
+**One pair of key channels, before and after RoPE, over a window of 64 tokens.** Horizontal: tokens into the window. Vertical: the key value. Lapis: the first channel of the pair before RoPE (a steady value near 9 plus a little noise, illustrative). Vermilion: the same channel after RoPE (solid) and its partner (dashed). Shaded bands: the range a per-channel ruler must cover, before (lapis) and after (vermilion). The slider picks the pair (0 turns fastest, 63 slowest, for a head of 128 channels and the usual base of 10,000); the buttons pick where in the text the window starts. The read-out gives the turn per token, the channel's level (mean) and spread (standard deviation) before and after, the step of a 3-bit min–max ruler, and a rough count of the extra bits an exact per-channel code would need: $\log_2$ of the ratio of spreads.
 :::
 
 ::: try
@@ -111,14 +111,14 @@ Hooper, Kim, Mohammadzadeh, Mahoney, Shao, Keutzer and Gholami, NeurIPS 2024 (ar
 
 The last row is the subtle one. With per-token rulers, rounding *after* RoPE is better. Pre-RoPE helps only when the ruler runs along the channel — because that is exactly where RoPE does its damage.
 
-**What it tells us.** Keys have per-channel structure that is *cleaner before RoPE*. For a lossless coder this is the single most transferable piece of advice in the lossy literature: store K before RoPE, so the simplest per-channel dictionary sees a steady channel instead of a swinging one. It also tells us that key and value numbers have heavy tails: a few numbers per vector stretch any ruler, which is the situation [[escape|escapes]] exist for.
+**What it tells us.** Per-channel key structure is *cleaner before RoPE*. For a lossless coder that is the most transferable advice in the lossy literature: store K before RoPE, so the simplest per-channel dictionary sees a steady channel, not a swinging one. And KV numbers have heavy tails — a few per vector stretch any ruler, the situation [[escape|escapes]] exist for.
 
 Pair 40 of the figure adds a warning for our own measurement. After RoPE, a slow pair makes a steady channel *drift* with position: a per-block dictionary would follow it, a global one would not. Measured on post-RoPE keys, part of a block-scope gain would be RoPE — predictable from the position alone — and not neighbours being alike. Measuring before RoPE keeps the two apart.
 
-**What it does not tell us.** How many bits the steady channel costs to store exactly. The figure's "extra bits" is our rule of thumb from [[#school-residual-shapes]] (halve the spread, save a bit), applied to a toy. The real number needs the spread of each channel *within* a block and *across* the whole text, on the 8-bit grid — measured, not inferred from perplexity.
+**What it does not tell us.** How many bits the steady channel costs exactly. The figure's "extra bits" is our rule of thumb from [[#school-residual-shapes]] (halve the spread, save a bit) on a toy. The real number needs each channel's spread within a block and across the text, on the 8-bit grid.
 
 ::: note warning Where we are not convinced — and what it costs us
-- **"Exact" moves.** If we store keys before RoPE, the GPU must apply RoPE after reading each key back, every step. In floating point a rotation is not undone bit for bit, so this is a choice of what the stored, exactly reproduced thing *is* — made once, up front — not a free re-encoding of post-RoPE keys. Details in [[#missed-keys-before-rope]].
+- **"Exact" moves.** Storing keys before RoPE means applying RoPE after every read. A floating-point rotation is not undone bit for bit, so this decides, up front, what the exactly reproduced thing *is* — it is not a free re-encoding of post-RoPE keys ([[#missed-keys-before-rope]]).
 - **Partial RoPE.** Many newer models turn only some channels (our proxy model among them), and latent caches keep a separate small RoPE part. The pre-/post-RoPE difference may live in fewer channels than in LLaMA.
 - **"10M tokens" is a capacity claim.** It says the cache fits, not how well the model reads it at that length.
 :::
@@ -148,8 +148,7 @@ KVQuant spends real effort *choosing* its grid: marks where the numbers are dens
 :::
 ::::
 
-- **KIVI** ([[#papers-kivi]]) gave the ruler directions; KVQuant explains part of *why* the key direction works — RoPE leaves per-channel structure intact only before it turns the pairs.
-- The offline per-channel cut-offs hint that a key channel's range is stable across texts, which is what a global per-channel code captures — the baseline every dictionary must beat ([[#homework-solo-coding]]).
+The offline per-channel cut-offs also hint that a key channel's range is stable across texts — what a global per-channel code already captures, the baseline every dictionary must beat ([[#homework-solo-coding]]).
 
 ::: takeaway
 - KVQuant's escapes are lossy cousins of the escapes in fixed-length lossless codes.

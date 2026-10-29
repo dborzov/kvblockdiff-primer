@@ -46,7 +46,7 @@ Here are eight numbers from a KV cache, in BF16, written out bit by bit (illustr
 
 Notice anything? The mantissa column looks like coin flips. The exponent column does not: six times out of eight it starts with `011111`, and its eight bits take just five different values out of 256. Numbers of the size a model produces sit in a handful of [[exponent|binades]], so the exponent byte is mostly predictable before you read it.
 
-SplitZip is a paper built on exactly this observation, and nothing more. That makes it the most useful calibration point in this Part.
+SplitZip is built on exactly this observation and nothing more — which makes it the most useful calibration point in this Part.
 
 ::: note literature The paper
 Guo and Joshi, *SplitZip: Ultra Fast Lossless KV Compression for Disaggregated LLM Serving*, arXiv:2605.01708 (2026); listed as a NeurIPS 2026 poster. Re-checked against the abstract, the codec comparison table and public summaries.
@@ -57,8 +57,7 @@ Guo and Joshi, *SplitZip: Ultra Fast Lossless KV Compression for Disaggregated L
 SplitZip lives on the bulk-transfer [[data-path]] of one particular way of serving models.
 
 ::: define disaggregation
-- **What it is:** prefill (reading the prompt) and decode (writing the answer) run on different GPUs. When prefill finishes, the prompt's whole KV cache is shipped to the decode GPU, once, in bulk.
-- **Why it matters here:** that shipment sits between the prompt and the first answer token. Fewer bytes means an earlier first token.
+- **What it is:** prefill (reading the prompt) and decode (writing the answer) run on different GPUs, so the prompt's whole KV cache is shipped to the decode GPU once, in bulk — right before the first answer token.
 - **Easy to confuse with:** the miss path, where single entries cross from host memory to the same GPU at every step.
 :::
 
@@ -83,12 +82,12 @@ $$ {#eq-papers-splitzip-bits}
 With $\vn = 4$, the 99.8 % coverage the paper reports for Qwen3-32B ($\veps = 0.002$), and 40 bits per escape (our assumption: a 32-bit position plus the raw exponent byte), that is $8 + 4 + 0.08 = 12.08$ bits, a ratio of $16 / 12.08 = 1.324$ — the paper's measured ratio to the third digit. The figure lets you run the same arithmetic on a toy.
 
 ::: figure fig-papers-splitzip-escapes paEscapes wide
-**The escape mechanism on a toy exponent histogram.** Bars: the share of numbers with each exponent-field value (horizontal axis: the raw field value of the chosen format; vertical axis: per cent of all numbers). The toy data are illustrative: eight [[channel|channels]] of bell-shaped numbers whose widths are spread over the number of binades (powers of two) set by the slider, plus one outlier channel about 11 times wider than the widest of them; shares are computed exactly from the bell curve, not sampled. Teal bars are covered by the table and get a codeword; red bars are escaped (switch to the log scale to see the rare ones). The strip below codes 32 sample numbers drawn from the same toy (fixed seed): each cell shows the exponent field and its codeword, or ESC. The tiles compute [[#eq-papers-splitzip-bits]] and the ratio, next to the ratio an ideal [[entropy-coder]] would reach on the same exponents. For FP8 the numbers are first scaled so the widest channel's extremes sit near 256.
+**The escape mechanism on a toy exponent histogram.** Bars: the share of numbers (vertical axis, per cent) with each raw exponent-field value of the chosen format (horizontal axis). Illustrative toy data: eight [[channel|channels]] of bell-shaped numbers whose widths spread over the number of binades set by the slider, plus one outlier channel about 11 times wider; shares are computed exactly, not sampled. Teal bars are covered by the table and get a codeword; red bars are escaped (switch to the log scale to see the rare ones). The strip below codes 32 sample numbers drawn from the same toy (fixed seed): each cell shows the exponent field and its codeword, or ESC. The tiles compute [[#eq-papers-splitzip-bits]] and the ratio, next to the ratio an ideal [[entropy-coder]] would reach on the same exponents. For FP8 the numbers are first scaled so the widest channel's extremes sit near 256.
 :::
 
 ::: try
 1. The default (BF16, 4-bit code, 40-bit escapes) covers 99.78 % of numbers: 12.09 bits each, **1.323×** — within a hair of the paper's 1.324× on real KV. An ideal entropy coder on the same exponents would reach 1.414×.
-2. Switch to a 3-bit code on BF16: coverage drops to 87.5 %, and the escapes eat the whole gain (1.00×).
+2. Switch to a 3-bit code on BF16: coverage drops to 87.5 %, and the escapes eat the whole gain (0.999×).
 3. Choose FP8 E4M3 with a 3-bit code: 12 bits per 8-bit number, **0.67×** — the data grows. Untick the outlier channel: 96.5 % covered, still 0.95×. Switch the bars to a log scale to see the escaped values at all.
 4. Set the spread to 0 and untick the outlier: one plain bell curve, 2.54 bits of exponent entropy, an ideal ratio of 1.52×. That is the territory of [[#papers-float-coders]].
 :::
@@ -139,14 +138,12 @@ Here the tax is the escape stream. At 99.8 % coverage it costs 0.08 bits per num
 1. **Two different "1.32×".** The abstract's 1.32× is a *speed-up of the transfer*; the codec table's 1.324× is the *compression ratio*. They nearly coincide because the transfer is limited by bandwidth. The first draft quoted "1.32× on six model families" as a ratio; we found the ratio measured on one workload (Qwen3-32B), and only the coverage statistic over several models.
 2. **The headlines are ceilings of the format.** A 4-bit code on an 8-bit exponent cannot beat 16/12 = 1.333×; SplitZip reaches 99.3 % of that. On E5M2, a 4-bit code on a 5-bit exponent saves exactly 1 bit of 8, a ceiling of 8/7 = 1.143× — and the reported 1.14× is that ceiling. The numbers tell us the escapes are cheap, not that KV holds more structure.
 3. **Our own first draft was too harsh.** It called SplitZip a "bulk stream" coder, the wrong shape for the miss path. Its main stream is fixed-length, so every element's codeword sits at a known address. Only the escape list stops random access: to rebuild one element you must know whether it was escaped. A per-entry escape count or a small escape index per block would fix that. The gap between SplitZip and a miss-path coder is escape bookkeeping, not coder state.
-4. **E5M2 is the unusual FP8 format for KV.** The positive FP8 result is on E5M2; the format most KV stores use, E4M3, is the one where it fails.
-
 ::: theme grid-matters
-The same table and the same escapes give 1.33× on BF16, 1.14× on E5M2 and less than 1× on E4M3. Nothing about the KV cache changed; only how many exponent bits the format spends.
+The same table and escapes give 1.33× on BF16, 1.14× on E5M2 and less than 1× on E4M3 — and E4M3 is the more common 8-bit format for KV. Nothing about the KV cache changed; only how many exponent bits the format spends.
 :::
 
 ::: note connection Connections
-Fixed-length codes and escapes: [[#school-fixed-length]]. Floats, exponents and BF16: [[#school-integers-floats]], [[#school-fp8]]. The same exponent trick on model weights: [[#papers-float-coders]]. The bit budget of an 8-bit element: [[#homework-the-budget]]. Entropy-coded versus fixed-length rates: [[#homework-two-rates]].
+The same trick on model weights: [[#papers-float-coders]]. The bit budget of an 8-bit element: [[#homework-the-budget]]. Entropy-coded versus fixed-length rates: [[#homework-two-rates]].
 :::
 
 ::: takeaway

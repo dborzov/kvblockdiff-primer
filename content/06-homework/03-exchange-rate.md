@@ -47,7 +47,10 @@ A predictor that explains a share $\vRsq$ of a value's variance leaves a [[resid
 The rule of [[#school-exchange-rate]], written for one element:
 
 $$
-\text{bits saved per element} \;=\; \frac12 \log_2 \frac{\vsigma^2}{\underbrace{(1-\vRsq)\,\vsigma^2}_{\text{variance left in the residual}}} \;=\; \frac12 \log_2 \frac{1}{1-\vRsq}
+\begin{aligned}
+\text{saved per element} &= \tfrac12 \log_2 \frac{\vsigma^2}{\underbrace{(1-\vRsq)\,\vsigma^2}_{\text{left in the residual}}} \\
+&= \tfrac12 \log_2 \frac{1}{1-\vRsq}
+\end{aligned}
 $$ {#eq-hwa-exchange}
 
 Three things about it matter for KV.

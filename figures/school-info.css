@@ -20,4 +20,7 @@
 .si-jt tr.is-sel td { font-weight: 700; }
 .si-jt .si-jt-h { font-family: var(--f-mono); }
 .si-jt tr:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
-.si-hf-sliders .slider { flex: 1 1 9rem; }
+
+.si-hf-sliders { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: .3rem 1.2rem; }
+.si-hf-sliders > .fig-note { grid-column: 1 / -1; }
+.si-hf-sliders .slider { max-width: none; }

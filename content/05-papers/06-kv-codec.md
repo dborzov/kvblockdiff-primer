@@ -25,7 +25,7 @@ cards:
     sec: doubts
 ---
 
-Film a harbour with a camera on a tripod. Frame after frame, almost every pixel is what it was a moment ago: a few boats move, the rest is still. A video coder exploits exactly that. It sends the first frame, then for every later frame only *how it differs* from the one before — [[predictive-coding]] with the previous frame as the prediction. That is why an hour of a quiet harbour fits in a small file.
+Film a harbour with a camera on a tripod. Frame after frame, almost every pixel is what it was a moment ago. A video coder sends the first frame, then for every later frame only *how it differs* from the one before — [[predictive-coding]] with the previous frame as the prediction. That is why an hour of a quiet harbour fits in a small file.
 
 Now replace the harbour with a KV cache, and the frames with tokens. That is the whole idea of KV-Codec. Its appeal for us is obvious: if consecutive tokens' entries look alike, the video coder will find it, and its compression ratio becomes a reading of [[fallen-apple]] similarity. This page asks how good a reading it is.
 
@@ -93,7 +93,7 @@ A ratio like 11.9× cannot be converted into "bits saved per element by the prev
 
 ## Where we are not convinced {#doubts}
 
-1. **"Lossless accuracy" is not lossless.** Rounding comes first; only the rounded integers are rebuilt exactly. The accuracy claim rests on benchmark scores, which is the right claim for their purpose and the wrong one for ours.
+1. **"Lossless accuracy" is not lossless.** Only the rounded integers are rebuilt exactly. Benchmark scores are the right test for their purpose and the wrong one for ours.
 2. **The headline ratio hides its parts.** If the rounding went from 16 to 8 bits, it alone gives 2×, leaving about 6× to lossless coding of 8-bit integers — far more than anything else in this Part reaches. That suggests coarser rounding, but we could not find the bit width. Without it, 11.9× says nothing about predictability.
 3. **No control on the token axis.** The head-swap experiment is a good control of the *channel* arrangement. Its twin is missing: shuffle the token order — the [[#homework-rehearsal|shuffle control]] — and see how much of the ratio survives. Since the swap left the token order untouched and still cost a factor 2.4, a large share of the gain may come from inside each token, not from its neighbours.
 4. **The first draft over-read it, twice.** It said slicing along the token axis "gives the most inter-frame similarity" — we found the layout slices along tokens, but no comparison with other slicings. And it called KV-Codec "weak but direct evidence for fallen-apple similarity at BF16" — the evidence is at rounded precision, not BF16, and indirect.

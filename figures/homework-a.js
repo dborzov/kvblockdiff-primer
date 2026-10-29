@@ -285,7 +285,7 @@ window.FIG = window.FIG || {};
     const kT = kpi(tex('\\vsigma^2_{\\text{total}}'), '', 'all blocks together', 'var(--ink-3)');
     const kW = kpi(tex('\\vsigma^2_{\\text{within}}'), '', 'average inside a block', BRAND.loc);
     const kG = kpi('gain of loc', '', 'bits per element', BRAND.loc);
-    host.append(controls(slider('share of variance from drift between blocks', 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0))),
+    host.append(controls(slider('drift share', 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0))),
       legend([['the Hermit: global mean ± 1 sd', 'var(--ink-3)', 'band'], ['the Anchor: block median ± 1 within-block sd', BRAND.loc, 'band'], ['values', 'var(--ink-2)', 'dot']]),
       box, h('div', { class: 'kpis' }, kT, kW, kG));
     const P = Plot(box, { x: [0, NB * PER], y: [-3.6, 3.6], h: 300, xlabel: 'token position (8 blocks of 48)', ylabel: 'value (global sd = 1)', grid: 'y', label: 'One channel over eight blocks with block medians' });

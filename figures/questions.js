@@ -83,8 +83,8 @@ window.FIG = window.FIG || {};
       legend([['delta (crosses the link on a miss)', 'var(--t-delta)', 'box'], ['dictionary, amortized (stored, resident)', 'var(--t-dictionary)', 'box']]),
       box, ro,
     );
-    const CATS = ['raw 8-bit (HiSparse)', 'solo coding', 'dictionary + delta'];
-    const P = Plot(box, { ycats: CATS, x: [0, 8.6], h: 230, xlabel: 'bits per element (raw = 8)', grid: 'x', label: 'Bits per element: raw, solo coding and a dictionary coder' });
+    const CATS = ['raw', 'solo', 'with dictionary'];
+    const P = Plot(box, { ycats: CATS, x: [0, 8.6], h: 240, m: { t: 30 }, xlabel: 'bits per element (raw = 8)', grid: 'x', label: 'Bits per element: raw, solo coding and a dictionary coder' });
     function rect(i, x0, x1, color, op) {
       const y0 = P.y(i - 0.27), y1 = P.y(i + 0.27);
       return el('rect', { x: P.x(x0), y: Math.min(y0, y1), width: Math.max(0, P.x(x1) - P.x(x0)), height: Math.abs(y1 - y0), rx: 3 * P.fs, style: `fill:${color};fill-opacity:${op || 1}` }, P.g.data);
@@ -100,7 +100,8 @@ window.FIG = window.FIG || {};
       rect(2, 0, delta, 'var(--t-delta)', 0.9);
       rect(2, delta, total, 'var(--t-dictionary)', 0.9);
       [[0, 8], [1, solo], [2, total]].forEach(([i, v]) => svgText(P.g.top, P.x(v) + 6 * P.fs, P.y(i) + 4 * P.fs, fmt(v, 2), { class: 'val' }));
-      rule(P, { x: solo, label: 'the bar to clear' });
+      rule(P, { x: solo });
+      svgText(P.g.top, P.x(solo), P.m.t - 9 * P.fs, 'the bar to clear', { class: 'lbl', 'text-anchor': 'middle' });
       const rho = delta / 8;
       const verdict = total >= solo ? '<b>loses to solo</b> — ship solo coding, no dictionary'
         : delta >= solo ? 'smaller only if you ignore the dictionary' : `beats solo by ${fmt(solo - total, 2)} bit per element`;
@@ -236,8 +237,6 @@ window.FIG = window.FIG || {};
       });
       dot(P.g.top, P.x(ZERO), P.y(1), 6.5 * P.fs, 'var(--t-hisparse)');
       dot(P.g.top, P.x(ZERO), P.y(solo), 6.5 * P.fs, 'var(--t-solo)');
-      svgText(P.g.top, P.x(ZERO) + 10 * P.fs, P.y(1) + 16 * P.fs, 'HiSparse (0, 1)', { class: 'lbl' });
-      svgText(P.g.top, P.x(ZERO) + 10 * P.fs, P.y(solo) + 16 * P.fs, `solo (0, ${fmt(solo, 2)})`, { class: 'lbl' });
       const cand = pts.map(p => ({ ...p, tot: (p.x === ZERO ? 0 : p.x) + p.y })).sort((a, c) => a.tot - c.tot)[0];
       const light = Math.min(solo, ...pts.filter(p => p.x === ZERO || p.x <= 0.01).map(p => p.y));
       ro.set([
@@ -379,10 +378,10 @@ window.FIG = window.FIG || {};
     }
     const SYS = [
       { id: 'his', name: 'HiSparse', color: series(0), f: Bs => N(Bs, { rho: 1, fD: 1 }) },
-      { id: 'req', name: 'lever 1 · request scope (w = 256)', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
-      { id: 'blk', name: 'lever 1 · block scope, 4 resident (w = 32)', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
-      { id: 'vic', name: 'lever 1 + victim tier (best size)', color: series(4), f: Bs => bestVictim(Bs) },
-      { id: 'lv2', name: 'levers 1 + 2 · deltas in the hot cache', color: series(1), f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
+      { id: 'req', name: 'lever 1, per request', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
+      { id: 'blk', name: 'lever 1, per block', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
+      { id: 'vic', name: 'lever 1 + victim tier', color: series(4), f: Bs => bestVictim(Bs) },
+      { id: 'lv2', name: 'levers 1 + 2', color: series(1), f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
     ];
     const box = h('div'), tbl = h('div');
     mark(host).append(
@@ -419,7 +418,7 @@ window.FIG = window.FIG || {};
         if (s.id === 'his') base = best[1];
         rows.push([`<i class="q-key" style="--kc:${s.color}"></i>${s.name}`, fmt(best[0], 0), fmt(best[1], 0), base ? `${(best[1] / base).toFixed(2)}×` : '—']);
       });
-      tbl.replaceChildren(table(['system, each at its own best B', 'best B', 'N', 'vs HiSparse'], rows, { left: [0] }));
+      tbl.replaceChildren(table(['system, at its own best B', 'best B', 'N', 'gain'], rows, { left: [0] }));
     }
     draw();
   };
@@ -428,11 +427,11 @@ window.FIG = window.FIG || {};
   FIG.qParkedMap = (host) => {
     // positions are our judgement (cost to test, odds of a useful answer), not data
     const Q = [
-      { s: 'indexer keys as a free dictionary', x: 0.72, y: 0.35, p: 0 },
+      { s: 'indexer keys', x: 0.72, y: 0.33, p: 0 },
       { s: 'anchor entries', x: 0.15, y: 0.3, p: 0 },
       { s: 'shared prefixes', x: 0.82, y: 0.6, p: 0 },
       { s: 'rate allocation', x: 0.22, y: 0.78, p: 0 },
-      { s: 'upstairs groups', x: 0.32, y: 0.38, p: 1 },
+      { s: 'upstairs groups', x: 0.32, y: 0.4, p: 1 },
       { s: 'GQA heads alike?', x: 0.12, y: 0.22, p: 1 },
       { s: 'prefill vs generated', x: 0.25, y: 0.55, p: 1 },
       { s: 'surprising misses', x: 0.5, y: 0.5, p: 1 },
@@ -519,6 +518,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     mark(host).append(schem('Schematic · three invented patterns, no data'),
       controls(seg([['graded', 'graded with depth'], ['uniform', 'all layers alike'], ['few', 'a few layers']], pat, v => { pat = v; draw(); }, 'which pattern')),
+      h('div', { class: 'q-heatkey' }, h('span', { text: 'bits saved: 0' }), h('span', { class: 'q-ramp' }), h('span', { text: '1.1 or more' })),
       box, ro);
     const D = Diagram(box, { w: 640, h: 300, label: 'Heat map of bits saved by layer and token distance (invented)' });
     const g = el('g', {}, D.svg);
@@ -533,10 +533,7 @@ window.FIG = window.FIG || {};
       });
       [0, 4, 8, 12, 15].forEach(i => svgText(g, lx + (i + 0.5) * cw, by + 16 * D.fs, DS[i] >= 1024 ? `${DS[i] / 1024}K` : String(DS[i]), { class: 'lbl', 'text-anchor': 'middle' }));
       [0, 5, 11].forEach(l => svgText(g, lx - 8, by - (l + 0.5) * chh + 4, `layer ${l}`, { class: 'lbl', 'text-anchor': 'end' }));
-      svgText(g, (lx + rx) / 2 - 60, D.H - 4, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
-      [0, 0.25, 0.5, 0.75, 1].forEach((f, i) => el('rect', { x: 500 + i * 18, y: D.H - 16, width: 17, height: 12, class: 'q-heat', style: `fill:color-mix(in srgb, var(--t-curve) ${Math.round(100 * f)}%, var(--paper-3))` }, g));
-      svgText(g, 494, D.H - 6, '0', { class: 'lbl', 'text-anchor': 'end' });
-      svgText(g, 596, D.H - 6, '1.1 bit', { class: 'lbl' });
+      svgText(g, (lx + rx) / 2, D.H - 4, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
       ro.set([['what we would read', PAT[pat].read]]);
     }
     draw();

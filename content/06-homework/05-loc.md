@@ -79,7 +79,10 @@ A [[channel]] is one position $\vc$ across many vectors — one sensor's column 
 How many bits does an anchor save on a channel? The residual's spread is the spread *within* a block, $\vsigma_{\text{within}}$; the Hermit faces the spread over all blocks, $\vsigma_{\text{total}}$. For bell-shaped values the exchange rate of [[#homework-exchange-rate]] gives, per element:
 
 $$
-\vgain_{\text{loc}} \;=\; \frac12 \log_2 \frac{\vsigma^2_{\text{total}}}{\vsigma^2_{\text{within}}} \;=\; \frac12 \log_2 \frac{1}{1 - \underbrace{\vRsq}_{\text{share explained by block means}}}
+\begin{aligned}
+\vgain_{\text{loc}} &= \frac12 \log_2 \frac{\vsigma^2_{\text{total}}}{\vsigma^2_{\text{within}}} \\
+&= \frac12 \log_2 \frac{1}{1 - \underbrace{\vRsq}_{\text{explained by block means}}}
+\end{aligned}
 $$ {#eq-hwa-loc}
 
 The two forms are the same statement: block means explain the share $\vRsq = 1 - \vsigma^2_{\text{within}}/\vsigma^2_{\text{total}}$ of the channel's variance. The entry's saving is this gain averaged over its $\vd$ channels; the cost is 0 per entry plus $8 \times 2/\vb$ per element for the dictionary.

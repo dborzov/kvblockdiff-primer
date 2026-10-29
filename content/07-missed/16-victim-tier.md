@@ -77,7 +77,7 @@ The victim tier is simply the next $\vBV$ rows of the stack. A selection whose s
 
 ::: try
 1. The default: $\vB$ = 2,048 (just the current selection), $\vBV$ = 3,200, $\vrho$ = 0.65. The link now sees 10.3 % misses for 4,226 slots' worth of memory — about HiSparse's own 4,096 — and a GPU serves about 142 requests. The best plain raw cache of *any* size serves 127; HiSparse at 4,096 slots, 109.
-2. Press *misses move deltas too*, then set $\vBV$ to about 2,200: both levers together reach about 169 requests per GPU.
+2. Press *misses move deltas too*, then set $\vBV$ to 2,176: both levers together reach about 169 requests per GPU.
 3. Watch the decode tile: around 90 GB/s per GPU on promotions for the victim tier alone, about 160 with lever 1 as well. That is a fraction of the ~370 GB/s the full lever 2 needs, and well inside what fixed-length decoders do ([[#papers-splitzip]]).
 4. Choose $\vB$ = 8,192: memory binds at once, and every delta added only lowers the count.
 :::

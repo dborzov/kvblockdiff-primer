@@ -31,7 +31,7 @@ cards:
     sec: doubts
 ---
 
-Count how many caching numbers on this site come from one experiment. The miss rate of a hot cache at three sizes. The miss rates of FIFO, random replacement and Bélády's clairvoyant policy. The "87 % hits" behind the [[lucky-louis]]. The power law in [[#landscape-reuse-curve]]. Every one of them was measured on **a single request**: one GLM-5.1 prompt of 100,384 tokens, decoding for 1,799 steps.
+Count how many caching numbers on this site come from one experiment: the miss rate of a hot cache at three sizes; FIFO, random replacement and Bélády's clairvoyant policy; the "87 % hits" behind the [[lucky-louis]]; the power law of [[#landscape-reuse-curve]]. Every one was measured on **a single request** — one GLM-5.1 prompt of 100,384 tokens, decoding for 1,799 steps.
 
 That request comes from the HiSparse paper. We use its numbers more than any other paper's, so it deserves the same sceptical reading as the rest.
 
@@ -62,7 +62,7 @@ The figure shows the evidence for why such a small desk works.
 
 ::: try
 1. Fit through all three LRU points: $\alpha \approx 1.08$. Now fit through the two larger caches only: $\alpha = 1.00$ exactly, because 13.4 % → 6.7 % is a clean halving.
-2. Read the extrapolation at 16384 slots in both fits: 3.1 % against 3.4 %. Small difference — and both are guesses.
+2. Read the extrapolation at 16384 slots in both fits: 3.1 % against 3.3 %. Small difference — and both are guesses.
 3. Compare the dots at 4096: random replacement (16.1 %) is only 2.7 points worse than LRU. Recency helps, but most of the work is done by the selections themselves repeating.
 :::
 
@@ -114,10 +114,10 @@ Every number HiSparse reports is about *which* entries the indexer wants. None i
 4. **BF16 only.** HiSparse stores and moves BF16. Our [[reference-setting]] assumes 8-bit storage. Miss *rates* are about which entries are wanted, so they should not care about the format; miss *bytes* halve. That is our assumption, not their measurement.
 5. **Two prefetch findings that sound opposite.** Guessing layer $\vl + 1$'s picks from layer $\vl$'s gave little (as reported in the first draft; not re-checked). For models that share one selection across several layers, prefetching the known picks hides about half of the remaining miss time (abstract). They agree once translated: guessing fails, knowing works.
 
-One reassurance, too. The 30 % point is "keep only the current picks", which sounds like a different policy from LRU. It is not: with exactly $\vk$ slots, LRU must hold this step's $\vk$ picks and nothing else, so the three dots on the line belong to one policy.
+One reassurance: the 30 % point ("keep only the current picks") is not a different policy. With exactly $\vk$ slots, LRU must hold this step's $\vk$ picks and nothing else, so all three dots on the line belong to one policy.
 
 ::: note connection Where HiSparse appears on this site
-The system: [[#landscape-hisparse]] and [[#landscape-toy-trace]]. Its locality: [[#landscape-lucky-louis]] and [[#landscape-reuse-curve]]. The two prices it leaves alone, and the two levers that attack them: [[#idea-two-levers]]. What a cache-size curve can and cannot say: [[#papers-classics/stack]].
+The system: [[#landscape-hisparse]]. Its locality: [[#landscape-lucky-louis]]. The two prices it leaves alone: [[#idea-two-levers]]. What a cache-size curve can and cannot say: [[#papers-classics/stack]].
 :::
 
 ::: takeaway

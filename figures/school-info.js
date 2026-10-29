@@ -369,7 +369,7 @@ window.FIG = window.FIG || {};
   // ================================================================= II.6 — information bars
   FIG.siInfoBars = host => {
     let kind = 'season', st = 0.8;
-    const D = Diagram(host, { w: 640, h: 210, label: 'Entropy of the sky report and of the side information, overlapping by the mutual information' });
+    const D = Diagram(host, { w: 640, h: 210, grow: 1, label: 'Entropy of the sky report and of the side information, overlapping by the mutual information' });
     const g = el('g', {}, D.svg);
     const sl = slider('stickiness', 0, 0.95, 0.05, st, v => { st = v; draw(); }, v => fmt(v, 2));
     const sk = seg([['season', 'the season'], ['previous', 'the previous report'], ['none', 'nothing'], ['self', 'the report itself']], kind, v => { kind = v; draw(); }, 'side information');
@@ -392,19 +392,19 @@ window.FIG = window.FIG || {};
       sl.input.disabled = kind !== 'previous';
       sl.style.opacity = kind === 'previous' ? 1 : 0.4;
       const { HX, HY, HXY, name } = nums(), I = HX - HXY, HYX = HY - I;
-      const k = 140, x0 = 70, y1 = 46, y2 = 128, bh = 40;
+      const f = D.fs, k = 140, x0 = 70, y1 = 46 * f, y2 = 128 * f, bh = 40 * f;
       g.replaceChildren();
-      el('text', { x: 6, y: y1 + bh / 2 + 4, class: 'lbl', text: 'sky' }, g);
-      el('text', { x: 6, y: y2 + bh / 2 + 4, class: 'lbl', text: 'known' }, g);
+      el('text', { x: 6, y: y1 + bh / 2 + 4 * f, class: 'lbl', text: 'sky' }, g);
+      el('text', { x: 6, y: y2 + bh / 2 + 4 * f, class: 'lbl', text: 'known' }, g);
       const a = x0 + HXY * k, b = x0 + HX * k, c = a + HY * k;
       seg2(x0, a, y1, bh, tint(skyCol(0), 45), `still to send ${fmt(HXY, 2)}`);
       seg2(a, b, y1, bh, tint(series(4), 55), `shared ${fmt(I, 2)}`);
       if (I > 0.005 && b - a <= 46 * D.fs) el('text', { x: b + 6, y: y1 + bh / 2 + 4 * D.fs, class: 'val', text: `← shared ${fmt(I, 2)}` }, g);
       seg2(a, a + I * k, y2, bh, tint(series(4), 55), `shared ${fmt(I, 2)}`);
       seg2(a + I * k, c, y2, bh, tint(series(2), 30), `${fmt(HYX, 2)}`);
-      if (I > 0.01) [a, b].forEach(x => el('line', { x1: x, x2: x, y1: y1 - 8, y2: y2 + bh + 8, style: 'stroke:var(--ink-2);stroke-dasharray:4 3' }, g));
-      el('text', { x: x0, y: y1 - 12, class: 'annot', text: `H(X) = ${fmt(HX, 2)} bits: the sky report` }, g);
-      el('text', { x: Math.min(a, 360), y: y2 + bh + 24, class: 'annot', text: HY > 0 ? `H(Y) = ${fmt(HY, 2)} bits: ${name}` : 'Y = nothing: 0 bits' }, g);
+      if (I > 0.01) [a, b].forEach(x => el('line', { x1: x, x2: x, y1: y1 - 8 * f, y2: y2 + bh + 8 * f, style: 'stroke:var(--ink-2);stroke-dasharray:4 3' }, g));
+      el('text', { x: x0, y: y1 - 12 * f, class: 'annot', text: `H(X) = ${fmt(HX, 2)} bits: the sky report` }, g);
+      el('text', { x: Math.min(a, 360), y: y2 + bh + 24 * f, class: 'annot', text: HY > 0 ? `H(Y) = ${fmt(HY, 2)} bits: ${name}` : 'Y = nothing: 0 bits' }, g);
       kHXY.set(fmt(HXY, 3), `bits still to send (${fmtPct(HXY / HX, 0)} of 1.75)`);
       kI.set(fmt(I, 3), `bits saved per report, knowing ${name}`);
     }
@@ -459,6 +459,12 @@ window.FIG = window.FIG || {};
       T.order.forEach((n, k) => pos.set(n.id, [W * (k + 1) / (T.order.length + 1), bottom]));
       (function place(n) { if (n.leaf) return pos.get(n.id); const a = place(n.kids[0]), b = place(n.kids[1]); const p = [(a[0] + b[0]) / 2, bottom - n.hgt * dy]; pos.set(n.id, p); return p; })(T.root);
       const vis = n => n.leaf || n.born <= Math.min(step, 3);
+      const ghost = el('g', { style: 'opacity:.18' }, g);
+      T.nodes.filter(n => !n.leaf && !vis(n)).forEach(n => n.kids.forEach(kid => {
+        const [x1, y1] = pos.get(n.id), [x2, y2] = pos.get(kid.id);
+        el('line', { x1, y1, x2, y2, style: 'stroke:var(--ink-3);stroke-width:1.4;stroke-dasharray:4 4' }, ghost);
+      }));
+      T.nodes.filter(n => !n.leaf && !vis(n)).forEach(n => { const [x, y] = pos.get(n.id); el('circle', { cx: x, cy: y, r: 7 * D.fs, style: 'fill:var(--paper-2);stroke:var(--ink-3)' }, ghost); });
       const fresh = step >= 1 && step <= 3 ? T.merges[step - 1] : null;
       T.nodes.filter(n => !n.leaf && vis(n)).forEach(n => n.kids.forEach((kid, side) => {
         const [x1, y1] = pos.get(n.id), [x2, y2] = pos.get(kid.id);
@@ -479,7 +485,7 @@ window.FIG = window.FIG || {};
         }
       });
       const ps = w.map(v => v / tot()), L = ps.reduce((a, p, i) => a + p * T.code[i].length, 0), H = entropy(ps);
-      tblBox.replaceChildren(table(['report', 'p', 'surprisal (bits)', 'codeword', 'length (bits)'],
+      tblBox.replaceChildren(table(['report', 'p', 'surprisal', 'codeword', 'length'],
         SKY.map((s, i) => [s, fmt(ps[i], 3), fmt(-Math.log2(ps[i]), 2), { html: step === 4 ? `<code>${T.code[i]}</code>` : '…' }, step === 4 ? String(T.code[i].length) : '…']), { left: [0] }));
       kL.set(step === 4 ? fmt(L, 3) : '…', 'bits per report');
       kH.set(fmt(H, 3), 'bits per report');
@@ -501,7 +507,7 @@ window.FIG = window.FIG || {};
     let model = 'summer', cur = 0;
     const sm = seg([['summer', 'summer model'], ['year', 'year model']], model, v => { model = v; draw(cur); }, 'model');
     host.append(controls(h('span', { class: 'fig-note', text: 'Both ends use the' }), sm));
-    const D = Diagram(host, { w: 640, h: 250, label: 'The coding interval shrinking as each report is coded', grow: 0.2 });
+    const D = Diagram(host, { w: 640, h: 226, label: 'The coding interval shrinking as each report is coded', grow: 1 });
     const g = el('g', {}, D.svg);
     const ro = readout();
     const kB = kpi('this model', '', 'bits so far', series(2));
@@ -518,38 +524,41 @@ window.FIG = window.FIG || {};
     }
     const bin = (x, n) => { let s = ''; for (let k = 0; k < n; k++) { x *= 2; const b = Math.floor(x); s += b; x -= b; } return s; };
     function bar(y, hgt, P, chosen, faded) {
+      const f = D.fs;
       let x = 20;
       P.forEach((p, k) => {
         const wpx = 600 * p;
         el('rect', { x, y, width: wpx, height: hgt, style: `fill:${tint(skyCol(k), faded ? 30 : chosen === k ? 95 : 55)};stroke:${chosen === k ? 'var(--c)' : 'var(--paper-3)'};stroke-width:${chosen === k ? 3 : 1}` }, g);
-        if (wpx > 24 * D.fs) el('text', { x: x + wpx / 2, y: y + hgt / 2 + 4 * D.fs, 'text-anchor': 'middle', class: 'lbl', text: wpx > 70 * D.fs ? SKY[k] : LETTER[k] }, g);
+        if (wpx > 24 * f) el('text', { x: x + wpx / 2, y: y + hgt / 2 + 4 * f, 'text-anchor': 'middle', class: 'lbl', text: wpx > 70 * D.fs ? SKY[k] : LETTER[k] }, g);
         x += wpx;
       });
     }
     function draw(i) {
-      const P = MODELS[model], S = states(P);
+      const P = MODELS[model], S = states(P), f = D.fs;
       g.replaceChildren();
       const cw = 600 / MSG.length;
       MSG.forEach((s, k) => {
         const on = k < i, now = k === i - 1;
-        el('rect', { x: 20 + k * cw + 1.5, y: 8, width: cw - 3, height: 26, rx: 5, style: `fill:${on ? skyCol(s) : 'var(--paper-2)'};stroke:${now ? 'var(--c)' : 'var(--rule)'};stroke-width:${now ? 3 : 1}` }, g);
-        el('text', { x: 20 + k * cw + cw / 2, y: 26, 'text-anchor': 'middle', class: 'val', text: LETTER[s] }, g);
+        el('rect', { x: 20 + k * cw + 1.5, y: 8 * f, width: cw - 3, height: 26 * f, rx: 5, style: `fill:${on ? skyCol(s) : 'var(--paper-2)'};stroke:${now ? 'var(--c)' : 'var(--rule)'};stroke-width:${now ? 3 : 1}` }, g);
+        el('text', { x: 20 + k * cw + cw / 2, y: 26 * f, 'text-anchor': 'middle', class: 'val', text: LETTER[s] }, g);
       });
       const [lo, wd] = S[Math.max(0, i - 1)], [lo2, wd2] = S[i];
-      el('text', { x: 20, y: 62, class: 'lbl', text: i === 0 ? 'the interval [0, 1)' : `the interval before report ${i}, width ${fmt(wd, 6)}` }, g);
-      bar(70, 34, P, i === 0 ? -1 : MSG[i - 1], false);
+      el('text', { x: 20, y: 56 * f, class: 'lbl', text: i === 0 ? 'the interval [0, 1)' : `before report ${i}: width ${fmt(wd, 6)}` }, g);
+      bar(64 * f, 34 * f, P, i === 0 ? -1 : MSG[i - 1], false);
+      if (i === 0) el('text', { x: 320, y: 150 * f, 'text-anchor': 'middle', class: 'annot', text: 'Press Next (or Play) to code the reports one by one.' }, g);
       if (i > 0) {
         const start = P.slice(0, MSG[i - 1]).reduce((a, b) => a + b, 0);
         const xa = 20 + 600 * start, xb = xa + 600 * P[MSG[i - 1]];
-        el('path', { d: `M${xa} 104L20 150M${xb} 104L620 150`, style: 'stroke:var(--c);stroke-dasharray:4 3;fill:none;stroke-width:1.6' }, g);
-        el('path', { d: `M${xa} 104L${xb} 104L620 150L20 150Z`, style: `fill:${tint('var(--c)', 8)}` }, g);
-        el('text', { x: 20, y: 172, class: 'lbl', text: `zoomed in: the interval after report ${i}, width ${fmt(wd2, 6)}` }, g);
-        bar(180, 34, P, -1, true);
+        const yA = 98 * f, yB = 140 * f;
+        el('path', { d: `M${xa} ${yA}L20 ${yB}M${xb} ${yA}L620 ${yB}`, style: 'stroke:var(--c);stroke-dasharray:4 3;fill:none;stroke-width:1.6' }, g);
+        el('path', { d: `M${xa} ${yA}L${xb} ${yA}L620 ${yB}L20 ${yB}Z`, style: `fill:${tint('var(--c)', 8)}` }, g);
+        el('text', { x: 20, y: 160 * f, class: 'lbl', text: `zoomed in, after report ${i}: width ${fmt(wd2, 6)}` }, g);
+        bar(168 * f, 34 * f, P, -1, true);
       }
       const bits = -Math.log2(wd2), hf = MSG.slice(0, i).reduce((a, s) => a + HUFF[s], 0);
       const bl = bin(lo2, 40), bh = bin(Math.min(lo2 + wd2, 1 - 1e-15), 40);
       let common = 0; while (common < 40 && bl[common] === bh[common]) common++;
-      ro.set([['interval', `[${fmt(lo2, 8)}, ${fmt(lo2 + wd2, 8)})`], ['width', `${fmt(wd2, 8)} = 2<sup>−${fmt(bits, 2)}</sup>`], ['binary digits already settled', i ? `0.<code>${bl.slice(0, common) || '—'}</code>…` : 'none yet']]);
+      ro.set([['interval', `[${fmt(lo2, 8)}, ${fmt(lo2 + wd2, 8)})`], ['width', i ? `${fmt(wd2, 8)} = 2<sup>−${fmt(bits, 2)}</sup>` : '1'], ['binary digits already settled', i ? `0.<code>${bl.slice(0, common) || '—'}</code>…` : 'none yet']]);
       kB.set(fmt(bits, 2), `bits so far (${model} model)`);
       kHf.set(String(hf), 'bits so far (0 / 10 / 110 / 111)');
     }

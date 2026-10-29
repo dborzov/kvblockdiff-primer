@@ -120,7 +120,7 @@ window.FIG = window.FIG || {};
         hover(c, () => `<b>${o.name}, B = 4096</b><br>miss rate ${fmtPct(o.m, 1)}<br><i>${src}</i>`);
       });
       ro.set([
-        ['fitted exponent α', fmt(f.alpha, 2)],
+        ['fitted exponent α', f.alpha.toFixed(2)],
         ['double the cache', `misses × ${fmt(2 ** -f.alpha, 2)}`],
         ['guess at B = 16K', fmtPct(f.at(16384), 1)],
       ]);

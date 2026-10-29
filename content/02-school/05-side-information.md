@@ -71,15 +71,15 @@ The almanac is this theme's first appearance in Part II, and Part I's [[trained-
 
 ## Conditional entropy {#conditional}
 
+::: aside reminder Entropy
+$\vH(\vX) = \sum_{\vi} \vp_{\vi} \log_2(1/\vp_{\vi})$: the average surprisal of the source $\vX$, here the next sky report ([[#school-entropy]]). The sky's entropy over the whole year is 1.75 bits.
+:::
+
 Every season lasts a quarter of the year. So with the almanac on both ends, the average cost per report is the average of the four seasons' entropies:
 
 $$
 \vH(\vX \mid \vY) = \sum_{\text{seasons}} \underbrace{\vp(\text{season})}_{\text{how often}} \cdot \underbrace{\vH(\vX \mid \vY = \text{season})}_{\text{bits per report in that season}}
 $$ {#eq-conditional-entropy}
-
-::: aside reminder Entropy
-$\vH(\vX) = \sum_{\vi} \vp_{\vi} \log_2(1/\vp_{\vi})$: the average surprisal of the source $\vX$, here the next sky report ([[#school-entropy]]). The sky's entropy over the whole year is 1.75 bits.
-:::
 
 For Gull Rock:
 

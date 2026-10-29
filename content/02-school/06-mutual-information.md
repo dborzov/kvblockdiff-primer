@@ -94,11 +94,11 @@ People describe the same saving in at least three everyday ways. On this site al
 | “today's sky is similar to the last report” | knowing one makes the other cheaper to send | $\vI(\vX;\vY)$ |
 | “the sky is predictable from the season” | the season narrows down the sky | $\vI(\vX;\vY)$ |
 
-The figure's second example makes the point sharper. With an assumed stickiness of 0.8, the **previous report** saves 1.01 bits per sky report — six times what the season saves. Half an hour ago is a much closer neighbour than “it is summer”. The [[order-0-entropy]] of [[#school-entropy]] ignores order, so it leaves this whole bit on the table.
-
 ::: aside reminder Order-0 entropy
 The entropy computed from symbol frequencies alone, ignoring which symbols came before. For the sky it is 1.75 bits.
 :::
+
+The figure's second example makes the point sharper. With an assumed stickiness of 0.8, the **previous report** saves 1.01 bits per sky report — six times what the season saves. Half an hour ago is a much closer neighbour than “it is summer”. The [[order-0-entropy]] of [[#school-entropy]] ignores order, so it leaves this whole bit on the table.
 
 Watch the direction of the arrows, because it is easy to get backwards:
 
@@ -113,7 +113,7 @@ Watch the direction of the arrows, because it is easy to get backwards:
 :::
 ::::
 
-The first draft of this project mixed up exactly these two columns; [[#missed-mutual-information-direction]] tells that story.
+The first draft of this project mixed up exactly these two columns (the story is told in [[#missed-mutual-information-direction]]).
 
 ::: takeaway
 - Redundancy, similarity and predictability are mutual information under other names, and are measured in bits.
