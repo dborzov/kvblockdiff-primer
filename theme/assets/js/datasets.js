@@ -97,6 +97,7 @@
   /** Histogram of a numeric column; click a bar to select that bin. */
   DS.views.histogram = (o) => ({
     label: o.label || 'Histogram',
+    note: o.note, highlights: o.highlights, legend: o.legend,
     draw(box, ctx) {
       const bin = o.bin || 1, vals = ctx.rows.map(r => r[o.key]);
       const lo = o.domain ? o.domain[0] : Math.floor(Math.min(...vals) / bin) * bin;
@@ -133,6 +134,7 @@
   /** Line through the rows in order (x defaults to the row position); highlighted rows get dots; drag to select a stretch. */
   DS.views.timeline = (o) => ({
     label: o.label || 'Timeline',
+    note: o.note, highlights: o.highlights, legend: o.legend,
     draw(box, ctx) {
       const X = r => (o.x ? r[o.x] : ctx.idx.get(r)), Y = r => r[o.y];
       const xs = ctx.rows.map(X), ys = ctx.rows.map(Y);
@@ -158,6 +160,7 @@
   /** Scatter of two columns; optional colour by a category column; drag a box to select. */
   DS.views.scatter = (o) => ({
     label: o.label || 'Scatter',
+    note: o.note, highlights: o.highlights, legend: o.legend,
     draw(box, ctx) {
       const pad = ([a, b]) => { const p = (b - a) * 0.08 || 1; return [a - p, b + p]; };
       const P = Plot(box, { x: o.xdomain || pad(extent(ctx.rows.map(r => r[o.x]))), y: o.ydomain || pad(extent(ctx.rows.map(r => r[o.y]))), h: o.h || 300, equal: o.equal, xlabel: o.xlabel, ylabel: o.ylabel, label: o.title || `${o.ylabel} against ${o.xlabel}` });
@@ -183,6 +186,7 @@
   /** Counts per category (bars); click a bar to select the category. */
   DS.views.categories = (o) => ({
     label: o.label || 'Counts',
+    note: o.note, highlights: o.highlights, legend: o.legend,
     draw(box, ctx) {
       const cats = o.order || [...new Set(ctx.rows.map(r => r[o.key]))];
       const n = cats.map(c => ctx.rows.filter(r => r[o.key] === c).length);

@@ -531,7 +531,7 @@ Two files, so that several writers can add datasets side by side:
 | `scatter` | `x`, `y`, `xlabel`, `ylabel`, `color` (a category column), `catLabel(c)`, `catSeries(c, i)`, `equal`, `xdomain`, `ydomain`, `r`, `tip(row, i)`, `h`, `label` |
 | `categories` | `key`, `order` (category order), `catLabel(c)`, `catSeries(c, i)`, `xlabel`, `ylabel`, `noun`, `h`, `label` |
 
-Every built-in view takes `after(P, ctx)` to draw extra marks on top (fits, reference curves, annotations).
+Every built-in view takes `after(P, ctx)` (and passes through `note`, `highlights`, `legend`, below) to draw extra marks on top (fits, reference curves, annotations).
 Any view (built-in or custom) may also carry `highlights: ['gales', …]` (the highlights it can show; the
 highlight picker offers only those), `legend: false` (no automatic "all rows / highlight" legend, for a view
 that draws its own key; `legend: 'hl'` keeps only the highlight's entry) and `note` (a sentence or `ctx => html` shown under the plot).
