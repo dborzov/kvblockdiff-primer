@@ -17,7 +17,7 @@ cards:
   - q: 'In the decision table, request-scope gain 0.5 bit and block-scope gain 0.3 bit fall where?'
     a: In a hole — the sum is 0.8 ≥ 0.75, but the block gain is between 0.15 and 0.4, a case the table does not name
     wrong: ["Go with block scope", "Request scope only", "Publish the negative"]
-    why: The old table covers g_blk ≥ 0.4 and g_blk < 0.15 for sums above 0.75, not the band between. We file it under "marginal".
+    why: 'The old table covers g_blk ≥ 0.4 and g_blk < 0.15 for sums above 0.75, not the band between. The plan fills it: run wave 2 with both scopes and let the trace replay decide (IX.9).'
     sec: map
   - q: If wave 1 is negative, what does the field get?
     a: A shuffle-controlled measurement that 8-bit KV has little conditional structure, and a pointer to context-free miss-path coding (about 1.1–1.3× for free)
@@ -74,11 +74,11 @@ Wave 1 ends with two numbers, and the decision table maps them to a next step. D
 3. Put it just below the dashed line: a block gain under 0.1 bit cannot be told apart from fitting noise, whatever the total says.
 :::
 
-Point 2 is a real gap in the old draft's rule. With a total above 0.75 bit, it covers a block gain of at least 0.4 bit (go block-scale) and one below 0.15 (go request-scale), but not the band in between. Our proposal: treat that band as *marginal*. Run framework C ([[#questions-framework-c]]) and let the cost model choose the scope, because both scales contribute and the answer depends on what residency costs.
+Point 2 is a real gap in the old draft's rule. With a total above 0.75 bit, it covers a block gain of at least 0.4 bit (go block-scale) and one below 0.15 (go request-scale), but not the band in between. The plan fills it ([[#plan-decision-rule]]): treat that band as *both scales* — run wave 2 with request and block scope, and let framework C ([[#questions-framework-c]]) and the cost model choose, because both scales contribute and the answer depends on what residency costs.
 
 ::: takeaway
 - Every region of the map ends in a publishable paper; the decision is about *which* paper, not whether there is one.
-- The old table has a hole (total ≥ 0.75, block gain 0.15–0.4); we file it under "marginal: let the cost model decide".
+- The old table has a hole (total ≥ 0.75, block gain 0.15–0.4); the plan fills it with "both scopes, the trace replay decides".
 :::
 
 ## What changes in the plan {#plan}

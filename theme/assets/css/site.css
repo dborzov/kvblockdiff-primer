@@ -473,3 +473,7 @@ a.xref::before { content: "§ "; color: var(--gold); font-family: var(--f-body);
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .banner { background:
     radial-gradient(ellipse 70% 90% at 50% -10%, color-mix(in srgb, var(--gold-2) 22%, transparent), transparent 70%),
     linear-gradient(165deg, color-mix(in srgb, var(--c) 42%, #1d1024), color-mix(in srgb, var(--c) 22%, #0e0812)); } }
+
+/* numbered equations: keep the number clear of underbrace annotations */
+.eq-math:has(.eq-no) { padding-bottom: 1.5rem; }
+.eq-no { bottom: .3rem; }

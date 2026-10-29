@@ -75,8 +75,8 @@ So the project only pays if 8-bit KV is compressible well below solo's $\vrho \a
 
 ## The plan {#plan}
 
-1. **Wave 1 (one weekend):** dump keys (before RoPE) and values from a small open model; round to E4M3 and INT8; build the [[harness]] with its four controls; run experiment 1a (grid-free bounds and distance curves, an hour of compute) and 1b (the exact lossless ladder, both rates, both formats). → [[#plan-experiment-1a]], [[#plan-experiment-1b]]
-2. **Decision:** $\vgainreq + \vgainblk \ge 0.75$ bit → go; the split between them decides block-scope versus request-scope dictionaries (a block gain of at least 0.4 bit for block scope, under 0.15 for request scope; in between, treat it as marginal and let the trace replay and the cost model decide); below 0.25 bit → publish the negative and pivot to context-free miss-path coding. → [[#plan-decision-rule]]
+1. **Wave 1 (a long weekend — about three days plus an evening of dumping):** dump keys (before RoPE) and values from a small open model; round to E4M3 and INT8; build the [[harness]] with its four controls; run experiment 1a (grid-free bounds and distance curves, an hour of compute) and 1b (the exact lossless ladder, both rates, both formats). → [[#plan-experiment-1a]], [[#plan-experiment-1b]]
+2. **Decision:** $\vgainreq + \vgainblk \ge 0.75$ bit → go; the split between them decides block-scope versus request-scope dictionaries (a block gain of at least 0.4 bit for block scope, under 0.15 for request scope; in between, run both scopes and let the trace replay decide — read on the fixed-length rate, after subtracting what survives the shuffle control); below 0.25 bit → publish the negative and pivot to context-free miss-path coding. → [[#plan-decision-rule]]
 3. **Wave 2:** trace replay with exact top-k as the indexer ($\vfD$, $\vnload$, block concentration, the reuse-distance distribution), then the cost model with measured inputs. → [[#plan-wave2-measure]]
 4. **Later:** the GPU decoder, the victim tier, the compressed hot cache, MLA latents, cross-layer dictionaries.
 
