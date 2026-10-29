@@ -41,11 +41,19 @@ It pictured heavy per-block dictionaries (codebooks of hundreds of centroids) an
 
 ## How light is light? {#weight}
 
+How light is a [[loc]] dictionary? You built one in Part II without the name. [[#school-vectors]] gave each channel of the Gull Rock afternoon its own typical value and its own spread.
+
+::: dataset fig-missed-loc-afternoon gull-day view=channels metrics=means,spreads,bits-raw,bits-centred
+**A loc dictionary for the Gull Rock afternoon (II.13).** *Plot:* "Five channels" draws each sensor of the twelve half-hourly readings as its own strip, on its own scale; hover or tap for the whole reading at one time, click to select it. *Table:* one row per reading, one column per sensor. *Numbers:* each channel's mean and spread — together, the whole dictionary — and the bits a fixed-length code needs per reading before and after subtracting the means. Synthetic data from fixed seeds.
+:::
+
+The whole dictionary is ten numbers: five means and five spreads, two per channel, so its weight is about two readings' worth. Subtracting the means alone takes a reading from 45 bits to 21. A dictionary this light can travel with every block.
+
 ::: aside reminder Weight and amortization
 A dictionary of [[weight]] $\vw$ takes $\vw$ entries' worth of memory. Shared by a [[block]] of $\vb$ entries, it costs $8\vw/\vb$ bits per element ([[#homework-amortization-rule]]).
 :::
 
-Line up the four dictionary types of Part VI at the block size wave 1 uses most, $\vb$ = 2,048 tokens. A request of $\vL$ = 100,000 tokens then has about 49 blocks per [[layer]].
+Now line up the four dictionary types of Part VI at the block size wave 1 uses most, $\vb$ = 2,048 tokens. A request of $\vL$ = 100,000 tokens then has about 49 blocks per [[layer]].
 
 | type | weight $\vw$ | all blocks resident, per layer | share of a 4,096-slot [[hot-cache]] | amortized, bits per element |
 |---|---:|---:|---:|---:|

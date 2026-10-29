@@ -96,7 +96,7 @@ So the theorem has a precise shape. Knowing more never costs more **on average**
 
 The same shape turns up in data you have met. The Gull Rock sky archive of [[#school-side-information]] has 4,096 noon reports, each with its season. Here is every kind of report, priced without the season and with it.
 
-::: dataset fig-ma-sky-cost missed-sky-cost view=bar,outcomes hl=dearer metrics=H,condH,mi,dearer,worst
+::: dataset fig-ma-sky-cost missed-sky-cost view=bar,outcomes metrics=H,condH,mi,dearer,worst
 **The sky archive, priced with and without the season.** *Plot:* "Paid and saved" is the bar of the figure above for the archive: the average cost of a report with nothing known, and with the season known, split into what is still paid (red) and what the season saves (green). "Report by report" has one bar per season and sky: how much one such report's surprisal, $-\log_2 \vp$, changes once the season is known (green: cheaper, red: dearer); the number beside each bar is how many reports of that kind the archive holds. *Table:* the 16 kinds, with their counts and both costs. *Numbers:* the averages, and how many reports get dearer. Synthetic, seeded data from II.3, counted exactly.
 :::
 

@@ -270,7 +270,8 @@ window.FIG = window.FIG || {};
 
   // ================================================================== VII.12 — the stack behind every LRU size
   FIG.mbStackDistance = (host) => {
-    const PRESETS = { anomaly: '1 2 3 4 1 2 5 1 2 3 4 5', loop: 'A B C D E A B C D E A B C D E', drift: 'A B C A B D B C D E C D E F D E F' };
+    const PRESETS = { anomaly: '1 2 3 4 1 2 5 1 2 3 4 5', loop: 'A B C D E A B C D E A B C D E', drift: 'A B C A B D B C D E C D E F D E F',
+      storm: DS.rows('storm-morning').map(r => r.id).join(' ') };   // the forecaster's 24 requests of II.21, read from the dataset
     let text = PRESETS.anomaly, Bsel = 3;
     const parse = s => { let t = s.trim().split(/[\s,]+/).filter(Boolean); if (t.length === 1 && t[0].length > 1) t = [...t[0]]; return t.slice(0, 24); };
     function analyse(seq) {
@@ -283,7 +284,7 @@ window.FIG = window.FIG || {};
       return { states, dist, distinct, lru, fifo, opt };
     }
     const inp = h('input', { type: 'text', value: text, 'aria-label': 'Request string', class: 'mb-seq', spellcheck: 'false' });
-    const pre = seg([['anomaly', 'Bélády’s string'], ['loop', 'a loop of 5'], ['drift', 'a drifting set']], 'anomaly', v => { text = PRESETS[v]; inp.value = text; draw(); }, 'Preset request strings');
+    const pre = seg([['anomaly', 'Bélády’s string'], ['loop', 'a loop of 5'], ['drift', 'a drifting set'], ['storm', 'the storm morning']], 'anomaly', v => { text = PRESETS[v]; inp.value = text; draw(); }, 'Preset request strings');
     inp.addEventListener('input', () => { text = inp.value; pre.set(null); draw(); });
     const bSl = slider('cache size B', 1, 6, 1, Bsel, v => { Bsel = v; draw(); });
     const diagBox = h('div', { class: 'mb-stack-wrap' }), plotBox = h('div'), ro = readout();

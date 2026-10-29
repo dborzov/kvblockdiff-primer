@@ -162,8 +162,8 @@
   const tlOpts = {
     x: 'k', xlabel: 'entry, sequence after sequence', ylabel: 'value (scaled units)', xdomain: [0, NE * T], ydomain: [-6.5, 6.5], zero: false, width: 0.6,
     xticks: range(0, NE * T + 1, T / 2), xtfmt: v => (v % T ? '' : `${v / 1024}K`), xfmt: v => { const k = Math.round(v), s = SEQ(k); return `sequence ${s + 1}, entry ${k - s * T}`; }, yfmt: v => fmt(v, 2), h: 270,
-    highlights: [], legend: false,
   };
+  const tl = (o, extra) => Object.assign(DS.views.timeline(Object.assign({}, tlOpts, o)), { highlights: [], legend: false }, extra);
 
   DS.define('plan-synth', {
     helpers: { E4, rint, e4round, e4index, e4value, histBits, indexLaplaceBits, gridBits, median },
@@ -180,29 +180,29 @@
       });
     },
     columns: [
-      { key: 'seq', label: 'sequence' },
+      { key: 'seq', label: 'seq.' },
       { key: 't', label: 'entry' },
-      { key: 'blk', label: 'true block' },
-      { key: 'lvl', label: 'planted level', fmt: v => fmt(v, 3) },
-      { key: 'x', label: `channel ${SHOW}`, fmt: v => fmt(v, 3) },
-      { key: 'i8', label: 'INT8 code' },
-      { key: 'e4', label: 'E4M3 index' },
-      { key: 'out', label: `channel ${OUT} (outlier)`, fmt: v => fmt(v, 3) },
+      { key: 'blk', label: 'block' },
+      { key: 'lvl', label: 'planted', fmt: v => fmt(v, 2) },
+      { key: 'x', label: `ch. ${SHOW}`, fmt: v => fmt(v, 2) },
+      { key: 'i8', label: 'INT8' },
+      { key: 'e4', label: 'E4M3' },
+      { key: 'out', label: `ch. ${OUT}`, fmt: v => fmt(v, 2) },
     ],
     csvColumns: ['seq', 't', 'x', 'i8', 'e4', 'out'],
     highlights: {
       nearzero: { label: 'values within ±0.25 of zero', test: r => Math.abs(r.x) < 0.25 },
     },
     views: {
-      sequences: DS.views.timeline(Object.assign({}, tlOpts, { y: 'x', label: 'Four sequences', after: frame('lvl'),
-        note: `Channel ${SHOW} of the four evaluation sequences, entry after entry (grey), with the planted level — mean, request offset and block offset — as a step line (vermilion). Solid lines separate the sequences, dotted lines the true blocks of 2,048 entries. Drag across the plot to select a stretch.` })),
-      shuffled: DS.views.timeline(Object.assign({}, tlOpts, { y: 'xs', label: 'Shuffled', after: frame('lvls'),
-        note: 'The same 32,768 entries after the shuffle control: permuted across all four sequences, each entry intact. The planted level (vermilion) now jumps at every entry. No block and no sequence has anything of its own left.' })),
+      sequences: tl({ y: 'x', label: 'Four sequences', after: frame('lvl') }, {
+        note: `Channel ${SHOW} of the four evaluation sequences, entry after entry (lapis), with the planted level — mean, request offset and block offset — as a step line (vermilion). Solid lines separate the sequences, dotted lines the true blocks of 2,048 entries. Drag across the plot to select a stretch.` }),
+      shuffled: tl({ y: 'xs', label: 'Shuffled', after: frame('lvls') }, {
+        note: 'The same 32,768 entries after the shuffle control: permuted across all four sequences, each entry intact. The planted level (vermilion) now jumps at every entry. No block and no sequence has anything of its own left.' }),
       codes: DS.views.histogram({ key: 'e4', bin: 1, xlabel: 'E4M3 index of the code', ylabel: 'entries', noun: 'entries', label: 'E4M3 codes', h: 260 }),
       int8: DS.views.histogram({ key: 'i8', bin: 1, xlabel: 'INT8 code', ylabel: 'entries', noun: 'entries', label: 'INT8 codes', h: 260 }),
     },
     metrics: [
-      { id: 'shape', label: 'sequences × entries × channels', value: () => [NE, T, D], fmt: v => `${v[0]} × ${fmt(v[1])} × ${v[2]}`,
+      { id: 'shape', label: 'sequences × entries × channels', value: () => [NE, T, D], fmt: v => `${v[0]} × ${v[1].toLocaleString('en-US')} × ${v[2]}`,
         note: `The evaluation set; ${NC} more sequences, kept apart, are the calibration set on which every global dictionary is fit. The plot and the table show one channel (channel ${SHOW}); the numbers below average all 64.` },
       { id: 'recipe', label: `channel ${SHOW}: centre $\\vmu$ and scale`, value: () => [make().mu[SHOW], make().sc[SHOW]], fmt: v => `μ = ${fmt(v[0], 2)}, scale ${fmt(v[1], 2)}`,
         note: 'Every value is centre + scale × (request offset + block offset + noise), each part with variance 1. So a third of each channel\'s spread is shared by a whole sequence, a third by a true block, and a third is noise that nothing can predict.' },
@@ -210,11 +210,11 @@
         note: 'Four channels in 64 sit far from zero, like the outlier channels of keys before RoPE. Their big constant is the cheapest thing in the set to predict: any location absorbs it.' },
       { id: 'gainreq', label: 'float location gain, request over global', tex: '\\vgainreq', value: () => G().req, fmt: v => `${fmt(v, 3)} bit`,
         note: v => `Experiment 1a's yardstick, averaged over the 64 channels of this draw. The harness's own (numpy) draw of the recipe gives 0.407. Both sit above the textbook 0.29 bit: with four sequences, a request's own location also soaks up a quarter of the block offsets and the calibration gap.` },
-      { id: 'gainblk', label: 'float location gain, block over request, by $\\vb$', tex: '\\vgainblk', value: () => G().blk, fmt: v => BS.map((b, i) => `${fmtB(b)}: ${fmt(v[i], 3)}`).join(' · '),
+      { id: 'gainblk', label: 'float location gain, block over request, for $\\vb$ = 256, 512, 1K, 2K, 4K', tex: '\\vgainblk', value: () => G().blk, fmt: v => v.map(x => fmt(x, 3)).join(' · '),
         note: 'Level up to the planted 2,048, then it collapses: a block of 4,096 straddles two true blocks and fits neither. The numpy draw gives 0.368–0.370, then 0.114. The knee is the planted block length.' },
       { id: 'shufreq', label: 'request gain after the shuffle', value: () => GS().req, fmt: v => `${fmt(v, 3)} bit`,
         note: 'Not zero. After the shuffle each "request" is a sample of the whole pool, and the pool differs from the calibration data: a calibration gap, not structure (numpy draw: 0.105).' },
-      { id: 'shufblk', label: 'block gains after the shuffle', value: () => GS().blk, fmt: v => BS.map((b, i) => `${fmtB(b)}: ${fmt(v[i], 3)}`).join(' · '),
+      { id: 'shufblk', label: 'block gains after the shuffle, same block sizes', value: () => GS().blk, fmt: v => v.map(x => fmt(x, 3)).join(' · '),
         note: 'Zero to the third decimal at every block size. A block gain that survived here would be a bug or a fit to noise.' },
       { id: 'h4', label: 'E4M3 codes: their own histogram', value: () => CODES().h4, fmt: v => `${fmt(v, 2)} bits`,
         note: 'The order-0 entropy of each channel\'s E4M3 codes, averaged over the channels: the floor for coding them one at a time with a perfect table (the harness: 6.128).' },

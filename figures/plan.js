@@ -82,7 +82,7 @@ window.FIG = window.FIG || {};
     function tableOf(title, rows, opts) {
       const t = h('div', { class: 'pl-da-t' + (opts.cls ? ' ' + opts.cls : '') });
       t.append(h('div', { class: 'pl-da-h', html: title }));
-      const body = h('div', { class: 'pl-da-body', style: `grid-template-columns: auto repeat(5, minmax(2.4rem, 1fr))` });
+      const body = h('div', { class: 'pl-da-body', style: 'grid-template-columns: auto repeat(3, minmax(2.2rem, 1fr)) minmax(3.4rem, 1.4fr) minmax(2.2rem, 1fr)' });
       body.append(h('span', { class: 'pl-da-c pl-da-k' }, ''), ...['foot', 'top', 'hum.', 'pres.', 'wind'].map(t => h('span', { class: 'pl-da-c pl-da-k', html: t })));
       rows.forEach((row, i) => {
         const on = opts.isOn(i), used = opts.isUsed(i);
@@ -97,15 +97,15 @@ window.FIG = window.FIG || {};
     }
     function draw() {
       grid.replaceChildren(
-        tableOf('the block <small>(whole sensor steps)</small>', X, { rowName: i => names[i], show: v => sgn(v), isOn: i => i === sel, isUsed: () => false, click: i => { sel = i; draw(); } }),
-        tableOf(tex('\\vD') + ' <small>(one per block)</small>', [D], { rowName: () => 'location', show: v => sgn(v), isOn: () => false, isUsed: () => true, cls: 'pl-da-dict' }),
+        tableOf('the block <small>(whole sensor steps)</small>', X, { rowName: i => names[i], show: v => String(v), isOn: i => i === sel, isUsed: () => false, click: i => { sel = i; draw(); } }),
+        tableOf(tex('\\vD') + ' <small>(one per block)</small>', [D], { rowName: () => 'median', show: v => String(v), isOn: () => false, isUsed: () => true, cls: 'pl-da-dict' }),
         tableOf('the deltas <small>(residuals)</small>', R, { rowName: i => `δ ${names[i]}`, show: v => sgn(v), isOn: () => false, isUsed: i => i === sel, dim: true, click: i => { sel = i; draw(); } }),
       );
       const rebuilt = R[sel].map((v, j) => v + D[j]);
       const ok = rebuilt.every((v, j) => v === X[sel][j]);
       const dBits = width.reduce((a, b) => a + b, 0);
       ro.set([
-        [`the ${names[sel]} reading, rebuilt`, `${rebuilt.map(sgn).join(', ')} ${ok ? '— bit for bit ✓' : '✗'}`],
+        [`the ${names[sel]} reading, rebuilt`, `${rebuilt.join(', ')} ${ok ? '— bit for bit ✓' : '✗'}`],
         ['read from memory', `${tex('\\vD')} + δ ${names[sel]} only (the other ${X.length - 1} deltas untouched)`],
         ['delta size', `${dBits} bits (widths ${width.join(' + ')}) against ${sum(raw)} bits raw (${raw.join(' + ')})`],
       ]);
@@ -448,7 +448,7 @@ window.FIG = window.FIG || {};
      IX.9 — planDecision: two scope gains in, one row of the rule out
      ================================================================= */
   FIG.planDecision = (host) => {
-    let gr = 0.459, gb = 0.342;
+    let [gr, gb] = (() => { const g = DS.spec('plan-ladder').helpers.J.gains.int8['loc+flag'].orig.entropy; return [g.gainreq, g.gainblk]; })();
     const rows = [
       { id: 'blk', cond: '$\\vgainreq + \\vgainblk \\ge 0.75$ and $\\vgainblk \\ge 0.4$', read: 'fallen-apple similarity is real and block-scale', next: 'wave 2 with block scope', c: series(0) },
       { id: 'req', cond: '$\\vgainreq + \\vgainblk \\ge 0.75$ but $\\vgainblk < 0.15$', read: 'real, but per-request ("requestdiff")', next: 'wave 2 with request scope; framework C optional', c: series(2) },
@@ -460,9 +460,8 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     const s1 = slider(texify('$\\vgainreq$ (bits)'), 0, 1.5, 0.01, gr, v => { gr = v; draw(); });
     const s2 = slider(texify('$\\vgainblk$ (bits)'), 0, 1.5, 0.01, gb, v => { gb = v; draw(); });
-    const presets = [
-      ['synthetic, INT8, entropy', 0.459, 0.342], ['synthetic, INT8, fixed-length', 0.570, 0.371], ['synthetic, E4M3, fixed-length', 0.058, 0.161],
-    ];
+    const G = (f, rate) => { const g = DS.spec('plan-ladder').helpers.J.gains[f]['loc+flag'].orig[rate]; return [g.gainreq, g.gainblk]; };
+    const presets = [['synthetic, INT8, entropy', ...G('int8', 'entropy')], ['synthetic, INT8, fixed-length', ...G('int8', 'fixed')], ['synthetic, E4M3, fixed-length', ...G('e4m3', 'fixed')]];
     const tbl = h('div', { class: 'pl-dec' });
     host.append(controls(s1, s2), controls(...presets.map(([l, a, b]) => btn(l, () => { gr = a; gb = b; s1.set(a); s2.set(b); draw(); }, { cls: 'sm' }))), h('div', { class: 'fig-row' }, box, tbl), ro);
     const P = Plot(box, { x: [0, 1.5], y: [0, 1.5], h: 360, w: 420, xlabel: 'g_req (bits per element)', ylabel: 'g_blk (bits per element)', label: 'decision regions in the plane of the two scope gains' });

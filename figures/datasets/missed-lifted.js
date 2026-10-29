@@ -31,11 +31,11 @@
     ],
     csvColumns: ['day', 'time', 'low', 'mast', 'a', 'd'],
     views: {
-      before: DS.views.scatter({ x: 'low', y: 'mast', equal: true, r: 2.2, h: 300, label: 'As measured', xlabel: 'foot thermometer (tenths of °C)', ylabel: 'top thermometer (tenths of °C)',
-        tip: r => `<b>day ${r.day}, ${r.time}</b><br>foot ${r.low}, top ${r.mast}` }),
-      after: Object.assign(DS.views.scatter({ x: 'a', y: 'd', equal: true, r: 2.2, h: 300, label: 'After three shears', xlabel: 'first lifted coordinate (≈ the sum)', ylabel: 'second (≈ the difference)',
+      before: Object.assign(DS.views.scatter({ x: 'low', y: 'mast', equal: true, r: 2.2, h: 300, xdomain: [40, 220], ydomain: [-20, 160], label: 'As measured', xlabel: 'foot thermometer (tenths of °C)', ylabel: 'top thermometer (tenths of °C)',
+        tip: r => `<b>day ${r.day}, ${r.time}</b><br>foot ${r.low}, top ${r.mast}` }), { note: 'Both thermometers in whole tenths of a degree, on equal axes: a thin cloud tilted at 45°, because they read the same weather.' }),
+      after: Object.assign(DS.views.scatter({ x: 'a', y: 'd', equal: true, r: 2.2, h: 300, xdomain: [40, 220], ydomain: [-20, 160], label: 'After three shears', xlabel: 'first lifted coordinate (≈ sum ÷ √2)', ylabel: 'second (≈ difference ÷ √2)',
         tip: r => `<b>day ${r.day}, ${r.time}</b><br>foot ${r.low}, top ${r.mast}<br>→ (${r.a}, ${r.d})` }),
-      { note: 'The same 480 pairs of whole numbers after the three shears, on equal axes. The tilted cloud is now lying flat: almost all the spread is in the first coordinate, the second barely moves.' }),
+      { note: 'The same 480 pairs of whole numbers after the three shears, in the same frame as “As measured”. The tilted cloud now lies flat: almost all the spread is in the first coordinate, and the second barely moves.' }),
     },
     metrics: [
       { id: 'exact', label: 'readings rebuilt exactly', value: rows => rows.filter(r => r.back === 'yes').length, fmt: (v, rows) => `${v} of ${rows.length}`,

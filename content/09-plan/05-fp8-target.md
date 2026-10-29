@@ -111,6 +111,14 @@ Numbering the grid is free. Coding the numbers is not, and here the E4M3 grid bi
 
 On a log grid, values near zero are spread over many tiny steps, so the codes pile up in **two humps**, one per sign, with a hollow in between. A single bump fits that badly. On the synthetic set of [[#plan-controls]] the source's model charges solo coding of the E4M3 codes **8.375 bits per element — more than raw** — while the codes' histogram says 6.128. On INT8, where the codes form one bell, the same model is fine (7.074 against the grid-aware 7.073).
 
+The rehearsal set of [[#plan-controls]] shows the humps in the very codes the harness coded. Its channel 24 is centred almost exactly on zero.
+
+::: dataset fig-plan-synth-codes plan-synth view=codes,int8 hl=nearzero metrics=h4,l4,g4,h8,l8
+**The rehearsal set's codes.** Histograms of the 32,768 codes of channel 24 ([[#fig-plan-synth-data]]): its E4M3 index (two humps) or its INT8 code (one bell). Highlight: the values within ±0.25 of zero, about one entry in six. Click a bar to select its entries. *Numbers:* three prices for coding the codes one at a time, averaged over all 64 channels, each model fit on the codes themselves; the harness fits on the calibration set, so its numbers (quoted in each note) differ a little. Synthetic data, seeded.
+:::
+
+Switch on the highlight. In E4M3 the values within a quarter of zero are spread over 132 codes, from −72 to 72; in INT8 they share 11. That spread is the hollow between the humps. A single bump in index space puts its peak right in it: exactly one of the 32,768 codes is 0.
+
 ::: define grid-aware-model
 - **What it is:** an entropy model of the *value*, not of the code number. A Laplace bump in value units, centred on the prediction, gives each 8-bit code the probability of the bump's area over that code's grid cell.
 - **Why it works:** on a log grid a value near zero sits in a narrow cell and gets a small probability — exactly the extra bits it really costs. On a uniform grid it reduces to the index-space Laplace.

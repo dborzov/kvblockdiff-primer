@@ -23,7 +23,7 @@
     draw(box, ctx) {
       [['v', 'in time order', IN], ['vs', 'shuffled', SH]].forEach(([k, name, col]) => {
         const b = h('div'); box.append(b);
-        const P = Plot(b, { x: [0, 28], y: [4, 18], h: 170, xlabel: name === 'shuffled' ? 'position in the record (days of readings)' : '', ylabel: '°C', xticks: [0, 7, 14, 21, 28],
+        const P = Plot(b, { x: [0, 28], y: [4, 18], h: 180, xlabel: name === 'shuffled' ? 'position in the record (reading number)' : '', ylabel: '°C', xticks: [0, 7, 14, 21, 28],
           xfmt: v => (name === 'shuffled' ? `${v * 48}` : `day ${v + 1}`), label: `The 1,344 temperature readings, ${name}` });
         line(P, ctx.rows.map((r, i) => [i / 48, r[k] / 10]), { color: col, width: k === 'v' ? 1.2 : 0.7 });
         el('text', { x: P.m.l + 8 * P.fs, y: P.m.t + 14 * P.fs, class: 'lbl', text: name }, P.g.top);

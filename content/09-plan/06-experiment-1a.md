@@ -80,6 +80,14 @@ def location_gains(calib_f, eval_f, bs):
 
 On the synthetic set of [[#plan-controls]] (true block length 2048) it gives a request gain of 0.407 bit and a block gain of 0.368–0.370 bit for any $\vb$ up to 2048, dropping to 0.114 at 4096, where every block straddles two true blocks. After the shuffle: 0.000–0.003 for the blocks and 0.105 for the request (the calibration gap).
 
+The card runs the same function in your browser, on its own draw of the rehearsal set of [[#plan-controls]]. The plot shows why the gain collapses at 4,096.
+
+::: dataset fig-plan-synth-gains plan-synth view=sequences,shuffled metrics=gainreq,gainblk,shufreq,shufblk tab=numbers
+**Experiment 1a's location gains on the rehearsal set.** *Numbers:* the request gain and the block gains for $\vb$ = 256 to 4,096, averaged over the 64 channels, then the same after the shuffle; each note quotes the harness's numpy draw next to this one. *Plot:* channel 24 with its planted level as vermilion steps; drag across 4,096 entries and the stretch always spans two steps. Synthetic data, seeded.
+:::
+
+Up to 2,048 entries a block sits on one step of the planted level, and a location per block removes it. A block of 4,096 spans two steps, and its single location fits neither. The knee is at the planted length — the same knee the distance curve below shows from another angle.
+
 The distance curve is easiest to understand by playing with one.
 
 ::: figure fig-plan-distance planDistance

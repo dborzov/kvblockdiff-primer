@@ -18,14 +18,14 @@
     box.append(legend([['in time order', IN], ['shuffled (the control)', SH]]));
     const b = h('div'); box.append(b);
     const rows = ctx.rows.filter(r => r.g <= o.max);
-    const P = Plot(b, { x: o.log ? [1, o.max] : [0, o.max], xlog: o.log ? 2 : false, y: [0, 3.2], h: 290, xlabel: o.xlabel, ylabel: 'bits per reading saved',
+    const P = Plot(b, { x: o.log ? [1, o.max] : [0, o.max], xlog: o.log ? 2 : false, y: [0, 3.2], h: 300, xlabel: o.xlabel, ylabel: 'bits per reading saved',
       xticks: o.xticks, xfmt: o.xfmt, label: 'Bits saved by one earlier reading, against how far back it is' });
-    [48, 96, 144, 336].filter(g => g <= o.max).forEach(g => rule(P, { x: g, label: g === 336 ? '1 week' : `${g / 48} day${g > 48 ? 's' : ''}`, color: 'var(--ink-3)' }));
+    const phone = P.fs > 1.3;   // on narrow screens: fewer labels, so nothing collides
+    o.rules.forEach((g, i) => rule(P, { x: g, label: phone && i ? '' : g === 336 ? '1 week' : `${g / 48} day${g > 48 ? 's' : ''}`, color: 'var(--ink-3)' }));
     if (ctx.sel) rows.filter(ctx.sel.test).forEach(r => el('line', { x1: P.x(r.g), x2: P.x(r.g), y1: P.y(0), y2: P.y(r.bits), style: 'stroke:var(--c);stroke-width:2;opacity:.5' }, P.g.bg));
     line(P, rows.map(r => [r.g, r.bitsS]), { color: SH, width: 1.6, name: 'shuffled' });
     line(P, rows.map(r => [r.g, r.bits]), { color: IN, width: 2, name: 'in order' });
-    if (ctx.hl) rows.filter(ctx.hl.test).forEach(r => dot(P.g.data, P.x(r.g), P.y(r.bits), 3.4 * P.fs, series(1)));
-    o.notes.forEach(([g, text, dx, dy]) => annotate(P, g, at(ctx.rows, g).bits, text, { dx, dy }));
+    if (!phone) o.notes.forEach(([g, text, dx, dy]) => annotate(P, g, at(ctx.rows, g).bits, text, { dx, dy }));
     crosshair(P, { xname: 'gap', xfmt: v => `${Math.round(v)} half-hours (${span(Math.round(v))})`, yfmt: v => `${fmt(v, 2)} bits` });
   }
 
@@ -46,24 +46,19 @@
       { key: 'bitsS', label: 'bits saved, shuffled', fmt: v => fmt(v, 4) },
     ],
     csvColumns: ['g', 'r', 'r2', 'bits', 'rS', 'bitsS'],
-    highlights: {
-      days: { label: 'whole days back', test: r => r.g % 48 === 0 },
-    },
     views: {
       curve: {
         label: 'Two weeks (log scale)',
-        highlights: ['days'],
         draw(box, ctx) {
-          curve(box, ctx, { max: G, log: true, xlabel: 'gap g (half-hours back, log scale)', xticks: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512], xfmt: v => String(v),
+          curve(box, ctx, { max: G, log: true, rules: [48, 336], xlabel: 'gap g (half-hours back, log scale)', xticks: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512], xfmt: v => String(v),
             notes: [[1, 'half an hour back', 34, 20], [12, 'six hours: almost nothing', 20, -40], [48, 'one day back:\nthe cycle repeats', 34, -46]] });
         },
       },
       days: {
         label: 'Three days',
-        highlights: ['days'],
         draw(box, ctx) {
-          curve(box, ctx, { max: 144, log: false, xlabel: 'gap g (half-hours back)', xticks: [0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120, 132, 144], xfmt: v => String(v),
-            notes: [[24, 'twelve hours: the other\nside of the day', 30, -60], [48, 'one day', 26, -30]] });
+          curve(box, ctx, { max: 144, log: false, rules: [48, 96, 144], xlabel: 'gap g (half-hours back)', xticks: [0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120, 132, 144], xfmt: v => String(v),
+            notes: [[24, 'twelve hours:\nthe other side\nof the day', -20, -80], [48, 'one day', 40, -14]] });
         },
       },
     },

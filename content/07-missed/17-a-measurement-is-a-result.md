@@ -88,6 +88,14 @@ Point 2 is a real gap in the old draft's rule. With a total above 0.75 bit, it c
 - **That pivot is worth having.** [[solo|Solo coding]] needs no dictionaries, no blocks and no residency, and is worth about 1.1–1.3× on 8-bit KV ([[#homework-solo-coding]]). In the reference setting it lifts HiSparse's link-bound 109 requests per GPU to roughly 120–142.
 - **Write the rule before the data**, including what fills the hole above. That is what makes either answer believable.
 
+What would the first result look like? Here is a distance curve with its shuffle control, measured on the one dataset this site can already measure: the Gull Rock temperatures of [[#missed-block-is-a-knob]].
+
+::: dataset fig-missed-curve-result missed-distance view=curve metrics=g1,g48,shuf
+**A distance curve with its control, as wave 1 will draw one.** *Plot:* bits per reading saved by knowing the reading $\vgap$ half-hours earlier (log scale), for the Gull Rock temperatures in time order (blue) and after a seeded shuffle (vermilion, the control); grey lines mark one day and one week. *Numbers:* two points of the curve and the largest value the control ever reaches. Synthetic, seeded data from II.10; for KV entries, the gap is in tokens and the values are 8-bit codes.
+:::
+
+Either answer reads off a plot like this. A blue curve far above its shuffled twin is a positive. A blue curve lying on top of it, from an instrument that has been shown to find a planted effect, is a negative worth publishing.
+
 :::: compare Two attitudes to the same weekend
 ::: col A bet
 - Success = a compression ratio.

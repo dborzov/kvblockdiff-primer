@@ -40,16 +40,16 @@
           box.append(legend([['gain of the block mean', IN, 'dash'], ['net, after paying for the dictionary', IN], ['net on shuffled readings (the control)', SH]]));
           const bx = h('div'); box.append(bx);
           const rows = ctx.rows, B = best(rows);
-          const P = Plot(bx, { x: [2, 1344], xlog: 2, y: [-1, 4.2], h: 300, xlabel: 'block size b (readings, log scale)', ylabel: 'bits per reading',
+          const P = Plot(bx, { x: [2, 1344], xlog: 2, y: [-1, 4.2], h: 310, xlabel: 'block size b (readings, log scale)', ylabel: 'bits per reading',
             xticks: [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024], label: 'What a block-mean dictionary saves, against the block size' });
           rule(P, { y: 0, color: 'var(--ink-3)', dash: false });
           rule(P, { x: 48, label: 'one day', color: 'var(--ink-3)' });
-          rule(P, { x: 1344, label: 'the whole record', color: 'var(--ink-3)' });
+          rule(P, { x: 1344, label: P.fs > 1.3 ? '' : 'the whole record', color: 'var(--ink-3)' });
           line(P, rows.map(r => [r.b, r.gain]), { color: IN, width: 1.8, dash: true });
           line(P, rows.map(r => [r.b, r.netS]), { color: SH, width: 1.8, markers: 2.5, tip: p => `<b>b = ${p[0]}</b><br>shuffled net ${fmtS(p[1], 2)} bits` });
           line(P, rows.map(r => [r.b, r.net]), { color: IN, width: 2.4, markers: 3, tip: p => { const r = rows.find(q => q.b === p[0]); return `<b>b = ${r.b}</b> (${r.span})<br>gain ${fmt(r.gain, 2)} − cost ${fmt(r.cost, 2)} = <b>${fmtS(r.net, 2)}</b> bits`; } });
           el('circle', { cx: P.x(B.b), cy: P.y(B.net), r: 8 * P.fs, style: 'fill:none;stroke:var(--c);stroke-width:2.2' }, P.g.top);
-          annotate(P, B.b, B.net, `best: b = ${B.b}, ${fmtS(B.net, 2)} bits`, { dx: 40, dy: -26 });
+          annotate(P, B.b, B.net, `best: b = ${B.b}, ${fmtS(B.net, 2)} bits`, { dx: 30, dy: 44 });
           box.append(h('p', { class: 'fig-note', text: 'Small blocks track the weather closely but pay for a mean every few readings; big blocks are cheap but their mean is stale. Past one day the daily swing is inside every block and the mean saves almost nothing.' }));
         },
       },

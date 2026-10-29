@@ -28,43 +28,59 @@
       const M = model();
       return steps().map((x, i) => {
         const r = x.kn - x.prev, esc = Math.abs(r) >= M.lim;
-        return { i, day: x.day, time: x.time, t: x.t, prev: x.prev, kn: x.kn, r, lb: M.bits(r), esc, fb: M.w + (esc ? 8 : 0), field: esc ? `${-M.lim}, then the raw ${x.kn}` : String(r) };
+        return { i, day: x.day, time: x.time, t: x.t, prev: x.prev, kn: x.kn, r, lb: M.bits(r), esc, fb: M.w + (esc ? 8 : 0), field: esc ? `${fmt(-M.lim)}, raw ${x.kn}` : fmt(r) };
       });
     },
     columns: [
       { key: 'day', label: 'day' },
       { key: 'time', label: 'time' },
-      { key: 'prev', label: 'previous (kn)' },
-      { key: 'kn', label: 'this (kn)' },
-      { key: 'r', label: 'change r (kn)', fmt: v => (v > 0 ? '+' : '') + fmt(v) },
-      { key: 'lb', label: 'Laplace model: bits', fmt: v => fmt(v, 2) },
-      { key: 'field', label: 'fixed-width field', left: true },
-      { key: 'fb', label: 'fixed-length: bits' },
+      { key: 'prev', label: 'before' },
+      { key: 'kn', label: 'now' },
+      { key: 'r', label: 'change', fmt: v => (v > 0 ? '+' : '') + fmt(v) },
+      { key: 'lb', label: 'model bits', fmt: v => fmt(v, 2) },
+      { key: 'field', label: 'field', left: true },
+      { key: 'fb', label: 'field bits' },
     ],
     csvColumns: ['day', 'time', 'prev', 'kn', 'r'],
     highlights: {
       esc: { label: 'escapes', test: r => r.esc },
     },
     views: {
-      histogram: DS.views.histogram({
-        key: 'r', domain: [-21, 22], xlabel: 'change since the last reading (knots)', ylabel: 'readings', unit: 'kn', noun: 'changes', xticks: [-20, -15, -10, -5, 0, 5, 10, 15, 20], h: 280,
-        label: 'The changes and the field',
-        after(P, ctx) {
-          const M = model(), n = ctx.rows.length, ks = range(-21, 22);
+      histogram: {
+        label: 'The changes and the field', legend: false, highlights: ['esc'],
+        draw(box, ctx) {
+          const M = model(), rows = ctx.rows, n = rows.length, ks = range(-21, 22);
           let Z = 0; for (let v = ALO; v <= AHI; v++) Z += Math.exp(-Math.abs(v - M.m) / M.beta);
+          const pm = k => n * Math.exp(-Math.abs(k - M.m) / M.beta) / Z;
+          const cnt = new Map(), hl = new Map();
+          rows.forEach(r => { cnt.set(r.r, (cnt.get(r.r) || 0) + 1); if (ctx.hl && ctx.hl.test(r)) hl.set(r.r, (hl.get(r.r) || 0) + 1); });
+          box.append(legend([['changes counted', series(0), 'box'], ...(ctx.hl ? [[esc(ctx.hl.label), series(1), 'box']] : []), [`fitted Laplace model × ${n.toLocaleString('en-US')}`, series(4)], [`what a ${M.w}-bit field holds`, 'color-mix(in srgb, var(--emerald) 30%, transparent)', 'box']]));
+          const b = h('div'); box.append(b);
+          const top = Math.max(pm(M.m), ...cnt.values()) * 1.08;
+          const P = Plot(b, { x: [-21.5, 21.5], y: [0, top], h: 290, xlabel: 'change since the last reading (knots)', ylabel: 'readings', xticks: [-20, -15, -10, -5, 0, 5, 10, 15, 20], grid: 'y', label: 'How often each change occurs, with the fitted model and the field' });
           el('rect', { x: P.x(-M.lim + 0.5), width: P.x(M.lim - 0.5) - P.x(-M.lim + 0.5), y: P.m.t, height: P.ph, style: 'fill:color-mix(in srgb, var(--emerald) 10%, transparent)' }, P.g.bg);
-          line(P, ks.map(k => [k, n * Math.exp(-Math.abs(k - M.m) / M.beta) / Z]), { color: series(4), width: 2, markers: 2.4 });
-          P.svg.closest('div').before(legend([['changes counted', series(0), 'box'], ...(ctx.hl ? [['escapes', series(1), 'box']] : []), ['fitted Laplace model × 1,023', series(4)], [`what a ${M.w}-bit field holds`, 'color-mix(in srgb, var(--emerald) 30%, transparent)', 'box']]));
+          const bw = (P.x(1) - P.x(0)) * 0.8;
+          cnt.forEach((c, k) => {
+            const g = el('g', {}, P.g.data), x = P.x(k) - bw / 2, sel = ctx.sel && rows.some(r => r.r === k && ctx.sel.test(r));
+            el('rect', { x, width: bw, y: P.y(c), height: Math.max(P.y(0) - P.y(c), 1.5), style: `fill:${series(0)}${ctx.sel && !sel ? ';opacity:.35' : ''}` }, g);
+            if (hl.get(k)) el('rect', { x, width: bw, y: P.y(hl.get(k)), height: Math.max(P.y(0) - P.y(hl.get(k)), 3), style: `fill:${series(1)}` }, g);
+            hover(g, () => `<b>change ${k > 0 ? '+' : ''}${fmt(k)} kn</b><br>${c} reading${c > 1 ? 's' : ''}<br>model price ${fmt(M.bits(k), 2)} bits<br>field: ${Math.abs(k) >= M.lim ? `escape, ${M.w} + 8 bits` : `${M.w} bits`}<br><span class="small">click to select</span>`);
+            g.style.cursor = 'pointer';
+            g.addEventListener('click', () => ctx.select({ label: `change = ${fmt(k)} kn`, test: r => r.r === k }));
+          });
+          line(P, ks.map(k => [k, pm(k)]), { color: series(4), width: 2, markers: 2.4 });
+          rows.filter(r => r.esc).forEach((r, i) => annotate(P, r.r, 1, `escape: ${r.r > 0 ? '+' : ''}${fmt(r.r)}`, { dx: r.r > 0 ? -30 : 30, dy: -36 - 30 * i }));
         },
-      }),
-      cost: DS.views.timeline({
-        x: 't', y: 'lb', xlabel: 'day', ylabel: 'bits for this change', xname: 'day', width: 1, ydomain: [0, 15], zero: false, highlights: ['esc'], legend: false,
+      },
+      cost: Object.assign(DS.views.timeline({
+        x: 't', y: 'lb', xlabel: 'day', ylabel: 'bits for this change', xname: 'day', width: 1, ydomain: [0, 15], zero: false,
         xfmt: v => `${Math.floor(v) + 1}`, yfmt: v => `${fmt(v, 1)} bits`, xticks: [0, 7, 14, 21], xtfmt: v => `day ${v + 1}`, label: 'Bits, reading by reading',
         after(P, ctx) {
           line(P, ctx.rows.map(r => [r.t, r.fb]), { color: series(2), width: 1.4, curve: 'step' });
           P.svg.closest('div').before(legend([['entropy coder: −log₂ p under the model', series(0)], ['fixed-width field (+8 for an escape)', series(2)], ...(ctx.hl ? [['escapes', series(1), 'dot']] : [])]));
         },
-        note: 'Every change priced both ways, over the three weeks. The entropy coder pays little for the common small changes and more for rare big ones; the fixed-width field pays the same for every reading, plus a raw byte at each escape — the onsets of the storms.',
+      }), { highlights: ['esc'], legend: false,
+        note: 'Every change priced both ways, over the three weeks. The entropy coder pays little for the common small changes and more for rare big ones; the fixed-width field pays the same for every reading, plus a raw byte at each escape — the steepest jumps of the storms.',
       }),
     },
     metrics: [
@@ -73,8 +89,8 @@
       { id: 'entropy', label: 'entropy rate (Laplace model)', value: rows => mean(rows.map(r => r.lb)), fmt: v => `${fmt(v, 2)} bits`,
         note: (v, rows) => `What an ideal entropy coder with this model would spend per reading: the scientific number. The changes' own histogram says ${fmt(histH(rows.map(r => r.r)), 2)} bits (II.12). A two-number model costs only a few hundredths of a bit more than a full table of counts.` },
       { id: 'width', label: 'field width $\\vn$', value: () => model().w, fmt: v => `${v} bits`,
-        note: v => `fl_widths picks the smallest width that holds all but half a percent of the changes: magnitudes up to ${2 ** (v - 1) - 1} knots. The one unused field value, ${-(2 ** (v - 1))}, means “escaped; the raw reading follows”.` },
-      { id: 'escapes', label: 'escapes', value: rows => rows.filter(r => r.esc).length, fmt: (v, rows) => `${v} of ${fmt(rows.length)} (${fmtPct(v / rows.length, 2)})`,
+        note: v => `fl_widths picks the smallest width that holds all but half a percent of the changes: magnitudes up to ${2 ** (v - 1) - 1} knots. The one unused field value, ${fmt(-(2 ** (v - 1)))}, means “escaped; the raw reading follows”.` },
+      { id: 'escapes', label: 'escapes', value: rows => rows.filter(r => r.esc).length, fmt: (v, rows) => `${v} of ${rows.length.toLocaleString('en-US')} (${fmtPct(v / rows.length, 2)})`,
         note: 'The sharpest jumps of the storms, 17 to 20 knots in half an hour. Each costs its 8 raw bits on top of the field, and each is a detour for a GPU decoder, which is why the width rule caps them.' },
       { id: 'fixed', label: 'fixed-length rate', value: rows => mean(rows.map(r => r.fb)), fmt: v => `${fmt(v, 2)} bits`,
         note: 'The width plus 8 bits times the escape share: the engineering number. It is directly the size of a delta, and every field sits at a known offset, so any one reading can be decoded without the others.' },

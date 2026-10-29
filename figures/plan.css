@@ -6,7 +6,7 @@
 .pl-da-h { font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); margin-bottom: .3rem; }
 .pl-da-h small { color: var(--ink-3); font-size: .8em; }
 .pl-da-body { display: grid; gap: 2px; }
-.pl-da-c { font-family: var(--f-mono); font-size: .78rem; text-align: right; padding: .12rem .3rem; }
+.pl-da-c { font-family: var(--f-mono); font-size: .78rem; text-align: right; padding: .12rem .3rem; white-space: nowrap; }
 .pl-da-k { font-family: var(--f-sc); font-size: .74rem; color: var(--ink-3); text-align: left; white-space: nowrap; }
 button.pl-da-v { border: 0; background: color-mix(in srgb, var(--ink) 5%, transparent); color: var(--ink); border-radius: 3px; cursor: pointer; }
 button.pl-da-v:hover, button.pl-da-v:focus-visible { background: color-mix(in srgb, var(--c) 18%, transparent); }

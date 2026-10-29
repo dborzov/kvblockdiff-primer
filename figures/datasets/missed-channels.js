@@ -38,15 +38,16 @@
         draw(box, ctx) {
           const rows = ctx.rows, A = avg(rows);
           const bx = h('div'); box.append(bx);
-          const P = Plot(bx, { xcats: rows.map(r => r.name.replace('temperature, ', '')), y: [0, 1.12], h: 280, ylabel: 'variance explained (R²)', yfmt: v => fmtPct(v, 0), yticks: [0, 0.25, 0.5, 0.75, 1], grid: 'y',
+          const P = Plot(bx, { xcats: rows.map(r => ({ low: 'foot', mast: 'top' })[r.key] || r.name), y: [0, 1.12], h: 280, ylabel: 'variance explained (R²)', yfmt: v => fmtPct(v, 0), yticks: [0, 0.25, 0.5, 0.75, 1], grid: 'y',
             label: 'Variance explained by the previous reading, channel by channel' });
           bars(P, rows.map(r => r.used), {
             colors: i => (ctx.hl && ctx.hl.test(rows[i]) ? series(1) : series(rows[i].s)),
-            labels: (v, i) => (rows[i].r2 > 0 ? `${fmt(rows[i].bits, 2)} bits` : 'not predicted'),
+            labels: (v, i) => (rows[i].r2 > 0 ? `${fmt(rows[i].bits, 2)}${P.fs > 1.3 ? '' : ' bits'}` : ''),
             tip: (v, i) => `<b>${rows[i].name}</b><br>R² = ${fmtPct(rows[i].r2, 1)}${rows[i].r2 > 0 ? '' : ' (worse than the mean: flag “do not predict”)'}<br>saves ${fmt(rows[i].bits, 2)} bits per reading`,
           });
           rule(P, { y: A, label: `average ${fmtPct(A, 0)}`, color: 'var(--ink-2)' });
-          box.append(h('p', { class: 'fig-note', text: 'Each bar is one channel of the ten days of II.14; the label above it is what the previous reading saves, by the exchange rate. Three channels drift slowly; humidity and wind jump about from one half-hour to the next.' }));
+          rows.forEach((r, i) => { if (r.r2 <= 0) el('text', { x: P.x(i), y: P.y(0) - 8 * P.fs, 'text-anchor': 'middle', class: 'val', text: P.fs > 1.3 ? 'none' : 'not predicted' }, P.g.top); });
+          box.append(h('p', { class: 'fig-note', text: 'Each bar is one channel of the ten days of II.14; the label above it is what the previous reading saves, in bits per reading, by the exchange rate. Foot and top are the two thermometers on the mast. Three channels drift slowly; humidity and wind jump about from one half-hour to the next.' }));
         },
       },
     },

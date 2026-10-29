@@ -64,6 +64,14 @@ The recipe has three steps. [[standardize|Standardize]] each [[channel]] of a bl
 
 The old draft rounded example B to "≈ 2.3"; the formula gives 2.43. The lesson does not change. A spectrum that merely *looks* low-rank on a plot is worth a few tenths of a bit; a gain worth building a lossless rotation for needs most of the variance in a few directions and almost none in the rest.
 
+The recipe takes one look at real-looking data. The five channels of the ten days at Gull Rock ([[#school-correlation]]) give a five-number spectrum.
+
+::: dataset fig-missed-tendays-spectrum missed-spectrum view=spectrum,bound,mix metrics=lambdas,top2,gain,last
+**The spectrum of the ten days at Gull Rock.** Each channel (both thermometers, humidity, pressure, wind) is standardized, and the eigenvalues of their 5 × 5 covariance are the variances along the cloud's own axes. *Plot:* "The spectrum" shows the five eigenvalues, largest first, on a log scale; their average is 1. "What each adds to the bound" splits ½ log₂(AM/GM) into one term per direction, $-\tfrac12 \log_2 \vlambda / 5$. "Which channels each mixes" writes each direction as weights on the five channels (blue positive, red negative). *Table:* the five directions. *Numbers:* the spectrum and the bound. Synthetic, seeded data from II.14.
+:::
+
+Two directions hold 86 % of the variance, and the spectrum looks low-rank. Yet they count *against* the bound. The bound is 0.77 bit per element, and 0.69 of it comes from one direction that is almost empty: the two thermometers disagreeing. The ceiling is set by what is missing, not by what is there.
+
 ::: takeaway
 - The most any rotation can save is read off the eigenvalues: ½ log₂(AM/GM), zero for a flat spectrum.
 - "Low-rank-ish" buys tenths of a bit; only a sharply spiky spectrum buys bits.
@@ -115,6 +123,8 @@ Experiment 1a ([[#plan-experiment-1a]]) is this page turned into an hour of comp
 2. the **location gain** $\tfrac12 \log_2 (\vsigma^2_{\text{global}} / \vsigma^2_{\text{within block}})$ — what [[loc]] can save;
 3. the **KLT gain** from each block's spectrum — what any rotation can save;
 4. all three again after the [[shuffle-control]].
+
+On the Gull Rock temperatures, items 1, 2 and 4 are the two cards of [[#missed-block-is-a-knob]]: a distance curve with its shuffled twin, and the gain of block means against the block size.
 
 Below 0.3 bit of location plus KLT gain at block scope, on both keys and values, the existence question is in trouble. Above 1 bit on keys, the project has a pulse. Either way the exact lossless ladder (1b) follows, because the 8-bit grid can take back part of what the floats promise ([[#missed-context-modeling]]).
 

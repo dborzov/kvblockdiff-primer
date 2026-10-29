@@ -16,27 +16,29 @@
 
   // Table 1: one row per (format, coder, data); cells "entropy / fixed-length".
   function table1(box, ctx) {
-    const cell = (a, b, d = 3) => `${fmt(a, d)} <span style="color:var(--ink-3)">/</span> ${fmt(b, d)}`;
+    const two = (a, b) => `${fmt(a, 3)}<br><span style="color:var(--ink-3)">${fmt(b, 3)}</span>`;
+    const twoS = (a, b) => `${fmtS(a, 3)}<br><span style="color:var(--ink-3)">${fmtS(b, 3)}</span>`;
     const out = [];
     ['int8', 'e4m3'].forEach(f => ['loc', 'loc+flag'].forEach(c => ['orig', 'shuf'].forEach(d => {
       const L = J.ladder[f][c][d], ge = g(f, c, d, 'entropy'), gf = g(f, c, d, 'fixed');
-      const shuf = d === 'shuf', hl = ctx.hl && ctx.rows.some(r => r.fmt === f && r.coder === c && r.data === d && ctx.hl.test(r));
+      const hl = ctx.hl && ctx.rows.some(r => r.fmt === f && r.coder === c && r.data === d && ctx.hl.test(r));
       const best = ge.best_b;
       out.push({
         cls: hl ? 'hl' : null,
         cells: [
-          { html: `${c}, ${FMT[f]}${shuf ? ' <i>(shuffled)</i>' : ''}` },
-          { html: cell(L.global[0], L.global[1]) },
-          { html: cell(L.request[0], L.request[1]) },
-          { html: `${cell(L.block[best][0], L.block[best][1])} <span style="color:var(--ink-3)">(${fmtB(best)})</span>` },
-          { html: `${fmtS(ge.gainreq, 3)} / ${fmtS(gf.gainreq, 3)}` },
-          { html: `${fmtS(ge.gainblk, 3)} / ${fmtS(gf.gainblk, 3)}` },
+          { html: `${c}<br>${FMT[f]}${d === 'shuf' ? ', <i>shuffled</i>' : ''}` },
+          { html: two(L.global[0], L.global[1]) },
+          { html: two(L.request[0], L.request[1]) },
+          { html: `${two(L.block[best][0], L.block[best][1])}` },
+          { html: fmtB(best) },
+          { html: twoS(ge.gainreq, gf.gainreq) },
+          { html: twoS(ge.gainblk, gf.gainblk) },
         ],
       });
     })));
-    box.append(table(['coder, format', 'global', 'request', 'best block (b)', texify('$\\vgainreq$'), texify('$\\vgainblk$')], out, { left: [0] }));
+    box.append(table(['coder, grid', 'global', 'request', 'best block', texify('$\\vb$'), texify('$\\vgainreq$'), texify('$\\vgainblk$')], out, { left: [0] }));
     const so = J.solo;
-    box.append(h('p', { class: 'fig-note', html: texify(`Each cell: entropy rate / fixed-length rate, in bits per element, every byte charged. The best block is the one with the lowest entropy rate. Solo coding (rung 0, global): INT8 ${fmt(so.int8.entropy, 3)} / ${fmt(so.int8.fixed, 1)}, E4M3 ${fmt(so.e4m3.entropy, 3)} / ${fmt(so.e4m3.fixed, 1)}. Synthetic data: a check of the method, not a result about KV caches.`) }));
+    box.append(h('p', { class: 'fig-note', html: texify(`In each cell the entropy rate is on top and the fixed-length rate below (grey), in bits per element, every byte charged. The best block is the one with the lowest entropy rate. Solo coding (rung 0, global): INT8 ${fmt(so.int8.entropy, 3)} / ${fmt(so.int8.fixed, 1)}, E4M3 ${fmt(so.e4m3.entropy, 3)} / ${fmt(so.e4m3.fixed, 1)}. Synthetic data: a check of the method, not a result about KV caches.`) }));
   }
 
   // Four readings of the same data: g_req + g_blk stacked, original next to shuffled, against the decision thresholds.

@@ -120,10 +120,23 @@ Three details differ from the source, and each one matters.
 
 The rate functions were tested against answers known in closed form. Residuals drawn from a [[laplace|Laplace]] distribution of scale $\vbeta = 3$ have an entropy of 4.015 bits; the fitted model charges 4.035 bits, and a histogram of the same residuals gives 4.034. Residuals spread evenly over −3…3 get 3-bit fields and a fixed-length rate of exactly 3.000.
 
+Closed forms check the code. Data you have met shows what the two numbers mean. Here is the Gull Rock wind of [[#school-fixed-length]], predicted by "the same as last time" as on [[#school-exchange-rate]]: each reading's change since the one before, run through the four functions above.
+
+::: dataset fig-plan-wind-rates plan-wind-rates view=histogram,cost hl=esc metrics=fit,entropy,width,escapes,fixed,gap
+**The wind's changes, priced the harness's two ways.** *The changes and the field:* how often each change in knots occurs (bars), the fitted Laplace model scaled to the 1,023 changes (curve), and the range a 5-bit field holds (green band); the three escapes fall outside it and are marked. Hover a bar for its price both ways; click it to select those readings. *Bits, reading by reading:* each change's price under the model (lapis) and in the fixed-width field (peacock, with a raw byte added at each escape), over the three weeks. *Numbers:* both rates and what they are made of. The changes are their own fitting set here (one block). Synthetic data, seeded; the readings of II.9.
+:::
+
+Three things to notice.
+
+- **The model is good enough.** It charges 3.46 bits per reading, a few hundredths above the 3.39 of the changes' own histogram.
+- **The field is not free.** Five bits hold every change but three, so the fixed-length rate is 5.02 bits: 1.56 bits above the ideal. That gap is the price of reading any one delta without the others.
+- **Escapes are rare by design.** The three that escape are the storms' steepest jumps, 17 to 20 knots in half an hour. Each costs 8 extra bits, and none breaks the rule that a delta decodes alone.
+
 ::: takeaway
 - The entropy rate is the ideal; the fixed-length rate is what a fast random-access decoder pays. Both include every tax.
 - Escapes are marked by the one field value the width rule never uses, so each delta stays self-contained.
 - The rate code is tested against closed-form answers before it touches data.
+- On the Gull Rock wind the two rates differ by 1.56 bits: what random access costs there.
 :::
 
 ## Who pays for the dictionary {#who-pays}

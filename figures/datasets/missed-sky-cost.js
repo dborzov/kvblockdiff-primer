@@ -32,11 +32,12 @@
       bar: {
         label: 'Paid and saved',
         legend: false,
+        highlights: [],
         draw(box, ctx) {
           const rows = ctx.rows, H = avg(rows, 'alone'), Hc = avg(rows, 'given');
           box.append(legend([['still paid, $\\vH$', 'var(--bad)', 'box'], ['saved by the season, $\\vI$', 'var(--good)', 'box']].map(([l, c, s]) => [texify(l), c, s])));
           const D = Diagram(box, { w: 640, h: 150, label: 'The cost of a sky report without and with the season, as two bars of the same length' });
-          const fs = D.fs, L = 150 * Math.min(fs, 1.3), R = 620, X = v => L + (R - L) * v / 2;
+          const fs = D.fs, L = 150 * Math.min(fs, 1.3), R = 540, X = v => L + (R - L) * v / 2;
           [['nothing known', H, 0], ['season known', Hc, H - Hc]].forEach(([name, paid, saved], i) => {
             const y = 18 + i * 58 * Math.min(fs, 1.3), hh = 30 * Math.min(fs, 1.3);
             el('text', { x: L - 8, y: y + hh * 0.65, 'text-anchor': 'end', class: 'lbl', text: name }, D.svg);
@@ -51,13 +52,13 @@
       },
       outcomes: {
         label: 'Report by report',
-        highlights: ['dearer'],
+        highlights: [],
         legend: false,
         draw(box, ctx) {
           const rows = ctx.rows;
           box.append(legend([['cheaper once the season is known', 'var(--good)', 'box'], ['dearer once the season is known', 'var(--bad)', 'box']]));
           const bx = h('div'); box.append(bx);
-          const P = Plot(bx, { ycats: rows.map(r => `${r.sky}, ${r.season}`), x: [-1.6, 1.6], h: 470, xlabel: 'change in the cost of one report (bits)', grid: 'x', m: { l: 116, r: 40, t: 10, b: 44 },
+          const P = Plot(bx, { ycats: rows.map(r => `${r.sky}, ${r.season}`), x: [-1.85, 1.6], h: 470, xlabel: 'change in the cost of one report (bits)', grid: 'x', m: { l: 116, r: 40, t: 10, b: 44 },
             label: 'How the cost of each kind of sky report changes once the season is known' });
           rule(P, { x: 0, color: 'var(--ink-3)', dash: false });
           rows.forEach((r, i) => {

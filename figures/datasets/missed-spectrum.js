@@ -65,7 +65,7 @@
         draw(box, ctx) {
           const bx = h('div'); box.append(bx);
           const rows = ctx.rows;
-          const P = Plot(bx, { xcats: rows.map(r => `λ${r.k}`), y: [-0.2, 0.8], h: 260, ylabel: 'bits per element', grid: 'y', label: 'Each direction’s share of the KLT bound' });
+          const P = Plot(bx, { xcats: rows.map(r => `λ${r.k}`), y: [-0.28, 0.8], h: 260, ylabel: 'bits per element', grid: 'y', label: 'Each direction’s share of the KLT bound' });
           rule(P, { y: 0, color: 'var(--ink-3)', dash: false });
           bars(P, rows.map(r => r.contrib), { colors: i => (rows[i].contrib > 0.3 ? series(1) : series(0)), labels: v => fmtS(v, 2), tip: (v, i) => `<b>direction ${rows[i].k}</b><br>−½ log₂ λ / 5 = ${fmtS(v, 3)} bits` });
           box.append(h('p', { class: 'fig-note', html: texify(`The bound is the sum of the bars, $-\\tfrac12 \\cdot$ the average of $\\log_2 \\vlambda$: ${fmt(gain(rows), 2)} bits per element. Strong directions count against it; the nearly empty direction pays for nearly all of it.`) }));
@@ -75,7 +75,7 @@
         label: 'Which channels each mixes',
         draw(box, ctx) {
           const rows = ctx.rows, n = CH.length;
-          const D = Diagram(box, { w: 640, h: 260, label: 'The five directions as mixtures of the five standardized channels' });
+          const D = Diagram(box, { w: 640, h: 260, grow: 0.6, label: 'The five directions as mixtures of the five standardized channels' });
           const fs = D.fs, L = 92 * Math.min(fs, 1.4), T = 30 * fs, cw = (628 - L) / n, rh = (D.H - T - 6) / n;
           const g = el('g', {}, D.svg);
           CH.forEach(([, nm], j) => el('text', { x: L + (j + 0.5) * cw, y: T - 10, 'text-anchor': 'middle', class: 'lbl', text: nm }, g));
@@ -95,7 +95,7 @@
       { id: 'lambdas', label: 'eigenvalues', tex: '\\vlambda', value: rows => rows.map(r => r.lambda), fmt: v => v.map(x => fmt(x, x < 0.1 ? 4 : 2)).join(' · '),
         note: 'They add up to 5, one per standardized channel, so their arithmetic mean is exactly 1.' },
       { id: 'top2', label: 'variance in the two strongest directions', value: rows => rows[0].share + rows[1].share, fmt: v => fmtPct(v, 0),
-        note: 'The weather (warm, dry and calm against cool, damp and windy) and the pressure swing. A plot of this spectrum looks “low-rank”.' },
+        note: 'The weather (warm and dry against cool and damp) and the pressure swing that brings the wind. A plot of this spectrum looks “low-rank”.' },
       { id: 'gain', label: 'KLT bound, ½ log₂(AM/GM)', value: gain, fmt: v => `${fmt(v, 2)} bits per element`,
         note: 'The most any rotation of these five channels can save, for bell-shaped data. One number, from five eigenvalues, before any coder exists.' },
       { id: 'last', label: 'share of the bound from the weakest direction', value: rows => rows[rows.length - 1].contrib / gain(rows), fmt: (v, rows) => `${fmtS(rows[rows.length - 1].contrib, 2)} bits · ${fmtPct(v, 0)}`,

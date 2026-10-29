@@ -91,44 +91,18 @@ Now look at one shear again. "$\vx_1$ minus a rounded multiple of $\vx_2$" is a 
 Here the theme hides inside linear algebra. A lossless rotation is a chain of predict-then-correct steps, each predicting one coordinate from the ones that stay put.
 :::
 
-Does the slight wrongness cost anything? Try it on the two mast thermometers of Part II. They read the same weather in tenths of a degree, one about 0.8 °C cooler. Turning their axes by 45° gives roughly their average and their difference.
+Does the slight wrongness cost anything? Try it on the two mast thermometers of the ten days at Gull Rock ([[#school-rotation]]). They read the same weather in whole tenths of a degree, the top one a little cooler. Turning their axes by 45° gives roughly their sum and their difference.
 
-```python lifting the two thermometers by 45°, exactly
-import numpy as np
+::: dataset fig-missed-lifted-thermo missed-lifted view=after,before metrics=exact,distinct,bound,gauss,hist
+**The two thermometers, turned by three integer shears.** *Plot:* "After three shears" has one dot per reading at its two lifted coordinates, in the same frame and on equal axes as "As measured": the first is roughly the sum of the two thermometers divided by √2, the second roughly their difference divided by √2. "As measured" shows the same 480 readings before the turn, foot thermometer across and top thermometer up, in whole tenths of a degree. Drag a box to select readings. *Table:* every reading before and after, and whether it comes back exactly. *Numbers:* the round trip, the collisions, and the bits before and after against the bound. *Code:* the three shears and their inverse in numpy. Synthetic, seeded data from II.14; the turn is θ = −45°.
+:::
 
-def lift(x1, x2, theta):                 # rotation by theta as three integer shears
-    t, s = np.tan(theta / 2), np.sin(theta)
-    x1 = x1 - np.round(t * x2)
-    x2 = x2 + np.round(s * x1)
-    x1 = x1 - np.round(t * x2)
-    return x1, x2
-
-def unlift(x1, x2, theta):               # the same three steps, backwards, signs flipped
-    t, s = np.tan(theta / 2), np.sin(theta)
-    x1 = x1 + np.round(t * x2)
-    x2 = x2 - np.round(s * x1)
-    x1 = x1 + np.round(t * x2)
-    return x1, x2
-
-def bits(v):                             # order-0 entropy of an integer stream
-    _, n = np.unique(v, return_counts=True); p = n / n.sum()
-    return -(p * np.log2(p)).sum()
-
-rng = np.random.default_rng(1)
-low = np.round(rng.normal(115, 30, 20000))          # mast thermometer, tenths of a degree
-high = np.round(low - 8 + rng.normal(0, 4, 20000))   # the one higher up: same weather, small offset
-a, d = lift(low, high, -np.pi / 4)                   # turn the axes by 45 degrees
-assert all(np.array_equal(u, v) for u, v in zip(unlift(a, d, -np.pi / 4), (low, high)))
-print(f"as measured: {(bits(low) + bits(high)) / 2:.2f} bits per value")   # 6.94
-print(f"lifted:      {(bits(a) + bits(d)) / 2:.2f} bits per value")        # 5.49
-```
-
-The round trip is exact, and the saving is 1.45 bits per value. The transform coding gain of this pair, from its two eigenvalues (about 1808 and 8), is ½ log₂(908 / 120) ≈ 1.46 bits. The rounding inside the shears cost almost nothing.
+The round trip is exact for all 480 readings, and no two pairs collide. Priced by their spreads, as on [[#school-residual-shapes]], the lifted coordinates save 1.44 bits per value. The transform coding gain of the pair, from its two eigenvalues (591 and 2.5, in tenths squared), is 1.47 bits. The rounding inside the shears cost a few hundredths of a bit.
 
 ::: takeaway
 - A shear moves one coordinate by a rounded amount computed from the other; the decoder recomputes it and undoes it exactly.
 - Three shears make a 2-D rotation. For a $\vd \times \vd$ rotation, Hao and Shi (2001) and the later [[plus-factorization]] do the same with a few triangular steps ([[#papers-classics]]).
-- On the thermometer toy the lifted rotation keeps 1.45 of the 1.46 bits the formula promises.
+- On the Gull Rock thermometers the lifted rotation keeps 1.44 of the 1.47 bits the formula promises, and undoes exactly.
 :::
 
 ## What it costs, and what changes in the plan {#plan}

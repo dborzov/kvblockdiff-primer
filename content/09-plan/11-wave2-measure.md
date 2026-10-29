@@ -40,6 +40,12 @@ Wave 2 runs only on a "go" from the [[decision-rule|decision rule]].
 6. **Sibling residency** (only if [[sib]] did well in wave 1): how often an entry's chosen sibling is in the hot cache when the entry misses.
 7. **Content of the residual misses.** Are the entries that miss — surprising in *time* — also harder to code — surprising in *content*? Compare the rate of missed entries with the rate of all entries. If they are harder, $\vrho$ on the miss path is worse than wave 1's average.
 
+Measurement 3 needs no new tool. On [[#school-reuse-distance]] the LRU miss rate of every desk size was read straight off the reuse distances of the forecaster's morning. Wave 2 reads the dictionary cache's miss rate off the reuse distances of *blocks* in the same way.
+
+::: dataset fig-plan-storm-reuse storm-morning view=reuse,dists metrics=dist2,curve,belady4
+**Reuse distances of the forecaster's morning.** *With reuse distances:* each repeat request joined to the previous request for the same logbook, with the number of other logbooks asked for in between written under it. *Reuse distances:* how often each distance occurs. *Numbers:* the LRU miss rate for every desk size, read off the distances. In wave 2 the requests are a step's blocks and the desk holds $\vnD$ dictionaries. Made-up data (II.21–II.22).
+:::
+
 What would change the design, from framework C:
 
 | reading | meaning | design |

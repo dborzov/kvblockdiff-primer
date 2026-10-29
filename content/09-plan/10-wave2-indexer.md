@@ -77,6 +77,14 @@ What a trace looks like depends on the keys. The figure plays the same game on s
 - **What it cannot see:** timing. Replay counts misses and loads; how long they take is the cost model's job.
 :::
 
+Trace replay is the game of [[#school-caches]], played at a larger scale. There the forecaster's morning was a list of 24 requests for 8 logbooks, and a desk of 4 slots was run over it, request by request.
+
+::: dataset fig-plan-storm-replay storm-morning view=raster,reuse hl=lru metrics=n,distinct,lru4,fifo4,belady4
+**The storm morning: a trace, replayed.** The forecaster's 24 requests for 8 station logbooks, in order (II.21–II.22): one row per logbook, one column per request. Highlighted: the requests that miss on an LRU desk of 4 slots. *With reuse distances* joins each repeat to the previous request for the same logbook. *Numbers:* the misses of three replacement rules, replayed on the same list. Made-up data.
+:::
+
+Wave 2 plays it with the indexer's selections. A logbook becomes an entry, one request becomes one decode step's selection, and the desk becomes HiSparse's hot cache — with a second, smaller desk beside it for block dictionaries.
+
 The source sketched the replay; the harness version runs. It keeps HiSparse's token cache — [[lru|LRU]], never evicting an entry the current step needs — and adds a per-layer LRU of $\vnD$ block dictionaries.
 
 ```python token LRU plus dictionary LRU (analysis/plan_harness.py)
@@ -125,7 +133,13 @@ What differs from the source's sketch:
 - **A δ-miss needs its dictionary already resident.** Loads happen after the step's misses and serve later steps — no free lunch for the step that triggered them.
 - **Names follow the site:** the loads per step per layer are $\vnload$ (the source's $d_L$), the δ-miss fraction is $\vfD$.
 
-On a 300-step synthetic trace (block topics, drifting queries, $\vk = 128$ of 4096 positions, blocks of 256) the replay behaves as framework C expects: the token miss rate falls from 8.8 % to 2.9 % to 2.2 % as the hot cache grows from $\vk$ to $2\vk$ to $4\vk$; with $\vB = 2\vk$ the δ-miss fraction rises from 10 % with one resident dictionary to 41 % with four and 88 % with sixteen, at 0.13 loads per step with four. Synthetic numbers, a check that the code has the right shape — not a prediction.
+Here is the synthetic trace of [[#fig-plan-selections]], at its default settings, replayed.
+
+::: dataset fig-plan-trace-replay plan-trace view=heat,misses hl=switch metrics=n,top,life,miss,fd,nload
+**The rehearsal trace, replayed.** *Blocks by step:* 300 decode steps (columns) by 16 blocks of 256 positions (rows); the shade counts how many of the step's 128 selections fall in the block. Thin dark bars mark the 4 block dictionaries resident after each step (heaviest-blocks policy); the highlight marks the steps where the heaviest block changes. Hover for the counts. *Misses per step:* token misses with a hot cache of 256 entries, and the δ-misses among them. *Table:* one row per step (the row number is the step): the heaviest block and its share, the share of the top 4 blocks, how many blocks the step touches, and the misses (hot cache of 256), δ-misses and dictionary loads. Topic strength 1.5, query drift 0.15; a seeded JavaScript twin of the harness's own test. Synthetic data: the shape of the measurement, not its result.
+:::
+
+On this trace the replay behaves as framework C expects. The token miss rate falls from 8.7 % to 2.6 % to 2.0 % as the hot cache grows from $\vk$ to $2\vk$ to $4\vk$. With $\vB = 2\vk$ the δ-miss fraction rises from 19 % with one resident dictionary to 52 % with four and 87 % with sixteen, at 0.04 loads per step with four. The harness's numpy run of the same recipe draws other random numbers and prints 8.8, 2.9 and 2.2 %, then 10, 41 and 88 % at 0.13 loads per step: the same shape. Synthetic numbers, a check that the code has the right shape — not a prediction.
 
 ::: theme which-vs-what
 Replay is pure "which": it never looks inside an entry. Whether the entries it moves are compressible is wave 1's question; whether the right dictionaries are on the GPU when they are needed is this one.

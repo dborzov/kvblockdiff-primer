@@ -69,6 +69,14 @@ Lossless means "the stored numbers come back exactly". A system whose baseline s
 
 The lossy papers agree on a pattern ([[#papers-kivi]], [[#papers-kvquant]]). In our words: before RoPE, a few key channels carry large values that change slowly from token to token. Value channels show much less of this; their surprises come token by token instead. For a coder that means keys are where dictionaries can win and values are where they may not.
 
+The Gull Rock channels of [[#missed-harsh-exchange-rate]] split the same way, and show what such a split does to an average.
+
+::: dataset fig-missed-channels-split missed-channels view=bars hl=giants metrics=split,bits,flag
+**Ten days at Gull Rock: a slow half and a quick half.** *Plot:* one bar per channel, the share of its variance explained by its own reading half an hour before; the label above each bar is the bits per reading this saves. The highlight marks the three slow channels. *Numbers:* the saving in each half, and over the whole vector. Synthetic, seeded data from II.14.
+:::
+
+The slow three save 2.14 bits per element, the quick two nothing. The whole vector averages 1.29: the quick half holds it down however well the slow half does. Keys and values could split exactly like this.
+
 The entry's [[delta-ratio|delta ratio]] is the byte-weighted mean of its two halves. With equal bytes of keys and values:
 
 $$

@@ -35,9 +35,8 @@
         draw(box, ctx) {
           const b = bitsOf(ctx.rows), lo = b.indexOf(Math.min(...b));
           const bx = h('div'); box.append(bx);
-          const P = Plot(bx, { xcats: ['order 0', 'order 1', 'order 2', 'order 3'], y: [0, 7.6], h: 260, ylabel: 'bits per reading', grid: 'y', label: 'Bits per temperature reading for each of FLAC’s four guesses' });
+          const P = Plot(bx, { xcats: ['order 0', 'order 1', 'order 2', 'order 3'], y: [0, 7.4], h: 260, ylabel: 'bits per reading', grid: 'y', label: 'Bits per temperature reading for each of FLAC’s four guesses' });
           bars(P, b, { colors: i => (i === lo ? series(0) : `color-mix(in srgb, ${series(0)} 45%, transparent)`), labels: v => fmt(v, 2), tip: (v, i) => `<b>${NAMES[i]}</b><br>${fmt(v, 2)} bits per reading` });
-          rule(P, { y: DS.metric('temp', 'width'), label: 'fixed width of the readings', color: 'var(--ink-3)' });
           box.append(h('p', { class: 'fig-note', text: 'Entropy of each residual’s histogram: what an ideal coder pays per reading with that guess. The darker bar is the best guess.' }));
         },
       },
@@ -64,14 +63,14 @@
           const b1 = h('div'), b2 = h('div');
           box.append(b1);
           const P1 = Plot(b1, { x: [3, 4], y: [9, 16.5], h: 170, ylabel: '°C', xticks: [3, 3.25, 3.5, 3.75, 4], xfmt: v => `${String(Math.round((v - 3) * 24)).padStart(2, '0')}:00`, label: 'The temperature on day 4' });
-          line(P1, rows.map(r => [r.t, r.v / 10]), { color: series(6), width: 2, markers: 2 });
+          line(P1, rows.map(r => [r.t, r.v / 10]), { color: series(6), width: 2 });
           if (ctx.hl) rows.filter(ctx.hl.test).forEach(r => dot(P1.g.data, P1.x(r.t), P1.y(r.v / 10), 3.2 * P1.fs, series(1)));
           box.append(legend(KEYS.slice(1).map((k, j) => [NAMES[j + 1], series(SER[j + 1])])), b2);
           const P2 = Plot(b2, { x: [3, 4], y: [-16, 16], h: 210, xlabel: 'time on day 4', ylabel: 'residual (tenths)', xticks: [3, 3.25, 3.5, 3.75, 4], xfmt: v => `${String(Math.round((v - 3) * 24)).padStart(2, '0')}:00`, label: 'The three residuals on day 4' });
           rule(P2, { y: 0, color: 'var(--ink-3)', dash: false });
           KEYS.slice(1).forEach((k, j) => line(P2, rows.map(r => [r.t, r[k]]), { color: series(SER[j + 1]), width: 1.6, name: NAMES[j + 1] }));
           crosshair(P2, { xname: 'time', xfmt: v => `${String(Math.floor((v - 3) * 24)).padStart(2, '0')}:${Math.round(((v - 3) * 48) % 2) ? '30' : '00'}`, yfmt: v => fmt(v, 0) });
-          box.append(h('p', { class: 'fig-note', text: 'Day 4, when the first (cold) front passes in the early afternoon. Every guess misses during the front; order 3 also jitters wildly on quiet stretches, where it is amplifying sensor noise.' }));
+          box.append(h('p', { class: 'fig-note', text: 'Day 4, with the first (cold) front passing in the early afternoon (red dots, when the highlight is on). Orders 1 and 2 stay within a few tenths; order 3 swings about twice as far, on quiet stretches as much as during the front: it is amplifying sensor noise.' }));
         },
       },
     },

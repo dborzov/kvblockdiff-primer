@@ -38,8 +38,8 @@
           line(P, rows.map(r => [r.c, r.raw]), { color: 'var(--ink-3)', width: 1.4, dash: true });
           line(P, rows.map(r => [r.c, r.fixed]), { color: series(0), width: 2.4 });
           line(P, rows.map(r => [r.c, r.stream]), { color: series(1), width: 2.4, markers: 3.2, tip: p => { const r = rows.find(q => q.c === p[0]); return `<b>chunks of ${r.c}</b><br>${fmt(r.touched, 1)} chunks touched, ${fmt(r.decoded, 0)} readings decoded<br>${fmt(r.stream, 0)} bits, against ${fmt(r.fixed, 0)} for the slots`; } });
-          annotate(P, 1024, row(rows, 1024).stream, 'one chunk: decode\nthe whole archive', { dx: -60, dy: 30 });
-          annotate(P, 2, row(rows, 2).stream, 'two per chunk:\nalready worse', { dx: 30, dy: -40 });
+          annotate(P, 1024, row(rows, 1024).stream, 'one chunk: decode\nthe whole archive', { dx: -40, dy: 80 });
+          annotate(P, 2, row(rows, 2).stream, 'two per chunk:\nalready worse', { dx: 10, dy: -80 });
           box.append(h('p', { class: 'fig-note', text: 'Expected values for 20 calls at random times among 1,024 readings, computed exactly. The stream line ignores the table of chunk addresses, which only makes it worse.' }));
         },
       },

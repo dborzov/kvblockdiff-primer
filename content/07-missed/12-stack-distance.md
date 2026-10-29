@@ -55,7 +55,16 @@ The trick is a single observation. An LRU cache of $\vB$ slots always holds exac
 1. On *Bélády's string* (1 2 3 4 1 2 5 1 2 3 4 5), FIFO misses 9 times with 3 slots and **10 times with 4**. A bigger cache, more misses: Bélády's anomaly (1969).
 2. On *a loop of 5*, LRU misses every single request until $\vB$ = 5: the item needed next is always the one just evicted. Bélády's policy, which can see the future, does much better.
 3. On *a drifting set* (a few items in use, slowly replaced), LRU's misses fall steeply at $\vB$ = 3 — a toy version of the Lucky Louis property.
+4. Pick *the storm morning*: the forecaster's 24 requests of [[#school-caches]]. Each column's distance is the reuse distance that page wrote under it.
 :::
+
+The storm morning was a stack-distance list all along. [[#school-reuse-distance]] wrote each request's reuse distance under it, and read the desk's misses off them.
+
+::: dataset fig-missed-storm-stack storm-morning view=reuse,dists metrics=curve,lru4,fifo4,belady4
+**The storm morning of II.21–II.22, as one list of distances.** *Plot:* "With reuse distances" is the grid of requests (one row per logbook, one column per request); each repeat is joined to the same logbook's previous request, and its reuse distance — its depth in the LRU stack — is written under its column (∞ for a first request). Hover or tap a request to shade its stretch. "Reuse distances" counts the requests at each distance. *Table:* every request, with whether it hits on a 4-slot desk under LRU and FIFO. *Numbers:* the whole LRU miss-rate curve read off the distances, and three policies at four slots. Hand-made toy data.
+:::
+
+One list of 24 numbers gives the whole curve. Every request misses on a desk of 1 and 88 % on a desk of 2; then a cliff to 46 % at 3, and a slow slide to the floor of 33 %, the first requests. FIFO at four slots needs 14 trips where LRU needs 10, and Bélády's clairvoyant policy saves just one more.
 
 Why can FIFO misbehave while LRU cannot? Because LRU caches nest: what a cache of 3 slots holds is always inside what a cache of 4 slots holds. Mattson and colleagues called policies with this property **stack algorithms**, and proved that Bélády's optimal policy is one too. FIFO is not, and a policy without nesting has no single curve.
 

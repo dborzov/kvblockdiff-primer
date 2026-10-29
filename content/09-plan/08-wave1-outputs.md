@@ -85,17 +85,15 @@ Two things about the shape are deliberate.
 4. **Diagnostics.** The per-channel breakdown (expect a few key channels to dominate); the k-means residual against the Gaussian bound (does the data cluster?); the BF16 column; float gains against 8-bit gains (how much the grid takes back).
 5. **Derived.** The [[delta-ratio|delta ratio]] $\vrho$ and the delta size $\vdsz$ of the fixed-length coder at the best affordable $(\vb, \vw)$ — the inputs of [[#questions-framework-d]].
 
-To make Table 1 concrete, here it is filled in for the synthetic set of [[#plan-controls]] — one type, two grids. **Synthetic; a method check, not a result about KV caches.**
+To make Table 1 concrete, here it is filled in for the rehearsal set of [[#plan-controls]] — one type in two variants, two grids, and the shuffled twins. **Synthetic; a method check, not a result about KV caches.**
 
-| type and grid | global | request | best block ($\vb$ = 2048) | $\vgainreq$ | $\vgainblk$ |
-|---|---|---|---|---|---|
-| loc, INT8 | 7.073 / 7.953 | 6.614 / 7.383 | 6.272 / 7.012 | 0.459 / 0.570 | 0.342 / 0.371 |
-| loc + flag, E4M3 | 6.367 / 7.907 | 5.906 / 7.848 | 5.566 / 7.687 | 0.461 / 0.058 | 0.340 / 0.161 |
-| shuffled: loc, INT8 | 7.073 / 7.953 | 6.943 / 7.835 | 6.946 / 7.835 | 0.131 / 0.118 | −0.004 / −0.000 |
+::: dataset fig-plan-table1 plan-ladder view=table1,readings hl=shuffled metrics=rho,shuf-int8,calgap,bestb
+**Table 1, filled in on the rehearsal set.** *Table 1:* one row per coder (loc, and loc with its per-channel flag), grid and data set, with the rates at global, request and best block scope and the two scope gains; the shuffled twins are highlighted. *Four readings:* the same gains as bars, against the thresholds of the decision rule ([[#fig-plan-ladder-readings]]). *Numbers:* the derived $\vrho$ for wave 2, the shuffled twins and the calibration gap. Computed by `analysis/plan_harness.py`; synthetic data — a method check, not a result about KV caches.
+:::
 
-Each cell is entropy rate / fixed-length rate in bits per element. The derived number for wave 2 would be read from the INT8 row: $\vrho = 7.012/8 \approx 0.88$, a delta of about 56 bytes for a 64-byte entry.
+In each cell the entropy rate is on top and the fixed-length rate below, in bits per element. The derived number for wave 2 would be read from the INT8 rows: $\vrho = 7.012/8 \approx 0.88$, a delta of about 56 bytes for a 64-byte entry (the card's *Numbers* tab).
 
-We would add two things to the source's list. **Every gain next to its shuffled twin** (the third row), because the shuffled request gain is the calibration gap. And **the fixed-length rate of an exponent-splitting solo coder**, so that the fixed-length column has a fair baseline ([[#plan-experiment-1b/printed]]).
+We would add two things to the source's list. **Every gain next to its shuffled twin** (the highlighted rows), because the shuffled request gain is the calibration gap. And **the fixed-length rate of an exponent-splitting solo coder**, so that the fixed-length column has a fair baseline ([[#plan-experiment-1b/printed]]).
 
 ::: takeaway
 - Figure A answers Q1; Table 1 gives the scope gains; Figure B gives the curve; the diagnostics say why.

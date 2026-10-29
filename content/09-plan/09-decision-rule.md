@@ -68,7 +68,7 @@ They are judgement calls, which is fine — as long as they are made now.
 ## Try it {#try}
 
 ::: figure fig-plan-decision planDecision wide
-**The decision rule as a map.** Horizontal axis: $\vgainreq$; vertical axis: $\vgainblk$, both in bits per element, from 0 to 1.5. Coloured regions are the rows of the rule: lapis = block scope, peacock = request scope, saffron = marginal, vermilion = negative; the amethyst band is the **gap** that no row of the source covers. Drag the knob (or use the sliders, or the arrow keys on the knob); the matching row lights up on the right and the readout gives the next step. The three buttons place the knob on results of our synthetic run ([[#plan-controls]]); they are a method check, not KV data.
+**The decision rule as a map.** Horizontal axis: $\vgainreq$; vertical axis: $\vgainblk$, both in bits per element, from 0 to 1.5. Coloured regions are the rows of the rule: lapis = block scope, peacock = request scope, saffron = marginal, vermilion = negative; the amethyst band is the **gap** that no row of the source covers. Drag the knob (or use the sliders, or the arrow keys on the knob); the matching row lights up on the right and the readout gives the next step. The three buttons place the knob on results of our synthetic run, read from the rehearsal ladder ([[#fig-plan-ladder-readings]]); they are a method check, not KV data.
 :::
 
 ::: try

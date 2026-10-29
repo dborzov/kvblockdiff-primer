@@ -71,6 +71,14 @@ Under LRU, a cache of $\vB$ slots holds exactly the top $\vB$ rows of the recenc
 
 The victim tier is simply the next $\vBV$ rows of the stack. A selection whose stack distance falls between $\vB$ and $\vB + \vBV$ was a miss and is now a promotion. Its value is $\vm(\vB) - \vm(\vB + \vBV)$, read off the curve.
 
+Try it on the storm morning of Part II first. The forecaster's desk holds 2 logbooks; behind it stands a shelf for 2 more, kept as cheap notes from which a logbook can be rebuilt without the lift.
+
+::: dataset fig-missed-storm-victim storm-morning view=dists,reuse metrics=curve,dist2
+**The storm morning's reuse distances (II.22).** *Plot:* "Reuse distances" counts the 24 requests at each reuse distance, their depth in the LRU stack (∞ for a first request); click a bar to select those requests. "With reuse distances" is the grid of requests, one row per logbook, with each request's distance under its column. *Table:* every request. *Numbers:* the LRU miss rate at every desk size, read off the distances. Hand-made toy data.
+:::
+
+A desk of 2 misses every request at distance 2 or more: 21 of 24. The shelf catches the next two rows of the stack, distances 2 and 3, and those 11 requests become promotions. Only the 10 requests at distance 4 or more, 8 of them first requests, still send the lift down — exactly the misses of a desk of 4, for the memory of 2 logbooks plus 2 notes.
+
 ::: figure fig-missed-victim mbVictimTier wide
 **The victim tier on the reuse-distance curve, in the reference setting.** *Left:* miss rate against cache size (both axes logarithmic). Grey line: a power law through HiSparse's measured LRU points (vermilion dots; anchored at 13.4 % for 4,096 slots); peacock dot: Bélády's 8.2 % at 4,096. Blue band: stack distances served by the raw hot cache of $\vB$ slots; red band: those served by the victim tier. Accent dot: the miss rate with the tier; grey dot: a plain raw cache using the same GPU memory. *Right:* requests per GPU, $\vN = \min(\vNlink, \vNhbm)$, as the tier grows; the lines mark HiSparse at 4,096 slots and the best plain raw cache of any size. Memory includes loc dictionaries for every block ($\vb$ = 2,048, 98 slots' worth per layer). Tiles: miss rate over the link, GPU memory per request, requests per GPU, and the decode rate needed on promotions (raw-equivalent bytes per second per GPU). $\vrho$ is **assumed**. Choose $\vB$, slide $\vBV$ and $\vrho$; the button makes misses move deltas too (lever 1).
 :::

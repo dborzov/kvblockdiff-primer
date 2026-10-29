@@ -70,6 +70,14 @@ The harness was run on a tiny synthetic set, so these controls are not a promise
 - one channel in sixteen with a large constant mean, like the outlier channels of keys before [[rope|RoPE]];
 - codes in [[integer-grid|INT8]] (one scale per channel) and in [[fp8|E4M3]] (one power-of-two scale), both fit on calibration only.
 
+Here is the set itself, one channel at a time. Look for the three planted parts: a level for each sequence, a step every 2,048 entries, and the noise around them.
+
+::: dataset fig-plan-synth-data plan-synth view=sequences,shuffled metrics=shape,recipe,outlier,gainreq,gainblk,shufreq,shufblk
+**The rehearsal set.** *Four sequences:* channel 24 of the four evaluation sequences, 32,768 entries one after another (lapis), with the level that was planted — the channel's centre plus its request offset plus its block offset — as a vermilion step line. Solid lines separate the sequences, dotted lines the true blocks of 2,048 entries; drag across the plot to select a stretch. *Shuffled:* the same entries after the shuffle control. *Table:* every entry — sequence, entry, true block, planted level, the value of channel 24, its INT8 code and E4M3 index — and the value of channel 1, an outlier channel. *Numbers:* the recipe, and experiment 1a's float location gains of all 64 channels, before and after the shuffle. A browser twin of the harness's generator, seeded: the same recipe with other random draws, so its gains differ from the numpy run's in the second decimal. Synthetic data.
+:::
+
+Inside a true block the planted level is flat, so a location per block captures it: that is the structure a block dictionary should find. The shuffled view is what the shuffle control hands the harness — the same values, with every neighbourhood destroyed.
+
 ::: figure fig-plan-controls-run planControlsRun
 **The harness on synthetic data, with the shuffle control.** Rate of the [[loc]] dictionary (with its per-channel predict-or-not flag) in bits per element, against block size $\vb$ (log scale). Solid lapis: block scope on the original data; dashed vermilion: the same after shuffling entries across sequences. The last point, $\vb$ = 8192 (the whole sequence), is request scope. Dashed peacock lines: global scope (fit on calibration). Grey line: solo coding, rung 0. Dotted vertical line: the planted block length. Computed by `analysis/plan_harness.py`; 4 sequences × 8192 entries × 64 channels. Switch the number format, the rate and the data shown.
 :::

@@ -142,6 +142,14 @@ How to read it:
 - **The best block is 2048**, the planted length, in every original row; after the shuffle the best "block" is the largest one and $\vgainblk$ is zero.
 - **E4M3 starts lower** (6.367 bits for solo coding against INT8's 7.073 in the entropy rate): the log grid suits context-free coding. **INT8 keeps more of the gain** in the fixed-length rate. Both effects were predicted on paper ([[#homework-the-grid]]).
 
+The six rows are a slice of 58 numbers. The card holds all of them; its first view lines up four ways of reading the same run.
+
+::: dataset fig-plan-ladder-readings plan-ladder view=readings,table1 metrics=bestb,int8-entropy,int8-fixed,e4m3-entropy,e4m3-fixed,e4m3-noflag,solo
+**Everything the harness printed for loc on the rehearsal set.** *Four readings:* for loc with its per-channel flag, the request gain (lapis) and the block gain (vermilion) stacked, in each 8-bit grid and each rate, on the original data (full colour) and after the shuffle (pale). The number on top is the total; the dashed lines are the 0.25 and 0.75 bit of the [[#plan-decision-rule|decision rule]]. Hover a bar for its parts. *Table 1:* the rates at global, request and best block scope, for both coders, grids and data sets. *Table:* all 58 rates. Computed by `analysis/plan_harness.py` on 4 × 8,192 entries × 64 channels; synthetic data, a check of the method.
+:::
+
+The same planted structure stands 0.80 to 0.94 bit tall in three readings and 0.22 bit in the fourth. Nothing in the data changed between them — only the grid, and the way the residuals are priced.
+
 And one honest flaw. **Solo coding's fixed-length rate is exactly 8.0 bits** in both formats. The plain fixed-length format cannot shorten raw codes that use the whole range, so against this baseline every dictionary looks good. A fair rung 0 for the fixed-length column splits off the exponent, as [[#papers-splitzip|SplitZip]] does, and saves about a bit on its own. The harness does not have that rung yet; until it does, fixed-length gains over "solo" overstate what dictionaries add.
 
 ::: note numbers How long will the real ladder take?

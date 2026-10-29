@@ -124,14 +124,13 @@
       });
     },
     columns: [
-      { key: 's', label: 'step' },
-      { key: 'top', label: 'heaviest block' },
+      { key: 'top', label: 'top block' },
       { key: 'top1', label: 'its share', fmt: v => fmtPct(v, 0) },
-      { key: 'top4', label: 'top 4 blocks', fmt: v => fmtPct(v, 0) },
-      { key: 'touched', label: 'blocks touched' },
-      { key: 'miss', label: `misses (B = ${B2})` },
+      { key: 'top4', label: 'top 4', fmt: v => fmtPct(v, 0) },
+      { key: 'touched', label: 'blocks hit' },
+      { key: 'miss', label: 'misses' },
       { key: 'dmiss', label: 'δ-misses' },
-      { key: 'loads', label: 'dictionary loads' },
+      { key: 'loads', label: 'loads' },
     ],
     csvColumns: ['s', 'sel'],
     highlights: {
@@ -141,19 +140,20 @@
     views: {
       heat: { label: 'Blocks by step', legend: false, highlights: ['switch'], draw: heat,
         note: `Each column is one decode step, each row one block of ${TR.b} positions; the shade counts how many of the step's ${TR.k} selections fall in that block. A thin dark bar marks a block whose dictionary is resident after the step. Hover for the counts.` },
-      misses: DS.views.timeline({
-        x: 's', y: 'miss', xlabel: 'decode step', ylabel: 'entries per step', xname: 'step', ydomain: [0, 40], width: 1.3, highlights: ['loads'], legend: 'hl',
+      misses: Object.assign(DS.views.timeline({
+        x: 's', y: 'miss', xlabel: 'decode step', ylabel: 'entries per step', xname: 'step', ydomain: [0, 40], width: 1.3,
         label: 'Misses per step', xfmt: v => fmt(v, 0), yfmt: v => fmt(v, 0),
         after(P, ctx) {
           line(P, ctx.rows.map(r => [r.s, r.dmiss]), { color: series(2), width: 1.3 });
-          P.svg.closest('div').before(legend([[`token misses (hot cache of ${B2})`, series(0)], [`δ-misses (${ND} dictionaries resident)`, series(2)]]));
+          P.svg.closest('div').before(legend([[`token misses (hot cache of ${B2})`, series(0)], [`δ-misses (${ND} dictionaries resident)`, series(2)], ...(ctx.hl ? [[esc(ctx.hl.label), series(1), 'dot']] : [])]));
         },
+      }), { highlights: ['loads'], legend: false,
         note: 'Step 0 starts from an empty cache: all 128 selections miss (off the top of the plot). After that, a few misses per step; the vermilion dots mark steps on which a dictionary had to be loaded.',
       }),
     },
     metrics: [
       { id: 'n', label: 'decode steps × selections', value: rows => rows.length, fmt: v => `${v} × ${TR.k}`,
-        note: `Each step selects ${TR.k} of ${fmt(TR.n)} positions — about 3 %, the sparsity of a real indexer picking 2,048 of a 64K context.` },
+        note: `Each step selects ${TR.k} of ${TR.n.toLocaleString('en-US')} positions — about 3 %, the sparsity of a real indexer picking 2,048 of a 64K context.` },
       { id: 'top', label: 'share of a step held by its heaviest 1 and 4 blocks', value: rows => [mean(rows.map(r => r.top1)), mean(rows.map(r => r.top4))], fmt: v => `${fmtPct(v[0], 0)} · ${fmtPct(v[1], 0)}`,
         note: `Spread evenly, one block of 16 would hold 6 %. Here selections pile into a few blocks: the heavy blocks that make a per-block dictionary worth keeping on the GPU.` },
       { id: 'life', label: 'how long the heaviest block stays heaviest', value: rows => rows.length / rows.filter((r, s) => !s || rows[s - 1].top !== r.top).length, fmt: v => `${fmt(v, 1)} steps on average`,
@@ -161,7 +161,7 @@
       { id: 'miss', label: 'token miss rate, hot cache of $\\vB$ = 128, 256, 512', tex: '\\vm', value: () => MISS(), fmt: v => v.map(x => fmtPct(x, 1)).join(' · '),
         note: 'Far below HiSparse\'s 30, 13 and 7 %: this toy is much more local than a real trace, which is why its numbers show the shape of the measurement and not its result. (The numpy run of the same recipe: 8.8, 2.9 and 2.2 %.)' },
       { id: 'fd', label: 'δ-miss fraction for 1, 2, 4, 8, 16 resident dictionaries', tex: '\\vfD', value: () => FD().map(r => r.fD), fmt: v => v.map(x => fmtPct(x, 0)).join(' · '),
-        note: 'The share of misses whose block dictionary is already on the GPU, with a hot cache of 256 and the heaviest-blocks policy. It can only rise as more dictionaries stay resident; with all 16 resident it would be 100 % after the first loads. (numpy run: 10, 22, 41, 72 and 88 %.)' },
+        note: 'The share of misses whose block dictionary is already on the GPU, with a hot cache of 256 and the heaviest-blocks policy. It rises as more dictionaries stay resident. With all 16 resident every later miss finds its dictionary; only the cold start, 128 misses before any dictionary is loaded, keeps it below 100 %. (numpy run: 10, 22, 41, 72 and 88 %.)' },
       { id: 'nload', label: 'dictionary loads per step, 4 resident', tex: '\\vnload', value: () => R4().nload, fmt: v => `${fmt(v, 2)}`,
         note: 'Below the 0.1 break-even of a heavy dictionary: the heavy blocks live long enough that a load serves many steps. (numpy run: 0.13.)' },
     ],
