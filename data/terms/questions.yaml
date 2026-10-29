@@ -1,0 +1,16 @@
+# Terms of Part VIII (The questions). Writer: questions.
+big-question:
+  label: big-picture question
+  name: big-picture question (Q1–Q3)
+  cat: project
+  home: questions-two-kinds
+  short: >-
+    An open-ended question the project exists to get closer to — Q1 (is there neighbour similarity?), Q2 (can a store use it?), Q3 (do misses pile into few blocks?). Too wide to answer with one experiment.
+
+framework-question:
+  label: framework question
+  name: experiment-framework question (A–D)
+  cat: project
+  home: questions-two-kinds
+  short: >-
+    A question asked together with its measuring set-up — what is varied, what is held fixed, how every byte is charged — and with each possible outcome and its meaning written down before any data. Frameworks A–D.

@@ -1,0 +1,8 @@
+# Terms added by the homework-a writer (Part VI, pages VI.1–VI.12).
+entry-tax:
+  label: per-entry tax
+  name: per-entry tax (side information sent with every entry)
+  cat: project
+  home: homework-dictionary-shape
+  short: >-
+    Bits a dictionary coder must store with every single entry on top of its residual: which centroid ($\log_2 \vC$ bits), which sibling ($\log_2 \vb$ bits), a flag. Spread over the entry's $\vd$ elements it is the $\vtax$ of the accounting.

@@ -293,15 +293,15 @@
 .lg-box { width: .8rem; height: .8rem; border-radius: 2px 4px 2px 4px; background: var(--kc); }
 .lg-band { width: 1.3rem; height: .75rem; border-radius: 2px; border-top: 2px solid var(--kc); background: color-mix(in srgb, var(--kc) 22%, transparent); }
 
-.tbl-wrap { width: 100%; overflow-x: auto; }
-.tbl-wrap table.data { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
-.tbl-wrap table.data th { font-family: var(--f-sc); font-weight: 500; letter-spacing: .03em; color: var(--ink-2); text-align: right; padding: .3rem .55rem; border-bottom: 1.5px solid var(--rule); white-space: nowrap; }
-.tbl-wrap table.data td { font-family: var(--f-mono); font-size: .84rem; text-align: right; padding: .25rem .55rem; border-bottom: 1px solid color-mix(in srgb, var(--rule) 45%, transparent); white-space: nowrap; }
-.tbl-wrap table.data .l { text-align: left; }
-.tbl-wrap table.data tr.sum td { border-top: 1.5px solid var(--rule); font-weight: 600; }
-.tbl-wrap table.data tr.hl td { background: color-mix(in srgb, var(--c) 12%, transparent); }
-.tbl-wrap table.data td.pos { color: var(--good); }
-.tbl-wrap table.data td.neg { color: var(--bad); }
+.fig-host .tbl-wrap { width: 100%; overflow-x: auto; }
+.fig-host .tbl-wrap table.data { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.fig-host .tbl-wrap table.data th { font-family: var(--f-sc); font-weight: 500; letter-spacing: .03em; color: var(--ink-2); text-align: right; padding: .3rem .55rem; border-bottom: 1.5px solid var(--rule); white-space: nowrap; }
+.fig-host .tbl-wrap table.data td { font-family: var(--f-mono); font-size: .84rem; text-align: right; padding: .25rem .55rem; border-bottom: 1px solid color-mix(in srgb, var(--rule) 45%, transparent); white-space: nowrap; }
+.fig-host .tbl-wrap table.data .l { text-align: left; }
+.fig-host .tbl-wrap table.data tr.sum td { border-top: 1.5px solid var(--rule); font-weight: 600; }
+.fig-host .tbl-wrap table.data tr.hl td { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.fig-host .tbl-wrap table.data td.pos { color: var(--good); }
+.fig-host .tbl-wrap table.data td.neg { color: var(--bad); }
 
 /* math in figures */
 .tex.d { display: block; text-align: center; overflow-x: auto; overflow-y: hidden; padding: .2rem 0; }

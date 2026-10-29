@@ -1,0 +1,24 @@
+/* Part V figures of writer papers-a. Tokens only (see theme/assets/css/tokens.css). Every class starts with .pa- */
+.pa-strip { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px; font-family: var(--f-mono); font-size: .72rem; }
+.pa-cell { display: flex; flex-direction: column; align-items: center; padding: .15rem 0; border-radius: 5px; background: color-mix(in srgb, var(--peacock) 16%, var(--paper)); border: 1px solid color-mix(in srgb, var(--peacock) 45%, transparent); line-height: 1.25; }
+.pa-cell b { font-weight: 600; color: var(--ink); }
+.pa-cell i { font-style: normal; color: var(--ink-2); }
+.pa-cell.is-esc { background: color-mix(in srgb, var(--vermilion) 18%, var(--paper)); border-color: color-mix(in srgb, var(--vermilion) 60%, transparent); }
+.pa-cell.is-esc i { color: var(--ink); font-weight: 700; }
+.pa-esc-list { font-family: var(--f-mono); font-size: .78rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.pa-esc-list b { font-family: var(--f-sc); color: var(--ink); margin-right: .3rem; }
+@media (max-width: 620px) { .pa-strip { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+
+.pa-bins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; }
+.pa-bin { display: flex; flex-direction: column; gap: .3rem; padding: .55rem .6rem; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper); }
+.pa-bin.is-sent { border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 9%, var(--paper)); }
+.pa-bin-k { font-family: var(--f-sc); font-size: .82rem; color: var(--ink-2); }
+.pa-bin-m { display: flex; gap: .5rem; }
+.pa-bin-m code { font-size: .95rem; padding: .1rem .35rem; border-radius: 5px; color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, transparent); }
+.pa-bin-m code.is-x { outline: 2px dashed var(--ink-2); outline-offset: 1px; }
+.pa-bin-m code.is-pick { background: color-mix(in srgb, var(--c) 28%, var(--paper)); font-weight: 700; }
+.pa-bin-d { font-size: .78rem; color: var(--ink-2); font-style: italic; }
+.pa-verdict { padding: .5rem .75rem; border-radius: 8px; font-size: .92rem; color: var(--ink); }
+.pa-verdict.is-ok { background: color-mix(in srgb, var(--good) 14%, var(--paper)); border-left: 4px solid var(--good); }
+.pa-verdict.is-bad { background: color-mix(in srgb, var(--bad) 14%, var(--paper)); border-left: 4px solid var(--bad); }
+@media (max-width: 620px) { .pa-bins { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

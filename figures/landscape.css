@@ -1,0 +1,82 @@
+/* Part III figures. Tokens only (see theme/assets/css/tokens.css); every class starts with ls-. */
+
+/* III.2 attention toy: the output as a stacked mix of values */
+.ls-mix-wrap { display: grid; grid-template-columns: auto 1fr; gap: .7rem; align-items: center; }
+.ls-mix-lbl { font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); }
+.ls-mix { display: flex; height: 1.3rem; border-radius: 999px; overflow: hidden; border: 1px solid var(--rule); background: var(--paper); }
+.ls-mix-seg { display: block; min-width: 0; transition: flex-grow .15s; }
+@media (max-width: 520px) { .ls-mix-wrap { grid-template-columns: 1fr; gap: .3rem; } }
+
+/* III.3 entry anatomy: one entry as a strip of numbers */
+.ls-strip { display: flex; gap: 3px; min-height: 3.2rem; }
+.ls-strip-seg { display: flex; align-items: center; justify-content: center; min-width: 0; border-radius: 6px; padding: .2rem .3rem; border: 1px solid var(--rule); outline-offset: 2px; }
+.ls-strip-seg.is-k { background: color-mix(in srgb, var(--lapis) 22%, var(--paper)); }
+.ls-strip-seg.is-v { background: color-mix(in srgb, var(--vermilion) 18%, var(--paper)); }
+.ls-strip-seg.is-l { background: color-mix(in srgb, var(--t-entry) 22%, var(--paper)); }
+.ls-strip-lbl { font-family: var(--f-sc); font-size: .82rem; color: var(--ink); text-align: center; line-height: 1.15; overflow-wrap: anywhere; }
+
+/* III.5 memory wall: value-against-limit meters */
+.ls-meters { display: flex; flex-direction: column; gap: .9rem; }
+.ls-meter { display: grid; grid-template-columns: 12rem 1fr 6.5rem; gap: .8rem; align-items: center; }
+.ls-meter-lbl { font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); line-height: 1.2; }
+.ls-meter-track { position: relative; height: 1.5rem; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.ls-meter-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--good); transition: width .2s; }
+.ls-meter.is-over .ls-meter-fill { background: var(--bad); }
+.ls-meter-lim { position: absolute; top: -.35rem; bottom: -.35rem; width: 0; border-left: 2px dashed var(--ink); }
+.ls-meter-limlbl { position: absolute; top: -1.25rem; transform: translateX(-50%); font-family: var(--f-mono); font-size: .72rem; color: var(--ink-2); white-space: nowrap; }
+.ls-meter-val { font-family: var(--f-mono); font-size: .9rem; color: var(--ink); text-align: right; }
+.ls-meters { padding-top: .6rem; }
+@media (max-width: 560px) {
+  .ls-meter { grid-template-columns: 1fr auto; row-gap: 1.1rem; }
+  .ls-meter-lbl { grid-column: 1 / -1; }
+}
+
+/* III.6 HiSparse system: archive | lift | desk (stacks on phones) */
+.ls-sys { display: grid; grid-template-columns: 1fr 7.5rem 1.25fr; gap: .6rem; align-items: stretch; }
+.ls-sys-tier { border-radius: 12px; padding: .6rem .7rem; display: flex; flex-direction: column; gap: .45rem; border: 1.5px solid var(--rule); background: var(--paper-3); }
+.ls-sys-tier.is-gpu { border-color: var(--t-hisparse); background: color-mix(in srgb, var(--t-hisparse) 6%, var(--paper-3)); }
+.ls-sys-head { display: flex; flex-direction: column; line-height: 1.2; }
+.ls-sys-head b { font-family: var(--f-sc); font-size: 1rem; color: var(--ink); }
+.ls-sys-head span { font-style: italic; font-size: .85rem; color: var(--ink-3); }
+.ls-sys-hist { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+.ls-sys-cell, .ls-sys-slot { display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: .74rem; aspect-ratio: 1.15; border-radius: 5px; background: color-mix(in srgb, var(--t-entry) 16%, var(--paper)); border: 1px solid var(--rule); color: var(--ink); }
+.ls-sys-cell.is-sel { outline: 2.5px solid var(--t-indexer); outline-offset: -1px; font-weight: 700; }
+.ls-sys-note { margin: 0; font-size: .82rem; color: var(--ink-2); line-height: 1.3; }
+.ls-sys-link { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .15rem; line-height: 1.2; outline-offset: 3px; }
+.ls-sys-link b { font-family: var(--f-sc); font-size: .9rem; }
+.ls-sys-link span { font-size: .82rem; color: var(--ink-2); }
+.ls-sys-link .ls-sys-miss { font-family: var(--f-mono); font-size: .76rem; color: var(--ink); background: color-mix(in srgb, var(--t-hot-cache) 16%, transparent); border-radius: 999px; padding: .05rem .45rem; }
+.ls-sys-arrow { display: block; width: 100%; height: 0; border-top: 3px solid var(--t-hot-cache); position: relative; margin-bottom: .3rem; }
+.ls-sys-arrow::after { content: ""; position: absolute; right: -2px; top: -8px; border: 6.5px solid transparent; border-left: 10px solid var(--t-hot-cache); border-right: 0; }
+.ls-sys-box { border-radius: 9px; padding: .4rem .55rem; font-size: .86rem; line-height: 1.3; background: var(--paper); border: 1px solid var(--rule); outline-offset: 2px; }
+.ls-sys-box b { font-family: var(--f-sc); }
+.ls-sys-box.is-indexer { border-color: var(--t-indexer); }
+.ls-sys-box.is-hot { border: 2px solid var(--t-hot-cache); display: flex; flex-direction: column; gap: .4rem; }
+.ls-sys-slots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.ls-sys-slot.is-hit { background: color-mix(in srgb, var(--good) 28%, var(--paper)); border-color: var(--good); }
+.ls-sys-slot.is-miss { background: color-mix(in srgb, var(--t-hot-cache) 30%, var(--paper)); border-color: var(--t-hot-cache); font-weight: 700; }
+.ls-sys-down { align-self: center; width: 0; height: .7rem; border-left: 2px solid var(--ink-3); position: relative; margin: -.15rem 0; }
+@media (max-width: 640px) {
+  .ls-sys { grid-template-columns: 1fr; }
+  .ls-sys-link { flex-direction: row; flex-wrap: wrap; gap: .2rem .6rem; padding: .2rem 0; }
+  .ls-sys-arrow { width: 0; height: 1.6rem; border-top: 0; border-left: 3px solid var(--t-hot-cache); margin: 0 .4rem 0 0; }
+  .ls-sys-arrow::after { right: auto; left: -8px; top: auto; bottom: -2px; border: 6.5px solid transparent; border-top: 10px solid var(--t-hot-cache); border-bottom: 0; }
+}
+
+/* III.10 reference setting: a pinboard of frozen numbers */
+.ls-pins { display: flex; flex-direction: column; gap: .8rem; }
+.ls-pin-head { font-family: var(--f-sc); font-size: .9rem; letter-spacing: .04em; color: var(--ink-2); margin-bottom: .3rem; border-bottom: 1px solid color-mix(in srgb, var(--t-reference-setting) 40%, transparent); }
+.ls-pin-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: .5rem; }
+.ls-pin { display: flex; flex-direction: column; gap: .2rem; padding: .45rem .6rem; border-radius: 9px; background: var(--paper-3); border: 1px solid var(--rule); border-top: 3px solid var(--t-reference-setting); outline-offset: 2px; transition: box-shadow .2s; }
+.ls-pin-lbl { font-size: .8rem; line-height: 1.2; color: var(--ink-2); }
+.ls-pin-val { font-family: var(--f-mono); font-size: 1.02rem; color: var(--ink); }
+.ls-pin.is-changed { box-shadow: 0 0 0 2.5px var(--c); }
+
+/* III.11 derived numbers: chains of arithmetic */
+.ls-chains { display: grid; grid-template-columns: auto 1fr; gap: .5rem .8rem; align-items: center; }
+.ls-chain-head { font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); }
+.ls-chain { display: flex; flex-wrap: wrap; gap: .3rem .25rem; align-items: center; }
+.ls-chain-chip { font-size: .84rem; line-height: 1.25; padding: .2rem .55rem; border-radius: 999px; background: var(--paper-3); border: 1px solid var(--rule); color: var(--ink); }
+.ls-chain-chip.is-bind { border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 10%, var(--paper-3)); }
+.ls-chain-arrow { color: var(--ink-3); font-size: .9rem; }
+@media (max-width: 560px) { .ls-chains { grid-template-columns: 1fr; } }

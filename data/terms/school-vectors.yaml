@@ -1,0 +1,8 @@
+# Terms introduced in Part II, pages II.13–II.25 (writer: school-vectors).
+standardize:
+  label: standardize
+  name: standardizing a channel
+  cat: stats
+  home: school-vectors
+  short: >-
+    Subtract a channel's mean and divide by its standard deviation, so every channel has mean 0 and spread 1 and channels measured in different units can be compared.

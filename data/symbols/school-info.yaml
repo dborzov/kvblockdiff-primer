@@ -1,0 +1,8 @@
+# Symbols introduced on pages II.2–II.12 (writer: school-info). See data/symbols/core.yaml for the format.
+phat:
+  tex: '\hat{p}'
+  fam: frac
+  name: model probability
+  unit: ""
+  home: school-arithmetic
+  short: 'The probability a coder''s model assigns to an outcome. It may differ from the true probability $\vp$; the difference costs bits (cross-entropy).'

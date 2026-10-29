@@ -1,0 +1,9 @@
+# Symbols introduced in Part V (Papers), pages V.7–V.12 (writer papers-b). Fields as in core.yaml.
+ngrp:   { tex: 'n_{\mathrm{grp}}', fam: count, name: scale-group size, unit: numbers, home: papers-kivi,
+          short: 'How many numbers share one rounding ruler (one smallest value and one step); KIVI uses 32.' }
+natoms: { tex: 'n_{\mathrm{atoms}}', fam: count, name: dictionary atoms, unit: atoms, home: papers-lexico,
+          short: 'Number of atoms in a sparse-coding dictionary; naming one atom costs $\log_2 \vnatoms$ bits. Lexico uses about 4096.' }
+s:      { tex: 's', fam: count, name: atoms per vector, unit: atoms, home: papers-lexico,
+          short: 'How many atoms sparse coding uses to describe one vector (its sparsity).' }
+nu:     { tex: '\nu', fam: stat, name: grid noise floor, unit: variance (standardized), home: papers-kvtc,
+          short: 'The rounding noise a stored number grid adds to every channel, as a share of the average variance. A lossless coder must reproduce it.' }

@@ -1,0 +1,435 @@
+{
+ "meta": {
+  "script": "analysis/homework_b_rehearsal.py",
+  "seed": 20261029,
+  "d": 64,
+  "tokens_per_request": 16384,
+  "calibration_requests": 32,
+  "test_requests": 4,
+  "shuffle_pool_requests": 32,
+  "true_block": 2048,
+  "sigma_total_codes": 30.0,
+  "shares": {
+   "global_rank8": 0.4,
+   "request_mean": 0.1,
+   "block_mean": 0.2,
+   "block_rank2": 0.1,
+   "noise": 0.2
+  },
+  "grid": "integers clipped to [-127, 127] (INT8)",
+  "rate_model": "per-channel two-sided geometric (discretized Laplace) fit on the scope's own data",
+  "vq": {
+   "centroids": 256,
+   "kmeans_iterations": 12,
+   "w": 257
+  },
+  "sib": {
+   "targets_per_block": 512,
+   "prediction": "nearest earlier entry of the block (L2)"
+  },
+  "klt": "rotated by the block's covariance eigenbasis and re-rounded; basis cost excluded",
+  "clipped_fraction": 7.2e-05,
+  "runtime_s": 24.3
+ },
+ "b": [
+  128,
+  256,
+  512,
+  1024,
+  2048,
+  4096,
+  8192
+ ],
+ "original": {
+  "block": {
+   "loc": [
+    6.8559,
+    6.7978,
+    6.7689,
+    6.7544,
+    6.7471,
+    6.8394,
+    6.8847
+   ],
+   "klt": [
+    6.077,
+    6.1416,
+    6.1643,
+    6.1738,
+    6.1774,
+    6.2504,
+    6.3343
+   ],
+   "vq": [
+    null,
+    null,
+    9.6325,
+    8.132,
+    7.2938,
+    6.9087,
+    6.7443
+   ],
+   "sib": [
+    6.9728,
+    6.8675,
+    6.7979,
+    6.7469,
+    6.7063,
+    6.7212,
+    6.7266
+   ]
+  },
+  "parts": {
+   "loc": [
+    {
+     "resid": 6.7309,
+     "side": 0.0,
+     "dict": 0.125
+    },
+    {
+     "resid": 6.7353,
+     "side": 0.0,
+     "dict": 0.0625
+    },
+    {
+     "resid": 6.7376,
+     "side": 0.0,
+     "dict": 0.0312
+    },
+    {
+     "resid": 6.7388,
+     "side": 0.0,
+     "dict": 0.0156
+    },
+    {
+     "resid": 6.7393,
+     "side": 0.0,
+     "dict": 0.0078
+    },
+    {
+     "resid": 6.8355,
+     "side": 0.0,
+     "dict": 0.0039
+    },
+    {
+     "resid": 6.8828,
+     "side": 0.0,
+     "dict": 0.002
+    }
+   ],
+   "klt": [
+    {
+     "resid": 5.952,
+     "side": 0.0,
+     "dict": 0.125
+    },
+    {
+     "resid": 6.0791,
+     "side": 0.0,
+     "dict": 0.0625
+    },
+    {
+     "resid": 6.1331,
+     "side": 0.0,
+     "dict": 0.0312
+    },
+    {
+     "resid": 6.1582,
+     "side": 0.0,
+     "dict": 0.0156
+    },
+    {
+     "resid": 6.1696,
+     "side": 0.0,
+     "dict": 0.0078
+    },
+    {
+     "resid": 6.2465,
+     "side": 0.0,
+     "dict": 0.0039
+    },
+    {
+     "resid": 6.3323,
+     "side": 0.0,
+     "dict": 0.002
+    }
+   ],
+   "vq": [
+    null,
+    null,
+    {
+     "resid": 5.4918,
+     "side": 0.125,
+     "dict": 4.0156
+    },
+    {
+     "resid": 5.9992,
+     "side": 0.125,
+     "dict": 2.0078
+    },
+    {
+     "resid": 6.1649,
+     "side": 0.125,
+     "dict": 1.0039
+    },
+    {
+     "resid": 6.2817,
+     "side": 0.125,
+     "dict": 0.502
+    },
+    {
+     "resid": 6.3683,
+     "side": 0.125,
+     "dict": 0.251
+    }
+   ],
+   "sib": [
+    {
+     "resid": 6.7384,
+     "side": 0.1094,
+     "dict": 0.125
+    },
+    {
+     "resid": 6.68,
+     "side": 0.125,
+     "dict": 0.0625
+    },
+    {
+     "resid": 6.626,
+     "side": 0.1406,
+     "dict": 0.0312
+    },
+    {
+     "resid": 6.575,
+     "side": 0.1562,
+     "dict": 0.0156
+    },
+    {
+     "resid": 6.5266,
+     "side": 0.1719,
+     "dict": 0.0078
+    },
+    {
+     "resid": 6.5298,
+     "side": 0.1875,
+     "dict": 0.0039
+    },
+    {
+     "resid": 6.5215,
+     "side": 0.2031,
+     "dict": 0.002
+    }
+   ]
+  },
+  "global": {
+   "loc": 7.0114,
+   "klt": 6.8406
+  },
+  "request": {
+   "loc": 6.9087,
+   "klt": 6.4341
+  }
+ },
+ "shuffled": {
+  "block": {
+   "loc": [
+    7.1206,
+    7.0626,
+    7.0336,
+    7.0191,
+    7.0118,
+    7.0082,
+    7.0064
+   ],
+   "klt": [
+    6.6714,
+    6.7384,
+    6.7614,
+    6.7712,
+    6.7756,
+    6.778,
+    6.7795
+   ],
+   "vq": [
+    null,
+    null,
+    10.0401,
+    8.5499,
+    7.7183,
+    7.285,
+    7.0611
+   ],
+   "sib": [
+    7.3612,
+    7.2672,
+    7.2041,
+    7.1574,
+    7.1151,
+    7.0768,
+    7.0357
+   ]
+  },
+  "parts": {
+   "loc": [
+    {
+     "resid": 6.9956,
+     "side": 0.0,
+     "dict": 0.125
+    },
+    {
+     "resid": 7.0001,
+     "side": 0.0,
+     "dict": 0.0625
+    },
+    {
+     "resid": 7.0023,
+     "side": 0.0,
+     "dict": 0.0312
+    },
+    {
+     "resid": 7.0035,
+     "side": 0.0,
+     "dict": 0.0156
+    },
+    {
+     "resid": 7.004,
+     "side": 0.0,
+     "dict": 0.0078
+    },
+    {
+     "resid": 7.0043,
+     "side": 0.0,
+     "dict": 0.0039
+    },
+    {
+     "resid": 7.0044,
+     "side": 0.0,
+     "dict": 0.002
+    }
+   ],
+   "klt": [
+    {
+     "resid": 6.5464,
+     "side": 0.0,
+     "dict": 0.125
+    },
+    {
+     "resid": 6.6759,
+     "side": 0.0,
+     "dict": 0.0625
+    },
+    {
+     "resid": 6.7302,
+     "side": 0.0,
+     "dict": 0.0312
+    },
+    {
+     "resid": 6.7556,
+     "side": 0.0,
+     "dict": 0.0156
+    },
+    {
+     "resid": 6.7678,
+     "side": 0.0,
+     "dict": 0.0078
+    },
+    {
+     "resid": 6.7741,
+     "side": 0.0,
+     "dict": 0.0039
+    },
+    {
+     "resid": 6.7775,
+     "side": 0.0,
+     "dict": 0.002
+    }
+   ],
+   "vq": [
+    null,
+    null,
+    {
+     "resid": 5.8995,
+     "side": 0.125,
+     "dict": 4.0156
+    },
+    {
+     "resid": 6.4171,
+     "side": 0.125,
+     "dict": 2.0078
+    },
+    {
+     "resid": 6.5894,
+     "side": 0.125,
+     "dict": 1.0039
+    },
+    {
+     "resid": 6.658,
+     "side": 0.125,
+     "dict": 0.502
+    },
+    {
+     "resid": 6.6851,
+     "side": 0.125,
+     "dict": 0.251
+    }
+   ],
+   "sib": [
+    {
+     "resid": 7.1268,
+     "side": 0.1094,
+     "dict": 0.125
+    },
+    {
+     "resid": 7.0797,
+     "side": 0.125,
+     "dict": 0.0625
+    },
+    {
+     "resid": 7.0322,
+     "side": 0.1406,
+     "dict": 0.0312
+    },
+    {
+     "resid": 6.9855,
+     "side": 0.1562,
+     "dict": 0.0156
+    },
+    {
+     "resid": 6.9354,
+     "side": 0.1719,
+     "dict": 0.0078
+    },
+    {
+     "resid": 6.8854,
+     "side": 0.1875,
+     "dict": 0.0039
+    },
+    {
+     "resid": 6.8306,
+     "side": 0.2031,
+     "dict": 0.002
+    }
+   ]
+  },
+  "global": {
+   "loc": 7.0113,
+   "klt": 6.8354
+  },
+  "request": {
+   "loc": 7.0055,
+   "klt": 6.7797
+  }
+ },
+ "gains": {
+  "original": {
+   "g_req_loc": 0.103,
+   "g_blk_loc": 0.162,
+   "best_b_loc": 2048
+  },
+  "shuffled": {
+   "g_req_loc": 0.006,
+   "g_blk_loc": -0.001,
+   "best_b_loc": 8192
+  }
+ }
+}

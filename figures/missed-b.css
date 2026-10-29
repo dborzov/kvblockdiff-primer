@@ -1,0 +1,18 @@
+/* Part VII figures by missed-b (VII.9–VII.17). Tokens only; every class is prefixed "mb-". */
+.mb-seq-l { display: flex; gap: .5rem; align-items: center; flex: 1 1 18rem; font-family: var(--f-sc); font-size: .92rem; color: var(--ink-2); }
+.mb-seq { flex: 1; min-width: 0; font-family: var(--f-mono); font-size: .9rem; padding: .3rem .55rem; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent); background: var(--paper-3); color: var(--ink); }
+.mb-seq:focus { outline: 2px solid var(--c); outline-offset: 1px; }
+.mb-stack-wrap { overflow-x: auto; }
+.mb-stack-wrap svg { min-width: 22rem; }
+
+/* Workaround, scoped to missed-b's own pages (framework request filed): figures.css styles every
+   ".tbl-wrap table.data" as a right-aligned, no-wrap number table, which also catches Markdown tables
+   in the prose. Restore the prose-table look of site.css for Markdown tables only. */
+:is(body[data-page-id="missed-predictive-coding"], body[data-page-id="missed-lifting"], body[data-page-id="missed-context-modeling"],
+    body[data-page-id="missed-stack-distance"], body[data-page-id="missed-rate-distortion-bounds"], body[data-page-id="missed-light-dictionaries-first"],
+    body[data-page-id="missed-keys-before-rope"], body[data-page-id="missed-victim-tier"], body[data-page-id="missed-a-measurement-is-a-result"])
+  article.prose > .tbl-wrap table.data :is(th, td) { text-align: left; white-space: normal; font-family: inherit; font-size: .92rem; letter-spacing: normal; }
+:is(body[data-page-id="missed-predictive-coding"], body[data-page-id="missed-lifting"], body[data-page-id="missed-context-modeling"],
+    body[data-page-id="missed-stack-distance"], body[data-page-id="missed-rate-distortion-bounds"], body[data-page-id="missed-light-dictionaries-first"],
+    body[data-page-id="missed-keys-before-rope"], body[data-page-id="missed-victim-tier"], body[data-page-id="missed-a-measurement-is-a-result"])
+  article.prose > .tbl-wrap table.data :is(th, td)[style*="right"] { text-align: right; font-variant-numeric: tabular-nums; }

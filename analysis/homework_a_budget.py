@@ -29,14 +29,16 @@ int8_H = [hist_entropy(int8_codes(z * s, 1.0)) for s in int8_sigmas]
 H_int8_32 = hist_entropy(int8_codes(z * 32, 1.0))
 H_gauss_32 = 0.5 * np.log2(2 * np.pi * np.e * 32 ** 2)   # differential-entropy formula, step 1
 
-# ---- the reference E4M3 channel: sigma = 40 (the source's test scale); code usage for the figure
-ref = e4m3_index(e4m3_round(z * 40))
+# ---- the reference E4M3 channel: sigma = 64, so the 99.99th percentile of |x| lands near 256 (the site's
+#      scaling rule for E4M3, see the FP8 facts page); code usage for the figure
+REF = 64
+ref = e4m3_index(e4m3_round(z * REF))
 H_ref = hist_entropy(ref)
 codes, counts = np.unique(ref, return_counts=True)
 used_99 = int(np.searchsorted(np.cumsum(np.sort(counts)[::-1]) / N, 0.99) + 1)
 
 # ---- a fixed-length solo code for E4M3 (exponent split, SplitZip-style)
-xq = e4m3_round(z * 40)
+xq = e4m3_round(z * REF)
 ax = np.abs(xq)
 expo = np.where(ax < 2.0 ** -6, 0, np.floor(np.log2(np.maximum(ax, 2.0 ** -6))) + 7).astype(int)  # 4-bit field
 ev, ec = np.unique(expo, return_counts=True)
@@ -60,7 +62,7 @@ out = {
     "e4m3": {"sigma": e4m3_scales, "H": e4m3_H},
     "int8": {"sigma_codes": int8_sigmas, "H": int8_H},
     "ref": {
-        "e4m3_sigma": 40, "H_e4m3": H_ref, "H_int8_sigma32": H_int8_32, "H_int8_formula": H_gauss_32,
+        "e4m3_sigma": REF, "exponent_shares": {f"{int(v):04b}": float(c / N) for v, c in zip(ev, ec)}, "H_e4m3": H_ref, "H_int8_sigma32": H_int8_32, "H_int8_formula": H_gauss_32,
         "codes_used": int(len(codes)), "codes_for_99pct": used_99,
         "H_exponent": H_exp, "H_sign": H_sign, "H_mantissa_given_sign_exponent": H_mant_given,
         "fixed_length": fixed, "escape_position_bits": POS_BITS,

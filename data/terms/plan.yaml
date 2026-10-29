@@ -1,0 +1,40 @@
+# Terms of Part IX (The plan). Writer: plan. Each is defined ([[=id]]) once, on its home page.
+calibration-set:
+  label: calibration set
+  name: calibration set (data kept apart for the global scope)
+  cat: project
+  home: plan-data
+  short: >-
+    Sequences kept apart from the evaluation data. Every global-scope dictionary and model is fit on them. If they overlap the evaluation data, the global scope cheats; if they are too few, the global dictionary is poorly fit and the request-scope gain looks bigger than it is.
+
+proxy-model:
+  label: proxy model
+  name: proxy model (a small open model standing in for the real target)
+  cat: llm
+  home: plan-data
+  short: >-
+    The small open model whose KV cache wave 1 measures in place of the real sparse-attention target: Qwen3.5-2B's full-attention layers, replicated on Qwen3-1.7B. It fits a 16 GB GPU; whether its statistics transfer is itself a risk.
+
+grid-aware-model:
+  label: grid-aware model
+  name: grid-aware entropy model
+  cat: coding
+  home: plan-fp8-target
+  short: >-
+    An entropy model that describes the value, not the code number: a Laplace bump in value units, centred on the prediction, whose probability for each 8-bit code is the area over that code's grid cell. Needed on E4M3, where a single bump in index space fits badly.
+
+decision-rule:
+  label: decision rule
+  name: the decision rule of wave 1
+  cat: project
+  home: plan-decision-rule
+  short: >-
+    The table, written before any data, that maps wave 1's two scope gains $\vgainreq$ and $\vgainblk$ to what happens next: block scope, request scope, a cost-model decision, or a published negative.
+
+trace-replay:
+  label: trace replay
+  name: trace replay (re-running caches on recorded selections)
+  cat: systems
+  home: plan-wave2-indexer
+  short: >-
+    Recording which entries the (proxy) indexer selects at every decode step, then re-running the hot cache and the dictionary cache on that list. It measures miss rates, the δ-miss fraction and dictionary loads without running any kernel.

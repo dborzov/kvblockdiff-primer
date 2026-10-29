@@ -1,0 +1,8 @@
+/* Part VII (missed-a) figures. Tokens only; every class is prefixed "ma-". */
+.ma-panel-t { font-family: var(--f-sc); font-size: .92rem; color: var(--ink-2); margin-top: .2rem; }
+.ma-mi-tbl table.data { font-size: .9rem; }
+.ma-mi-tbl td.l, .ma-mi-tbl th.l { text-align: left; }
+.ma-mi-tbl tr.sum td { font-weight: 600; }
+figure.plate[data-fig^="ma"] .slider .num { flex: none; }
+figure.plate[data-fig^="ma"] .slider .sl-name { white-space: normal; }
+svg.plot .ma-intext { font-family: var(--f-mono); font-size: calc(11.5px * var(--fs, 1)); fill: var(--paper-3); }

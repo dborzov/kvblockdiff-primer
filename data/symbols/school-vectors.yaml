@@ -1,0 +1,5 @@
+# Symbols introduced in Part II, pages II.13–II.25 (writer: school-vectors).
+xvec:  { tex: '\mathbf{x}', fam: object, name: a vector (one reading), unit: "", home: school-vectors,
+         short: 'A whole vector of $\vd$ numbers, $\vxvec = (\vx_0, \dots, \vx_{\vd-1})$; its element in channel $\vc$ is $\vx_{\vc}$.' }
+Sigma: { tex: '\Sigma', fam: stat, name: covariance matrix, unit: "variance units", home: school-correlation,
+         short: 'The $\vd \times \vd$ table of covariances between every pair of channels; its diagonal holds the variances $\vsigma_{\vc}^2$.' }

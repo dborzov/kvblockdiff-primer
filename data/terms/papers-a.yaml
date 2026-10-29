@@ -1,0 +1,34 @@
+# Terms defined in Part V (Papers), pages V.1–V.6 and V.13 (writer papers-a).
+# Fields as in core.yaml. Every term here is defined ([[=id]]) exactly once, on its home page.
+
+data-path:
+  label: data path
+  name: data path (where compressed KV bytes travel, and how they are read)
+  cat: systems
+  home: papers-reading-guide
+  short: >-
+    Where a compressed KV cache travels and how it is read back: a bulk transfer between machines, a network fetch of a stored prefix, the GPU-resident footprint, or the sparse-decode miss path of scattered single-entry reads. The path, more than the statistics, decides what a codec may look like.
+
+disaggregation:
+  label: disaggregated serving
+  name: disaggregated serving (prefill and decode on separate GPUs)
+  cat: systems
+  home: papers-splitzip
+  short: >-
+    Running the prefill of a prompt and the decoding of its answer on different GPUs or machines. The finished KV cache of the prompt must then be shipped from the prefill side to the decode side, in one bulk transfer per request.
+
+slepian-wolf:
+  label: Slepian–Wolf
+  name: Slepian–Wolf coding (side information only at the decoder)
+  cat: info
+  home: papers-classics
+  short: >-
+    The 1973 theorem that $\vX$ can be sent losslessly at $\vH(\vX \mid \vY)$ bits even when only the receiver knows $\vY$ — the sender groups messages into bins and the receiver uses $\vY$ to pick the right member. Its lossy sibling is Wyner–Ziv coding.
+
+plus-factorization:
+  label: PLUS factorization
+  name: PLUS factorization (a rotation as integer-reversible steps)
+  cat: linalg
+  home: papers-classics
+  short: >-
+    Writing a matrix as a reordering of its rows (P) times three triangular factors (L, U, S) whose diagonals hold only ones when the matrix is a rotation. Each factor can be applied to integers with rounding and undone exactly, so any rotation becomes a lossless integer transform — lifting for whole matrices.

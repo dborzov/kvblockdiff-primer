@@ -1,0 +1,18 @@
+# Terms defined in Part V (Papers), pages V.7–V.12 and V.14 (writer papers-b).
+# Fields as in core.yaml. Every term here is defined ([[=id]]) exactly once, on its home page.
+
+scale-group:
+  label: scale group
+  name: scale group (numbers that share one rounding ruler)
+  cat: numbers
+  home: papers-kivi
+  short: >-
+    The set of numbers that are rounded with one shared ruler — one smallest value and one step size. Per-channel rounding makes each scale group one channel over a run of tokens (a column); per-token rounding makes it one token's vector (a row).
+
+sparse-coding:
+  label: sparse coding
+  name: sparse coding (a vector as a few atoms of a large dictionary)
+  cat: linalg
+  home: papers-lexico
+  short: >-
+    Describe a vector as a weighted sum of a few vectors ("atoms") picked from a large, fixed dictionary, and store only which atoms and their weights. VQ is the special case of one atom with weight 1; a KLT uses every axis with a weight.

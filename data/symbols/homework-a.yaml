@@ -1,0 +1,5 @@
+# Symbols added by the homework-a writer (Part VI, pages VI.1–VI.12).
+gain: { tex: '\mathrm{gain}', fam: info, name: gain of a dictionary, unit: bits per element, home: homework-dictionary-shape,
+        short: 'Bits per element that a dictionary''s prediction saves on the residual, compared with coding the element alone (solo), before any of the dictionary''s costs are paid.' }
+tax:  { tex: '\mathrm{tax}', fam: info, name: per-entry tax per element, unit: bits per element, home: homework-dictionary-shape,
+        short: 'The per-entry tax (an index, a pointer, a flag) spread over the entry: its bits per entry divided by $\vd$.' }
