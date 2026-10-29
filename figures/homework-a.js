@@ -637,14 +637,12 @@ window.FIG = window.FIG || {};
       row.v.forEach((v, j) => {
         const g = el('g', {}, P.g.data);
         el('rect', { x: P.x(x) + 1, y: yc - bh / 2, width: Math.max(1, P.x(x + v) - P.x(x) - 2), height: bh, rx: 4, style: `fill:${F[j].col};opacity:${j === 1 ? 1 : 0.8}` }, g);
-        if (P.x(x + v) - P.x(x) > 34 * P.fs) svgText(g, P.x(x + v / 2), yc + 4 * P.fs, fmt(v, 2), { class: 'val', 'text-anchor': 'middle' });
+        if (P.x(x + v) - P.x(x) > 34 * P.fs) svgText(g, P.x(x + v / 2), yc + 4 * P.fs, Math.abs(v - Math.round(v)) < 0.005 ? fmt(Math.round(v)) : fmt(v, 2), { class: 'val', 'text-anchor': 'middle' });
         hover(g, () => `<b>${row.cat} · ${F[j].name}</b><br>${fmt(v, 2)} bits — ${row.how[j]}`);
         x += v;
       });
       svgText(P.g.top, P.x(x) + 8 * P.fs, yc + 4 * P.fs, `${fmt(x, 2)}`, { class: 'val' });
     });
-    const xe = 1 + r.H_exponent;
-    annotate(P, xe, 2, 'the exponent shrinks;\nsign and mantissa barely move', { dx: 60, dy: -78 });
   };
 
   // ================================================================== VI.3 (and VI.13)  the variance ladder in bits
@@ -667,8 +665,9 @@ window.FIG = window.FIG || {};
     }
     const box = h('div');
     host.append(controls(...sl), box, h('div', { class: 'kpis' }, kT, kB, kC));
-    const D = Diagram(box, { w: 640, h: 230, label: 'Variance shares of the rungs and the bits each rung saves' });
-    const fs = D.fs, g = el('g', {}, D.svg), L = 90 * Math.min(fs, 1.35), R = 620;
+    const narrow = box.clientWidth < 520, W = narrow ? 380 : 640;
+    const D = Diagram(box, { w: W, h: 230, label: 'Variance shares of the rungs and the bits each rung saves' });
+    const fs = D.fs, g = el('g', {}, D.svg), L = 84 * Math.min(fs, 1.3), R = W - 14;
     function draw() {
       g.replaceChildren();
       const noise = 100 - sh.g - sh.q - sh.b;
@@ -704,7 +703,10 @@ window.FIG = window.FIG || {};
         hover(seg, () => `<b>${x.name} rung</b><br>explains ${fmtPct(x.of, 0)} of what is left<br>saves ½ log₂ 1/(1 − ${fmt(x.of, 2)}) = ${fmt(x.b, 2)} bits per element`);
         b0 += x.b;
       });
-      svgText(g, Math.min(XB(total), R - 4), y2 - 10 * fs, total > MAXB ? `total ${fmt(total, 2)} (off the scale)` : `total = ½ log₂(1 / noise share) = ${fmt(total, 2)}`, { class: 'annot', 'text-anchor': XB(total) > R - 170 * fs ? 'end' : XB(total) < L + 170 * fs ? 'start' : 'middle' });
+      const tl = total > MAXB ? `total ${fmt(total, 2)} (off the scale)` : narrow ? `total ${fmt(total, 2)} = ½ log₂(1 / noise)` : `total = ½ log₂(1 / noise share) = ${fmt(total, 2)}`;
+      const half = tl.length * 3.1 * fs, xt = XB(total);
+      svgText(g, xt - half < 4 ? 4 : xt + half > W - 4 ? W - 4 : xt, y2 - 10 * fs, tl, { class: 'annot', 'text-anchor': xt - half < 4 ? 'start' : xt + half > W - 4 ? 'end' : 'middle' });
+      D.svg.setAttribute('viewBox', `0 0 ${W} ${y2 + hh + 28 * fs}`);
       kT.set(fmt(total, 2), `bits per element, out of about 6.5`);
       kB.set(fmt(gains[2].b, 2), `bits; it explains ${fmtPct(gains[2].of, 0)} of what is left`);
       const need = 0.75 * (100 - sh.g - sh.q);

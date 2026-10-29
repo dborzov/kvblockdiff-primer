@@ -34,19 +34,17 @@ Six papers on these pages, a few more on the neighbouring ones, and each answere
 
 ## Two kinds of evidence, one empty square {#gap}
 
-| work | exact copy? | 8-bit target? | neighbours measured in bits? | controls? | single-entry reads? | sparse-decode miss path? |
-|---|---|---|---|---|---|---|
-| [[#papers-kivi\|KIVI]], [[#papers-kvquant\|KVQuant]] | no | no (2–3 bits) | no | no | yes (fixed-width codes) | no |
-| [[#papers-kvtc\|KVTC]] | no | no | no | no | no (DEFLATE stream) | no |
-| [[#papers-lexico\|Lexico]] | no | no | no | no | yes (per-vector atoms) | no |
-| [[#papers-cachegen\|CacheGen]] | no | no | as variance, not bits | no | no (coded chunks) | no |
-| [[#papers-kvcomp\|KVComp]] | no | no | no | no | in chunks of bits | no |
-| [[#papers-kv-codec\|KV-Codec]] | of rounded integers | no | no | no | no (video stream) | no |
-| [[#papers-splitzip\|SplitZip]] | yes | yes (E5M2) | no — order-0 only | no | almost (fixed-width) | no |
-| [[#papers-hisparse\|HiSparse]] | nothing compressed | — | — | — | yes (raw entries) | yes |
-| **kv-blockdiff** | **yes** | **yes** | **the question** | **built in** | **yes** | **yes** |
+::: figure fig-papers-gap-grid paGapGrid wide
+**Eight published works and this proposal, on the six questions that matter for kv-blockdiff.** Rows: the works (each name links to its page in this Part); columns: the questions. Green: yes; saffron: partly; grey: no; blank: does not apply (HiSparse compresses nothing). The dashed cell is the question this proposal asks. The buttons (or a click on a column header) highlight one column, and the readout says what it shows. Hover or tap a cell for the detail behind it. Our reading of each paper, as argued on its page; KIVI and KVQuant share a row.
+:::
 
-Read the table by columns. Two kinds of evidence exist, and they do not meet.
+::: try
+1. Start on "neighbours measured in bits": the column is grey from top to bottom, with one saffron cell (CacheGen, a variance ratio). That is the empty square.
+2. Highlight "exact copy" and "8-bit target": SplitZip is the only full yes in both — and it is order-0.
+3. Highlight "sparse-decode miss path": one yes, HiSparse, which compresses nothing.
+:::
+
+Read the grid by columns. Two kinds of evidence exist, and they do not meet.
 
 - **Lossy papers** show *where structure lives* — key channels with sizes of their own (KIVI, KVQuant), a few dominant directions (KVTC), atoms shared by all texts (Lexico), neighbours alike within a channel (CacheGen) — and what the model *tolerates*. Their yardstick is accuracy at a memory budget.
 - **Lossless coders** count bits, but without context: SplitZip prices each number by its own histogram (an order-0 bound of 6.19 bits on E5M2 KV), and the float coders do the same for exponents.

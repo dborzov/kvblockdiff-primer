@@ -1,6 +1,6 @@
 /* Part V (Papers), pages V.1–V.6 and V.13 — figures of writer papers-a. See docs/figures.md.
    Builders: paHisparsePoints (V.2), paSelectors (V.3), paEscapes (V.4), paFloatRatios (V.5),
-   paVideoLayout (V.6), paSlepianWolf (V.13). All data are either numbers quoted from papers
+   paVideoLayout (V.6), paSlepianWolf (V.13), paGapGrid (V.14). All data are either numbers quoted from papers
    (marked as such in tooltips) or exact/seeded toy computations; nothing is sampled at random. */
 window.FIG = window.FIG || {};
 
@@ -438,6 +438,68 @@ window.FIG = window.FIG || {};
       verdict.textContent = ok
         ? 'Correct: the other member of the bin differs from Y in at least two bits, so it cannot be X.'
         : 'Wrong: with two flips, the bin’s other member is closer to Y. The 2-bit price holds only while the promise (at most one flip) holds.';
+    }
+    draw();
+  };
+
+  /* ---------------------------------------------------------------- V.14 the gap, as a grid
+     Our reading of each paper (argued on its page), one cell per question. Status: yes · part · no · na · open. */
+  FIG.paGapGrid = (host) => {
+    const COLS = [
+      { k: 'exact', head: 'exact copy?', short: 'exact?', note: 'Only SplitZip rebuilds every bit. KV-Codec rebuilds its rounded integers exactly; the other KV papers are lossy and say what the model tolerates.' },
+      { k: 'bits8', head: '8-bit target?', short: '8-bit?', note: 'Only SplitZip measures at 8 bits (E5M2) — and its trick fails on E4M3. The lossy papers round to 2–3 bits; nobody targets an exact 8-bit copy.' },
+      { k: 'nbr', head: 'neighbours measured in bits?', short: 'neigh\u00adbours in bits?', note: 'The empty column. Nobody measures, in bits per number, what a neighbouring entry saves for an exact copy. CacheGen comes closest, as a variance ratio with an unclear baseline.' },
+      { k: 'ctrl', head: 'controls?', short: 'con\u00adtrols?', note: 'No paper shuffles the tokens to check that a gain is really about neighbours. KV-Codec ran half a control (scrambling channels), not the half we need.' },
+      { k: 'single', head: 'single-entry reads?', short: 'single reads?', note: 'Fixed-width codes can read one entry at a known address; streams (DEFLATE, video, coded chunks) must decode from their start.' },
+      { k: 'miss', head: 'sparse-decode miss path?', short: 'miss path?', note: 'Only HiSparse lives on the miss path, and it moves raw entries. Every compressor in this Part sits on another road.' },
+    ];
+    const Y = (t, d) => ({ s: 'yes', t, d }), N = (t, d) => ({ s: 'no', t, d }), PA = (t, d) => ({ s: 'part', t, d }), NA = d => ({ s: 'na', t: '—', d });
+    const ROWS = [
+      { name: 'KIVI, KVQuant', page: 'kivi', c: [N('no', 'lossy: rounded to 2–3 bits'), N('no', 'rounded to 2–3 bits'), N('no'), N('no'), Y('yes', 'fixed-width codes'), N('no')] },
+      { name: 'KVTC', page: 'kvtc', c: [N('no', 'lossy: small axes dropped'), N('no'), N('no'), N('no'), N('no', 'a DEFLATE stream'), N('no')] },
+      { name: 'Lexico', page: 'lexico', c: [N('no', 'lossy: a few atoms per vector'), N('no'), N('no'), N('no'), Y('yes', 'per-vector atoms'), N('no')] },
+      { name: 'CacheGen', page: 'cachegen', c: [N('no', 'lossy: differences rounded'), N('no'), PA('part', 'as a variance ratio, not bits'), N('no'), N('no', 'coded chunks'), N('no')] },
+      { name: 'KVComp', page: 'kvcomp', c: [N('no', 'lossy, error-bounded'), N('no'), N('no', 'no prediction step at all'), N('no'), PA('part', 'in chunks of bits'), N('no')] },
+      { name: 'KV-Codec', page: 'kv-codec', c: [PA('part', 'only of rounded integers'), N('no'), N('no', 'a bundled ratio, not bits per predictor'), N('no', 'channel scramble only'), N('no', 'a video stream'), N('no')] },
+      { name: 'SplitZip', page: 'splitzip', c: [Y('yes', 'every bit returns'), Y('yes', 'E5M2'), N('no', 'order-0 only'), N('no'), Object.assign(PA('almost', 'fixed-width; only the escapes need an index'), { ts: 'part' }), N('no')] },
+      { name: 'HiSparse', page: 'hisparse', c: [NA('nothing is compressed'), NA('nothing is compressed'), NA('nothing is compressed'), NA('nothing is compressed'), Y('yes', 'raw entries'), Y('yes', 'it is the miss path')] },
+      { name: 'kv-blockdiff', page: 'what-would-be-new', ours: true, c: [Y('yes'), Y('yes'), { s: 'open', t: 'the question', ts: 'open', d: 'what this proposal would measure' }, Y('built in', 'shuffle, synthetic, round trip'), Y('yes'), Y('yes')] },
+    ];
+    const LBL = { yes: 'yes', part: 'partly', no: 'no', na: 'does not apply', open: 'the open question' };
+    let col = 'nbr';
+    const ro = readout();
+    const pick = h('div');
+    const tbl = h('table', { class: 'pa-gap' });
+    const heads = COLS.map(c => {
+      const th = h('th', { scope: 'col' }, h('button', { type: 'button', class: 'pa-gap-h', 'aria-label': c.head, 'aria-pressed': 'false' }, h('span', { class: 'pa-gap-long', text: c.head }), h('span', { class: 'pa-gap-short', text: c.short })));
+      th.querySelector('button').addEventListener('click', () => { col = c.k; draw(); });
+      return th;
+    });
+    tbl.append(h('thead', {}, h('tr', {}, h('th', { scope: 'col', class: 'pa-gap-corner', text: 'work' }), ...heads)));
+    const tb = h('tbody'); tbl.append(tb);
+    const cells = ROWS.map(r => {
+      const tr = h('tr', { class: r.ours ? 'is-ours' : null });
+      tr.append(h('th', { scope: 'row' }, h('a', { href: `${(window.KV && KV.prefix) || '/'}papers/${r.page}/`, text: r.name })));
+      const tds = r.c.map((x, j) => {
+        const td = h('td', { class: `pa-g-${x.s}`, tabindex: 0 }, h('b', {}, h('span', { class: x.ts ? 'pa-gap-long' : null, text: x.t }), x.ts ? h('span', { class: 'pa-gap-short', text: x.ts }) : null), x.d ? h('small', { text: x.d }) : null);
+        hover(td, () => `<b>${r.name} · ${COLS[j].head}</b><br>${LBL[x.s]}${x.d ? ': ' + x.d : ''}`);
+        tr.append(td);
+        return td;
+      });
+      tb.append(tr);
+      return tds;
+    });
+    host.append(
+      controls(pick),
+      legend([['yes', 'var(--emerald)', 'box'], ['partly', 'var(--saffron)', 'box'], ['no', 'var(--ink-3)', 'box'], ['the open question', 'var(--vermilion)', 'box']]),
+      h('div', { class: 'pa-gap-wrap' }, tbl), ro);
+    function draw() {
+      pick.replaceChildren(seg(COLS.map(c => [c.k, c.head.replace('?', '')]), col, v => { col = v; draw(); }, 'Highlight one column'));
+      const j = COLS.findIndex(c => c.k === col);
+      heads.forEach((th, i) => { th.classList.toggle('is-col', i === j); th.querySelector('button').setAttribute('aria-pressed', String(i === j)); });
+      cells.forEach(tds => tds.forEach((td, i) => td.classList.toggle('is-col', i === j)));
+      const yes = ROWS.filter(r => !r.ours && r.c[j].s === 'yes').map(r => r.name);
+      ro.set([[COLS[j].head, COLS[j].note], ['a full yes among the 8 published works', yes.length ? yes.join(', ') : 'none']]);
     }
     draw();
   };

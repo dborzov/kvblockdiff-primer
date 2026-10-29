@@ -23,3 +23,15 @@ papers-temp-recipes:
     The readings and previous-value residuals of II.10–II.12, regrouped. Cut into groups of ten with the first as anchor,
     they show what CacheGen's "differences are smaller than values" is worth on one channel with a slow daily drift (V.11).
     Rounded to whole degrees, they show that a predictor saves fewer bits but a larger share on a coarse grid (V.12).
+papers-rope:
+  title: One pair of key channels, turned by RoPE
+  blurb: Pair 4 of a 128-wide key head over 64 tokens from position 1000 — a channel steady near 9 before RoPE, and the same numbers spun around a circle after it.
+  emblem: compass
+  unit: 64 tokens × 2 channels
+  source: synthetic, seeded
+  csv: rope-pair.csv
+  story: >-
+    A steady key channel (9 plus a little noise) and its quiet partner (0.6), turned by RoPE at 0.56 radians per token.
+    Drawn as points in the plane of the pair, the tight spot before RoPE is smeared around a circle of radius 9 after it:
+    lengths kept, directions spun. It is why KVQuant rounds keys before RoPE (V.8), and why a lossless coder would store
+    them that way.

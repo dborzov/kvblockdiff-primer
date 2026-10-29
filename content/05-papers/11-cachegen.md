@@ -24,6 +24,11 @@ cards:
     wrong: ["About 24 %", "About 50 %", "About 99 %"]
     why: The difference keeps at least twice the noise, so 2(1−f) ≤ 1/2.4, which gives f ≥ 0.79.
     sec: ratio
+  - q: On the Gull Rock temperatures, differences from a group anchor are 3.2× narrower in variance than the readings, differences from the reading before 63×. Why the gap?
+    a: The day moves within the five hours of a group, but hardly within half an hour
+    wrong: ["The anchor carries more sensor noise than other readings", "Anchors are rounded more coarsely", "The previous reading is predicted from the future"]
+    why: The difference from an anchor grows with distance as the daily cycle drifts away from it. The nearest neighbour has had no time to drift, so its difference is small.
+    sec: ratio
   - q: CacheGen's anchor groups have the shape of which kv-blockdiff object?
     a: A block of 10 tokens whose dictionary is one entry (the anchor)
     wrong: ["A hot cache of 10 slots", "A victim tier", "A global codebook"]
@@ -110,6 +115,7 @@ On this channel the anchor passes CacheGen's test: its differences are 3.2 times
 ::: takeaway
 - Per channel, a difference to a neighbour beats the channel's typical value only if slow drift dominates the fast noise.
 - If CacheGen's ratio is per channel, 79–83 % of the variance would be slow drift — strong, checkable, and not yet checked at 8 bits.
+- On the Gull Rock temperatures the anchor gives 3.2×, the reading before 63×: anchors buy parallel decoding with bits.
 :::
 
 ## Connections {#connections}

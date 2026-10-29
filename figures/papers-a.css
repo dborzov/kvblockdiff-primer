@@ -22,3 +22,38 @@
 .pa-verdict.is-ok { background: color-mix(in srgb, var(--good) 14%, var(--paper)); border-left: 4px solid var(--good); }
 .pa-verdict.is-bad { background: color-mix(in srgb, var(--bad) 14%, var(--paper)); border-left: 4px solid var(--bad); }
 @media (max-width: 620px) { .pa-bins { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* V.14 the gap grid */
+.pa-gap-wrap { overflow-x: auto; }
+.pa-gap { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; font-size: .8rem; }
+.pa-gap th, .pa-gap td { padding: .3rem .35rem; border-radius: 6px; vertical-align: top; text-align: left; line-height: 1.25; overflow-wrap: break-word; hyphens: manual; }
+.pa-gap-short { display: none; }
+.pa-gap thead th { vertical-align: bottom; }
+.pa-gap-corner { width: 6.2rem; font-family: var(--f-sc); font-weight: 500; color: var(--ink-3); }
+.pa-gap-h { all: unset; cursor: pointer; display: block; font-family: var(--f-sc); font-size: .78rem; color: var(--ink-2); line-height: 1.2; }
+.pa-gap-h:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; border-radius: 4px; }
+.pa-gap thead th.is-col { background: color-mix(in srgb, var(--c) 14%, var(--paper)); }
+.pa-gap thead th.is-col .pa-gap-h { color: var(--ink); font-weight: 600; }
+.pa-gap tbody th { font-weight: 500; }
+.pa-gap tbody th a { color: var(--ink); text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+.pa-gap tr.is-ours th, .pa-gap tr.is-ours td { border-top: 2px solid var(--ink-2); }
+.pa-gap tr.is-ours th a { font-weight: 700; }
+.pa-gap td b { display: block; font-weight: 600; color: var(--ink); }
+.pa-gap td small { display: block; font-size: .72rem; color: var(--ink-2); margin-top: .1rem; }
+.pa-g-yes { background: color-mix(in srgb, var(--emerald) 24%, var(--paper)); }
+.pa-g-part { background: color-mix(in srgb, var(--saffron) 26%, var(--paper)); }
+.pa-g-no { background: color-mix(in srgb, var(--ink) 5%, var(--paper)); }
+.pa-g-no b { color: var(--ink-3); font-weight: 500; }
+.pa-g-na { background: transparent; }
+.pa-g-na b { color: var(--ink-3); font-weight: 400; }
+.pa-g-open { background: color-mix(in srgb, var(--vermilion) 12%, var(--paper)); outline: 2px dashed var(--vermilion); outline-offset: -2px; }
+.pa-gap td.is-col { box-shadow: 0 0 0 2px var(--c); }
+@media (max-width: 620px) {
+  .pa-gap { font-size: .7rem; border-spacing: 2px; }
+  .pa-gap td small { display: none; }
+  .pa-gap-corner { width: 4.6rem; }
+  .pa-gap-h { font-size: .66rem; }
+  .pa-gap-long { display: none; }
+  .pa-gap-short { display: inline; }
+  .pa-gap th, .pa-gap td { padding: .25rem .2rem; }
+}

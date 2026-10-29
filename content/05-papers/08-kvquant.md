@@ -57,6 +57,14 @@ print(round(turn, 2), a_rope.round(1), b_rope.round(1))
 # 0.56 [-9.1 -7.2 -3.4  1.6  5.9  8.8] [-0.6 -5.1 -8.6 -8.9 -6.7 -2.4]
 ```
 
+The table is hand-rounded. Here is the same kind of pair over a longer window of 64 tokens, drawn as points in the plane of its two channels — the window the first figure below starts from.
+
+::: dataset fig-pb-kvq-plane papers-rope view=plane metrics=turn,level,spread,length
+**One pair of key channels, before and after RoPE.** Each dot is one token (64, positions 1000–1063), placed by its channel c8 number (horizontal) and its channel c9 number (vertical), on equal scales; lapis before RoPE, vermilion after; the dashed circle has radius 9. Hover a dot for its numbers; the Table tab lists them all. Synthetic, seeded data: a steady value plus a little noise, turned by pair 4's 0.56 radians per token.
+:::
+
+Before RoPE the 64 tokens are one tight spot near (9, 0.6). After it they are smeared around the circle. Every point keeps its distance from the centre, so nothing is lost, but channel c8 alone now swings from −9 to +9: its spread grows from 0.31 to 6.46.
+
 ## What KVQuant does, in our words {#what}
 
 KVQuant ([[lossy]]) starts where [[#papers-kivi|KIVI]] stops: keys rounded with one ruler per channel, values with one ruler per token. Then it makes four changes.
@@ -69,7 +77,7 @@ KVQuant ([[lossy]]) starts where [[#papers-kivi|KIVI]] stops: keys rounded with 
 The first change is easiest to see by sliding along RoPE's pairs. Each pair turns at its own speed, from one radian per token for the first pair to one full turn every ~54,000 tokens for the last.
 
 ::: figure fig-pb-kvq-rope pbKvqRope
-**One pair of key channels, before and after RoPE, over a window of 64 tokens.** Horizontal: tokens into the window. Vertical: the key value. Lapis: the first channel of the pair before RoPE (a steady value near 9 plus a little noise, illustrative). Vermilion: the same channel after RoPE (solid) and its partner (dashed). Shaded bands: the range a per-channel ruler must cover, before (lapis) and after (vermilion). The slider picks the pair (0 turns fastest, 63 slowest, for a head of 128 channels and the usual base of 10,000); the buttons pick where in the text the window starts. The read-out gives the turn per token, the channel's level (mean) and spread (standard deviation) before and after, the step of a 3-bit min–max ruler, and a rough count of the extra bits an exact per-channel code would need: $\log_2$ of the ratio of spreads.
+**One pair of key channels, before and after RoPE, over a window of 64 tokens.** Horizontal: tokens into the window. Vertical: the key value. Lapis: the first channel of the pair before RoPE (a steady value near 9 plus a little noise, illustrative: the same 64 numbers as in [[#fig-pb-kvq-plane]]). Vermilion: the same channel after RoPE (solid) and its partner (dashed). Shaded bands: the range a per-channel ruler must cover, before (lapis) and after (vermilion). The slider picks the pair (0 turns fastest, 63 slowest, for a head of 128 channels and the usual base of 10,000); the buttons pick where in the text the window starts. The read-out gives the turn per token, the channel's level (mean) and spread (standard deviation) before and after, the step of a 3-bit min–max ruler, and a rough count of the extra bits an exact per-channel code would need: $\log_2$ of the ratio of spreads.
 :::
 
 ::: try

@@ -43,25 +43,25 @@
         legend: false,
         draw(box, ctx) {
           box.append(legend(FIELD.map(f => [`${f.name} (${f.n} bit${f.n > 1 ? 's' : ''})`, f.col, 'box'])));
-          const n = ctx.rows.length, rowH = 30;
-          const D = Diagram(box, { w: 640, h: 40 + n * rowH, label: 'The ten stored bytes, bit by bit, coloured by field' });
+          const n = ctx.rows.length, rowH = 30, narrow = box.clientWidth < 520, W = narrow ? 340 : 640;
+          const D = Diagram(box, { w: W, h: 40 + n * rowH, label: 'The ten stored bytes, bit by bit, coloured by field' });
           const fs = D.fs, g = el('g', {}, D.svg);
-          const cw = Math.min(36, 300 / 8), x0 = 640 / 2 - 4 * cw - 20 * (fs - 1);
-          el('text', { x: x0 - 14, y: 22, 'text-anchor': 'end', class: 'lbl', text: 'drawn → stored' }, g);
-          el('text', { x: x0 + 8 * cw + 16, y: 22, class: 'lbl', text: 'grid position' }, g);
+          const cw = narrow ? 28 : 36, x0 = narrow ? 64 : 640 / 2 - 4 * cw - 20 * (fs - 1);
+          el('text', { x: x0 - 10, y: 22, 'text-anchor': 'end', class: 'lbl', text: narrow ? 'stored' : 'drawn → stored' }, g);
+          el('text', { x: x0 + 8 * cw + 12, y: 22, class: 'lbl', text: narrow ? 'rung' : 'grid position' }, g);
           ctx.rows.forEach((r, i) => {
             const y = 34 + i * rowH, hl = ctx.hl && ctx.hl.test(r), sel = ctx.sel && ctx.sel.test(r);
-            if (hl) el('rect', { x: 4, y: y - 3, width: 632, height: rowH - 2, rx: 6, style: `fill:${mix(series(1), 14)}` }, g);
-            if (sel) el('rect', { x: 4, y: y - 3, width: 632, height: rowH - 2, rx: 6, style: 'fill:none;stroke:var(--c);stroke-width:1.5' }, g);
-            el('text', { x: x0 - 14, y: y + rowH / 2 + 1, 'text-anchor': 'end', class: 'val', text: `${(r.drawn < 0 ? '−' : '+') + Math.abs(r.drawn).toFixed(2)} → ${vstr(r.stored)}` }, g);
+            if (hl) el('rect', { x: 2, y: y - 3, width: W - 4, height: rowH - 2, rx: 6, style: `fill:${mix(series(1), 14)}` }, g);
+            if (sel) el('rect', { x: 2, y: y - 3, width: W - 4, height: rowH - 2, rx: 6, style: 'fill:none;stroke:var(--c);stroke-width:1.5' }, g);
+            el('text', { x: x0 - 10, y: y + rowH / 2 + 1, 'text-anchor': 'end', class: 'val', text: narrow ? vstr(r.stored) : `${(r.drawn < 0 ? '−' : '+') + Math.abs(r.drawn).toFixed(2)} → ${vstr(r.stored)}` }, g);
             const bits = (r.sign + r.exp + r.mant).split('');
             bits.forEach((b, k) => {
               const f = k === 0 ? FIELD[0] : k < 5 ? FIELD[1] : FIELD[2];
               const x = x0 + k * cw + (k >= 1 ? 3 : 0) + (k >= 5 ? 3 : 0);
               el('rect', { x, y, width: cw - 3, height: rowH - 8, rx: 3, style: `fill:${mix(f.col, b === '1' ? 70 : 16)};stroke:${mix(f.col, 80)};stroke-width:1` }, g);
-              el('text', { x: x + (cw - 3) / 2, y: y + (rowH - 8) / 2 + 4.5 * fs, 'text-anchor': 'middle', class: 'mono', style: `fill:${b === '1' ? 'var(--paper-3)' : 'var(--ink)'};font-size:${12 * fs}px`, text: b }, g);
+              el('text', { x: x + (cw - 3) / 2, y: y + (rowH - 8) / 2 + 4.5 * fs, 'text-anchor': 'middle', class: 'mono', style: `fill:${b === '1' ? 'var(--paper-3)' : 'var(--ink)'};font-size:${(narrow ? 11 : 12) * fs}px`, text: b }, g);
             });
-            el('text', { x: x0 + 8 * cw + 16, y: y + rowH / 2 + 1, class: 'val', text: (r.pos < 0 ? '−' : '+') + Math.abs(r.pos) }, g);
+            el('text', { x: x0 + 8 * cw + 12, y: y + rowH / 2 + 1, class: 'val', text: (r.pos < 0 ? '−' : '+') + Math.abs(r.pos) }, g);
           });
           box.append(h('p', { class: 'fig-note', text: 'Each row is one stored byte: 1 sign bit, 4 exponent bits, 3 mantissa bits (filled = 1). Read the columns: the exponent keeps repeating a few patterns; the sign and the mantissa do not.' }));
         },

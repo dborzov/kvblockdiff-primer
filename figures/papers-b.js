@@ -113,9 +113,8 @@ window.FIG = window.FIG || {};
   /* ================================================================== KVQuant
      pbKvqRope — one pair of key channels before and after RoPE, over a window of 64 tokens. */
   FIG.pbKvqRope = (host) => {
-    const N = 64, DH = 128, r = rng('pb-kvq-rope');
-    const na = range(N).map(() => r.normal()), nb = range(N).map(() => r.normal());
-    const preA = na.map(z => 9 + 0.3 * z), preB = nb.map(z => 0.6 + 0.3 * z);
+    const N = 64, DH = 128;
+    const { a: preA, b: preB } = DS.spec('papers-rope').helpers.pre();   // the pre-RoPE pair: dataset papers-rope (V.8)
     let pair = 4, start = 1000;
     const box = h('div'), ro = readout();
     const sl = slider('channel pair', 0, 63, 1, pair, v => { pair = v; draw(); }, v => `${v} of 0–63`);

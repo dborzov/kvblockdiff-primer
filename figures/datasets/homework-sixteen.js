@@ -27,7 +27,8 @@
         draw(box, ctx) {
           box.append(legend([['clerk 1: a code fit to the counts', series(0), 'box'], ['clerk 2: 3-bit slots + escape', series(1), 'box']]));
           const b = h('div'); box.append(b);
-          const P = Plot(b, { xcats: ctx.rows.map(r => sgn(r.r)), y: [0, 17], yticks: [0, 3, 6, 9, 12, 15], h: 280, grid: 'y', xlabel: 'the sixteen residuals, in order', ylabel: 'bits spent on the value',
+          const narrow = box.clientWidth < 520;
+          const P = Plot(b, { xcats: ctx.rows.map(r => (narrow ? fmt(r.r) : sgn(r.r))), y: [0, 17], yticks: [0, 3, 6, 9, 12, 15], h: 280, grid: 'y', xlabel: 'the sixteen residuals, in order', ylabel: 'bits spent on the value',
             label: 'Bits each clerk spends on each of the sixteen residuals' });
           bars(P, ctx.rows.map(r => [r.ideal, r.fixed]), {
             colors: (i, j) => { const c = series(j); return ctx.sel && !ctx.sel.test(ctx.rows[i]) ? `color-mix(in srgb, ${c} 35%, transparent)` : c; },
@@ -37,7 +38,7 @@
           rule(P, { y: WIDTH, color: 'var(--ink-3)' });
           svgText(P.g.top, P.x(8.5), P.y(WIDTH) - 8 * P.fs, 'every slot: 3 bits', { class: 'annot', 'text-anchor': 'middle' });
           const k = ctx.rows.findIndex(r => !fits(r.r));
-          annotate(P, k, 15, 'the escape: 3 + 8 + 4 = 15 bits', { dx: -150, dy: -2, anchor: 'end' });
+          annotate(P, k, 15, narrow ? 'escape: 3 + 8 + 4' : 'the escape: 3 + 8 + 4 = 15 bits', { dx: narrow ? -60 : -150, dy: -2, anchor: 'end' });
           const tot = j => ctx.rows.reduce((s, r) => s + (j ? r.fixed : r.ideal), 0);
           box.append(h('p', { class: 'fig-note', text: `Totals: clerk 1 ${fmt(tot(0), 1)} bits, clerk 2 ${tot(1)} bits. A common value (0, seen five times) costs clerk 1 only ${fmt(Math.log2(16 / 5), 2)} bits; a value seen once costs 4. Clerk 2 pays 3 bits for everything, and 15 for the one that does not fit.` }));
         },

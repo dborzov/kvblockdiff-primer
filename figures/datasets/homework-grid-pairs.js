@@ -35,16 +35,16 @@
         draw(box, ctx) {
           box.append(legend([['INT8 grid points (step 2)', series(0), 'line'], ['E4M3 grid points', series(1), 'line'], ['value', 'var(--ink)', 'dot'], ['prediction', 'var(--c)', 'dot']]));
           const ladder = DS.rows('e4m3');
-          const rowH = 92, n = ctx.rows.length;
-          const D = Diagram(box, { w: 640, h: n * rowH + 10, label: 'For each pair, the grid points of INT8 and of E4M3 between the prediction and the value' });
-          const fs = D.fs, g = el('g', {}, D.svg), L = 24, R = 616;
+          const rowH = 92, n = ctx.rows.length, narrow = box.clientWidth < 520, W = narrow ? 360 : 640;
+          const D = Diagram(box, { w: W, h: n * rowH + 10, label: 'For each pair, the grid points of INT8 and of E4M3 between the prediction and the value' });
+          const fs = D.fs, g = el('g', {}, D.svg), L = narrow ? 12 : 24, R = W - L;
           ctx.rows.forEach((r, k) => {
             const y0 = 8 + k * rowH, lo = Math.min(r.value, r.pred), hi = Math.max(r.value, r.pred), pad = (hi - lo) * 0.12;
             const X = v => L + (v - (lo - pad)) / (hi - lo + 2 * pad) * (R - L);
             const hl = ctx.hl && ctx.hl.test(r), sel = ctx.sel && ctx.sel.test(r);
-            if (hl) el('rect', { x: 2, y: y0 - 4, width: 636, height: rowH - 6, rx: 8, style: `fill:${mix(series(1), 9)}` }, g);
-            if (sel) el('rect', { x: 2, y: y0 - 4, width: 636, height: rowH - 6, rx: 8, style: 'fill:none;stroke:var(--c);stroke-width:1.5' }, g);
-            el('text', { x: L, y: y0 + 10 * fs, class: 'lbl', text: `value ${fmt(r.value)}, prediction ${fmt(r.pred)}` }, g);
+            if (hl) el('rect', { x: 2, y: y0 - 4, width: W - 4, height: rowH - 6, rx: 8, style: `fill:${mix(series(1), 9)}` }, g);
+            if (sel) el('rect', { x: 2, y: y0 - 4, width: W - 4, height: rowH - 6, rx: 8, style: 'fill:none;stroke:var(--c);stroke-width:1.5' }, g);
+            el('text', { x: L, y: y0 + 10 * fs, class: 'lbl', text: narrow ? `${fmt(r.value)} vs ${fmt(r.pred)}` : `value ${fmt(r.value)}, prediction ${fmt(r.pred)}` }, g);
             el('text', { x: R, y: y0 + 10 * fs, 'text-anchor': 'end', class: 'val', text: `INT8 ${sgn(r.int8)} · E4M3 ${sgn(r.e4m3)}` }, g);
             const yI = y0 + 18 * fs + 14, yE = yI + 22, tk = 7;
             el('line', { x1: L, x2: R, y1: yI, y2: yI, style: `stroke:${mix('var(--rule)', 70)}` }, g);

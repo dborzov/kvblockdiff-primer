@@ -24,6 +24,11 @@ cards:
     wrong: ["About 3.3 bits", "About 1 bit", "About 0.5 bit"]
     why: 'Bits add up per element: 10 × 3.3 = 33 bits spread over 640 elements is 0.05 bit each. Owning most of the variance is not owning most of the bytes.'
     sec: game
+  - q: 'Three rungs of dictionaries explain 70 % of an entry''s variance between them, split in some way; 30 % is noise. What do they save in total, per element?'
+    a: 0.87 bit, however the 70 % is split among the rungs
+    wrong: ["More when the block rung takes the biggest share", "2.1 bits — 70 % of 3 bits", "Nothing until one rung explains 75 %"]
+    why: 'Each rung saves ½ log₂ of how much it shrinks what is left, and the shrinkings multiply: the total is ½ log₂ 1/0.3 = 0.87. The noise share sets the total; the split only decides which rung earns it.'
+    sec: game
 ---
 
 A dictionary predicts an element from what the receiver already holds. Suppose the prediction is good: it explains **half** of the element's variance. Sounds like a halving of the bits?
