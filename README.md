@@ -50,8 +50,8 @@ node scripts/check.mjs _site --shots   # headless check of every page, desktop +
 
 ## Deployment
 
-The built site is published on the `gh-pages` branch. To automate it, move
-[`docs/deploy-workflow.yml`](docs/deploy-workflow.yml) to `.github/workflows/deploy.yml`: then every push to
-`main` runs a strict build and pushes the result to `gh-pages`. (Until then, publish by hand:
-`STRICT=1 npm run build`, then commit the contents of `_site/` to the `gh-pages` branch.) GitHub Pages serves that branch; because the account's user site has the custom
+The built site is published on the `gh-pages` branch by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
+every push to `main` (or a manual run from the Actions tab) runs a strict build and force-pushes the result to
+`gh-pages`. To publish by hand instead, run `STRICT=1 npm run build` and commit the contents of `_site/` to `gh-pages`.
+GitHub Pages serves that branch; because the account's user site has the custom
 domain `www.borzov.ca`, this project appears at `https://www.borzov.ca/kvblockdiff-primer/`.
