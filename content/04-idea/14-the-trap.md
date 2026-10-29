@@ -75,20 +75,20 @@ The noise share is a hard floor. With 30 % of the variance unexplainable, no dic
 
 There is one way out, and it comes from the shape of the exchange rate itself. Bits per element are an *average over [[channel|channels]]*. The exchange rate is gentle for modest $\vRsq$ and steep near $\vRsq = 1$: a channel whose variance is 98 % explainable saves $\tfrac12\log_2 50 \approx 2.8$ bits, more than three times what a typical channel saves under the default budget.
 
-So the same total predictability, concentrated in a few channels, buys more bits than when it is spread evenly. In the calculator's lower part, give 10 % of the channels a noise share of 2 % and leave the rest at the default budget: the average rises from 0.87 to about 1.06 bits per element — the few near-deterministic channels add as much as the whole block rung.
+So the same total predictability, concentrated in a few channels, buys more bits than when it is spread evenly. The compare block below makes that exact: 70 % of the variance explained on average either way, 0.87 bit spread evenly, 1.0 bit concentrated. In the calculator's lower part you can also *add* such channels to the default budget: make 10 % of the channels 98 % explainable and the average rises from 0.87 to about 1.06 bits per element — a tenth of the channels adds half as much as the whole block rung.
 
 Do KV caches have such channels? There are hints. Papers on KV quantization report that keys have a few channels whose values are much larger than the rest and change slowly from token to token ([[#papers-kivi]], [[#papers-kvquant]]). If those channels are near-deterministic at block scale, they are the escape hatch. But three things are unknown: whether they survive at 8-bit precision, how many of the entry's bytes they own, and how the 8-bit number grid treats a prediction ([[#homework-the-grid]] shows that a logarithmic grid can eat much of the gain).
 
-:::: compare Two ways to explain 70 % of the variance
+:::: compare Two ways to explain 70 % of the variance, on average
 ::: col Spread evenly
 - Every channel: 70 % explained, 30 % noise.
 - Every channel saves 0.87 bit.
 - Average: **0.87 bit per element.**
 :::
 ::: col Concentrated (toy)
-- 10 % of channels: 98 % explained; the rest as before.
-- Those channels save 2.8 bits each.
-- Average: **about 1.06 bits per element.**
+- 10 % of channels: 98 % explained (2.8 bits each).
+- The other 90 %: 67 % explained (0.80 bit each).
+- Average: **1.0 bit per element.**
 :::
 ::::
 

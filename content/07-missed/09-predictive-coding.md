@@ -103,7 +103,7 @@ Information theory has a second, stranger version of the story, and it is worth 
 :::
 ::: col At the decoder only
 - The encoder never sees $\vY$. It sends a short "hash" saying which bin $\vX$ fell into; the decoder picks the bin member that fits its $\vY$.
-- Slepian and Wolf (1973) proved the rate is *still* $\vH(\vX \mid \vY)$ for lossless coding, given long enough blocks. Wyner and Ziv (1976) did the lossy version: for Gaussian data with squared error, nothing is lost at all.
+- [[slepian-wolf|Slepian and Wolf]] (1973) proved the rate is *still* $\vH(\vX \mid \vY)$ for lossless coding, given long enough blocks. Wyner and Ziv (1976) did the lossy version: for Gaussian data with squared error, nothing is lost at all.
 - Decoding is a search, not a subtraction.
 :::
 ::::

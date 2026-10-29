@@ -50,10 +50,10 @@ $$
 \;=\; -\tfrac12 \cdot \underbrace{\text{average of } \log_2 \vlambda}_{\text{after standardizing, so } \mathrm{AM} = 1}
 $$ {#eq-missed-klt-bound}
 
-The recipe has three steps. Standardize each [[channel]] of a block, compute the [[covariance-matrix]], and take its eigenvalues. No coder, no 8-bit grid, no rounding. The figure does the arithmetic for a family of spectra: a few strong directions holding a share of the variance, the rest sharing what is left.
+The recipe has three steps. [[standardize|Standardize]] each [[channel]] of a block, compute the [[covariance-matrix]], and take its eigenvalues. No coder, no 8-bit grid, no rounding. The figure does the arithmetic for a family of spectra: a few strong directions holding a share of the variance, the rest sharing what is left.
 
 ::: figure fig-missed-spectrum mbBoundsSpectrum
-**From a spectrum to a bound.** *Left:* the 64 eigenvalues of a standardized covariance (log scale; their average is 1), largest first: $s$ strong directions share the chosen fraction of the total variance, the other $64 - s$ share the rest. *Right:* the KLT gain ½ log₂(AM/GM) in bits per element as that fraction varies, for the current number of strong directions; the dot is the current spectrum. The two dashed lines are experiment 1a's thresholds ([[#plan-experiment-1a]]). The buttons load the old draft's two worked examples and a flat spectrum. Gaussian data assumed.
+**From a spectrum to a bound.** *Left:* the 64 eigenvalues of a standardized covariance (log scale; their average is 1), largest first: the chosen number of strong directions share the chosen fraction of the total variance equally, and the remaining directions share the rest. *Right:* the KLT gain ½ log₂(AM/GM) in bits per element as that fraction varies, for the current number of strong directions; the dot is the current spectrum. The two dashed lines are experiment 1a's thresholds ([[#plan-experiment-1a]]). The buttons load the old draft's two worked examples and a flat spectrum. Gaussian data assumed.
 :::
 
 ::: try
@@ -74,7 +74,7 @@ The old draft rounded example B to "≈ 2.3"; the formula gives 2.43. The lesson
 A [[vq]] codebook gets its own one-line limit. [[rate-distortion|Rate–distortion]] theory says that for Gaussian data, each bit spent describing a $\vd$-element vector can shrink the residual variance by at most a factor $4^{1/\vd}$, which saves at most $1/\vd$ bit per element. Naming one of $\vC$ centroids costs $\log_2 \vC$ bits per vector:
 
 $$
-\underbrace{\frac{\log_2 \vC}{\vd}}_{\text{index tax per element}}
+\underbrace{\vtax = \frac{\log_2 \vC}{\vd}}_{\text{index tax per element}}
 \;\ge\;
 \underbrace{\text{bits per element the centroid saves beyond a rotation}}_{\text{Gaussian data, ideal quantizer}}
 $$ {#eq-missed-vq-bound}

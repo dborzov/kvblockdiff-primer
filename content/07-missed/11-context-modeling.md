@@ -110,7 +110,7 @@ The number grid decides which way of using a prediction is safe. On a uniform gr
 :::
 
 ::: note warning A per-block table is not enough
-Could the harness just fit a separate residual table per block and channel? Only if the table has the right shape. A Laplace curve fitted to *index-space* residuals, context by context, costs 7.62 bits at $\vRsq$ = 0.5 — worse than no prediction (our check, same script). The table must be computed in the value domain: a bell of the right width centred on $\vxhat$, integrated over each grid cell.
+Could the harness just fit a separate residual table per block and channel? Only if the table has the right shape. A Laplace curve fitted to *index-space* residuals, context by context, costs 7.62 bits at $\vRsq$ = 0.5 — worse than no prediction (our check, same script). The table must be computed in the value domain: a bell of the right width centred on $\vxhat$, integrated over each grid cell. The plan's entropy model on E4M3 does exactly this ([[#plan-fp8-target]]).
 :::
 
 ::: takeaway

@@ -127,7 +127,7 @@ The round trip is exact, and the saving is 1.45 bits per value. The transform co
 
 ::: takeaway
 - A shear moves one coordinate by a rounded amount computed from the other; the decoder recomputes it and undoes it exactly.
-- Three shears make a 2-D rotation; Hao and Shi (2001) factor any d × d rotation into a few triangular steps of the same kind ([[#papers-classics]]).
+- Three shears make a 2-D rotation. For a $\vd \times \vd$ rotation, Hao and Shi (2001) and the later [[plus-factorization]] do the same with a few triangular steps ([[#papers-classics]]).
 - On the thermometer toy the lifted rotation keeps 1.45 of the 1.46 bits the formula promises.
 :::
 
