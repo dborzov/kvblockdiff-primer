@@ -31,7 +31,7 @@ cards:
     sec: lifting
 ---
 
-On the last page, turning the thermometer axes saved 2.95 bits per reading. Turning all five Gull Rock channels at once gave a table of eigenvalues: 2.65, 1.63, 0.37, 0.35 and 0.008. How many bits is *that* worth? There is a one-line answer, and it explains when rotations are a big deal and when they are not.
+On the last page, turning the thermometer axes saved 2.95 bits per reading. Turning all five Gull Rock channels at once gave a table of eigenvalues: 2.65, 1.63, 0.372, 0.345 and 0.008 ([[#fig-sv-klt-recipes]]). How many bits is *that* worth? There is a one-line answer, and it explains when rotations are a big deal and when they are not.
 
 ## The coding gain {#gain}
 
@@ -131,7 +131,13 @@ assert (foot2 == foot).all() and (top2 == top).all()
 print(s[:4], d[:4])                  # [111 116 116 116] [-6 -4 -4 -7]
 ```
 
-The pair $(s, d)$ is "roughly the average, exactly the difference", and it takes the original twelve readings back with no error at all. The difference column is a narrow band of small numbers, which is where the coding gain lives.
+The twelve readings are the afternoon of II.13. Here they are again, with the lifted pair drawn in.
+
+::: dataset fig-sv-day-lift gull-day view=lift,channels metrics=lift-d,lift-exact
+**The afternoon's two thermometers, lifted.** *Plot:* "Lifted: s and d" shows the foot and top thermometers in whole tenths of a degree (blue, yellow), $s$ = foot + ⌊$d$/2⌋ (dashed), and below, on the same vertical scale, the difference $d$ = top − foot as red bars, labelled; hover a bar for the arithmetic. "Five channels" is the whole afternoon as on II.13. *Numbers:* the range of $d$, and the check that every reading comes back exactly. Synthetic, seeded data.
+:::
+
+The pair $(s, d)$ is "roughly the average, exactly the difference", and it takes the original twelve readings back with no error at all. The red bars are a narrow band of small numbers, which is where the coding gain lives.
 
 ::: define lifting
 - **What it is:** writing a rotation as a short sequence of steps, each adding to one number a rounded function of the others. Every step is undone by subtracting the same amount, so the whole transform maps whole numbers to whole numbers, reversibly.

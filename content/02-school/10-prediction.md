@@ -95,10 +95,16 @@ Because the residuals are whole numbers, the receiver's sum is exact. A predicto
 
 ## Which guess? {#which-guess}
 
-“The previous reading” is one guess among many. The figure runs four predictors over four weeks of readings and measures what each residual costs.
+“The previous reading” is one guess among many. To compare guesses we need more than one night. Here are all four weeks the station sent; the night above is the first eight rows of the table.
+
+::: dataset fig-predict-temp-data temp view=timeline,histogram hl=fronts marks=mean metrics=n,mean,sd,distinct,entropy,width
+**Four weeks of Gull Rock temperatures.** *Four weeks:* the temperature every 30 minutes for 28 days (°C against the day; drag across it to select a stretch), with the readings taken while one of the five fronts passed marked in red and the four-week mean as a grey line. *How often each temperature:* the histogram, in half-degree bins. *Table:* every reading, in tenths of a degree and in °C. *Numbers:* what the readings cost before any prediction. Synthetic, seeded data: a daily cycle, a slow weather wander, five fronts and sensor noise.
+:::
+
+The daily swing is the loudest thing on the timeline, about five degrees from the small hours to mid-afternoon, and the fronts shift the whole wave up or down within a few hours. Sent as they are, the readings cover 112 different values and cost 6.53 bits each. Every reading, though, sits close to the one before. The figure runs four predictors over the same four weeks and measures what each residual costs.
 
 ::: figure fig-predict-temperature siPredict wide
-**Four predictors on four weeks of temperatures.** Top: the temperature every 30 minutes for 28 days (blue; 1,344 readings in tenths of a degree, from a seeded generator: a daily cycle, a slow weather wander, five passing fronts and sensor noise) and the prediction (red dashed). Bottom left: the residual, reading minus prediction, over time. Bottom right: histogram of the residuals (share of readings per value, one bar per tenth of a degree). Tiles: the residual's standard deviation (its typical size, defined on [[#school-residual-shapes]]), the bits per reading — the order-0 entropy of the residuals, what an entropy coder would need — and the fixed width that holds every residual. Predictors: **no prediction** (send the reading itself), **the average** (the 28-day mean, 11.0 °C, known to both ends), **previous value**, and **previous + trend** (extend the last step: $2\vx_{\vi-1} - \vx_{\vi-2}$). **One day** zooms in on day 9.
+**Four predictors on four weeks of temperatures.** Top: the temperatures of [[#fig-predict-temp-data]] (blue; 1,344 readings in tenths of a degree) and the prediction (red dashed). Bottom left: the residual, reading minus prediction, over time. Bottom right: histogram of the residuals (share of readings per value, one bar per tenth of a degree). Tiles: the residual's standard deviation (its typical size, defined on [[#school-residual-shapes]]), the bits per reading — the order-0 entropy of the residuals, what an entropy coder would need — and the fixed width that holds every residual. Predictors: **no prediction** (send the reading itself), **the average** (the 28-day mean, 11.0 °C, known to both ends), **previous value**, and **previous + trend** (extend the last step: $2\vx_{\vi-1} - \vx_{\vi-2}$). **One day** zooms in on day 9.
 :::
 
 | predictor | typical size of a residual | bits per reading | fixed width |

@@ -58,7 +58,13 @@ That is no coincidence. It is a property of the number itself, and it is the fir
 $\vH(\vX \mid \vY)$ is the average number of bits still needed for $\vX$ when $\vY$ is known; it is never more than $\vH(\vX)$ on average ([[#school-side-information]]).
 :::
 
-Now run it the other way. The season, one of four equally likely, has $\vH(\vY) = 2$ bits. After seeing one sky report, the season is still uncertain: on average $\vH(\vY \mid \vX) = 1.84$ bits remain (a fog report hints at winter, a sunny one at summer, but only hints). The difference is $2 - 1.84 = 0.16$ bits — the same number. **Mutual information is symmetric:** what the season tells about the sky equals what the sky tells about the season.
+Now run it the other way. The season, one of four equally likely, has $\vH(\vY) = 2$ bits. After seeing one sky report, the season is still uncertain. The archive shows by how much: turn the almanac's question around and ask, for each kind of sky, which seasons its reports came from.
+
+::: dataset fig-mi-sky-backwards sky view=bysky,seasons hl=fog metrics=seasonGivenSky,mi,condH
+**The sky archive, read backwards.** *Season by sky:* for each sky report, the share of its reports that fell in spring, summer, autumn and winter (bars); the dashed ticks are what the almanac implies. Click a sky to select its reports. *Sky by season:* the forward view of [[#school-side-information]]. *Numbers:* how much of the season is left uncertain after one report, and the bits saved in each direction. Synthetic, seeded data.
+:::
+
+A fog report points at winter: five fog reports in eight fall there. A sunny report leans to summer and spring. But every bar group still holds all four seasons, so a report only hints. On average $\vH(\vY \mid \vX) = 1.84$ bits of the season remain. The difference is $2 - 1.84 = 0.16$ bits — the same number. **Mutual information is symmetric:** what the season tells about the sky equals what the sky tells about the season.
 
 The figure draws this as two overlapping bars, and lets you swap the season for other kinds of side information.
 
@@ -98,7 +104,13 @@ People describe the same saving in at least three everyday ways. On this site al
 The entropy computed from symbol frequencies alone, ignoring which symbols came before. For the sky it is 1.75 bits.
 :::
 
-The figure's second example makes the point sharper. With an assumed stickiness of 0.8, the **previous report** saves 1.01 bits per sky report — six times what the season saves. Half an hour ago is a much closer neighbour than “it is summer”. The [[order-0-entropy]] of [[#school-entropy]] ignores order, so it leaves this whole bit on the table.
+The figure's second example makes the point sharper. With an assumed stickiness of 0.8, the **previous report** saves 1.01 bits per sky report — six times what the season saves. The sticky sky of [[#school-entropy]] is four weeks of exactly this model; here it is again, with a table of what follows what.
+
+::: dataset fig-mi-sticky sticky view=transitions,mosaic hl=changes metrics=order0,condH,saved,repeats
+**The sticky sky, neighbour by neighbour.** *What follows what:* each row is the sky of one report, each column the sky of the next; a cell gives the share of the row, shaded in the next report's colour, and the outlined diagonal is “the sky carries on”. *Four weeks, in order:* the reports one row per day, with every change of sky highlighted. *Numbers:* the order-0 entropy, the entropy left when the previous report is known, and the difference. An illustrative model (stickiness 0.8), seeded.
+:::
+
+Every row of the table is dominated by its diagonal cell: whatever the sky did half an hour ago, it most likely does again. Each row is therefore a sharp distribution, far sharper than any season's. Averaged over the rows, the next report costs 0.74 bits instead of 1.75, and the 1.01 bits between them are the mutual information. Half an hour ago is a much closer neighbour than “it is summer”. The [[order-0-entropy]] of [[#school-entropy]] ignores order, so it leaves this whole bit on the table.
 
 Watch the direction of the arrows, because it is easy to get backwards:
 

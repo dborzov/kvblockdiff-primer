@@ -66,6 +66,8 @@ These three places will carry every idea of the course.
 - The **radio link** makes us count bits, and asks what the receiver already knows.
 - The **harbour office** makes us think about what to keep close at hand and what to fetch.
 
+The station's data comes back again and again: an archive of sky reports, four weeks of temperatures, three weeks of wind. Each appears as a card you can open — a plot, the raw table, the numbers that matter, and a few lines of code — and each card links to the other pages that use the same data. The [[#reference-datasets|list of example datasets]] collects them all.
+
 When the language model arrives in Part III, each of them will have a counterpart. The station becomes the model producing its memory, the radio link becomes the wire between host memory and the GPU, and the harbour desk becomes the GPU's small, fast memory.
 
 ::: takeaway

@@ -61,6 +61,14 @@ On the radio, the spaces in the box above do not exist. Plan B's morning arrives
 
 There is never a doubt, because of the prefix property. Break it and trouble starts at once: with sunny `0`, cloudy `1`, rain `01`, fog `10`, the bits `01` could be rain, or sunny followed by cloudy.
 
+Eight reports are a small test. The archive of [[#school-surprise]] is a bigger one: 4,096 noon reports, coded both ways.
+
+::: dataset fig-codes-sky-plans sky view=counts,mosaic metrics=planA,planB,entropy tab=numbers
+**The whole sky archive under both plans.** *Numbers:* the size of the archive in plan A (two bits per report) and in plan B (`0`, `10`, `110`, `111`), and the entropy of its counts. *Plot:* how often each sky occurs, and the archive itself. *Table:* every report; its “surprisal” column is exactly plan B's codeword length. Synthetic, seeded data.
+:::
+
+Plan B spends 7,170 bits where plan A spends 8,192: 12.5 % less, and 1.750 bits per report, matching the archive's own entropy to three decimals. The short codeword goes to the report that comes most often, and that is where the whole saving comes from.
+
 A prefix code is easiest to picture as a tree. Start at the top; `0` goes left and `1` goes right; each codeword is a leaf. Short codewords sit near the top and use up room: once sunny owns `0`, every other codeword must start with `1`. That is the trade the code has to get right.
 
 ::: takeaway
@@ -135,7 +143,13 @@ The sky's year-round probabilities are all powers of ½, so every surprisal is a
 | Gull Rock, summer | 1.19 | 1.375 | 16 % |
 | lopsided sky (sunny 29 of 32) | 0.60 | 1.16 | 93 % |
 
-The more lopsided the source, the worse the rounding. A source that says the same thing 99 times in 100 has an entropy of 0.08 bits, yet Huffman still charges at least 1 bit per symbol.
+The more lopsided the source, the worse the rounding. The figure makes the sky steadily more lopsided and watches the gap open.
+
+::: figure fig-codes-whole-bits siWholeBits
+**The whole-bit loss.** Horizontal axis: the probability of a sunny report, from 25 % to 99 %; the other three reports share the rest as in the year and in summer (cloudy twice as likely as rain or as fog). Vertical axis: bits per report. Violet: the entropy, the floor for any code. Red: the average codeword length of the Huffman code for those probabilities; the shaded band between them is what whole bits cost. The dots mark the Gull Rock year and summer. Hover or touch the plot to read both curves.
+:::
+
+At 50 % sunny the two curves touch: every probability is a power of ½. From there the entropy keeps falling towards zero, but the Huffman curve flattens out at 1 bit, because sunny can never get less than one whole bit. A source that says the same thing 99 times in 100 has an entropy of 0.08 bits, yet Huffman still charges at least 1 bit per symbol.
 
 There is a neater way to see the loss. A codeword of $\ell$ bits behaves like a bet that its symbol has probability $2^{-\ell}$: 1 bit bets on ½, 2 bits on ¼, 3 bits on ⅛. Huffman's summer code is `0`, `10`, `110`, `111` — the same as the year's — so it bets that summer looks like the year, with sunny at ½. Summer's sunny is really ¾. The wrong bet is what costs the extra 0.19 bits per report.
 

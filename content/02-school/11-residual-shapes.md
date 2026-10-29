@@ -134,7 +134,13 @@ $$ {#eq-gauss-bits}
 with $\vsigma$ in integer steps. For a Laplace of the same $\vsigma$ the constant is $\log_2(\sqrt2\, e) \approx 1.94$. **Halve $\vsigma$, save one bit.**
 :::
 
-Check it on the temperatures of [[#school-prediction]]. The previous-value residual has $\vsigma = 3.05$ tenths: $\log_2 3.05 + 2.05 \approx 3.66$ bits, and the measured cost was 3.63. Without prediction, $\vsigma = 24.2$ tenths and the formula says 6.64 bits; the measured 6.53 is a little lower. Part of the gap is the shape: the raw temperatures are not bell-shaped (the daily swing piles them up near its highs and lows), and any shape other than the Gaussian costs less. Part is the counting: 1,344 readings spread over 112 different values make the histogram's estimate a few hundredths of a bit low, as on [[#school-entropy]].
+Check it on the temperatures of [[#school-prediction]]. Here are their previous-value residuals once more, all 1,344 of them, with a Gaussian and a Laplace of the same $\vsigma$ laid over the histogram.
+
+::: dataset fig-shapes-resid resid view=histogram,timeline hl=night metrics=sd,entropy,gauss,laplace,mean,largest
+**The temperature residuals and the two shapes.** *Histogram, with the two shapes:* how many residuals (reading minus the previous reading, in tenths of a degree) take each value (bars); the green and violet curves are a Gaussian and a Laplace with the same standard deviation, turned into counts of whole-number residuals. The eight residuals of the first night are highlighted. Click a bar to select those readings. *Over four weeks:* the residual against the day, in °C; drag to select a stretch. *Numbers:* the spread, the measured cost and what the formula says for each shape. Synthetic, seeded data, derived from the temperatures of [[#fig-predict-temp-data]].
+:::
+
+The bars follow the green bell closely; the violet Laplace is too tall at 0 and too thin on the shoulders. These residuals are mostly sensor noise and many small weather nudges added together, the very recipe for a Gaussian. The previous-value residual has $\vsigma = 3.05$ tenths: $\log_2 3.05 + 2.05 \approx 3.66$ bits (3.65 with $\vsigma$ unrounded, as on the card), and the measured cost was 3.63. Without prediction, $\vsigma = 24.2$ tenths and the formula says 6.64 bits; the measured 6.53 is a little lower. Part of the gap is the shape: the raw temperatures are not bell-shaped (the daily swing piles them up near its highs and lows), and any shape other than the Gaussian costs less. Part is the counting: 1,344 readings spread over 112 different values make the histogram's estimate a few hundredths of a bit low, as on [[#school-entropy]].
 
 Two warnings come with the formula.
 

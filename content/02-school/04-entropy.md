@@ -19,6 +19,11 @@ cards:
     wrong: ["The rare symbols", "The most common symbol", "Symbols with surprisal above 3 bits"]
     why: It is computed from symbol frequencies alone. Shuffle the reports and it does not change, so it cannot see that fog tends to follow fog.
     sec: histogram
+  - q: Four weeks of sticky half-hourly sky reports and the same reports shuffled. How do their order-0 entropies compare?
+    a: They are equal
+    wrong: ["The sticky sky's is lower", "The shuffled sky's is lower", "The sticky sky's is zero"]
+    why: Order-0 entropy is computed from the counts, and shuffling does not change the counts. Only a code that looks at neighbours can profit from the runs.
+    sec: histogram
   - q: Entropy estimated from the histogram of a small sample tends to be…
     a: too low
     wrong: ["too high", "exactly right", "always zero"]
@@ -94,10 +99,10 @@ Nobody hands us the true probabilities. We count. A [[=histogram]] is that count
 How good is the estimate? The figure counts the first few reports of a long, randomly ordered archive.
 
 ::: figure fig-entropy-histogram siHistogram
-**Estimating the entropy by counting.** The archive is 4,096 noon reports drawn at random from the sky distribution (seeded, so it is the same every time). Left: the histogram of the first reports, as shares of how many were counted (bars, with the count on top); dashed ticks mark the true probabilities. Right: the entropy computed from that histogram, against the number of reports counted, on a doubling axis (violet line and dots; the knob marks the current count); the dashed green line is the average estimate over 200 independent archives of the same size; the grey dashed line is the true 1.75 bits. Move the slider to count from 8 to 4,096 reports.
+**Estimating the entropy by counting.** The archive is the 4,096 noon reports of [[#fig-surprise-sky]], drawn at random from the sky distribution (seeded, so it is the same every time). Left: the histogram of the first reports, as shares of how many were counted (bars, with the count on top); dashed ticks mark the true probabilities. Right: the entropy computed from that histogram, against the number of reports counted, on a doubling axis (violet line and dots; the knob marks the current count); the dashed green line is the average estimate over 200 independent archives of the same size; the grey dashed line is the true 1.75 bits. Move the slider to count from 8 to 4,096 reports.
 :::
 
-With 16 reports the counts are 9, 3, 3, 1 and the estimate is 1.62 bits. With 64 it drops to 1.51 bits — this archive's early stretch is unusually sunny. Only after a thousand reports or so does the estimate settle within a few hundredths of 1.75. Notice that the dashed average curve stays *below* 1.75 for small samples: a short sample tends to miss rare outcomes, so it looks more predictable than the sky really is.
+With 16 reports the counts are 9, 3, 3, 1 and the estimate is 1.62 bits. With 64 it drops to 1.50 bits — this archive's early stretch is unusually sunny. Only after a thousand reports or so does the estimate settle within a few hundredths of 1.75. Notice that the dashed average curve stays *below* 1.75 for small samples: a short sample tends to miss rare outcomes, so it looks more predictable than the sky really is.
 
 The number we just computed has a name, because it ignores something important.
 
@@ -107,10 +112,18 @@ The number we just computed has a name, because it ignores something important.
 - **Easy to confuse with:** the true information content of a sequence. Real sky reports half an hour apart are sticky: fog tends to follow fog. Order-0 entropy cannot see that, so it overstates what a smarter code must pay. [[#school-mutual-information]] measures the difference.
 :::
 
+To see what it misses, look at a different sky. The camera also reports every half hour, and half-hourly skies are sticky. The card below shows four weeks of them from a simple model: four times in five, the sky just carries on from half an hour before; otherwise the next report is drawn afresh from the sky distribution.
+
+::: dataset fig-entropy-sticky sticky view=mosaic,shuffled metrics=order0,repeats,run
+**The sticky sky.** *Four weeks, in order:* 1,344 half-hourly reports, one row of 48 tiles per day (midnight on the left), coloured by the sky. *The same, shuffled:* exactly the same tiles in a random order. Hover a tile for its time and sky. *Numbers:* the order-0 entropy, and how often a report repeats the one before. An illustrative model (stickiness 0.8), seeded; it comes back on [[#school-mutual-information]].
+:::
+
+The two pictures could hardly look more different: long bands of sunshine and fog on one, confetti on the other. Yet they hold the same tiles, so their histograms and their order-0 entropy agree, at 1.75 bits. A code that only knows the counts must pay 1.75 bits per report for both. A code that remembers the last report could pay far less for the banded one.
+
 ::: takeaway
 - A histogram counts outcomes in a sample; divided by the sample size, it estimates the distribution.
 - Small samples misestimate the entropy, usually on the low side.
-- Order-0 entropy uses frequencies only and ignores the order of the symbols.
+- Order-0 entropy uses frequencies only and ignores the order of the symbols: a sticky sky and its shuffled copy get the same 1.75 bits.
 :::
 
 ## Perplexity, and why we count in bits {#perplexity}

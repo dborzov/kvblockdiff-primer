@@ -19,13 +19,11 @@ window.FIG = window.FIG || {};
      1. Toy data
      ================================================================== */
 
-  // --- 1a. The day's readings: the same generator (and seed) as Part I's
-  //         Gull Rock messages (figures/tiny.js), plus the mast thermometer.
+  // --- 1a. A small seeded generator (Part I's), for the 'random' request list of II.22.
   function tinyRng(seed) {
     let s = seed | 0;
     return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   }
-  function tinyGauss(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
   const r1 = (v, d) => +v.toFixed(d);
 
   SV.CHANNELS = [
@@ -36,50 +34,10 @@ window.FIG = window.FIG || {};
     { key: 'wind', name: 'wind speed', short: 'wind', unit: 'kn', step: 1, dec: 0 },
   ];
 
-  SV.day = function (n = 12) {
-    const r = tinyRng(7), N = () => tinyGauss(r);
-    let T = 11.4, Hm = 0.82, P = 1012.6, W = 14;
-    const rm = tinyRng(1313);
-    const out = [];
-    for (let i = 0; i < n; i++) {
-      const mins = 14 * 60 + 30 + 30 * i;
-      const hh = Math.floor(mins / 60) % 24, mm = mins % 60;
-      const low = r1(T, 1);
-      out.push({
-        time: `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`,
-        low, mast: r1(low - 0.5 + 0.12 * tinyGauss(rm), 1),
-        hum: r1(Hm, 2), pres: r1(P, 1), wind: W,
-      });
-      T += -0.05 + 0.18 * N();
-      Hm = Math.min(0.99, Math.max(0.6, Hm + 0.006 + 0.012 * N()));
-      P += -0.35 + 0.15 * N();
-      W = Math.max(3, Math.round(W + 0.3 + 1.1 * N()));
-      if (r() < 0.12) { /* wind direction draw in Part I's generator: keep the stream aligned */ }
-    }
-    return out;
-  };
-
-  // --- 1b. Ten days of readings (480 vectors, d = 5), for correlation and rotation.
-  let monthCache = null;
-  SV.month = function () {
-    if (monthCache) return monthCache;
-    const r = PKr().rng('sv-month');
-    const out = [];
-    let anom = 0, pres = 1012;
-    for (let i = 0; i < 480; i++) {
-      const hour = (i * 0.5) % 24;
-      anom = 0.985 * anom + 0.36 * r.normal();                 // slow weather anomaly, σ ≈ 2 °C
-      pres = 1012 + 0.99 * (pres - 1012) + 1.1 * r.normal();   // slow pressure swings, σ ≈ 8 hPa
-      const air = 11 + 1.2 * Math.sin(2 * Math.PI * (hour - 9) / 24) + anom;
-      const low = r1(air + r.normal(0, 0.15), 1);
-      const mast = r1(air - 0.6 + r.normal(0, 0.15), 1);
-      const hum = r1(Math.min(1, Math.max(0.4, 0.82 - 0.02 * (air - 11) + r.normal(0, 0.03))), 2);
-      const p = r1(pres, 1);
-      const wind = Math.max(0, Math.round(14 - 0.6 * (pres - 1012) + r.normal(0, 4)));
-      out.push({ low, mast, hum, pres: p, wind });
-    }
-    return (monthCache = out);
-  };
+  // The data lives in the running datasets (figures/datasets/*.js): one source of truth.
+  //   gull-day: the day's twelve readings (II.13); ten-days: 480 readings (II.14–II.19).
+  SV.day = (n = 12) => DS.rows('gull-day').slice(0, n);
+  SV.month = () => DS.rows('ten-days');
   SV.matrixOf = rows => rows.map(o => SV.CHANNELS.map(c => o[c.key]));
 
   // The II.13 table in one of four views. Each channel is written as whole numbers of its
@@ -104,22 +62,10 @@ window.FIG = window.FIG || {};
     return { day, rows, steps, mu, sd, gmu, shift: shiftQ, width, total: width.reduce((s, v) => s + v, 0) };
   };
 
-  // --- 1c. Weather regimes in the (wind, humidity) plane: three clusters.
-  SV.REGIMES = [
-    { name: 'calm', n: 140, wind: 8, hum: 70, sw: 2.2, sh: 3.0 },
-    { name: 'fog', n: 60, wind: 4, hum: 97, sw: 1.5, sh: 1.2 },
-    { name: 'storm', n: 100, wind: 34, hum: 90, sw: 3.5, sh: 2.5 },
-  ];
+  // --- 1c. Weather regimes in the (wind, humidity) plane: three clusters (dataset 'regimes').
+  const REGIME_K = { calm: 0, fog: 1, storm: 2 };
   let regimeCache = null;
-  SV.regimes = function () {
-    if (regimeCache) return regimeCache;
-    const r = PKr().rng('sv-regimes');
-    const pts = [];
-    SV.REGIMES.forEach((g, k) => {
-      for (let i = 0; i < g.n; i++) pts.push({ x: Math.max(0, Math.round(r.normal(g.wind, g.sw))), y: Math.min(100, Math.round(r.normal(g.hum, g.sh))), k });
-    });
-    return (regimeCache = r.shuffle(pts));
-  };
+  SV.regimes = () => regimeCache || (regimeCache = DS.rows('regimes').map(r => ({ x: r.wind, y: r.hum, k: REGIME_K[r.regime] })));
   // The two thermometers of the month, as a 2-D cloud (°C), for the VQ-vs-KLT comparison.
   SV.thermoPairs = () => SV.month().map(o => ({ x: o.low, y: o.mast }));
 
@@ -301,7 +247,7 @@ window.FIG = window.FIG || {};
   // --- Caches -----------------------------------------------------------------
   SV.LOGBOOKS = { G: 'Gull Rock', S: 'Seal Point', H: 'Harbour buoy', L: 'Lighthouse', N: 'North Cape', F: 'Ferry pier', M: 'Mill Bay', R: 'Reef' };
   SV.TRACES = {
-    storm: 'G S G H G S L G S F G S H G N G S L G S M G S R'.split(' '),
+    get storm() { return DS.rows('storm-morning').map(r => r.id); },   // dataset 'storm-morning'
     sweep: 'G S H L N G S H L N G S H L N G S H L N G S H L'.split(' '),
     random: (function () { const r = tinyRng(99), k = 'GSHLNFMR'; return Array.from({ length: 24 }, () => k[Math.floor(r() * 8)]); })(),
   };
@@ -590,6 +536,34 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
+     II.15 — the KLT of all five channels: each new axis as a recipe
+     ================================================================== */
+  FIG.svKltRecipes = (host) => {
+    const R = SV.corrMatrix(SV.covMatrix(SV.matrixOf(SV.month()))), C = SV.CHANNELS;
+    const E = SV.eig(R);
+    const MEANS = ['warm and dry vs cold and damp', 'high and calm vs low and windy', 'pressure and wind off their usual relation', 'humidity that temperature does not explain', 'foot thermometer minus top thermometer'];
+    const wrap = h('div', { class: 'tbl-wrap' }), ro = readout();
+    host.append(legend([['positive weight', series(0), 'box'], ['negative weight', series(1), 'box'], [`eigenvalue ${tex('\\vlambda')} (variance along the axis)`, series(4), 'box']]), wrap, ro);
+    const t = h('table', { class: 'data sv-heat sv-recipe' });
+    t.append(h('thead', {}, h('tr', {}, h('th', { class: 'l', text: 'new axis: what it measures' }), h('th', { class: 'l', html: tex('\\vlambda') }),
+      ...C.map((c, j) => h('th', { html: `${tex('\\vc=' + j)}<br><span class="sv-sub">${c.short}</span>` })))));
+    const tb = h('tbody');
+    E.vectors.forEach((v, k) => {
+      const lam = E.values[k];
+      const bar = h('div', { class: 'sv-lbar' }, h('span', { style: `width:${Math.max(2, 100 * lam / E.values[0])}%;background:${series(4)}` }), h('b', { text: fmt(lam, lam < 1 ? 3 : 2) }));
+      const tr = h('tr', {}, h('th', { class: 'l sv-what', html: `<b>${k + 1}</b> <span class="sv-sub">${MEANS[k]}</span>` }), h('td', { class: 'sv-lcell' }, bar));
+      v.forEach((w, j) => {
+        const td = h('td', { tabindex: '0', style: `background:${mix(w >= 0 ? series(0) : series(1), Math.round(6 + 72 * Math.abs(w)))}`, text: num(w, 2) });
+        hover(td, () => `<b>axis ${k + 1}</b> takes ${num(w, 2)} × standardized ${C[j].name}<br>${Math.abs(w) < 0.1 ? 'almost ignores this channel' : w > 0 ? 'rises when this channel rises' : 'falls when this channel rises'}`);
+        tr.append(td);
+      });
+      tb.append(tr);
+    });
+    t.append(tb); wrap.append(t);
+    ro.set([['sum of the eigenvalues', `${fmt(sum(E.values), 2)} = the 5 standardized channels`], ['largest / smallest', `${fmt(E.values[0], 2)} / ${fmt(E.values[4], 4)}`]]);
+  };
+
+  /* ==================================================================
      II.16 — eigenvalue spectra, flat to spiky, and ½ log₂ AM/GM
      ================================================================== */
   FIG.svSpectrum = (host) => {
@@ -709,17 +683,30 @@ window.FIG = window.FIG || {};
     };
     const CS = [2, 3, 4, 8, 16, 32, 64];
     for (const s of Object.values(SETS)) {
-      const Z = SV.standardize2(s.pts).Z;
+      const Z = (s.Z = SV.standardize2(s.pts).Z);
       s.klt = SV.kltGain2(Z);
       s.res = CS.map(C => SV.vqBits(Z, C));
     }
-    let set = 'thermo';
-    const box = h('div'), ro = readout();
+    let set = 'thermo', ci = 3;
+    const box = h('div'), ro = readout(), cbox = h('div');
+    const sC = seg(CS.map((C, i) => [i, String(C)]), ci, v => { ci = v; drawCode(); }, 'Codebook size to show');
     host.append(
-      controls(seg(Object.entries(SETS).map(([k, s]) => [k, s.label]), set, v => { set = v; draw(); }, 'Data set')),
+      controls(seg(Object.entries(SETS).map(([k, s]) => [k, s.label]), set, v => { set = v; draw(); drawCode(); }, 'Data set')),
       legend([['bits the residual saves', series(2), 'box'], ['index tax', series(1), 'box'], ['net = saved − tax', series(5), 'box'], ['KLT gain (no tax)', series(4), 'dash']]),
       box, ro,
+      controls(h('span', { class: 'ds-ctl-k', text: 'show the codebook for C =' }), sC), cbox,
     );
+    const Q = Plot(cbox, { x: [-3.2, 3.2], y: [-3.2, 3.2], equal: true, h: 340, xlabel: 'first channel, standardized', ylabel: 'second channel, standardized', label: 'The standardized cloud with the k-means codebook drawn as diamonds' });
+    function drawCode() {
+      const s = SETS[set], km = s.res[ci].km;
+      Q.clear();
+      s.Z.forEach((p, i) => el('circle', { cx: Q.x(p[0]), cy: Q.y(p[1]), r: 2 * Q.fs, style: `fill:${series(km.lab[i] % 8)};opacity:.45` }, Q.g.data));
+      km.cents.forEach((c, k) => {
+        const d = 6.5 * Q.fs, X = Q.x(c[0]), Y = Q.y(c[1]);
+        el('path', { d: `M${X} ${Y - d}L${X + d} ${Y}L${X} ${Y + d}L${X - d} ${Y}Z`, style: `fill:${series(k % 8)};stroke:var(--paper-3);stroke-width:${2 * Q.fs}` }, Q.g.top);
+      });
+      el('text', { x: Q.m.l + 8 * Q.fs, y: Q.m.t + 16 * Q.fs, class: 'lbl', text: `C = ${CS[ci]}: net ${fmt(s.res[ci].net, 2)} bits / element` }, Q.g.top);
+    }
     const P = Plot(box, { xcats: CS.map(String), y: [-0.2, 4.8], h: 360, grid: 'y', xlabel: 'codebook size C (centroids)', ylabel: 'bits per element', label: 'VQ bits saved, index tax and net against codebook size, with the KLT gain' });
     function draw() {
       const s = SETS[set];
@@ -735,7 +722,7 @@ window.FIG = window.FIG || {};
       const best = s.res.reduce((a, b, i) => (b.net > a.net ? { net: b.net, i } : a), { net: -Infinity, i: 0 });
       ro.set([['KLT gain', `${fmt(s.klt, 2)} bits / element, no tax`], ['best VQ net', `${fmt(best.net, 2)} at C = ${CS[best.i]}`], ['winner', best.net > s.klt ? '<b>the codebook</b>' : '<b>the rotation</b>']]);
     }
-    draw();
+    draw(); drawCode();
   };
 
   /* ==================================================================
@@ -790,30 +777,6 @@ window.FIG = window.FIG || {};
       hover(knob, () => `<b>${fmt(v, 3)} ${o.unit}</b>`);
     }
     build();
-  };
-
-  /* ==================================================================
-     II.19 — BF16 bit patterns of temperatures, and the entropy of each bit
-     ================================================================== */
-  FIG.svBf16Bits = (host) => {
-    const day = SV.day(12), month = SV.month().map(o => o.low);
-    const wrap = h('div', { class: 'tbl-wrap' }), box = h('div'), ro = readout();
-    host.append(wrap, legend([['sign', series(6), 'box'], ['exponent (8 bits)', series(0), 'box'], ['mantissa (7 bits)', series(1), 'box']]), box, ro);
-    const t = h('table', { class: 'data sv-bits-tab' });
-    t.append(h('thead', {}, h('tr', {}, h('th', { class: 'l', text: 'time' }), h('th', { text: 'reading' }), h('th', { text: 'as BF16' }), h('th', { class: 'l', text: 'the 16 bits: sign · exponent · mantissa' }))));
-    const tb = h('tbody');
-    day.slice(0, 8).forEach(o => {
-      const b = SV.bf16(o.low), s = b.bits.toString(2).padStart(16, '0');
-      tb.append(h('tr', {}, h('td', { class: 'l', text: o.time }), h('td', { text: o.low.toFixed(1) }), h('td', { text: String(b.value) }),
-        h('td', { class: 'l sv-bitcell', html: `<span class="sv-b-s">${s[0]}</span> <span class="sv-b-e">${s.slice(1, 9)}</span> <span class="sv-b-m">${s.slice(9)}</span>` })));
-    });
-    t.append(tb); wrap.append(t);
-    const labels = ['s', 'e7', 'e6', 'e5', 'e4', 'e3', 'e2', 'e1', 'e0', 'm6', 'm5', 'm4', 'm3', 'm2', 'm1', 'm0'];
-    const Hb = labels.map((_, i) => { const k = 15 - i; const ones = month.filter(v => (SV.bf16(v).bits >> k) & 1).length / month.length; return PK.entropy([ones, 1 - ones]); });
-    const P = Plot(box, { xcats: labels, y: [0, 1.1], h: 260, grid: 'y', xlabel: 'bit position (sign, exponent e7…e0, mantissa m6…m0)', ylabel: 'bits of information', label: 'Entropy of each bit of a BF16 temperature' });
-    bars(P, Hb, { colors: i => (i === 0 ? series(6) : i < 9 ? series(0) : series(1)), labels: v => (v < 0.005 ? '' : fmt(v, 2)), tip: (v, i) => `<b>bit ${labels[i]}</b><br>${fmt(v, 3)} bits: ${v < 0.05 ? 'always the same — free to predict' : v > 0.9 ? 'a coin flip — looks like noise' : 'partly predictable'}`, width: 22 });
-    const joint = f => { const c = {}; month.forEach(v => { const k = f(SV.bf16(v).bits); c[k] = (c[k] || 0) + 1; }); return PK.entropy(Object.values(c)); };
-    ro.set([['sign + exponent (9 bits), together', `${fmt(joint(b => b >> 7), 2)} bits`], ['mantissa (7 bits), together', `${fmt(joint(b => b & 127), 2)} bits`], ['the whole 16-bit pattern', `${fmt(joint(b => b), 2)} bits`], ['readings', `${month.length} (ten days, foot thermometer)`]]);
   };
 
   /* ==================================================================

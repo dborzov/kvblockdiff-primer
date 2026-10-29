@@ -42,7 +42,15 @@ Here are six readings of the two thermometers on the Gull Rock mast, taken on si
 | day 8, 12:00 | 13.5 | 12.9 | −0.6 |
 | day 10, 04:00 | 12.3 | 11.2 | −1.1 |
 
-Notice anything? The temperature wanders by four degrees. The *difference* between the two thermometers barely moves: the top of the mast is always about half a degree colder. Knowing one thermometer, you could write down the other to within a few tenths.
+Notice anything? The temperature wanders by four degrees. The *difference* between the two thermometers barely moves: the top of the mast is always about 0.6 of a degree colder. Knowing one thermometer, you could write down the other to within a few tenths.
+
+Those six rows were picked from a longer record: ten days, a reading every half hour, all five sensors of II.13. Here it is in full.
+
+::: dataset fig-sv-tendays-data ten-days view=days,thermo,humid,storm hl=table metrics=n,spread-thermo,diff,cov-thermo,corr-thermo,corr-temp-hum,corr-pres-wind,corr-temp-pres
+**Ten days at Gull Rock, 480 readings of five channels.** *Plot:* "Ten days" draws each channel as a strip on its own scale (the two thermometers share the top strip; hover or tap for the whole reading at one moment, click to select it). The three scatter views plot one channel against another, one dot per reading, with the two means as grey lines; "Foot vs top" adds the dashed line *top = foot − 0.61 °C*. Red marks the six readings of the table above. *Numbers:* the spreads, the difference of the thermometers, and the covariances and correlations this page computes. Synthetic data from a fixed seed.
+:::
+
+In the top strip, the two thermometer lines are nearly one line, while each wanders by several degrees over the days. In *Foot vs top*, the 480 dots hug the dashed line. *Temperature vs humidity* leans the other way, *Pressure vs wind* too, more loosely.
 
 The two thermometers are two [[channel|channels]] of the same [[vector]]: channel 0 and channel 1 of each reading (II.13). This page measures how strongly channels move together.
 
@@ -85,7 +93,7 @@ The other pairs in the figure tell their own small stories:
 - **pressure · wind: −0.63.** Falling pressure brings wind; a storm is a low.
 - **temperature · pressure: −0.01.** In this data the two ignore each other, and the positive and negative rectangles cancel.
 
-Here is the link to bits. The correlation squared is exactly the $\vRsq$ of the best straight-line prediction of one channel from the other. For the thermometers that is $0.992^2 = 0.983$, so predicting the top thermometer from the foot one saves about $\tfrac12 \log_2 \frac{1}{1-0.983} \approx 2.95$ bits on that channel. A correlation of 0.73 (temperature and humidity) gives only $\vRsq = 0.54$ and about 0.55 bit.
+Here is the link to bits. The correlation squared is exactly the $\vRsq$ of the best straight-line prediction of one channel from the other. For the thermometers that is $0.992^2 = 0.983$, so predicting the top thermometer from the foot one saves about $\tfrac12 \log_2 \frac{1}{1-0.983} \approx 2.95$ bits on that channel. A correlation of 0.73 (temperature and humidity) gives only $\vRsq = 0.54$ and about 0.56 bit.
 
 ::: note warning Correlation only sees straight lines
 A cloud shaped like a ring or like three separate blobs can have correlation zero and still be very predictable. Correlation measures one kind of togetherness: the straight-line kind. Clusters get their own tool in [[#school-clusters]].

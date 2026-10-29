@@ -31,7 +31,7 @@ cards:
     sec: index-tax
 ---
 
-Here are eight readings from Gull Rock, wind speed and humidity only, in the order they arrived:
+Here are eight readings from the Gull Rock archive, wind speed and humidity only:
 
 | wind (kn) | 30 | 12 | 3 | 13 | 36 | 2 | 9 | 38 |
 |---|---|---|---|---|---|---|---|---|
@@ -39,7 +39,11 @@ Here are eight readings from Gull Rock, wind speed and humidity only, in the ord
 
 Notice anything? They come in three flavours. Light wind and moderate humidity: a **calm** day. Almost no wind and saturated air: **fog**. Strong wind and wet air: a **storm**. Plot 300 readings as dots and the flavours become three islands with empty sea between them.
 
-Rotations (II.15) cannot see this. The correlation matrix of these readings is nearly flat, and a KLT saves just 0.05 bit per element. Yet a forecaster could describe each reading in two words: "a storm, a bit windier than usual". This page turns that sentence into a code.
+::: dataset fig-sv-regimes-data regimes view=scatter,counts hl=table metrics=n,counts,centroids,corr,klt
+**Gull Rock's weather regimes: 300 readings of wind and humidity.** *Plot:* "Wind vs humidity" has one dot per reading, coloured by the mood the generator drew it from (blue calm, teal fog, purple storm), with each mood's average point as a diamond; drag a box to select readings. "How many of each" counts the moods. Red marks the eight readings of the table. *Numbers:* the counts, the three average points, and what straight-line statistics make of the cloud. Synthetic: three bell-shaped clusters from a fixed seed.
+:::
+
+Rotations (II.15) cannot see this. The correlation between wind and humidity is a modest 0.37 — windy readings tend to be wet, because storms are — and a KLT saves just 0.05 bit per element. Yet a forecaster could describe each reading in two words: "a storm, a bit windier than usual". This page turns that sentence into a code.
 
 ## Weather regimes {#regimes}
 

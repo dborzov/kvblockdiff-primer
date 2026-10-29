@@ -58,14 +58,18 @@ These shares are probabilities, and the whole list is a distribution.
 
 A [[=distribution]] is the full list: every possible outcome with its probability. Because one of the outcomes always happens, the probabilities of a distribution add up to exactly 1. From now on, *the sky distribution* means the table above: sunny ½, cloudy ¼, rain ⅛, fog ⅛.
 
-::: note toy Where do these numbers come from?
-From counting the station's archive. Counting is never perfect — a year of reports gives only an estimate. The next page, [[#school-entropy]], shows how good such an estimate is.
+Where do these numbers come from? From counting the station's archive. Here it is: 4,096 noon reports from random days of sixteen years, one tile per report.
+
+::: dataset fig-surprise-sky sky view=mosaic,counts metrics=n,sunny,cloudy,rain,fog
+**The Gull Rock sky archive.** *All 4,096 reports:* one tile per noon report, in archive order (left to right, then down), coloured by the sky; hover a tile for its date, season and sky. *How often each sky:* the counts, with their share of the archive; click a bar to select those reports. *Table:* every report with its date, season and its surprisal (defined below). *Numbers:* the share of each sky, against the rounded probabilities in the table above. Synthetic, seeded data: independent draws from the sky distribution.
 :::
+
+The mosaic looks like confetti, about half of it saffron, and that is the point: the reports come from random days, so no tile tells you anything about its neighbour. The counts land close to ½, ¼, ⅛ and ⅛ but not exactly on them (2,071 sunny reports, not 2,048). Counting is never perfect; the next page, [[#school-entropy]], shows how good such an estimate is.
 
 ::: takeaway
 - A probability $\vp$ is the long-run share of an outcome, between 0 and 1.
 - A distribution lists all outcomes with their probabilities; they add up to 1.
-- The Gull Rock sky distribution is sunny ½, cloudy ¼, rain ⅛, fog ⅛.
+- The Gull Rock sky distribution is sunny ½, cloudy ¼, rain ⅛, fog ⅛ — rounded from counting an archive of 4,096 noon reports.
 :::
 
 ## Surprisal: rare news costs more bits {#surprisal}
@@ -115,7 +119,7 @@ The figure shows the whole curve. Rare outcomes sit on the left, where the curve
 Why a logarithm, and not simply $1/\vp$? Because of how independent events combine. Take a sunny report on one day and a fog report on another, unrelated day. The chance of that pair is $½ × ⅛ = 1/16$, and its surprisal is $\log_2 16 = 4$ bits — which is $1 + 3$. **Probabilities of independent events multiply; their surprisals add.** Bits sent over a radio link add up too, so this is exactly the bookkeeping we want.
 
 ::: note warning “Independent” is an assumption
-Two noon reports on different days are close to independent. Two reports half an hour apart are not: fog lingers, and a sunny sky usually stays sunny. Surprisals of such neighbours do not simply add. [[#school-mutual-information]] measures how much the neighbour gives away.
+Two noon reports on different days are close to independent — that is why the archive's mosaic looks like confetti. Two reports half an hour apart are not: fog lingers, and a sunny sky usually stays sunny. Surprisals of such neighbours do not simply add. The next page shows what such a sky looks like, and [[#school-mutual-information]] measures how much the neighbour gives away.
 :::
 
 ::: takeaway

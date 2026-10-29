@@ -153,7 +153,7 @@
       { id: 'corr-temp-pres', label: 'correlation, temperature · pressure', value: rows => corr(rows, 'low', 'pres'), fmt: v => fmt(v, 2),
         note: 'Nearly zero: in this data the two ignore each other, and the positive and negative rectangles cancel.' },
       { id: 'variances', label: 'variances (the diagonal of $\\vSigma$)', value: rows => CH.map(c => variance(col(rows, c.key))),
-        fmt: v => v.map(x => (x < 0.01 ? fmt(x, 4) : fmt(x, 1))).join(' · '),
+        fmt: v => v.map(x => (x < 0.01 ? fmt(x, 4) : x < 10 ? fmt(x, 2) : fmt(x, 1))).join(' · '),
         note: 'Foot, top, humidity, pressure, wind, each in its own unit squared. The pressure’s 29.5 hPa² is fifteen thousand times the humidity’s 0.002: in raw units the big numbers drown the small ones.' },
     ],
     code: `

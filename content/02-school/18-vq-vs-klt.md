@@ -31,7 +31,7 @@ cards:
     sec: pq
 ---
 
-Take the k-means of the last page and run it on the other cloud of this Part: the two thermometers, a single bell-shaped cigar with no clusters at all. With $\vC = 8$ it lays its eight centroids along the diagonal, like beads on a string. It has found the long axis of the cigar — the KLT direction of II.15. And it charges an index for every reading to say which bead is nearest.
+Take the k-means of the last page and run it on the other cloud of this Part: the two thermometers, a single bell-shaped cigar with no clusters at all. With $\vC = 8$ it lays its eight centroids along the diagonal, like beads on a string (the lower plot of [[#fig-sv-vq-vs-klt]] shows them). It has found the long axis of the cigar — the KLT direction of II.15. And it charges an index for every reading to say which bead is nearest.
 
 So a codebook can do a rotation's job. Can it do it *better*? This page says when it can, when it cannot, and why.
 
@@ -55,7 +55,7 @@ So a codebook can do a rotation's job. Can it do it *better*? This page says whe
 The figure runs the contest on both clouds of this Part, for codebooks from 2 to 64 centroids.
 
 ::: figure fig-sv-vq-vs-klt svVqVsKlt
-**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both channels standardized).** For each codebook size $\vC$ (k-means, the best of five starts by total squared distance): teal, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each channel; red, the index tax $\log_2 \vC / 2$; green (or dark red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings) and the clustered weather regimes (300 readings). *Hover* a bar for its value.
+**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both channels standardized).** For each codebook size $\vC$ (k-means, the best of five starts by total squared distance): teal, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each channel; red, the index tax $\log_2 \vC / 2$; green (or dark red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings of [[#fig-sv-tendays-data|the ten days]]) and the clustered [[#fig-sv-regimes-data|weather regimes]] (300 readings). *Hover* a bar for its value. Below the bars, the standardized cloud itself, each dot coloured by its nearest centroid and the codebook drawn as diamonds; *pick* a codebook size to see it (it opens at $\vC = 8$).
 :::
 
 What the bars say:

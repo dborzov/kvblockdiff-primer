@@ -3,7 +3,9 @@
    Every toy number comes from a seeded generator, so the prose and the figures agree.
    The generators are exposed on window.SCHOOLINFO (data only, no DOM) so the numbers
    quoted in the prose can be re-checked from the browser console.
-   Builders: siQuestions, siSurprisal, siEntropyBars, siHistogram, siJointTable,
+   Data: the sky archive, the temperatures and the wind are datasets (figures/datasets/sky.js, temp.js, wind.js),
+   read here with DS.col — one source of truth for the figures and the dataset cards.
+   Builders: siQuestions, siSurprisal, siEntropyBars, siHistogram, siJointTable, siWholeBits,
    siInfoBars, siHuffman, siArith, siFixedWidth, siPredict, siShapes, siExchange.
    ===================================================================== */
 window.FIG = window.FIG || {};
@@ -37,14 +39,14 @@ window.FIG = window.FIG || {};
   const chainRow = (s, i) => SKY_P.map((q, j) => (1 - s) * q + (i === j ? s : 0));
   const chainCondH = s => SKY_P.reduce((a, p, i) => a + p * entropy(chainRow(s, i)), 0);
 
-  // The sky archive: noon reports from random days, independent draws from the year's distribution.
+  // The sky archive: 4,096 noon reports from random days, independent draws from the year's distribution.
+  // One source of truth: the dataset 'sky' (figures/datasets/sky.js); drawSky is still used for fresh archives.
   function drawSky(r, P = SKY_P) {
     let u = r(), k = 0;
     while (k < P.length - 1 && u >= P[k]) { u -= P[k]; k++; }
     return k;
   }
-  let archiveCache = null;
-  const skyArchive = () => archiveCache || (archiveCache = (() => { const r = rng('si-archive'); return range(4096).map(() => drawSky(r)); })());
+  const skyArchive = () => DS.col('sky', 'k');
   const countsOf = (xs, k = 4) => { const c = new Array(k).fill(0); xs.forEach(v => c[v]++); return c; };
 
   // Wind speeds in knots: mostly a breeze (Rayleigh, scale 8 kn), and 2.5 % gales of 40–59 kn, in three storms.
@@ -58,24 +60,9 @@ window.FIG = window.FIG || {};
     return { n, maxFit, escIdx, esc: escIdx.length, eps, escBits: eps * (POS_BITS + RAW_BITS), perValue: n + eps * (POS_BITS + RAW_BITS) };
   }
 
-  // Temperature every 30 minutes for 14 days, in tenths of a degree: day cycle + slow wander + 3 fronts + sensor noise.
+  // Temperature every 30 minutes for 28 days, in tenths of a degree: the dataset 'temp' (figures/datasets/temp.js).
   const DAYS = 28;
-  let tempCache = null;
-  function tempSeries() {
-    if (tempCache) return tempCache;
-    const r = rng('si-temp'), n = DAYS * 48;
-    const fronts = [[170, -30], [395, -22], [560, 34], [810, -28], [1060, 30]];   // [reading, change in tenths of °C], each over 3 hours
-    let w = 0;
-    const xs = [];
-    for (let i = 0; i < n; i++) {
-      const hour = (i / 2) % 24;
-      const cycle = 25 * Math.cos(2 * Math.PI * (hour - 15) / 24);
-      w = 0.985 * w + r.normal(0, 1.1);
-      const fr = fronts.reduce((a, [at, d]) => a + d * clamp((i - at) / 6, 0, 1), 0);
-      xs.push(Math.round(138 + cycle + w + fr + r.normal(0, 1.0)));
-    }
-    return (tempCache = xs);
-  }
+  const tempSeries = () => DS.col('temp', 'v');
   const PRED_LABELS = { none: 'no prediction', average: 'the average', previous: 'previous value', trend: 'previous + trend' };
   function predictAt(xs, i, kind, m) {
     if (kind === 'none') return 0;
@@ -491,6 +478,28 @@ window.FIG = window.FIG || {};
       render(i) { cur = i; draw(i); },
     });
     host.append(tblBox, h('div', { class: 'kpis' }, kL, kH, kO));
+  };
+
+  // ================================================================= II.7 — the whole-bit loss as the sky gets lopsided
+  FIG.siWholeBits = host => {
+    const sky = p => [p, (1 - p) / 2, (1 - p) / 4, (1 - p) / 4];      // sunny p; the rest split 2 : 1 : 1, as in the year and summer
+    const huffAvg = ps => { const T = huffman(ps.map(q => Math.round(q * 1e6))); return ps.reduce((a, q, i) => a + q * T.code[i].length, 0); };
+    const ps = linspace(0.25, 0.99, 149);
+    const H = ps.map(p => [p, entropy(sky(p))]), L = ps.map(p => [p, huffAvg(sky(p))]);
+    const box = h('div');
+    host.append(legend([['Huffman average', series(1)], ['entropy (the floor)', series(4)], ['the gap: whole-bit loss', series(1), 'band']]), box);
+    const P = Plot(box, { x: [0.25, 1], y: [0, 2.1], h: 300, xticks: [0.25, 0.5, 0.75, 1], xfmt: v => fmtPct(v, 0), xlabel: 'probability of sunny (the rest: cloudy 2 : rain 1 : fog 1)', ylabel: 'bits per report', label: 'Huffman average codeword length and entropy as the sky becomes lopsided' });
+    area(P, ps.map((p, i) => [p, H[i][1], L[i][1]]), { color: series(1), opacity: 0.14 });
+    line(P, H, { color: series(4), name: 'entropy' });
+    line(P, L, { color: series(1), name: 'Huffman', curve: 'linear' });
+    rule(P, { y: 1, label: 'no codeword is shorter than 1 bit' });
+    [[0.5, 'Gull Rock year'], [0.75, 'summer']].forEach(([p, lab]) => {
+      const e = entropy(sky(p)), l = huffAvg(sky(p));
+      dot(P.g.top, P.x(p), P.y(l), 4.5 * P.fs, series(1));
+      dot(P.g.top, P.x(p), P.y(e), 4.5 * P.fs, series(4));
+      annotate(P, p, l, `${lab}\n${fmt(l, 3)} vs ${fmt(e, 2)} bits`, { dx: 26, dy: -40 });
+    });
+    crosshair(P, { xname: 'sunny', xfmt: v => fmtPct(v, 0), yfmt: v => `${fmt(v, 2)} bits` });
   };
 
   // ================================================================= II.8 — arithmetic coding interval

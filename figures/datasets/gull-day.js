@@ -153,19 +153,20 @@
             return { r, foot, top, d, s: foot + Math.floor(d / 2) };
           });
           box.append(legend([['foot (tenths of °C)', series(0)], ['top (tenths of °C)', series(3)], [tex('s') + ' = foot + ⌊d/2⌋', series(6), 'dash'], [tex('d') + ' = top − foot', series(1), 'box']]));
-          const b = h('div'); box.append(b);
-          const P = Plot(b, { x: [-0.5, 11.5], y: [-10, 125], h: 320, xlabel: 'time of the reading', ylabel: 'tenths of a degree', xticks: [0, 2, 4, 6, 8, 10], xfmt: v => (ctx.rows[v] || {}).time || '', label: 'The two thermometers and their lifted pair s, d' });
-          rule(P, { y: 0, dash: false, color: 'var(--ink-3)' });
+          const b1 = h('div'), b2 = h('div'); box.append(b1, b2);
+          const xo = { x: [-0.5, 11.5], xticks: [0, 2, 4, 6, 8, 10], xfmt: v => (ctx.rows[v] || {}).time || '' };
+          const P1 = Plot(b1, { ...xo, y: [104, 124], h: 230, ylabel: 'tenths of °C', label: 'The two thermometers and s, in tenths of a degree' });
+          line(P1, rows.map((q, i) => [i, q.foot]), { color: series(0), markers: 2.6, tip: p => `foot ${p[1]}` });
+          line(P1, rows.map((q, i) => [i, q.top]), { color: series(3), markers: 2.6, tip: p => `top ${p[1]}` });
+          line(P1, rows.map((q, i) => [i, q.s]), { color: series(6), dash: true, width: 1.6 });
+          const P2 = Plot(b2, { ...xo, y: [-9, 1], h: 170, xlabel: 'time of the reading', ylabel: 'd (tenths)', yticks: [-8, -6, -4, -2, 0], label: 'The difference d, on the same scale' });
+          rule(P2, { y: 0, dash: false, color: 'var(--ink-3)' });
           rows.forEach((q, i) => {
-            const rr = el('rect', { x: P.x(i) - 9 * P.fs, width: 18 * P.fs, y: P.y(0), height: P.y(q.d) - P.y(0), rx: 3, style: `fill:${mix(series(1), 70)}` }, P.g.data);
+            const rr = el('rect', { x: P2.x(i) - 9 * P2.fs, width: 18 * P2.fs, y: P2.y(0), height: P2.y(q.d) - P2.y(0), rx: 3, style: `fill:${mix(series(1), 70)}` }, P2.g.data);
             hover(rr, () => `<b>${q.r.time}</b><br>foot ${q.foot}, top ${q.top}<br>d = ${q.top} − ${q.foot} = ${q.d}<br>s = ${q.foot} + ⌊${q.d}/2⌋ = ${q.s}`);
-            el('text', { x: P.x(i), y: P.y(q.d) + 14 * P.fs, 'text-anchor': 'middle', class: 'val', text: String(q.d) }, P.g.data);
+            el('text', { x: P2.x(i), y: P2.y(q.d) + 14 * P2.fs, 'text-anchor': 'middle', class: 'val', text: fmt(q.d) }, P2.g.data);
           });
-          line(P, rows.map((q, i) => [i, q.foot]), { color: series(0), markers: 2.6 });
-          line(P, rows.map((q, i) => [i, q.top]), { color: series(3), markers: 2.6 });
-          line(P, rows.map((q, i) => [i, q.s]), { color: series(6), dash: true, width: 1.6 });
-          annotate(P, 6, -5, 'd: a narrow band of small numbers', { dx: 10, dy: 52 });
-          box.append(h('p', { class: 'fig-note', text: 'The twelve readings in whole tenths of a degree, and the lifted pair: s (roughly the average) rides along with the thermometers, d (exactly the difference) is the short red bars. Hover a bar for the arithmetic.' }));
+          box.append(h('p', { class: 'fig-note', text: 'Top: the twelve readings in whole tenths of a degree, with s (roughly the average) riding along between them. Bottom, on the same scale: d (exactly the difference), a narrow band of small numbers. Hover a bar for the arithmetic.' }));
         },
       },
     },
@@ -185,7 +186,7 @@
       { id: 'bits-global', label: 'bits per reading, minus one mean of all 60 numbers', value: rows => widths(rows, 'global'), fmt: v => `${v.join(' + ')} = ${sum(v)}`,
         note: (v, rows) => `One shared shift of ${fmt(mean(CH.flatMap(c => rows.map(r => r[c.key]))), 1)} is wrong for every channel at once: a humidity of 0.82 becomes −209.32 and needs ${v[2]} bits. Worse than doing nothing.` },
       { id: 'lift-d', label: 'the difference $d$ = top − foot, in tenths', value: rows => rows.map(r => Math.round(r.mast * 10) - Math.round(r.low * 10)),
-        fmt: v => `${Math.min(...v)} … ${Math.max(...v)}`,
+        fmt: v => `${fmt(Math.min(...v))} … ${fmt(Math.max(...v))}`,
         note: (v, rows) => `Only ${new Set(v).size} different values in a band ${Math.max(...v) - Math.min(...v) + 1} tenths wide, while the foot thermometer alone spans ${Math.round(Math.min(...rows.map(r => r.low)) * 10)} to ${Math.round(Math.max(...rows.map(r => r.low)) * 10)} tenths. The quiet direction of the KLT, in whole numbers.` },
       { id: 'lift-exact', label: 'readings recovered exactly from $(s, d)$', value: rows => rows.filter(r => {
           const f = Math.round(r.low * 10), t = Math.round(r.mast * 10), d = t - f, s = f + Math.floor(d / 2), f2 = s - Math.floor(d / 2);

@@ -31,14 +31,13 @@ cards:
     sec: centring
 ---
 
-Strip the Gull Rock messages of Part I down to their numbers. The keys, quotes and commas go; both ends of the radio link agree once on the order of the values. Here are the first four half-hours, with one addition: the second thermometer, high on the mast.
+Strip the Gull Rock messages of Part I down to their numbers. The keys, quotes and commas go; both ends of the radio link agree once on the order of the values. Here is the whole afternoon, twelve half-hours from 14:30 to 20:00, with one addition: a second thermometer, high on the mast. The card opens on the table; then look at the plot.
 
-| time | temperature, foot of mast (°C) | temperature, top of mast (°C) | humidity | pressure (hPa) | wind (kn) |
-|---|---|---|---|---|---|
-| 14:30 | 11.4 | 10.8 | 0.82 | 1012.6 | 14 |
-| 15:00 | 11.8 | 11.4 | 0.83 | 1012.1 | 14 |
-| 15:30 | 11.8 | 11.4 | 0.83 | 1011.8 | 14 |
-| 16:00 | 12.0 | 11.3 | 0.85 | 1011.6 | 14 |
+::: dataset fig-sv-day-data gull-day view=channels,oneaxis hl=partI tab=table metrics=shape,means,spreads,bits-raw,bits-centred,bits-global
+**The afternoon's twelve readings.** *Table:* one row per reading, one column per sensor; the three highlighted rows are the JSON messages of Part I. *Plot:* "Five channels" draws each column as its own strip, on its own scale (hover or tap for the whole reading at that time, click to select it); "All on one scale" draws all five against one shared axis. *Numbers:* each channel's typical value and spread, and the bits a fixed-length code needs per reading, before and after centring. Synthetic data from fixed seeds.
+:::
+
+Look at the five strips. Down any one of them the numbers are alike: the barometer drifts from 1012.6 to 1009.1 hPa, the humidity creeps from 0.82 to 0.90. Now switch to *All on one scale*. The pressure sits up near 1011 and everything else is squashed flat near zero. The five numbers of one reading have nothing in common.
 
 What is left of the 14:30 message is five numbers: `11.4 10.8 0.82 1012.6 14`. Everything in the rest of this Part — correlation, rotations, codebooks — is about lists of numbers like this one. So we need two words, and we need them to be exact.
 
@@ -98,7 +97,7 @@ Pick each channel in turn and read its mean and spread off the figure:
 | 3 | pressure | 1010.83 hPa | 1.05 hPa |
 | 4 | wind | 15.9 kn | 1.9 kn |
 
-Down a column, the numbers are alike. Across a row, they have nothing in common: a temperature, a fraction, a four-digit pressure. Statistics live in channels.
+These are the same numbers as the *Numbers* tab of the afternoon's card ([[#fig-sv-day-data]]). Down a column, the numbers are alike. Across a row, they have nothing in common: a temperature, a fraction, a four-digit pressure. Statistics live in channels.
 
 ::: takeaway
 - A channel is one element position across many vectors — one column. A vector is a row.

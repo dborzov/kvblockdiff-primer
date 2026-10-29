@@ -126,9 +126,15 @@ The same information, thirty-two times cheaper. Nothing clever has happened yet:
 This is the theme in its simplest form. Whatever we measure later — surprise, similarity, what a dictionary saves — will be counted in bits, because bits are what the radio link charges for. Bits per value × number of values = the size on the wire.
 :::
 
-There is a hidden assumption in the 4 bits: all sixteen directions are equally likely. At Gull Rock they are not. The wind blows from the south-west far more often than from the north-east. When some answers are more likely than others, a clever questioner can average fewer than 4 questions. Measuring how many fewer takes two more ideas, probability and surprise. They are the subject of the next page.
+There is a hidden assumption in the 4 bits: all sixteen directions are equally likely. At Gull Rock they are not. Here are three weeks of the vane's readings, 1,024 of them, drawn as a *wind rose*: one petal per direction, its area proportional to how many readings came from there.
+
+::: dataset fig-bits-wind-rose wind view=rose,timeline hl=northeast metrics=dirTop,dirSW,dirNE,dirBits
+**Where the Gull Rock wind comes from.** *Rose:* one petal per compass direction; a petal's area is proportional to the number of readings from that direction (dashed rings: 25 %, 50 % and 100 % of the largest petal). Hover a petal for its count and its 4-bit address from the game above; click it to select those readings. The highlight marks the north-easterlies. *Three weeks:* the wind speed over time, with the same readings marked. *Table:* every reading with its direction. *Numbers:* how lopsided the vane is. Synthetic, seeded data; the same readings come back on [[#school-fixed-length]] for their speeds.
+:::
+
+The south-west petals dwarf the rest: SSW, SW and WSW together bring more than half of all readings, while the opposite three bring under 5 %, almost all of them in two short spells. A question like “Is it one of SSW, SW, WSW?” is nearly a fair coin here, and that is the trick. When some answers are more likely than others, a clever questioner asks about the likely ones first and averages fewer than 4 questions — about 3.4 for this vane. Measuring that takes two more ideas, probability and surprise. They are the subject of the next page.
 
 ::: takeaway
 - On a link paid by the bit, sending a 4-bit address instead of text cuts the wind direction's cost 32-fold.
-- 4 bits per direction assumes all sixteen are equally likely; uneven odds allow fewer bits on average.
+- 4 bits per direction assumes all sixteen are equally likely. The Gull Rock vane points south-west half the time, and uneven odds like these allow fewer bits on average: about 3.4.
 :::

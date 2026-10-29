@@ -28,11 +28,11 @@ cards:
 
 Seven in the morning at the harbour office, and a storm is coming. The forecaster works through the logbooks of the stations along the coast — Gull Rock (G), Seal Point (S), the Harbour buoy (H), the Lighthouse (L), the Ferry pier (F), North Cape (N), Mill Bay (M) and the Reef (R). Here is the morning's list of requests, in order:
 
-```text the storm morning: 24 requests for 8 logbooks
-G S G H G S L G S F G S H G N G S L G S M G S R
-```
+::: dataset fig-sv-storm-data storm-morning view=raster,counts metrics=n,distinct,gs,lru4,fifo4
+**The storm morning: 24 requests for 8 logbooks.** *Plot:* "The morning" has one row per logbook and one column per request, in order (the letters along the top are the list as written: G S G H G S L …); each logbook keeps its own colour, and hover or tap a request to see when that logbook was last asked for. "Requests per logbook" counts them. The highlight buttons mark the first requests, or the misses of a 4-slot desk under LRU or FIFO. *Table:* every request, with whether it hits on a 4-slot desk under each policy. *Numbers:* the counts this page uses. Hand-made toy data.
+:::
 
-The desk has room for **four** logbooks. Every other logbook lives in the archive downstairs, and fetching one means a trip of the slow lift. Gull Rock and Seal Point come up again and again; the Reef appears once, at the very end. Which logbooks should stay on the desk?
+The desk has room for **four** logbooks. Every other logbook lives in the archive downstairs, and fetching one means a trip of the slow lift. Look at the top two rows of the card: Gull Rock and Seal Point come up again and again, 16 of the 24 requests between them. The Reef appears once, at the very end. Which logbooks should stay on the desk?
 
 ## Desk and archive {#desk}
 

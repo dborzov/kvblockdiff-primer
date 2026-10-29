@@ -29,6 +29,11 @@ cards:
     wrong: ["By a factor of 2", "By 25 percentage points", "It must vanish completely"]
     why: Each bit halves σ, and halving σ quarters the variance. So 25 % unexplained becomes 6.25 %.
     sec: harsh
+  - q: '“The same as last time” explains 89.9 % of the Gull Rock wind''s variance. The formula promises 1.65 bits saved per reading; the histograms measure 1.15. Why the gap?'
+    a: Neither the wind speeds nor their changes are bell-shaped
+    wrong: ["The formula only works for temperatures", "R² was computed wrongly", "Wind readings are not whole numbers"]
+    why: The exchange rate assumes bell-shaped values and residuals. A lopsided breeze with sudden storm jumps breaks that assumption, so the formula is only a guide.
+    sec: harsh
 ---
 
 “My predictor is 90 % right.” It sounds like a triumph. In bits, if “90 % right” means it explains 90 % of the variance, it saves 1.66 bits per value. A predictor that explains *half* the variance — still a respectable model by most standards — saves half a bit.
@@ -97,7 +102,13 @@ Variance explained buys bits at a logarithmic rate: 75 % buys one bit, 94 % buys
 3. Watch the “next bit needs” tile as you go: 75 % → 93.8 % → 98.4 % → 99.6 %.
 :::
 
-Check it against the measurement of [[#school-prediction]]. The formula says the previous-value predictor, at 98.4 %, saves 2.99 bits per reading; the histograms measured 6.53 − 3.63 = 2.91. Close, and the small gap has known causes ([[#school-residual-shapes/halve]]): the raw temperatures are not quite bell-shaped, so their own cost was already a little below the formula's, and counting 1,344 readings estimates it slightly low.
+Check it against the measurement of [[#school-prediction]]. The temperatures come back once more, this time with each reading plotted against the one before it.
+
+::: dataset fig-exchange-temp-lag temp view=lag,timeline metrics=r2,exch,saved,sd
+**Each temperature against the one before.** *Against the previous reading:* every reading (vertical axis, °C) against the reading half an hour earlier (horizontal axis); each small square is one pair of values, darker where more readings share it. The dashed diagonal is the guess “the same as last time”: a reading on it has residual 0. *Four weeks:* the series itself. *Numbers:* the variance explained, and the bits saved by the formula and by measurement. Synthetic, seeded data.
+:::
+
+The cloud is a thin streak along the diagonal: the readings spread over twelve degrees, while their distance from the line is a few tenths. The formula says this predictor, at 98.4 %, saves 2.99 bits per reading; the histograms measured 6.53 − 3.63 = 2.91. Close, and the small gap has known causes ([[#school-residual-shapes/halve]]): the raw temperatures are not quite bell-shaped, so their own cost was already a little below the formula's, and counting 1,344 readings estimates it slightly low.
 
 ::: note connection The same number as mutual information
 For bell-shaped values and a straight-line predictor, $\tfrac12\log_2\frac{1}{1-\vRsq}$ is exactly the [[mutual-information]] between a value and its prediction. The exchange rate is not a new idea; it is [[#school-mutual-information]] written in the language of variances.
@@ -125,8 +136,17 @@ When the language model arrives, the same question will come back in a far more 
 It assumes the residual keeps the same shape as it narrows (bell-shaped before and after) and stays several integer steps wide. For fat-tailed residuals, or residuals squeezed below one step, it is only a guide — measure instead, as [[#school-residual-shapes]] does with Monte Carlo.
 :::
 
+The wind of [[#school-fixed-length]] shows how far off the guide can be. “The same as last time” explains 89.9 % of the wind's variance, so the formula promises 1.65 bits per reading. Measured, the saving is 1.15 bits.
+
+::: dataset fig-exchange-wind-lag wind view=lag,timeline hl=gales metrics=r2prev,lagFormula,lagSaved
+**Each wind reading against the one before.** *Against the previous reading:* every wind speed (vertical axis, knots) against the reading half an hour earlier (horizontal axis); each square is one pair of speeds, darker where more readings share it, red where the reading is a gale. The dashed diagonal is “the same as last time”. *Three weeks:* the wind over time, gales marked. *Numbers:* variance explained, and the bits saved by the formula and by measurement. Synthetic, seeded data.
+:::
+
+The breezes form a fat blob near the origin, not a thin streak, and the gales sit far out on their own. Neither the speeds (a lopsided hump with a long tail) nor their changes (mostly small, with sudden storm jumps) are bell-shaped, so $\vRsq$ overstates the saving by half a bit per reading. When the shapes are wrong, count.
+
 ::: takeaway
 - Every extra bit requires cutting the unexplained variance by a factor of four.
 - Getting the gist right explains little variance, and little variance buys little: 30 % → a quarter of a bit.
 - Unpredictable noise caps $\vRsq$, and with it the bits any predictor can save.
+- The formula assumes bell shapes. For the gusty wind it promises 1.65 bits and delivers 1.15: when the shapes are wrong, measure.
 :::

@@ -67,7 +67,8 @@
       const g = el('g', {}, D.svg);
       [0.25, 0.5, 1].forEach(f => {
         el('circle', { cx, cy, r: rad(f * top), style: 'fill:none;stroke:var(--rule);stroke-dasharray:3 3' }, g);
-        el('text', { x: cx + 4 * D.fs, y: cy - rad(f * top) - 3 * D.fs, class: 'val', style: 'fill:var(--ink-3)', text: `${Math.round(f * top)}` }, g);
+        const a = 0.31 * Math.PI, rr = rad(f * top);         // label each ring between NE and ENE, where the petals are short
+        el('text', { x: cx + rr * Math.sin(a) + 3 * D.fs, y: cy - rr * Math.cos(a), class: 'val', style: 'fill:var(--ink-3)', text: `${Math.round(f * top)}` }, g);
       });
       const wedge = (k, r) => {
         const a0 = (k - 0.42) * Math.PI / 8, a1 = (k + 0.42) * Math.PI / 8;

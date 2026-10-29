@@ -104,10 +104,10 @@ A grid is a choice about where precision goes. The even grid spends it uniformly
 
 ## The low bits look like noise {#noise}
 
-Store ten days of Gull Rock temperatures in BF16 and look at the bits.
+Take the foot thermometer of the ten days at Gull Rock ([[#fig-sv-tendays-data]]), store every reading in BF16, and look at the bits — all 480 × 16 of them.
 
-::: figure fig-sv-bf16-bits svBf16Bits
-**Gull Rock temperatures as BF16 bit patterns.** The table shows the first eight readings of the day from II.13 (foot thermometer), their BF16 value, and their 16 bits: sign (grey), exponent (blue), mantissa (red). The bars show, for each of the 16 bit positions, how much information that bit carries over 480 readings (ten days): its entropy in bits, from 0 (always the same) to 1 (a fair coin). The read-out gives the entropy of the exponent field, of the mantissa field and of the whole pattern, each counted together. *Hover* a bar for its value.
+::: dataset fig-sv-bf16-data ten-days-bf16 view=raster,entropy,hist metrics=range,exp,man,all,low
+**Ten days of temperatures as BF16 bit patterns.** *Plot:* "All 7,680 bits" draws one thin column per reading (480, in time order) and one row per bit position, sign (grey) at the top, then the 8 exponent bits (blue) and the 7 mantissa bits (red); a filled cell is a 1, and the number at the right of each row is that bit's entropy over the ten days. "Entropy of each bit" shows the same entropies as bars, from 0 (always the same) to 1 (a fair coin); hover a bar for its value. "Temperatures" is the histogram of the readings, with the boundary between the binades [4, 8) and [8, 16). *Table:* every reading with its BF16 value and its 16 bits. *Numbers:* the entropy of the exponent field, of the mantissa field and of the whole pattern, each counted together. Derived from synthetic, seeded data.
 :::
 
 ::: aside reminder Entropy (II.4)
@@ -116,7 +116,7 @@ Store ten days of Gull Rock temperatures in BF16 and look at the bits.
 
 Three things stand out.
 
-- **The sign bit and six of the eight exponent bits never change.** All temperatures lie between 4 and 16 °C, so only two binades ever occur. Together the exponent field carries **0.22 bits**, out of 8 stored.
+- **The sign bit and six of the eight exponent bits never change.** All temperatures lie between 6.4 and 15.3 °C, so only two binades ever occur, and only 17 of the 480 readings fall in the lower one, [4, 8). Together the sign and exponent carries **0.22 bits**, out of 8 stored.
 - **The mantissa bits look like coin flips.** Each carries 0.88 to 1.00 bits, and the seven together carry 5.91. The lowest ones encode sixteenths of a degree — finer than the thermometer's own noise (about 0.15 °C).
 - **The whole 16-bit pattern carries 5.97 bits.** A coder could save 10 bits per value here, most of them in the sign and exponent.
 

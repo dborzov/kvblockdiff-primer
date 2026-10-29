@@ -39,10 +39,9 @@ There is, for LRU. It rests on a single number written under every request.
 
 Take the storm morning and, for each request, look back to the last time the same logbook was requested. Count how many **different** other logbooks were used in between.
 
-```text the storm morning, with each request's reuse distance under it (∞ = first request)
-G S G H G S L G S F G S H G N G S L G S M G S R
-∞ ∞ 1 ∞ 1 2 ∞ 2 2 ∞ 2 2 4 2 ∞ 1 3 5 2 2 ∞ 2 2 ∞
-```
+::: dataset fig-sv-storm-reuse storm-morning view=reuse metrics=dist2,curve,lru4,belady4
+**The storm morning of II.21, with each request's reuse distance.** *Plot:* "With reuse distances" is the same grid of requests (one row per logbook, one column per request); each repeat request is joined to the same logbook's previous request, and its reuse distance — the number of *other* rows with a request inside that stretch — is written under its column (∞ for a first request). Hover or tap a request to shade its stretch and list the logbooks in between. *Numbers:* the miss-rate curve read off the distances, and LRU against the clairvoyant policy of the last section. Hand-made toy data.
+:::
 
 The third request, G, has distance 1: only S was used since the first G. The thirteenth, H, has distance 4: G, S, L and F came in between.
 

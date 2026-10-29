@@ -88,6 +88,14 @@ There is one angle where something special happens: the two new coordinates stop
 - **Easy to confuse with:** the diagonal of $\vSigma$. Those are the variances along the *original* axes (2.99 and 2.95); the eigenvalues are the variances along the *natural* ones.
 :::
 
+Here are the ten days of the two thermometers, written down in the new coordinates instead of the old ones.
+
+::: dataset fig-sv-thermo-axes thermo-axes view=timeline,arrows,cloud hl=disagree metrics=angle,lambdas,total,corr,bits
+**The thermometers, turned.** Each reading of the ten days (II.14), centred and measured along the cloud's own axes: *along* the cigar (axis 1, purple) and *across* it (axis 2, teal), in °C. *Plot:* "Along and across" draws both coordinates over the ten days on one scale (hover for values); "The original cloud, with its axes" draws the two eigenvectors as arrows two standard deviations long; "The cloud, turned" plots across against along, with equal units. Red marks the few readings where the thermometers disagree by more than 0.35 °C from their usual gap. *Numbers:* the angle, the eigenvalues, and the bits. Derived from synthetic, seeded data.
+:::
+
+The purple line carries all the weather of the ten days. The teal line, the same readings measured across the cigar, is a thin thread that never strays far from zero: that is what an eigenvalue of 0.025 °C² looks like. Turned, the cloud lies flat.
+
 ::: aside detail The one-line definition
 An eigenvector $v$ of $\vSigma$ satisfies $\vSigma v = \vlambda v$: multiplying the covariance matrix by that direction gives back the same direction, stretched by $\vlambda$. Every symmetric matrix such as $\vSigma$ has $\vd$ perpendicular eigenvectors, and numerical libraries find them in microseconds (`numpy.linalg.eigh`).
 :::
@@ -101,13 +109,9 @@ An eigenvector $v$ of $\vSigma$ satisfies $\vSigma v = \vlambda v$: multiplying 
 
 What does the KLT find in all five Gull Rock channels? We standardize the channels first (II.13), so that hectopascals and knots count the same, and turn to the eigenvectors of the correlation matrix. Each new axis is a recipe, a weighted mix of the old channels:
 
-| axis | $\vlambda$ | recipe (foot, top, humidity, pressure, wind) | what it measures |
-|---|---|---|---|
-| 1 | 2.65 | 0.60, 0.60, −0.53, −0.02, 0.03 | warm and dry vs cold and damp |
-| 2 | 1.63 | 0.02, 0.03, −0.01, 0.71, −0.71 | high and calm vs low and windy |
-| 3 | 0.37 | −0.11, −0.10, −0.24, 0.68, 0.68 | pressure and wind off their usual relation |
-| 4 | 0.35 | 0.36, 0.37, 0.81, 0.19, 0.21 | humidity that temperature does not explain |
-| 5 | 0.008 | 0.71, −0.71, 0.00, 0.01, 0.00 | foot thermometer minus top thermometer |
+::: figure fig-sv-klt-recipes svKltRecipes
+**The KLT of all five Gull Rock channels (standardized, ten days).** One row per new axis, sorted by its eigenvalue $\vlambda$ (the bar: the variance of the data along that axis). The five coloured cells are the axis's recipe: the weight it gives each standardized channel, blue for positive and red for negative, stronger colour for larger weight. Each row heading says in words what the axis measures. *Hover or focus* a cell for its meaning.
+:::
 
 The five eigenvalues add up to 5, the total spread of five standardized channels. The first two axes are the two blocks of II.14. The middle two are leftovers without a neat story. The last axis is the thermometers' disagreement, and its eigenvalue is almost zero. That one quiet direction will do most of the saving on the next page.
 

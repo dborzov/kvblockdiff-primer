@@ -31,3 +31,11 @@
 
 /* the prediction handle (II.20) takes the amethyst series colour instead of the accent */
 svg.plot .handle.sv-pred { fill: var(--amethyst); }
+
+/* the KLT recipes (II.15): eigenvalue bar + loadings */
+.tbl-wrap table.sv-recipe td.sv-lcell { min-width: 6.5rem; text-align: left; border: none; }
+.sv-lbar { display: flex; align-items: center; gap: .35rem; font-family: var(--f-mono); font-size: .82rem; }
+.sv-lbar span { display: block; height: .7rem; border-radius: 2px; flex: none; max-width: 3.6rem; }
+.sv-lbar b { font-weight: 500; color: var(--ink); }
+.tbl-wrap table.sv-recipe th.sv-what { text-align: left; min-width: 9.5rem; max-width: 13rem; white-space: normal; line-height: 1.25; font-family: var(--f-body); }
+.tbl-wrap table.sv-recipe th.sv-what .sv-sub { letter-spacing: 0; }

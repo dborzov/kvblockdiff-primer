@@ -43,6 +43,14 @@ The almanac is one table. It splits the station's reports by season — out of e
 
 Notice the bottom row: 32, 16, 8 and 8 out of 64 are exactly the sky distribution of [[#school-surprise]], ½, ¼, ⅛, ⅛. The almanac does not change the year. It only splits it into four seasons, each with a [[distribution]] of its own. Summer reads sunny ¾, cloudy ⅛, rain and fog 1/16 each; winter is foggy and much more mixed.
 
+Where does such a table come from? From the same archive as before. Every one of its 4,096 noon reports carries a date, so the reports can be sorted by season and counted again.
+
+::: dataset fig-side-sky-seasons sky view=seasons,mosaic hl=winter metrics=seasonH,condH
+**The sky archive, split by season.** *Sky by season:* for each season, the share of its reports that are sunny, cloudy, rain or fog (bars, in the sky colours); the dashed ticks are the almanac's shares from the table above. Click a season to select its reports. *All 4,096 reports:* the archive's mosaic again, with the winter reports highlighted. *Numbers:* each season's entropy and the average over the seasons, counted from the archive. Synthetic, seeded data, first met on [[#school-surprise]].
+:::
+
+Summer's saffron bar towers over the others; winter's four bars are nearly level, with fog as common as sunshine. Every bar sits on or next to its dashed tick: the almanac is the archive, counted by season and scaled down to 64 reports.
+
 ::: define side-information
 - **What it is:** something the receiver already knows that is relevant to the message. Here it is the season, which both ends read off the calendar, together with the almanac that says what each season's sky is like. We write it $\vY$.
 - **Example:** in summer, the station codes its report with summer's probabilities; the office decodes with the same page of the same almanac.
@@ -93,7 +101,7 @@ $$
 - **Easy to confuse with:** the entropy in one particular season, $\vH(\vX \mid \vY = \text{winter})$. The conditional entropy is the average over all seasons.
 :::
 
-The almanac saves 0.16 bits per report, about 9 %. The figure lets you make the almanac more or less informative and watch the saving.
+The almanac saves 0.16 bits per report, about 9 %. (Counting the archive itself gives 1.584 bits, the same to two decimals: see the Numbers tab of [[#fig-side-sky-seasons]].) The figure lets you make the almanac more or less informative and watch the saving.
 
 ::: figure fig-side-almanac siJointTable
 **The season almanac as a table.** Rows: seasons; columns: sky reports; each cell counts reports out of 64, shaded by the sky's colour (darker = more). “Bits if known” is the entropy of the sky in that season; the bottom row is the whole year. Click a season to compare its sky (coloured bars) with the whole year's (grey bars) in the plot. **Almanac sharpness** blends between a useless almanac (0: every season looks like the year), Gull Rock's almanac (½, the table above) and the sharpest almanac these seasons allow (1). The bottom row never changes. Tiles: entropy without the almanac, conditional entropy with it, and the saving in bits per report.

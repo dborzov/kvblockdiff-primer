@@ -11,3 +11,45 @@ wind:
   story: >-
     A breeze shaped like a Rayleigh distribution (scale 8 knots), plus 2.5 % gales of 40–59 knots that arrive in three storms.
     It teaches fixed-length codes and escapes: almost every reading fits in 5 bits, a few giants do not.
+    The readings also carry a direction on the vane's 16-point compass: mostly south-westerly, with two short north-easterly spells.
+sky:
+  title: The Gull Rock sky archive
+  blurb: 4,096 noon sky reports — sunny, cloudy, rain or fog — from random days of sixteen years, each with its date and season.
+  emblem: sun
+  unit: 4,096 reports · 4 symbols
+  source: synthetic, seeded
+  csv: gull-rock-sky-archive.csv
+  story: >-
+    Independent draws from the year's sky distribution (sunny ½, cloudy ¼, rain ⅛, fog ⅛), each given a distinct noon
+    date so that counting the archive by season gives back the season almanac. It teaches probability, surprisal,
+    entropy and its estimation, Huffman codes, conditional entropy and mutual information.
+sticky:
+  title: The sticky sky
+  blurb: Four weeks of half-hourly sky reports from a model in which the sky carries on from half an hour before, four times in five.
+  emblem: cloud
+  unit: 1,344 reports · 48 a day
+  source: illustrative model, seeded
+  csv: gull-rock-sticky-sky.csv
+  story: >-
+    A Markov chain with stickiness 0.8 over the year's sky distribution. Its counts look exactly like the archive's,
+    yet each report is cheap given the one before: the gap between order-0 entropy and what a neighbour knows.
+temp:
+  title: Gull Rock temperatures
+  blurb: Four weeks of air temperature at Gull Rock, one reading every half hour, in whole tenths of a degree.
+  emblem: gauge
+  unit: 1,344 readings · 0.1 °C
+  source: synthetic, seeded
+  csv: gull-rock-temperature.csv
+  story: >-
+    A daily cycle, a slow weather wander, five passing fronts and sensor noise of one tenth of a degree. It teaches
+    prediction and residuals, spread and bits, and the exchange rate between variance explained and bits saved.
+resid:
+  title: Temperature residuals
+  blurb: 'Each Gull Rock temperature minus the one before: what is left to send after the guess “the same as last time”.'
+  emblem: delta
+  unit: 1,344 residuals · 0.1 °C
+  source: derived from the temperatures
+  csv: gull-rock-temperature-residuals.csv
+  story: >-
+    Derived from the temperatures, so it changes whenever they do. It teaches the shape of a residual: centre, spread,
+    the Gaussian and the Laplace, and why halving the spread saves one bit.

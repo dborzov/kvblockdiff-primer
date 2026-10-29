@@ -1,0 +1,76 @@
+# Running example datasets of Part II, pages 13–25 (school-vectors). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+gull-day:
+  title: An afternoon at Gull Rock
+  blurb: Twelve half-hourly readings from 14:30 to 20:00, five sensors each — two thermometers, humidity, pressure and wind. Rows are vectors, columns are channels.
+  emblem: lighthouse
+  unit: 12 readings × 5 channels
+  source: synthetic, seeded
+  csv: gull-rock-afternoon.csv
+  story: >-
+    The first three readings are the JSON messages of Part I with their keys stripped away; a second thermometer, high on
+    the mast, is added. It teaches what a vector and a channel are, why each channel needs its own mean, and, on II.16,
+    how two thermometers are turned into an exactly reversible average and difference.
+ten-days:
+  title: Ten days at Gull Rock
+  blurb: 480 readings, one every half hour for ten days, each a vector of five channels. Two thermometers that agree, humidity that falls as it warms, wind that rises as the pressure falls.
+  emblem: compass
+  unit: 480 readings × 5 channels
+  source: synthetic, seeded
+  csv: gull-rock-ten-days.csv
+  story: >-
+    A slow weather anomaly drives both thermometers (each with its own small noise) and, inversely, the humidity; a slow
+    pressure swing drives the wind. It is the cloud of the vector pages: correlation and the covariance matrix (II.14),
+    the rotation to the data's own axes (II.15), the coding gain (II.16), the bell-shaped side of VQ versus KLT (II.18)
+    and, stored as BF16, the noisy mantissa (II.19).
+thermo-axes:
+  title: The thermometers, turned
+  blurb: The two thermometers of the ten days, centred and measured along the cloud's own axes — "how warm" and "how much they disagree".
+  emblem: axes
+  unit: 480 readings × 2
+  source: derived from Ten days at Gull Rock
+  csv: gull-rock-thermometers-klt.csv
+  story: >-
+    The KLT of II.15 applied to the two thermometer channels of the ten days. The first coordinate carries all the weather,
+    the second is a thin line near zero: the same readings, written where they are cheap.
+regimes:
+  title: Weather regimes
+  blurb: 300 Gull Rock readings of wind speed and humidity from three moods — calm, fog and storm — that form three separate islands.
+  emblem: cloud
+  unit: 300 readings × 2
+  source: synthetic, seeded
+  csv: gull-rock-regimes.csv
+  story: >-
+    Three bell-shaped clusters (140 calm, 60 fog, 100 storm), shuffled. Straight-line statistics barely see them; a
+    three-centroid codebook does. It is the clustered side of VQ versus KLT (II.17–II.18).
+ten-days-bf16:
+  title: Ten days of temperatures in BF16
+  blurb: The foot thermometer of the ten days stored as 16-bit floats, bit by bit — a predictable exponent and a mantissa that looks like noise.
+  emblem: chip
+  unit: 480 readings × 16 bits
+  source: derived from Ten days at Gull Rock
+  csv: gull-rock-bf16.csv
+  story: >-
+    Each temperature rounded to bfloat16 (1 sign, 8 exponent, 7 mantissa bits) the way hardware does it. Only two binades
+    occur, so the exponent says almost nothing; the low mantissa bits are finer than the thermometer's noise.
+e4m3:
+  title: The FP8 E4M3 ladder
+  blurb: All 253 values of the 8-bit float E4M3 in increasing order, each with its index and bit pattern — the rungs of index space.
+  emblem: ladder
+  unit: 253 values
+  source: exact, from the format
+  csv: fp8-e4m3-values.csv
+  story: >-
+    Zero, 7 subnormals and 15 binades of 8 values on each side (minus the not-a-number pattern), up to ±448. Counting rungs
+    instead of measuring distances makes every residual a whole number, and shows how tightly the rungs pack near zero.
+storm-morning:
+  title: The storm morning
+  blurb: The forecaster's 24 requests for the logbooks of 8 coastal stations, in order — a request trace for caches and reuse distance.
+  emblem: book
+  unit: 24 requests · 8 logbooks
+  source: hand-made
+  csv: storm-morning-requests.csv
+  story: >-
+    Gull Rock and Seal Point are wanted every few requests, four logbooks only once. It teaches hits and misses, LRU against
+    FIFO (II.21), and how one number per request — its reuse distance — gives the miss rate of every desk size (II.22).
