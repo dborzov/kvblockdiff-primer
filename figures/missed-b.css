@@ -5,17 +5,6 @@
 .mb-stack-wrap { overflow-x: auto; }
 .mb-stack-inner { min-width: 36rem; }
 
-/* Workaround, scoped to missed-b's own pages (framework request filed): figures.css styles every
-   ".tbl-wrap table.data" as a right-aligned, no-wrap number table, which also catches Markdown tables
-   in the prose. Restore the prose-table look of site.css for Markdown tables only. */
-:is(body[data-page-id="missed-predictive-coding"], body[data-page-id="missed-lifting"], body[data-page-id="missed-context-modeling"],
-    body[data-page-id="missed-stack-distance"], body[data-page-id="missed-rate-distortion-bounds"], body[data-page-id="missed-light-dictionaries-first"],
-    body[data-page-id="missed-keys-before-rope"], body[data-page-id="missed-victim-tier"], body[data-page-id="missed-a-measurement-is-a-result"])
-  article.prose > .tbl-wrap table.data :is(th, td) { text-align: left; white-space: normal; font-family: inherit; font-size: .92rem; letter-spacing: normal; }
-:is(body[data-page-id="missed-predictive-coding"], body[data-page-id="missed-lifting"], body[data-page-id="missed-context-modeling"],
-    body[data-page-id="missed-stack-distance"], body[data-page-id="missed-rate-distortion-bounds"], body[data-page-id="missed-light-dictionaries-first"],
-    body[data-page-id="missed-keys-before-rope"], body[data-page-id="missed-victim-tier"], body[data-page-id="missed-a-measurement-is-a-result"])
-  article.prose > .tbl-wrap table.data :is(th, td)[style*="right"] { text-align: right; font-variant-numeric: tabular-nums; }
 /* keep slider read-outs on one line in missed-b's figures */
 :is(#fig-missed-flac, #fig-missed-lifting, #fig-missed-context, #fig-missed-stack, #fig-missed-spectrum, #fig-missed-residency, #fig-missed-rope, #fig-missed-victim) .slider output { white-space: nowrap; min-width: max-content; }
 @media (max-width: 600px) { .mb-stack-wrap::after { content: "scroll sideways for every request →"; display: block; position: sticky; left: 0; text-align: center; font-family: var(--f-sc); font-size: .8rem; color: var(--ink-3); margin-top: .2rem; } }

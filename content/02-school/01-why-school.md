@@ -29,7 +29,7 @@ This Part is the cure. It is a short course — about twenty small pages — on 
 Each page of this Part teaches one idea, in the same rhythm:
 
 1. **A toy situation** from the weather station that makes the idea necessary.
-2. **The idea itself**, named and defined. Defined terms look like [[entropy]] (a plain term, tinted by its family) or like [[klt]] (a signature term with its own emblem). Hover either one, anywhere on the site, for a reminder.
+2. **The idea itself**, named and defined. Defined terms look like [[lossless]] (a plain term, tinted by its family) or like [[dictionary]] (a signature term with its own emblem) — both met in Part I. Hover either one, anywhere on the site, for a reminder.
 3. **A small calculation or an interactive figure** you can play with.
 4. **A takeaway card**, and a few flashcards you can add to your deck.
 

@@ -41,8 +41,8 @@ Mreq:  { tex: "M_{\\mathrm{req}}", fam: resource, name: GPU memory per request, 
 # ------------------------------------------------------------ counts & design knobs
 k:     { tex: "k", fam: count, name: selections per step, unit: entries, home: landscape-sparse-attention,
          short: "How many entries the indexer selects per layer per decode step; 2048 in the reference setting." }
-B:     { tex: "B", fam: count, name: hot-cache slots, unit: entries, home: landscape-hisparse,
-         short: "Size of the hot cache: entry slots per request per layer (2048, 4096 or 8192 in the examples)." }
+B:     { tex: "B", fam: count, name: cache slots, unit: items, home: school-caches,
+         short: "How many items a cache can hold. For HiSparse's hot cache: entry slots per request per layer (2048, 4096 or 8192 in the examples)." }
 BV:    { tex: "B_V", fam: count, name: victim-tier slots, unit: deltas, home: missed-victim-tier,
          short: "How many evicted entries' deltas the victim tier keeps per layer." }
 b:     { tex: "b", fam: count, name: block size, unit: tokens, home: idea-dictionary-delta-block,
