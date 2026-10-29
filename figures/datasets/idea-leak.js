@@ -75,15 +75,48 @@
   const SHOW = 300;
   const COL = { iid: 'var(--t-lucky-louis)', copy: 'var(--t-fallen-apple)' };
 
+  // each key against the next, one square panel per kind (side by side on wide screens)
+  const pairs = {
+    label: 'Each key against the next',
+    legend: false,
+    draw(box, ctx) {
+      const wrap = h('div', { style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:.6rem' });
+      box.append(wrap);
+      KINDS.forEach(k => {
+        const rows = ctx.rows.filter(r => r.kind === k.id), b = h('div');
+        wrap.append(b);
+        b.append(h('div', { class: 'lbl', style: 'font-family:var(--f-sc);font-size:.9rem;color:var(--ink-2);text-align:center', html: `${k.name}: ${tex('\\vRsq')} = ${fmt(r2(k.id), k.id === 'iid' ? 3 : 2)}` }));
+        const P = Plot(b, { x: [-3.6, 3.6], y: [-3.6, 3.6], w: 340, h: 320, xticks: [-3, 0, 3], yticks: [-3, 0, 3], xlabel: 'element 0 of key t', ylabel: 'of key t + 1', label: `Element 0 of each key against the next key, ${k.name}` });
+        el('line', { x1: P.x(-3.6), y1: P.y(-3.6), x2: P.x(3.6), y2: P.y(3.6), style: 'stroke:var(--ink-3);stroke-dasharray:4 4' }, P.g.bg);
+        rows.forEach(r => {
+          const c = dot(P.g.data, P.x(r.x), P.y(r.next), (ctx.sel && ctx.sel.test(r) ? 3.4 : 2.3) * P.fs, ctx.sel && !ctx.sel.test(r) ? `color-mix(in srgb, ${COL[k.id]} 30%, transparent)` : COL[k.id]);
+          hover(c, () => `<b>key ${r.t}</b>, ${k.name}<br>element 0: ${fmt(r.x, 2)}<br>next key: ${fmt(r.next, 2)}`);
+        });
+        const hit = el('rect', { x: P.m.l, y: P.m.t, width: P.pw, height: P.ph, class: 'hit ds-brush-hit', style: 'fill:transparent' }, P.g.bg);
+        let a = null;
+        hit.addEventListener('pointerdown', e => { a = P.toData(e); hit.setPointerCapture(e.pointerId); });
+        hit.addEventListener('pointerup', e => {
+          if (!a) return;
+          const q = P.toData(e), [x0, x1] = [Math.min(a[0], q[0]), Math.max(a[0], q[0])], [y0, y1] = [Math.min(a[1], q[1]), Math.max(a[1], q[1])];
+          a = null;
+          if (x1 - x0 < 0.1) { ctx.select(null); return; }
+          ctx.select({ label: `${k.name}, element 0 in ${fmt(x0, 1)}…${fmt(x1, 1)}, next in ${fmt(y0, 1)}…${fmt(y1, 1)}`, test: r => r.kind === k.id && r.x >= x0 && r.x <= x1 && r.next >= y0 && r.next <= y1 });
+        });
+      });
+    },
+    note: 'The dashed diagonal is the guess “the same as the key before”.',
+  };
+
   const walk = {
     label: 'One element along the keys',
     legend: false,
     draw(box, ctx) {
       box.append(legend(KINDS.map(k => [k.name, COL[k.id], 'line'])));
+      const tall = box.clientWidth > 0 && box.clientWidth < 520 ? 1.7 : 1;
       KINDS.forEach((k, i) => {
         const rows = ctx.rows.filter(r => r.kind === k.id), last = i === 1, b = h('div');
         box.append(b);
-        const P = Plot(b, { x: [0, SHOW - 1], y: [-3.6, 3.6], h: last ? 150 : 120, m: { l: 46, r: 10, t: 20, b: last ? 36 : 6 }, yticks: [-3, 0, 3],
+        const P = Plot(b, { x: [0, SHOW - 1], y: [-3.6, 3.6], h: (last ? 150 : 120) * tall, m: { l: 46, r: 10, t: 20, b: last ? 40 : 6 }, yticks: [-3, 0, 3],
           xticks: last ? [0, 100, 200, 299] : [], xlabel: last ? 'key position t' : '', ylabel: 'element 0', label: `Element 0 of the first ${SHOW} keys, ${k.name}` });
         if (ctx.sel) rows.forEach(r => { if (ctx.sel.test(r)) el('rect', { x: P.x(r.t - 0.5), width: P.x(1) - P.x(0), y: P.m.t, height: P.ph, style: 'fill:color-mix(in srgb, var(--c) 14%, transparent)' }, P.g.bg); });
         line(P, rows.map(r => [r.t, r.x]), { color: COL[k.id], width: 1.4, name: k.name });
@@ -104,11 +137,7 @@
     ],
     highlights: {},
     views: {
-      pairs: Object.assign(DS.views.scatter({
-        x: 'x', y: 'next', color: 'kind', catLabel: c => KINDS.find(k => k.id === c).name, catSeries: c => (c === 'iid' ? 5 : 1),
-        xlabel: 'element 0 of key t', ylabel: 'element 0 of key t + 1', equal: true, xdomain: [-3.6, 3.6], ydomain: [-3.6, 3.6], r: 2.4, h: 320,
-        label: 'Each key against the next', tip: r => `<b>key ${r.t}</b> (${r.kind === 'iid' ? 'independent' : 'close copies'})<br>element 0: ${fmt(r.x, 2)}<br>next key: ${fmt(r.next, 2)}`,
-      }), { legend: false }),
+      pairs,
       walk,
     },
     helpers: { LEAK, leakKeys, neighbourR2, topk, leakRun, keys, r2, ETA },

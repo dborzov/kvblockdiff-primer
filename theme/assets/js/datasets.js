@@ -332,7 +332,7 @@
           const v = m.value(rows);
           list.append(h('div', { class: 'ds-metric' },
             h('div', { class: 'ds-m-k' }, h('span', { html: texify(m.label) }), m.tex ? h('span', { class: 'ds-m-tex', html: tex(m.tex) }) : null),
-            h('div', { class: 'ds-m-v', html: m.fmt ? m.fmt(v, rows) : fmt(v) }),
+            h('div', { class: 'ds-m-v', html: texify(m.fmt ? String(m.fmt(v, rows)) : fmt(v)) }),
             m.note ? h('div', { class: 'ds-m-note', html: texify(typeof m.note === 'function' ? m.note(v, rows) : m.note) }) : null));
         });
         panels.numbers.append(list);

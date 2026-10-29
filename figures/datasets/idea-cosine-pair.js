@@ -12,15 +12,16 @@
     label: 'The two entries',
     legend: 'hl',
     draw(box, ctx) {
+      const narrow = box.clientWidth > 0 && box.clientWidth < 520, tall = narrow ? 1.8 : 1;
       [['a', 'entry a', series(0)], ['b', 'entry b', series(2)]].forEach(([key, name, col], k) => {
         const last = k === 1, b = h('div');
         box.append(b);
-        const P = Plot(b, { x: [-0.5, D - 0.5], y: [-4.5, 32], h: last ? 150 : 120, m: { l: 44, r: 10, t: 20, b: last ? 36 : 6 }, yticks: [0, 10, 20, 30], grid: 'y',
+        const P = Plot(b, { x: [-0.5, D - 0.5], y: [-4.5, 32], h: (last ? 150 : 120) * tall, m: { l: 44, r: 10, t: 20, b: last ? 40 : 6 }, yticks: [0, 10, 20, 30], grid: 'y',
           xticks: last ? [0, 160, 320, 480, 639] : [], xlabel: last ? 'element (channel) c' : '', ylabel: name, label: `The 640 elements of ${name}` });
         const pts = ctx.rows.map(r => `M${P.x(r.c).toFixed(1)},${P.y(0).toFixed(1)}V${P.y(r[key]).toFixed(1)}`).join('');
         el('path', { d: pts, style: `fill:none;stroke:${col};stroke-width:${1.1 * P.fs}` }, P.g.data);
         ctx.rows.forEach(r => { if ((ctx.hl && ctx.hl.test(r)) || (ctx.sel && ctx.sel.test(r))) dot(P.g.data, P.x(r.c), P.y(r[key]), 3 * P.fs, ctx.hl && ctx.hl.test(r) ? series(1) : 'var(--c)'); });
-        el('text', { x: P.m.l, y: P.m.t - 7 * P.fs, class: 'lbl', text: `${name}: four spikes of 30 at c = 0–3, then 636 small, unrelated numbers` }, P.g.top);
+        el('text', { x: P.m.l, y: P.m.t - 7 * P.fs, class: 'lbl', text: narrow ? `${name}: 4 spikes, then 636 small numbers` : `${name}: four spikes of 30 at c = 0–3, then 636 small, unrelated numbers` }, P.g.top);
         crosshair(P, { series: [{ name, pts: ctx.rows.map(r => [r.c, r[key]]), color: col }], xname: 'element', xfmt: v => `c = ${fmt(v, 0)}`, yfmt: v => fmt(v, 2) });
       });
     },
@@ -37,8 +38,9 @@
     highlights: { big: { label: 'the four outlier channels', test: r => r.big } },
     views: {
       strips,
-      scatter: DS.views.scatter({ x: 'a', y: 'b', xlabel: 'element of entry a', ylabel: 'same element of entry b', equal: true, xdomain: [-5, 33], ydomain: [-5, 33], r: 2.2, h: 300, label: 'b against a, all 640', tip }),
-      zoom: DS.views.scatter({ x: 'a', y: 'b', xlabel: 'element of entry a', ylabel: 'same element of entry b', equal: true, xdomain: [-3.8, 3.8], ydomain: [-3.8, 3.8], r: 2.2, h: 300, label: 'b against a, the 636', tip }),
+      scatter: DS.views.scatter({ x: 'a', y: 'b', xlabel: 'element of entry a', ylabel: 'same element of entry b', equal: true, xdomain: [-5, 33], ydomain: [-5, 33], r: 3, h: 320, label: 'b against a, all 640', tip,
+        after: P => { el('circle', { cx: P.x(30), cy: P.y(30), r: 9 * P.fs, style: `fill:none;stroke:${series(1)};stroke-width:1.6` }, P.g.top); annotate(P, 30, 30, 'four spikes,\nall at (30, 30)', { dx: -40, dy: 34, anchor: 'end' }); annotate(P, 0, 0, '636 elements', { dx: 50, dy: -40, anchor: 'start' }); } }),
+      zoom: DS.views.scatter({ x: 'a', y: 'b', xlabel: 'element of entry a', ylabel: 'same element of entry b', equal: true, xdomain: [-3.8, 3.8], ydomain: [-3.8, 3.8], r: 2.4, h: 320, label: 'b against a, the 636', tip }),
     },
     metrics: [
       { id: 'cos', label: 'cosine similarity of a and b', value: cosine, fmt: v => fmt(v, 2),

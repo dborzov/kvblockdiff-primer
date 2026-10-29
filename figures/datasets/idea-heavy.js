@@ -61,6 +61,7 @@
     { id: 'scattered', name: 'no heavy blocks', conc: 0 },
   ];
   const PARAMS = { life: 100, nD: 4 };
+  const HEAVY = series(0);
   const KIND = ['var(--ink-3)', 'var(--t-delta-miss)', 'var(--t-raw-miss)'];
 
   // per-world summaries from the rows
@@ -71,7 +72,7 @@
   const perBlock = rs => { const c = new Array(32).fill(0); rs.forEach(r => r.sel.forEach(([p, k]) => { if (k) c[Math.floor(p / 128)]++; })); return c; };
   const top4 = rs => { const c = perBlock(rs).sort((x, y) => y - x); return sum(c.slice(0, 4)) / sum(c); };
   const both = (f, d) => rows => WORLDS.map(w => f(of(rows, w.id)));
-  const pair = (d, pctFmt) => v => `${pctFmt ? fmtPct(v[0], 0) : fmt(v[0], d)} with heavy blocks · ${pctFmt ? fmtPct(v[1], 0) : fmt(v[1], d)} without`;
+  const pair = (d, pctFmt) => v => `${pctFmt ? fmtPct(v[0], 0) : fmt(v[0], d)} heavy · ${pctFmt ? fmtPct(v[1], 0) : fmt(v[1], d)} scattered`;
 
   function stepBrush(P, ctx) {
     const hit = el('rect', { x: P.m.l, y: P.m.t, width: P.pw, height: P.ph, class: 'hit ds-brush-hit', style: 'fill:transparent' }, P.g.top);
@@ -93,14 +94,16 @@
   const raster = {
     label: 'Where the selections land',
     legend: false,
+    highlights: ['load'],
     draw(box, ctx) {
+      const narrow = box.clientWidth > 0 && box.clientWidth < 520, tall = narrow ? 1.6 : 1;
       box.append(legend([['hit', 'var(--ink-3)', 'box'], ['δ-miss', 'var(--t-delta-miss)', 'box'], ['raw miss', 'var(--t-raw-miss)', 'box']]
         .concat(ctx.hl ? [[esc(ctx.hl.label), series(1), 'dot']] : [])));
       WORLDS.forEach((w, k) => {
         const rows = of(ctx.rows, w.id), last = k === WORLDS.length - 1, b = h('div');
         box.append(b);
         const P = Plot(b, {
-          x: [49.5, 319.5], y: [0, 4096], h: last ? 200 : 170, m: { l: 50, r: 10, t: 22, b: last ? 38 : 8 }, grid: false,
+          x: [49.5, 319.5], y: [0, 4096], h: (last ? 200 : 170) * tall, m: { l: 50, r: 10, t: 22, b: last ? 40 : 8 }, grid: false,
           xticks: last ? [50, 100, 150, 200, 250, 300] : [], yticks: [0, 2048, 4096], yfmt: v => fmt(v, 0),
           xlabel: last ? 'decode step' : '', ylabel: 'position', label: `Selections at each step, ${w.name}: grey hits, green δ-misses, brown raw misses`,
         });
@@ -114,7 +117,7 @@
         el('path', { d: paths[1], style: `fill:${KIND[1]}` }, P.g.data);
         el('path', { d: paths[2], style: `fill:${KIND[2]}` }, P.g.data);
         if (ctx.hl) rows.forEach(r => { if (ctx.hl.test(r)) dot(P.g.top, P.x(r.step), P.m.t - 6 * P.fs, 2.2 * P.fs, series(1)); });
-        el('text', { x: P.m.l, y: P.m.t - 8 * P.fs, class: 'lbl', text: `${w.name} (concentration ${fmtPct(w.conc, 0)}): δ-miss fraction ${fmtPct(fD(rows), 0)}, hits ${fmtPct(hitRate(rows), 0)}` }, P.g.top);
+        el('text', { x: P.m.l, y: P.m.t - 8 * P.fs, class: 'lbl', text: narrow ? `${w.name}: f_D ${fmtPct(fD(rows), 0)}, hits ${fmtPct(hitRate(rows), 0)}` : `${w.name} (concentration ${fmtPct(w.conc, 0)}): δ-miss fraction ${fmtPct(fD(rows), 0)}, hits ${fmtPct(hitRate(rows), 0)}` }, P.g.top);
         const hit = stepBrush(P, ctx);
         hover(hit, e => { const s = clamp(Math.round(P.toData(e)[0]), 50, 319), r = rows.find(q => q.step === s); return r ? `<b>step ${s}</b>, ${w.name}<br>${r.hits} hits, ${r.delta} δ-misses, ${r.raw} raw misses<br>shelf after: blocks ${r.shelf}${r.loads ? `<br>${r.loads} dictionary load${r.loads > 1 ? 's' : ''}` : ''}` : ''; });
       });
@@ -127,16 +130,18 @@
   const shares = {
     label: 'Two shares, step by step',
     legend: false,
+    highlights: [],
     draw(box, ctx) {
-      box.append(legend(WORLDS.map((w, i) => [w.name, i ? 'var(--ink-3)' : 'var(--t-heavy-block)', i ? 'dash' : 'line'])));
-      [['hit rate (share of selections already in the hot cache)', hitRate, 'Hit rate'], ['δ-miss fraction (share of misses whose dictionary is on the shelf)', fD, 'δ-miss fraction']].forEach(([name, f, short], k) => {
+      box.append(legend(WORLDS.map((w, i) => [w.name, i ? 'var(--ink-3)' : HEAVY, i ? 'dash' : 'line'])));
+      const narrow = box.clientWidth > 0 && box.clientWidth < 520, tall = narrow ? 1.6 : 1;
+      [[narrow ? 'hit rate' : 'hit rate (share of selections already in the hot cache)', hitRate, 'Hit rate'], [narrow ? 'δ-miss fraction' : 'δ-miss fraction (share of misses whose dictionary is on the shelf)', fD, 'δ-miss fraction']].forEach(([name, f, short], k) => {
         const b = h('div'); box.append(b);
         const P = Plot(b, {
-          x: [50, 319], y: [0, 1], h: k ? 190 : 160, m: { l: 50, r: 12, t: 22, b: k ? 38 : 8 }, yticks: [0, 0.5, 1], yfmt: v => fmtPct(v, 0),
+          x: [50, 319], y: [0, 1], h: (k ? 190 : 160) * tall, m: { l: 50, r: 12, t: 22, b: k ? 40 : 8 }, yticks: [0, 0.5, 1], yfmt: v => fmtPct(v, 0),
           xticks: k ? [50, 100, 150, 200, 250, 300] : [], xlabel: k ? 'decode step' : '', ylabel: short, label: `${name}, rolling over ${ROLL} steps, both worlds`,
         });
         if (ctx.sel) { const rs = of(ctx.rows, 'heavy').filter(ctx.sel.test); if (rs.length) el('rect', { x: P.x(rs[0].step), width: P.x(rs[rs.length - 1].step) - P.x(rs[0].step), y: P.m.t, height: P.ph, style: `fill:${tint('var(--c)', 14)}` }, P.g.bg); }
-        WORLDS.forEach((w, i) => line(P, roll(of(ctx.rows, w.id), f), { color: i ? 'var(--ink-3)' : 'var(--t-heavy-block)', dash: !!i, width: 2, name: w.name }));
+        WORLDS.forEach((w, i) => line(P, roll(of(ctx.rows, w.id), f), { color: i ? 'var(--ink-3)' : HEAVY, dash: !!i, width: 2, name: w.name }));
         el('text', { x: P.m.l, y: P.m.t - 8 * P.fs, class: 'lbl', text: name }, P.g.top);
         crosshair(P, { xname: 'step', xfmt: v => fmt(v, 0), yfmt: v => fmtPct(v, 0) });
         stepBrush(P, ctx);
@@ -148,11 +153,12 @@
   const blocks = {
     label: 'Misses per block',
     legend: false,
+    highlights: [],
     draw(box, ctx) {
-      box.append(legend(WORLDS.map((w, i) => [w.name, i ? 'var(--ink-3)' : 'var(--t-heavy-block)', 'box'])));
+      box.append(legend(WORLDS.map((w, i) => [w.name, i ? 'var(--ink-3)' : HEAVY, 'box'])));
       const pb = WORLDS.map(w => { const rs = of(ctx.rows, w.id).filter(r => !ctx.sel || ctx.sel.test(r)); const c = perBlock(rs), t = sum(c) || 1; return c.map(v => v / t); });
       const P = Plot(box, { xcats: range(32).map(j => (j % 4 === 0 ? String(j) : '')), y: [0, Math.max(0.1, Math.ceil(Math.max(...pb.flat()) * 10) / 10)], h: 240, ylabel: 'share of misses', xlabel: 'block j', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Share of all misses that landed in each block, both worlds' });
-      bars(P, range(32).map(j => [pb[0][j], pb[1][j]]), { colors: (i, j) => (j ? 'var(--ink-3)' : 'var(--t-heavy-block)'), fill: 0.9, gap: 0, tip: (v, i, j) => `<b>block ${i}</b>, ${WORLDS[j].name}<br>${fmtPct(v, 1)} of misses` });
+      bars(P, range(32).map(j => [pb[0][j], pb[1][j]]), { colors: (i, j) => (j ? 'var(--ink-3)' : HEAVY), fill: 0.9, gap: 0, tip: (v, i, j) => `<b>block ${i}</b>, ${WORLDS[j].name}<br>${fmtPct(v, 1)} of misses` });
     },
   };
 

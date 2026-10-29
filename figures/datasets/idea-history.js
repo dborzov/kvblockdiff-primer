@@ -158,11 +158,12 @@
   const apple = {
     label: 'Neighbours, by distance',
     legend: false,
+    highlights: [],
     draw(box, ctx) {
       const rows = ctx.rows, cur = appleCurve(rows), sh = appleCurve(shuffled(rows));
       box.append(legend([['this history', 'var(--t-fallen-apple)', 'line'], ['the same entries, shuffled', 'var(--ink-3)', 'dash'], ['block size b = 32', 'var(--ink-2)', 'dash']]));
       const P = Plot(box, {
-        x: [1, 64], xlog: 2, y: [0, 1], h: 260, xticks: [1, 2, 4, 8, 16, 32, 64], yticks: [0, 0.25, 0.5, 0.75, 1],
+        x: [1, 64], xlog: 2, y: [0, 1], h: box.clientWidth > 0 && box.clientWidth < 520 ? 400 : 260, xticks: [1, 2, 4, 8, 16, 32, 64], yticks: [0, 0.25, 0.5, 0.75, 1],
         xlabel: 'token distance Δ to the known neighbour (log scale)', ylabel: 'bits saved per element',
         label: 'Bits per element that knowing the entry Δ tokens back saves, against Δ',
       });
@@ -192,21 +193,21 @@
       { id: 'solo', label: 'bits per element, coded alone', value: soloBitsPerElement, fmt: v => `${fmt(v, 2)} bits · ${fmt(8 / v, 2)}× smaller than 8`,
         note: 'An ideal context-free code: each number costs −log₂ of its frequency in the whole history, with no help from any other entry. That gains about a fifth — the same range as the published context-free coders of 8-bit KV (1.1–1.3×).' },
       { id: 'dict', label: 'block 0’s dictionary', tex: '\\vD_0', value: rows => dictionary(rows.filter(r => r.block === 0)),
-        fmt: v => `typical ${v.typ.map(x => fmt(x)).join(' · ')}<br>widths ${v.width.join(' · ')} bits`,
+        fmt: v => `<span style="font-size:.8em">typical ${v.typ.map(x => fmt(x)).join(' ')}<br>widths ${v.width.join(' ')} bits</span>`,
         note: `Two small numbers per element — a typical value and the width of the deltas — so ${2 * D} bytes: as big as two entries, a weight of $\\vw = 2$. Each block has its own.` },
-      { id: 'widths', label: 'delta bits per entry, block by block', value: rows => dicts(rows).map(d => d.bits),
-        fmt: v => v.map((b, j) => `block ${j}: ${b}`).join(' · '),
+      { id: 'widths', label: 'delta bits per entry, blocks 0 to 3', value: rows => dicts(rows).map(d => d.bits),
+        fmt: v => `${v.join(' · ')} bits`,
         note: 'Every entry of a block gets the same, fixed number of bits, so delta t sits at a computable address. The widths differ from block to block, never within one.' },
-      { id: 'rho', label: 'delta ratio', tex: '\\vrho', value: rows => avg(dicts(rows).map(d => d.bits / (8 * D))), fmt: v => `${fmt(v, 2)} · ${fmt(8 * v, 1)} bits per element`,
+      { id: 'rho', label: 'delta ratio', tex: '\\vrho', value: rows => avg(dicts(rows).map(d => d.bits / (8 * D))), fmt: v => `${fmt(v, 2)} · ${fmt(8 * v, 1)} bits each`,
         note: 'Delta bits over the 64 raw bits of an entry, averaged over the four blocks. The pages of Part IV assume 0.75; this toy, built so the bet holds, lands a little below.' },
       { id: 'allin', label: 'all in, per entry', tex: '\\vrho + \\vw/\\vb', value: rows => avg(dicts(rows).map(d => d.bits / (8 * D))) + 2 / B,
         fmt: v => `${fmt(v, 3)} of a raw entry`,
         note: `The dictionary’s ${2 * D} bytes, shared by the ${B} entries of its block, add $\\vw/\\vb = 2/32 = 0.0625$ to every entry. Small blocks pay a real tax.` },
-      { id: 'apple1', label: 'bits saved by the entry next door', value: rows => bitsOf(r2At(rows, 1)), fmt: (v, rows) => `${fmt(v, 2)} bit per element · R² ${fmt(r2At(rows, 1), 2)}`,
+      { id: 'apple1', label: 'bits saved by the entry next door', value: rows => bitsOf(r2At(rows, 1)), fmt: (v, rows) => `${fmt(v, 2)} bit · R² ${fmt(r2At(rows, 1), 2)}`,
         note: 'Knowing E[t − 1] explains most of each element’s variation: the slow wander is shared, only the token noise is new.' },
-      { id: 'apple8', label: 'bits saved by the entry 8 tokens back', value: rows => bitsOf(r2At(rows, 8)), fmt: (v, rows) => `${fmt(v, 2)} bit per element · R² ${fmt(r2At(rows, 8), 2)}`,
+      { id: 'apple8', label: 'bits saved by the entry 8 tokens back', value: rows => bitsOf(r2At(rows, 8)), fmt: (v, rows) => `${fmt(v, 2)} bit · R² ${fmt(r2At(rows, 8), 2)}`,
         note: 'The saving fades with distance: eight tokens back, the wander has moved on.' },
-      { id: 'apple32', label: 'bits saved at a distance of one block', value: rows => bitsOf(r2At(rows, B)), fmt: (v, rows) => `${fmt(v, 2)} bit per element · R² ${fmt(r2At(rows, B), 2)}`,
+      { id: 'apple32', label: 'bits saved at a distance of one block', value: rows => bitsOf(r2At(rows, B)), fmt: (v, rows) => `${fmt(v, 2)} bit · R² ${fmt(r2At(rows, B), 2)}`,
         note: 'At Δ = 32 the neighbour says almost nothing. In this toy, blocks much longer than a few dozen tokens would waste the saving.' },
       { id: 'shuf', label: 'next door, after shuffling the entries', value: rows => bitsOf(r2At(shuffled(rows), 1)), fmt: v => `${fmt(v, 2)} bit per element`,
         note: 'Shuffle the token order and every neighbour relation is gone: the “no help” line of any fallen-apple measurement.' },
