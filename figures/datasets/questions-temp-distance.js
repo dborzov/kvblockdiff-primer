@@ -41,8 +41,8 @@
       if (ctx.hl) rows.filter(r => ctx.hl.test(r)).forEach(r => dot(P.g.data, P.x(r.d), P.y(r.bits), 3.6 * P.fs, series(1)));
       const hf = halfOf(rows), dp = dip(rows), day = at(rows, 48);
       rule(P, { x: hf.d, label: `halved by Δ = ${hf.d}`, color: 'var(--ink-2)' });
-      annotate(P, dp.d, dp.bits, `${ago(dp.d)} back: nothing`, { dx: -8, dy: -70, anchor: 'end' });
-      annotate(P, day.d, day.bits, `a day back: ${fmt(day.bits, 2)}`, { dx: -14, dy: -44, anchor: 'end' });
+      annotate(P, dp.d, dp.bits, `${ago(dp.d)} back: nothing`, { dx: 8, dy: -100, anchor: 'middle' });
+      annotate(P, day.d, day.bits, `a day back: ${fmt(day.bits, 2)}`, { dx: -12, dy: -34, anchor: 'end' });
       crosshair(P, { xname: 'Δ =', xfmt: v => `${Math.round(v)} (${ago(Math.round(v))})`, yfmt: v => `${fmt(v, 2)} bit` });
     },
   };
@@ -80,7 +80,7 @@
         note: (v, rows) => `The best straight line through the reading before explains ${fmtPct(at(rows, 1).r2, 1)} of the variance. A neighbour next door is worth almost three bits a reading — far more than any KV neighbour could hope for, because a thermometer changes slowly and its noise is tiny.` },
       { id: 'meas1', label: 'measured at $\\vgap$ = 1, on whole tenths', value: rows => at(rows, 1).meas, fmt: v => `${fmt(v, 2)} bits`,
         note: 'Entropy of the readings minus entropy of the exact integer residuals. A little below the formula, as on II.12: the readings are not quite bell-shaped. This is the column framework A reports; the formula is the quick look.' },
-      { id: 'half', label: 'where the gain has halved', value: rows => halfOf(rows).d, fmt: v => `$\\vgap$ = ${v} · ${ago(v)}`,
+      { id: 'half', label: 'where the gain has halved', value: rows => halfOf(rows).d, fmt: v => `Δ = ${v} · ${ago(v)} back`,
         note: v => `The fading length, read off the data. ${ago(v)} back, a reading says less than half of what the one next door said. On KV entries, this is the number that would set the block size.` },
       { id: 'dip', label: 'the low point within a day', value: rows => dip(rows).bits, fmt: (v, rows) => `${fmt(v, 2)} bit at ${ago(dip(rows).d)}`,
         note: (v, rows) => `About ${ago(dip(rows).d)} back the daily cycle has turned far enough that the old reading tells nothing at all: its correlation with now passes through zero. The curve has faded out completely — for a while.` },

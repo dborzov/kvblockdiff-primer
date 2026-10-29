@@ -37,6 +37,8 @@ window.FIG = window.FIG || {};
       const r = rng(`questions-prospector-${valley}-${seed}`);
       const pts = panned ? range(12).flatMap(st => DIST.map(d => [d * Math.exp(r.uniform(-0.12, 0.12)), Math.max(0.021, world.g(d) * Math.exp(r.normal(0, 0.45)))])) : [];
       OUT.forEach(o => line(P, linspace(Math.log10(8), Math.log10(1400), 30).map(v => [Math.pow(10, v), o.g(Math.pow(10, v))]), { color: o.color, width: 2, dash: true }));
+      [['falls → dig at the ridge', 9, 8 * Math.pow(0.9, -0.5) * 1.6, 'start'], ['flat → pan, do not dig', 9, 1.2 * 0.6, 'start'], ['nothing → go home', 1300, 0.05 * 1.45, 'end']]
+        .forEach(([t, x, y, anchor]) => svgText(P.g.top, P.x(x), P.y(y), t, { class: 'annot', 'text-anchor': anchor }));
       pts.forEach(([x, y]) => dot(P.g.data, P.x(x), P.y(y), 4 * P.fs, 'var(--c)'));
       if (!panned) { ro.set([['buckets', 'none yet'], ['the plan', 'three outcomes written down, each with what to do']]); return; }
       // read the buckets: the mean grade and the slope of log grade against log distance
@@ -498,7 +500,7 @@ window.FIG = window.FIG || {};
       label: 'Gain in requests per GPU over HiSparse against the delta ratio, with the thresholds of the outcome table' });
     BANDS.forEach(([a, b, name, c]) => {
       el('rect', { x: P.m.l, width: P.pw, y: P.y(b), height: P.y(a) - P.y(b), style: `fill:color-mix(in srgb, ${c} 9%, transparent)` }, P.g.bg);
-      if (b > 2) svgText(P.g.bg, P.x(0.995), P.y(2.35) + 14 * P.fs, name, { class: 'lbl' });
+      if (b > 1.2) svgText(P.g.bg, P.x(0.995), P.y(Math.min(b, 2.35)) + 14 * P.fs, name, { class: 'lbl' });
       else svgText(P.g.bg, P.x(0.405), P.y(b) + 14 * P.fs, name, { class: 'lbl', 'text-anchor': 'end' });
     });
     [1.1, 1.3].forEach(y => rule(P, { y, color: 'var(--ink-3)' }));

@@ -23,6 +23,11 @@ cards:
     wrong: ["It must stay the same", "It must rise, because shuffling adds noise", "It must decay faster"]
     why: Shuffling destroys every neighbour relationship. A gain that survives the shuffle is a bug, not similarity.
     sec: shapes
+  - q: 'On the Gull Rock temperatures, the bits-versus-distance curve fades within hours, then climbs back to 0.83 bit one day back. How should a shape like that be handled?'
+    a: As a new, fourth outcome, added openly and marked as found after the data, pointing to a neighbour of a special kind
+    wrong: ["Read it as fallen-apple similarity, the closest written shape", "Discard it as noise, since the shuffle control is at zero", "Read it as per-request structure, because the far end is positive"]
+    why: The written outcomes are the honest baseline; a shape outside them is reported as such, not squeezed into the nearest row.
+    sec: shapes
 ---
 
 On [[#questions-two-kinds]] a prospector panned gravel at 10 metres, 100 metres and a kilometre from the ridge, and read the grade against distance. Framework A is the same routine for KV entries. The "grade" is bits saved, and the "distance" is how many tokens back the neighbour sits.

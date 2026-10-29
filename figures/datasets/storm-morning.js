@@ -79,8 +79,8 @@
       far: { label: 'reuse distance ≥ 3', test: r => r.reuse >= 3 && r.reuse < Infinity },
     },
     views: {
-      raster: { label: 'The morning', draw(box, ctx) { raster(box, ctx, false); box.append(h('p', { class: 'fig-note', text: 'One row per logbook, one column per request, in order. Hover a request for when that logbook was last asked for.' })); } },
-      reuse: { label: 'With reuse distances', draw(box, ctx) { raster(box, ctx, true); box.append(h('p', { class: 'fig-note', text: 'Each repeat is joined to the same logbook’s previous request. Its reuse distance counts the other rows with a request inside that stretch. Hover a request to shade the stretch.' })); } },
+      raster: { label: 'The morning', legend: 'hl', draw(box, ctx) { raster(box, ctx, false); box.append(h('p', { class: 'fig-note', text: 'One row per logbook, one column per request, in order. Hover a request for when that logbook was last asked for.' })); } },
+      reuse: { label: 'With reuse distances', legend: 'hl', draw(box, ctx) { raster(box, ctx, true); box.append(h('p', { class: 'fig-note', text: 'Each repeat is joined to the same logbook’s previous request. Its reuse distance counts the other rows with a request inside that stretch. Hover a request to shade the stretch.' })); } },
       counts: DS.views.categories({ key: 'id', order: ORDER, catLabel: c => c, catSeries: (c) => ORDER.indexOf(c), xlabel: 'logbook', ylabel: 'requests', noun: 'requests', label: 'Requests per logbook' }),
       dists: DS.views.categories({ key: 'dist', order: ['0', '1', '2', '3', '4', '5', '∞'], xlabel: 'reuse distance', ylabel: 'requests', noun: 'requests', label: 'Reuse distances' }),
     },

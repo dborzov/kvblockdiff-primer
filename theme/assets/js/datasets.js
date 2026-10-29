@@ -192,7 +192,7 @@
       const selC = ctx.sel && ctx.sel.cat;
       bars(P, n, {
         colors: (i) => { const c = o.catSeries ? series(o.catSeries(cats[i], i)) : BASE; return selC != null && cats[i] !== selC ? tint(c, 35) : c; },
-        labels: (v) => `${count(v)} · ${fmtPct(v / N, 0)}`,
+        labels: (v) => (v ? `${count(v)} · ${fmtPct(v / N, 0)}` : ''),
         tip: (v, i) => `<b>${names[i]}</b><br>${count(v)} ${o.noun || 'rows'} (${fmtPct(v / N, 1)})<br><span class="small">click to select</span>`,
       });
       P.g.data.querySelectorAll('.bar').forEach((b, i) => {
