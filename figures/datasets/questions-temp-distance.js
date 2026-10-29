@@ -41,8 +41,8 @@
       if (ctx.hl) rows.filter(r => ctx.hl.test(r)).forEach(r => dot(P.g.data, P.x(r.d), P.y(r.bits), 3.6 * P.fs, series(1)));
       const hf = halfOf(rows), dp = dip(rows), day = at(rows, 48);
       rule(P, { x: hf.d, label: `halved by Δ = ${hf.d}`, color: 'var(--ink-2)' });
-      annotate(P, dp.d, dp.bits, `${ago(dp.d)} back: nothing`, { dx: 8, dy: -100, anchor: 'middle' });
-      annotate(P, day.d, day.bits, `a day back: ${fmt(day.bits, 2)}`, { dx: -12, dy: -34, anchor: 'end' });
+      annotate(P, dp.d, dp.bits, `${ago(dp.d)} back: nothing`, { dx: -30, dy: -60, anchor: 'end' });
+      annotate(P, day.d, day.bits, `a day back: ${fmt(day.bits, 2)}`, { dx: 30, dy: -46, anchor: 'start' });
       crosshair(P, { xname: 'Δ =', xfmt: v => `${Math.round(v)} (${ago(Math.round(v))})`, yfmt: v => `${fmt(v, 2)} bit` });
     },
   };

@@ -101,6 +101,14 @@ The distance curve is easiest to understand by playing with one.
 4. At a share of 50 %, compare the readout's location gain (0.5 bit) with the curve at $\vgap = 1$ (about 0.21 bit). One noisy neighbour predicts worse than the average of a whole block.
 :::
 
+Real data draws curves with more texture than one planted block length. The Gull Rock temperatures of [[#questions-framework-a]] are a toy with a daily rhythm, and their curve is what a Figure A from wave 1 will look like on the page.
+
+::: dataset fig-plan-temp-distance questions-temp-distance metrics=b1,half,b48,shuf
+**A distance curve with texture: the Gull Rock temperatures.** Horizontal axis: distance $\vgap$ in half-hours, log scale up to a week (dotted rules at whole days). Vertical axis: bits per reading saved by the best straight-line predictor from the reading $\vgap$ back. Blue: the exchange-rate formula; green: measured on exact whole-tenth residuals; dashed grey: the shuffle control. Hover for values. Derived from the synthetic, seeded temperatures of II.10.
+:::
+
+It fades within a couple of hours — a decay length, as above — and then climbs again a day back. On KV entries a bump like that would point to a neighbour of a special kind, such as a passage that repeats; 1a reports it as found, without forcing it into one of the three readings below.
+
 ::: takeaway
 - 1a computes three grid-free numbers: the distance curve, the location gain and the KLT gain, each with its shuffled twin.
 - The distance curve's decay length suggests the block size; a level curve means request or global structure.
