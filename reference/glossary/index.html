@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X.2 Glossary — kv-blockdiff</title>
+<meta name="description" content="Every term on this site, grouped by kind. Each chip links to the page where the term is defined; hovering it anywhere on the site shows the same reminder.">
+<script>try{var t=localStorage.getItem('kvp.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Alegreya+Sans+SC:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Federo&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/tokens.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/gen/terms.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/site.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/figures.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/cards.css">
+<link rel="icon" href="/kvblockdiff-primer/assets/img/favicon.svg" type="image/svg+xml">
+<script>window.KV={page:{"id":"reference-glossary","num":"X.2","title":"Glossary","part":"X","url":"/kvblockdiff-primer/reference/glossary/"}};</script>
+<script src="/kvblockdiff-primer/assets/gen/site-data.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/vendor/katex/katex.min.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/core.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/plotkit.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cgraph.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cards.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/figs-loader.js"></script>
+</head>
+<body data-page-id="reference-glossary" data-page-num="X.2" data-page-title="Glossary" data-part="X" class="is-page" style="--c:var(--part-X)">
+<svg class="sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+<!-- 24×24 line emblems. Stroke and colour come from CSS (.emb { stroke: currentColor }).
+     A brand term's emblem is named in data/terms/*.yaml ("emblem: compass"). -->
+<defs>
+<!-- ui -->
+<symbol id="emb-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+<symbol id="emb-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></symbol>
+<symbol id="emb-cards" viewBox="0 0 24 24"><rect x="3" y="6.5" width="12" height="14.5" rx="2"></rect><path d="M8 3.5h10.5a2 2 0 0 1 2 2V18"></path><path d="M9 11l1.5 2.5L9 16l-1.5-2.5z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-book" viewBox="0 0 24 24"><path d="M4 5.5a2.5 2.5 0 0 1 2.5-2.5H19v15.5H6.5A2.5 2.5 0 0 0 4 21z"></path><path d="M4 21V5.5M8.5 7.5h6M8.5 10.5h4"></path></symbol>
+<symbol id="emb-sigma" viewBox="0 0 24 24"><path d="M17.5 5H6.5l6.2 7-6.2 7h11"></path></symbol>
+<symbol id="emb-lighthouse" viewBox="0 0 24 24"><path d="M9.8 21l1.2-11.5h2L14.2 21z"></path><path d="M9.3 9.5h5.4M12 3.2l2.4 3.3H9.6z"></path><path d="M3.5 5.5l4.3 2M20.5 5.5l-4.3 2M3.5 9.5l4.3-.6M20.5 9.5l-4.3-.6M6 21h12"></path></symbol>
+<symbol id="emb-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.2"></circle><path d="M11 11l9.5 9.5M16.5 16.5l2.2-2.2M18.7 18.7l2-2"></path></symbol>
+<symbol id="emb-delta" viewBox="0 0 24 24"><path d="M12 3.5L3 20h18z"></path><path d="M12 10.5l-3.4 6h6.8z" style="fill:currentColor;stroke:none"></path></symbol>
+<!-- note kinds -->
+<symbol id="emb-spark" viewBox="0 0 24 24"><path d="M12 2.5v4.5M12 17v4.5M2.5 12H7M17 12h4.5M5.3 5.3l3 3M15.7 15.7l3 3M18.7 5.3l-3 3M8.3 15.7l-3 3"></path><circle cx="12" cy="12" r="2.2" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-quill" viewBox="0 0 24 24"><path d="M20.5 3.5C13 4.5 8.5 9.5 6.5 16.5L5 20.5"></path><path d="M20.5 3.5c-1 6-5 10.5-11.5 11.5"></path><path d="M9 15l-2.8-2.8"></path></symbol>
+<symbol id="emb-abacus" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"></rect><path d="M3 9h18M3 15h18"></path><circle cx="7.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="12.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="10" cy="15" r="1.7" style="fill:currentColor"></circle><circle cx="16.5" cy="15" r="1.7" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></symbol>
+<symbol id="emb-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.3"></circle><circle cx="12" cy="12" r="7"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"></path></symbol>
+<symbol id="emb-warn" viewBox="0 0 24 24"><path d="M12 3.5L2.5 20h19z"></path><path d="M12 10v4.5"></path><circle cx="12" cy="17.3" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-scroll" viewBox="0 0 24 24"><path d="M6.5 4H17a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7.5"></path><path d="M6.5 4a2 2 0 0 0-2 2v1.5h4V6a2 2 0 0 0-2-2zM7.5 20a2 2 0 0 1-2-2v-1h4v1a2 2 0 0 1-2 2"></path><path d="M10.5 9h5.5M10.5 12.5h5.5"></path></symbol>
+<symbol id="emb-gauge" viewBox="0 0 24 24"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"></path><path d="M12 17l4.2-6.3"></path><circle cx="12" cy="17" r="1.4" style="fill:currentColor"></circle><path d="M6 12.5l1.3.8M18 12.5l-1.3.8M12 8.5V10"></path></symbol>
+<symbol id="emb-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.8.3-1.1 1-1.1 1.8"></path><circle cx="12" cy="16.9" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- dictionary types -->
+<symbol id="emb-lantern" viewBox="0 0 24 24"><path d="M9 5h6M12 2.5V5"></path><path d="M7.5 7h9l-1.2 11.5H8.7z"></path><path d="M6.5 7h11M6.5 18.5h11"></path><path d="M12 10.3c1.4 1.4 1.4 3 0 4.4-1.4-1.4-1.4-3 0-4.4z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-anchor" viewBox="0 0 24 24"><circle cx="12" cy="4.8" r="2.1"></circle><path d="M12 7v14M8 10.5h8M4 13.5c0 4.3 3.6 7.5 8 7.5s8-3.2 8-7.5"></path><path d="M4 13.5l-1.8 2.2M4 13.5l2.6.9M20 13.5l1.8 2.2M20 13.5l-2.6.9"></path></symbol>
+<symbol id="emb-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.3"></circle><path d="M12 3.8l1.9 6.3 6.3 1.9-6.3 1.9-1.9 6.3-1.9-6.3L3.8 12l6.3-1.9z"></path><path d="M12 6.5l1 4.5 4.5 1-4.5 1-1 4.5-1-4.5-4.5-1 4.5-1z" style="fill:currentColor;stroke:none;opacity:.55"></path></symbol>
+<symbol id="emb-hive" viewBox="0 0 24 24"><path d="M7 3.5l3.2 1.8v3.7L7 10.8 3.8 9V5.3z"></path><path d="M17 3.5l3.2 1.8v3.7L17 10.8 13.8 9V5.3z"></path><path d="M12 12.4l3.2 1.8v3.7L12 19.7l-3.2-1.8v-3.7z"></path><circle cx="7" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="17" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="16" r="1.1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-twins" viewBox="0 0 24 24"><circle cx="8.8" cy="12" r="5.6"></circle><circle cx="15.2" cy="12" r="5.6"></circle><circle cx="8.8" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- properties -->
+<symbol id="emb-clover" viewBox="0 0 24 24"><path d="M12 11.5C9 11 6.2 9.8 6.6 7.2 7 5 9.6 5 10.6 6.6 10.4 4.8 12.5 3.5 14.2 4.6c1.9 1.3.6 4.6-2.2 6.9zM12 11.5c3-.5 5.8-1.7 5.4-4.3"></path><path d="M11.6 12c-3 .5-5.8 1.7-5.4 4.3.4 2.2 3 2.2 4 .6-.2 1.8 1.9 3.1 3.6 2 1.9-1.3.6-4.6-2.2-6.9zM12.2 12c2.9.7 5.6 2 5.1 4.6-.5 2.1-3.2 2-4.1.3"></path><path d="M12.5 12.3c1.9 2.8 3.6 5.4 6.5 8.2"></path></symbol>
+<symbol id="emb-apple" viewBox="0 0 24 24"><path d="M12 7.3c-2-1.6-6.2-1.3-7 3.1-.8 4.3 2.3 10.1 5 10.1.9 0 1.3-.5 2-.5s1.1.5 2 .5c2.7 0 5.8-5.8 5-10.1-.8-4.4-5-4.7-7-3.1z"></path><path d="M12 7.3c0-2.1 1-3.7 2.6-4.3"></path><path d="M12.6 5.8c1.6-.2 3.3-1.1 3.8-2.6-1.7-.2-3.3.6-3.8 2.6z" style="fill:currentColor"></path></symbol>
+<symbol id="emb-stairs" viewBox="0 0 24 24"><path d="M3 20.5h4.5V16H12v-4.5h4.5V7H21"></path><path d="M3 20.5h18"></path><path d="M14 3.5h5.5V9"></path></symbol>
+<symbol id="emb-houses" viewBox="0 0 24 24"><path d="M2.5 11.5l4.5-4.5 4.5 4.5v8.5h-9zM12.5 11.5l4.5-4.5 4.5 4.5v8.5h-9z"></path><path d="M5.5 20v-3.5h3V20M15.5 20v-3.5h3V20"></path></symbol>
+<!-- scopes -->
+<symbol id="emb-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.9 2.6 2.9 15.4 0 18M12 3c-2.9 2.6-2.9 15.4 0 18M4.5 7.5h15M4.5 16.5h15"></path></symbol>
+<symbol id="emb-spool" viewBox="0 0 24 24"><path d="M6.5 4h11M6.5 20h11"></path><path d="M8 4v16M16 4v16"></path><path d="M8 7.5l8 2M8 11l8 2M8 14.5l8 2"></path><path d="M16 17c3 0 4.3 1.6 3.3 4"></path></symbol>
+<symbol id="emb-brick" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="1"></rect><path d="M2.5 12h19M9 5.5V12M15 12v6.5"></path></symbol>
+<!-- project objects -->
+<symbol id="emb-tile" viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="15" rx="2"></rect><path d="M9 8.5h6M9 11.5h6M9 14.5h4"></path></symbol>
+<symbol id="emb-tiles" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="9.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="16.5" y="6.5" width="5" height="11" rx="1"></rect></symbol>
+<symbol id="emb-flame" viewBox="0 0 24 24"><path d="M12 21c-4 0-6.5-2.8-6.5-6.3 0-3.7 3.2-5.5 3.7-9.2 2.6 1.6 3.4 4 3.3 5.8 1-.7 1.7-2 1.8-3.3 2.4 2 3.2 4.3 3.2 6.6 0 3.6-2.6 6.4-5.5 6.4z"></path><path d="M12 21c-1.6 0-2.6-1.1-2.6-2.6 0-1.6 1.4-2.4 1.8-4 1.3 1 2.2 2 2.2 3.6 0 1.7-.6 3-1.4 3z" style="fill:currentColor;stroke:none;opacity:.6"></path></symbol>
+<symbol id="emb-shelf" viewBox="0 0 24 24"><path d="M3 20.5h18M3.5 20.5V5M20.5 20.5V5"></path><path d="M6 20.5V8.5h3v12M10.5 20.5V6h3v14.5M15 20.5l-.2-9.5 3-.6 1.4 10.1"></path></symbol>
+<symbol id="emb-dart" viewBox="0 0 24 24"><path d="M14 5.5l-6.5 12h13z"></path><path d="M2 9h6M3 13h4M2 17h3"></path></symbol>
+<symbol id="emb-crate" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="13.5" rx="1"></rect><path d="M3.5 10.5h17M9 6v4.5M15 6v4.5M3.5 6l17 13.5M20.5 6l-17 13.5" style="opacity:.55"></path></symbol>
+<symbol id="emb-ruler" viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1"></rect><path d="M6 8v3M9.5 8v4.5M13 8v3M16.5 8v4.5M20 8v3"></path></symbol>
+<symbol id="emb-weight" viewBox="0 0 24 24"><path d="M8.5 8.5a3.5 3.5 0 1 1 7 0"></path><path d="M6 9.5h12l2.2 11H3.8z"></path></symbol>
+<symbol id="emb-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"></path></symbol>
+<symbol id="emb-roofline" viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M5 5c2.5 6 7 10.5 15 12"></path><circle cx="9" cy="15.5" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="14" cy="18.2" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="7.2" cy="12.6" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-magnifier" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.2"></circle><path d="M15 15l5.5 5.5M8 10.5h5"></path></symbol>
+<symbol id="emb-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.4-6.5-11a6.5 6.5 0 0 1 13 0c0 4.6-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.4"></circle></symbol>
+<symbol id="emb-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"></path><path d="M3 12.5l9 5 9-5M3 16.5l9 5 9-5"></path></symbol>
+<symbol id="emb-ladder" viewBox="0 0 24 24"><path d="M7 2.5v19M17 2.5v19M7 6.5h10M7 11.5h10M7 16.5h10"></path></symbol>
+<symbol id="emb-cat" viewBox="0 0 24 24"><path d="M5 20.5v-8.3L4 5.5l4.3 3.2h7.4L20 5.5l-1 6.7v8.3z"></path><circle cx="9.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><circle cx="14.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><path d="M11 16.5h2l-1 1z"></path></symbol>
+<symbol id="emb-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6.2L4.6 18.4A1.8 1.8 0 0 0 6.2 21h11.6a1.8 1.8 0 0 0 1.6-2.6L14 9.2V3"></path><path d="M7.3 15h9.4"></path></symbol>
+<symbol id="emb-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"></path><path d="M9 4v14M15 6v14"></path></symbol>
+<symbol id="emb-flag" viewBox="0 0 24 24"><path d="M5 21V3.5M5 4h12.5l-2.2 4 2.2 4H5"></path></symbol>
+<symbol id="emb-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8.2-8 9-4.5-.8-8-4-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></symbol>
+<symbol id="emb-zip" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M12 3v2M12 7v2M12 11v2"></path><rect x="10.3" y="14" width="3.4" height="4.2" rx=".9"></rect></symbol>
+<symbol id="emb-braces" viewBox="0 0 24 24"><path d="M9 4C7 4 6 5 6 7v2.2c0 1.4-1 2.4-2.5 2.8 1.5.4 2.5 1.4 2.5 2.8V17c0 2 1 3 3 3M15 4c2 0 3 1 3 3v2.2c0 1.4 1 2.4 2.5 2.8-1.5.4-2.5 1.4-2.5 2.8V17c0 2-1 3-3 3"></path></symbol>
+<symbol id="emb-arrow" viewBox="0 0 24 24"><path d="M4.5 19.5L19 5"></path><path d="M19 5h-6.5M19 5v6.5"></path></symbol>
+<symbol id="emb-loggrid" viewBox="0 0 24 24"><path d="M2.5 18.5h19"></path><path d="M12 14v9M13.2 15.5v6M14.6 16v5M16.6 16.5v4M19.6 17v3M10.8 15.5v6M9.4 16v5M7.4 16.5v4M4.4 17v3"></path><path d="M5 5h14" style="opacity:.5"></path><path d="M5 3.5v3M8.5 3.5v3M12 3.5v3M15.5 3.5v3M19 3.5v3"></path></symbol>
+<symbol id="emb-cycle" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"></path><path d="M20 4.5v4h-4"></path></symbol>
+<symbol id="emb-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5L4.5 14h7l-1 7.5 9-11.5h-7z"></path></symbol>
+<symbol id="emb-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7.5 3c0 5.5 9 5.5 9 9s-9 3.5-9 9M16.5 3c0 5.5-9 5.5-9 9s9 3.5 9 9"></path></symbol>
+<symbol id="emb-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"></path><path d="M14.5 7.5v1.5M14.5 11.2v1.6M14.5 15v1.5"></path></symbol>
+<symbol id="emb-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.2"></rect><circle cx="8.8" cy="8.8" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="15.2" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.6" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-telegraph" viewBox="0 0 24 24"><path d="M3 19h18M6 19v-3.5h12V19M8.5 15.5l7.5-6"></path><circle cx="16.8" cy="8.8" r="1.9"></circle><path d="M3 9.5h2M3 12h3.5"></path></symbol>
+<!-- categories -->
+<symbol id="emb-envelope" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.5"></rect><path d="M3.5 6.5l8.5 7 8.5-7"></path></symbol>
+<symbol id="emb-bell" viewBox="0 0 24 24"><path d="M2 19.5c4 0 5.2-12.5 10-12.5s6 12.5 10 12.5"></path><path d="M2 19.5h20M12 7v12.5" style="opacity:.5"></path></symbol>
+<symbol id="emb-axes" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"></path><path d="M4 20l12-9.5"></path><path d="M16 10.5l-3.3.2M16 10.5l-1.2 3"></path></symbol>
+<symbol id="emb-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><rect x="9.5" y="9.5" width="5" height="5" rx=".6"></rect><path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"></path></symbol>
+<symbol id="emb-eye" viewBox="0 0 24 24"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+<symbol id="emb-seal" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6"></circle><circle cx="12" cy="9.5" r="3" style="opacity:.6"></circle><path d="M8.5 14.5l-1.6 6.5 5.1-2.6 5.1 2.6-1.6-6.5"></path></symbol>
+<!-- weather (toy world) -->
+<symbol id="emb-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"></path></symbol>
+<symbol id="emb-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.2 4.2 0 0 1-.6-8.4 5.8 5.8 0 0 1 11.2 1.6 3.4 3.4 0 0 1-.4 6.8z"></path></symbol>
+<symbol id="emb-rain" viewBox="0 0 24 24"><path d="M7 14.5a4.2 4.2 0 0 1-.6-8.4A5.8 5.8 0 0 1 17.6 7.7a3.4 3.4 0 0 1-.4 6.8z"></path><path d="M8.5 17.5l-1 3M12.5 17.5l-1 3M16.5 17.5l-1 3"></path></symbol>
+<symbol id="emb-fog" viewBox="0 0 24 24"><path d="M3 8h13M6 12h15M3 16h12M8 20h11"></path></symbol>
+</defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="ib menu-btn" type="button" aria-label="Open the table of contents" aria-controls="sidenav" aria-expanded="false"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-menu"></use></svg></button>
+  <a class="site-brand" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-delta"></use></svg><span class="brand-name">kv-blockdiff</span><span class="brand-sub">primer &amp; proposal</span></a>
+  <div class="crumb"><span class="crumb-part">Part X · Reference</span><span class="crumb-sep">›</span><span class="crumb-page"><b>X.2</b> Glossary</span></div>
+  <a id="deck-count" class="deck-count" href="/kvblockdiff-primer/practice/" title="Your flashcard deck"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span class="dc-n">0</span></a>
+  <button class="ib theme-btn" type="button" aria-label="Switch between light and dark"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-moon"></use></svg></button>
+</header>
+
+<nav id="sidenav" class="sidenav" aria-label="Table of contents">
+  <div class="sn-top">
+    <a class="sn-home" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-lighthouse"></use></svg><span>Start here</span></a>
+    <button class="ib sn-close" type="button" aria-label="Close the table of contents">×</button>
+  </div>
+  <details class="sn-part" style="--pc:var(--part-I)">
+    <summary><span class="sn-roman">I</span><span class="sn-title">The tiny-file problem</span><span class="sn-count">6</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/tiny-files/notice-anything/" data-page="tiny-files-notice-anything"><span class="sn-num">I.1</span><span class="sn-name">Notice anything?</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/one-at-a-time/" data-page="tiny-files-one-at-a-time"><span class="sn-num">I.2</span><span class="sn-name">One message alone</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/trained-dictionary/" data-page="tiny-files-trained-dictionary"><span class="sn-num">I.3</span><span class="sn-name">The trained dictionary</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/three-lessons/" data-page="tiny-files-three-lessons"><span class="sn-num">I.4</span><span class="sn-name">Three lessons</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/vectors-not-text/" data-page="tiny-files-vectors-not-text"><span class="sn-num">I.5</span><span class="sn-name">Lists of numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/profile/" data-page="tiny-files-profile"><span class="sn-num">I.6</span><span class="sn-name">The profile</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-II)">
+    <summary><span class="sn-roman">II</span><span class="sn-title">Back to school</span><span class="sn-count">25</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/school/why-school/" data-page="school-why-school"><span class="sn-num">II.1</span><span class="sn-name">Why go back to school?</span></a></li><li class="sn-group">Information</li>
+      <li><a href="/kvblockdiff-primer/school/bits/" data-page="school-bits"><span class="sn-num">II.2</span><span class="sn-name">Bits: twenty questions</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/surprise/" data-page="school-surprise"><span class="sn-num">II.3</span><span class="sn-name">Surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/entropy/" data-page="school-entropy"><span class="sn-num">II.4</span><span class="sn-name">Entropy: the average surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/side-information/" data-page="school-side-information"><span class="sn-num">II.5</span><span class="sn-name">Side information</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/mutual-information/" data-page="school-mutual-information"><span class="sn-num">II.6</span><span class="sn-name">Mutual information</span></a></li><li class="sn-group">Coding</li>
+      <li><a href="/kvblockdiff-primer/school/codes/" data-page="school-codes"><span class="sn-num">II.7</span><span class="sn-name">Codes and Huffman</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/arithmetic/" data-page="school-arithmetic"><span class="sn-num">II.8</span><span class="sn-name">Arithmetic coding and rANS</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fixed-length/" data-page="school-fixed-length"><span class="sn-num">II.9</span><span class="sn-name">Fixed-length codes and escapes</span></a></li><li class="sn-group">Prediction</li>
+      <li><a href="/kvblockdiff-primer/school/prediction/" data-page="school-prediction"><span class="sn-num">II.10</span><span class="sn-name">Predict, then send the surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/residual-shapes/" data-page="school-residual-shapes"><span class="sn-num">II.11</span><span class="sn-name">The shape of a residual</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/exchange-rate/" data-page="school-exchange-rate"><span class="sn-num">II.12</span><span class="sn-name">The exchange rate</span></a></li><li class="sn-group">Vectors</li>
+      <li><a href="/kvblockdiff-primer/school/vectors/" data-page="school-vectors"><span class="sn-num">II.13</span><span class="sn-name">Vectors and channels</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/correlation/" data-page="school-correlation"><span class="sn-num">II.14</span><span class="sn-name">Correlation</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/rotation/" data-page="school-rotation"><span class="sn-num">II.15</span><span class="sn-name">Turning the axes (KLT)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/coding-gain/" data-page="school-coding-gain"><span class="sn-num">II.16</span><span class="sn-name">What the rotation buys</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/clusters/" data-page="school-clusters"><span class="sn-num">II.17</span><span class="sn-name">Clusters and codebooks (VQ)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/vq-vs-klt/" data-page="school-vq-vs-klt"><span class="sn-num">II.18</span><span class="sn-name">Codebooks vs rotations</span></a></li><li class="sn-group">Numbers</li>
+      <li><a href="/kvblockdiff-primer/school/integers-floats/" data-page="school-integers-floats"><span class="sn-num">II.19</span><span class="sn-name">Integers and floats</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fp8/" data-page="school-fp8"><span class="sn-num">II.20</span><span class="sn-name">FP8 and index space</span></a></li><li class="sn-group">Machines</li>
+      <li><a href="/kvblockdiff-primer/school/caches/" data-page="school-caches"><span class="sn-num">II.21</span><span class="sn-name">Caches and LRU</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/reuse-distance/" data-page="school-reuse-distance"><span class="sn-num">II.22</span><span class="sn-name">Reuse distance</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/wires/" data-page="school-wires"><span class="sn-num">II.23</span><span class="sn-name">Wires and memories</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/amortization/" data-page="school-amortization"><span class="sn-num">II.24</span><span class="sn-name">Amortization</span></a></li><li class="sn-group">Recap</li>
+      <li><a href="/kvblockdiff-primer/school/recap/" data-page="school-recap"><span class="sn-num">II.25</span><span class="sn-name">Cheat sheet</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-III)">
+    <summary><span class="sn-roman">III</span><span class="sn-title">Where things stand</span><span class="sn-count">11</span></summary>
+    <ol class="sn-pages"><li class="sn-group">How a model reads its memory</li>
+      <li><a href="/kvblockdiff-primer/landscape/tokens-and-decoding/" data-page="landscape-tokens-and-decoding"><span class="sn-num">III.1</span><span class="sn-name">How a model writes</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/attention/" data-page="landscape-attention"><span class="sn-num">III.2</span><span class="sn-name">Attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/kv-cache/" data-page="landscape-kv-cache"><span class="sn-num">III.3</span><span class="sn-name">The KV cache and the entry</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/sparse-attention/" data-page="landscape-sparse-attention"><span class="sn-num">III.4</span><span class="sn-name">Sparse attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/memory-wall/" data-page="landscape-memory-wall"><span class="sn-num">III.5</span><span class="sn-name">Everything must be kept</span></a></li><li class="sn-group">HiSparse and its hot cache</li>
+      <li><a href="/kvblockdiff-primer/landscape/hisparse/" data-page="landscape-hisparse"><span class="sn-num">III.6</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/toy-trace/" data-page="landscape-toy-trace"><span class="sn-num">III.7</span><span class="sn-name">The toy trace</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/lucky-louis/" data-page="landscape-lucky-louis"><span class="sn-num">III.8</span><span class="sn-name">Lucky Louis</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/reuse-curve/" data-page="landscape-reuse-curve"><span class="sn-num">III.9</span><span class="sn-name">The reuse curve</span></a></li><li class="sn-group">The numbers</li>
+      <li><a href="/kvblockdiff-primer/landscape/reference-setting/" data-page="landscape-reference-setting"><span class="sn-num">III.10</span><span class="sn-name">The reference setting</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/derived-numbers/" data-page="landscape-derived-numbers"><span class="sn-num">III.11</span><span class="sn-name">Three numbers and a deadline</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IV)">
+    <summary><span class="sn-roman">IV</span><span class="sn-title">The idea, and what it bets on</span><span class="sn-count">15</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The idea</li>
+      <li><a href="/kvblockdiff-primer/idea/mapping/" data-page="idea-mapping"><span class="sn-num">IV.1</span><span class="sn-name">The idea, mapped</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/dictionary-delta-block/" data-page="idea-dictionary-delta-block"><span class="sn-num">IV.2</span><span class="sn-name">Dictionary, delta, block</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/size-relations/" data-page="idea-size-relations"><span class="sn-num">IV.3</span><span class="sn-name">How big is each piece?</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/blockdiff-step-by-step/" data-page="idea-blockdiff-step-by-step"><span class="sn-num">IV.4</span><span class="sn-name">kv-blockdiff, step by step</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/toy-trace/" data-page="idea-toy-trace"><span class="sn-num">IV.5</span><span class="sn-name">The same trace, with dictionaries</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/data-layout/" data-page="idea-data-layout"><span class="sn-num">IV.6</span><span class="sn-name">The access pattern decides the layout</span></a></li><li class="sn-group">What the idea bets on</li>
+      <li><a href="/kvblockdiff-primer/idea/neighbour-similarity/" data-page="idea-neighbour-similarity"><span class="sn-num">IV.7</span><span class="sn-name">Neighbour similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/fallen-apple/" data-page="idea-fallen-apple"><span class="sn-num">IV.8</span><span class="sn-name">Fallen-apple similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/upstairs/" data-page="idea-upstairs"><span class="sn-num">IV.9</span><span class="sn-name">Upstairs similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/heavy-blocks/" data-page="idea-heavy-blocks"><span class="sn-num">IV.10</span><span class="sn-name">Lucky Louis, block by block</span></a></li><li class="sn-group">The cat-thread ladder</li>
+      <li><a href="/kvblockdiff-primer/idea/cat-thread-ladder/" data-page="idea-cat-thread-ladder"><span class="sn-num">IV.11</span><span class="sn-name">The cat-thread ladder</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/what-is-right/" data-page="idea-what-is-right"><span class="sn-num">IV.12</span><span class="sn-name">What the ladder gets right</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/the-leak/" data-page="idea-the-leak"><span class="sn-num">IV.13</span><span class="sn-name">The leak: hit rate is about queries</span></a></li>
+      <li><a href="/kvblockdiff-primer/idea/the-trap/" data-page="idea-the-trap"><span class="sn-num">IV.14</span><span class="sn-name">The trap: the exchange rate is harsh</span></a></li><li class="sn-group">What better means</li>
+      <li><a href="/kvblockdiff-primer/idea/two-levers/" data-page="idea-two-levers"><span class="sn-num">IV.15</span><span class="sn-name">What “better than HiSparse” means</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-V)">
+    <summary><span class="sn-roman">V</span><span class="sn-title">Papers</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/papers/reading-guide/" data-page="papers-reading-guide"><span class="sn-num">V.1</span><span class="sn-name">How we read papers</span></a></li><li class="sn-group">The system we sit under</li>
+      <li><a href="/kvblockdiff-primer/papers/hisparse/" data-page="papers-hisparse"><span class="sn-num">V.2</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/sparse-selectors/" data-page="papers-sparse-selectors"><span class="sn-num">V.3</span><span class="sn-name">Sparse selectors</span></a></li><li class="sn-group">Lossless coders</li>
+      <li><a href="/kvblockdiff-primer/papers/splitzip/" data-page="papers-splitzip"><span class="sn-num">V.4</span><span class="sn-name">SplitZip</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/float-coders/" data-page="papers-float-coders"><span class="sn-num">V.5</span><span class="sn-name">Lossless float coders</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kv-codec/" data-page="papers-kv-codec"><span class="sn-num">V.6</span><span class="sn-name">KV-Codec</span></a></li><li class="sn-group">Lossy KV compression</li>
+      <li><a href="/kvblockdiff-primer/papers/kivi/" data-page="papers-kivi"><span class="sn-num">V.7</span><span class="sn-name">KIVI</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvquant/" data-page="papers-kvquant"><span class="sn-num">V.8</span><span class="sn-name">KVQuant</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvtc/" data-page="papers-kvtc"><span class="sn-num">V.9</span><span class="sn-name">KVTC</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/lexico/" data-page="papers-lexico"><span class="sn-num">V.10</span><span class="sn-name">Lexico</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/cachegen/" data-page="papers-cachegen"><span class="sn-num">V.11</span><span class="sn-name">CacheGen</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvcomp/" data-page="papers-kvcomp"><span class="sn-num">V.12</span><span class="sn-name">KVComp</span></a></li><li class="sn-group">Old theory</li>
+      <li><a href="/kvblockdiff-primer/papers/classics/" data-page="papers-classics"><span class="sn-num">V.13</span><span class="sn-name">The classics</span></a></li><li class="sn-group">The gap</li>
+      <li><a href="/kvblockdiff-primer/papers/what-would-be-new/" data-page="papers-what-would-be-new"><span class="sn-num">V.14</span><span class="sn-name">What would be new</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VI)">
+    <summary><span class="sn-roman">VI</span><span class="sn-title">Homework — napkin math before building</span><span class="sn-count">18</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Napkin information theory</li>
+      <li><a href="/kvblockdiff-primer/homework/the-budget/" data-page="homework-the-budget"><span class="sn-num">VI.1</span><span class="sn-name">The bit budget</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/solo-coding/" data-page="homework-solo-coding"><span class="sn-num">VI.2</span><span class="sn-name">Solo coding: the Hermit</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/exchange-rate/" data-page="homework-exchange-rate"><span class="sn-num">VI.3</span><span class="sn-name">The exchange rate, applied</span></a></li><li class="sn-group">Four dictionaries</li>
+      <li><a href="/kvblockdiff-primer/homework/dictionary-shape/" data-page="homework-dictionary-shape"><span class="sn-num">VI.4</span><span class="sn-name">The shape of every dictionary coder</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/loc/" data-page="homework-loc"><span class="sn-num">VI.5</span><span class="sn-name">loc: the Anchor</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/klt/" data-page="homework-klt"><span class="sn-num">VI.6</span><span class="sn-name">KLT: the Compass, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/vq/" data-page="homework-vq"><span class="sn-num">VI.7</span><span class="sn-name">VQ: the Hive, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/sib/" data-page="homework-sib"><span class="sn-num">VI.8</span><span class="sn-name">sib: the Twin</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/four-side-by-side/" data-page="homework-four-side-by-side"><span class="sn-num">VI.9</span><span class="sn-name">The four side by side</span></a></li><li class="sn-group">Rates and grids</li>
+      <li><a href="/kvblockdiff-primer/homework/two-rates/" data-page="homework-two-rates"><span class="sn-num">VI.10</span><span class="sn-name">Two rates for everything</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/the-grid/" data-page="homework-the-grid"><span class="sn-num">VI.11</span><span class="sn-name">The 8-bit grid gives and takes</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/where-bits-come-from/" data-page="homework-where-bits-come-from"><span class="sn-num">VI.12</span><span class="sn-name">Where the bits would come from</span></a></li><li class="sn-group">Scope and economics</li>
+      <li><a href="/kvblockdiff-primer/homework/scope/" data-page="homework-scope"><span class="sn-num">VI.13</span><span class="sn-name">Dictionary scope</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/amortization-rule/" data-page="homework-amortization-rule"><span class="sn-num">VI.14</span><span class="sn-name">The amortization rule</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/economics/" data-page="homework-economics"><span class="sn-num">VI.15</span><span class="sn-name">The economics</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/calculator/" data-page="homework-calculator"><span class="sn-num">VI.16</span><span class="sn-name">What-if calculator</span></a></li>
+      <li><a href="/kvblockdiff-primer/homework/break-even/" data-page="homework-break-even"><span class="sn-num">VI.17</span><span class="sn-name">Two break-even conditions</span></a></li><li class="sn-group">A dress rehearsal</li>
+      <li><a href="/kvblockdiff-primer/homework/rehearsal/" data-page="homework-rehearsal"><span class="sn-num">VI.18</span><span class="sn-name">Dress rehearsal</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VII)">
+    <summary><span class="sn-roman">VII</span><span class="sn-title">What Dima missed</span><span class="sn-count">17</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/missed/about/" data-page="missed-about"><span class="sn-num">VII.1</span><span class="sn-name">About this Part</span></a></li><li class="sn-group">Corrections</li>
+      <li><a href="/kvblockdiff-primer/missed/two-localities/" data-page="missed-two-localities"><span class="sn-num">VII.2</span><span class="sn-name">Two localities were merged</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/mutual-information-direction/" data-page="missed-mutual-information-direction"><span class="sn-num">VII.3</span><span class="sn-name">Mutual information points up</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/block-is-a-knob/" data-page="missed-block-is-a-knob"><span class="sn-num">VII.4</span><span class="sn-name">The block is a knob, not a property</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/vq-then-code/" data-page="missed-vq-then-code"><span class="sn-num">VII.5</span><span class="sn-name">VQ cannot beat a rotation on a bell</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/harsh-exchange-rate/" data-page="missed-harsh-exchange-rate"><span class="sn-num">VII.6</span><span class="sn-name">The harsh exchange rate</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/mantissa-and-grid/" data-page="missed-mantissa-and-grid"><span class="sn-num">VII.7</span><span class="sn-name">Mantissa and grid</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/access-pattern/" data-page="missed-access-pattern"><span class="sn-num">VII.8</span><span class="sn-name">The access pattern</span></a></li><li class="sn-group">Fields and tools to think with</li>
+      <li><a href="/kvblockdiff-primer/missed/predictive-coding/" data-page="missed-predictive-coding"><span class="sn-num">VII.9</span><span class="sn-name">The real home of the problem</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/lifting/" data-page="missed-lifting"><span class="sn-num">VII.10</span><span class="sn-name">Lifting</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/context-modeling/" data-page="missed-context-modeling"><span class="sn-num">VII.11</span><span class="sn-name">Context modelling</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/stack-distance/" data-page="missed-stack-distance"><span class="sn-num">VII.12</span><span class="sn-name">The stack-distance curve</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/rate-distortion-bounds/" data-page="missed-rate-distortion-bounds"><span class="sn-num">VII.13</span><span class="sn-name">Bounds before building</span></a></li><li class="sn-group">Design changes</li>
+      <li><a href="/kvblockdiff-primer/missed/light-dictionaries-first/" data-page="missed-light-dictionaries-first"><span class="sn-num">VII.14</span><span class="sn-name">Light dictionaries first</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/keys-before-rope/" data-page="missed-keys-before-rope"><span class="sn-num">VII.15</span><span class="sn-name">Keys before RoPE; K and V apart</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/victim-tier/" data-page="missed-victim-tier"><span class="sn-num">VII.16</span><span class="sn-name">The victim tier</span></a></li>
+      <li><a href="/kvblockdiff-primer/missed/a-measurement-is-a-result/" data-page="missed-a-measurement-is-a-result"><span class="sn-num">VII.17</span><span class="sn-name">A measurement is a result</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VIII)">
+    <summary><span class="sn-roman">VIII</span><span class="sn-title">The questions</span><span class="sn-count">11</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/questions/two-kinds/" data-page="questions-two-kinds"><span class="sn-num">VIII.1</span><span class="sn-name">Two kinds of questions</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/q1/" data-page="questions-q1"><span class="sn-num">VIII.2</span><span class="sn-name">Q1 · fallen-apple similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/q2/" data-page="questions-q2"><span class="sn-num">VIII.3</span><span class="sn-name">Q2 · the store</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/q3/" data-page="questions-q3"><span class="sn-num">VIII.4</span><span class="sn-name">Q3 · heavy blocks</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/framework-a/" data-page="questions-framework-a"><span class="sn-num">VIII.5</span><span class="sn-name">A · bits versus distance</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/framework-b/" data-page="questions-framework-b"><span class="sn-num">VIII.6</span><span class="sn-name">B · the curve and its roofline</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/framework-c/" data-page="questions-framework-c"><span class="sn-num">VIII.7</span><span class="sn-name">C · where misses land</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/framework-d/" data-page="questions-framework-d"><span class="sn-num">VIII.8</span><span class="sn-name">D · requests per GPU</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/parked-dictionaries/" data-page="questions-parked-dictionaries"><span class="sn-num">VIII.9</span><span class="sn-name">Parked · dictionaries</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/parked-measurements/" data-page="questions-parked-measurements"><span class="sn-num">VIII.10</span><span class="sn-name">Parked · measurements</span></a></li>
+      <li><a href="/kvblockdiff-primer/questions/parked-automation/" data-page="questions-parked-automation"><span class="sn-num">VIII.11</span><span class="sn-name">Parked · search and probes</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IX)">
+    <summary><span class="sn-roman">IX</span><span class="sn-title">The plan</span><span class="sn-count">15</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The harness</li>
+      <li><a href="/kvblockdiff-primer/plan/harness-interface/" data-page="plan-harness-interface"><span class="sn-num">IX.1</span><span class="sn-name">The harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/accounting/" data-page="plan-accounting"><span class="sn-num">IX.2</span><span class="sn-name">The accounting rule</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/controls/" data-page="plan-controls"><span class="sn-num">IX.3</span><span class="sn-name">Four controls</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/data/" data-page="plan-data"><span class="sn-num">IX.4</span><span class="sn-name">The data</span></a></li><li class="sn-group">Wave 1: one weekend</li>
+      <li><a href="/kvblockdiff-primer/plan/fp8-target/" data-page="plan-fp8-target"><span class="sn-num">IX.5</span><span class="sn-name">Step 0: the 8-bit target</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/experiment-1a/" data-page="plan-experiment-1a"><span class="sn-num">IX.6</span><span class="sn-name">Experiment 1a</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/experiment-1b/" data-page="plan-experiment-1b"><span class="sn-num">IX.7</span><span class="sn-name">Experiment 1b</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/wave1-outputs/" data-page="plan-wave1-outputs"><span class="sn-num">IX.8</span><span class="sn-name">What wave 1 produces</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/decision-rule/" data-page="plan-decision-rule"><span class="sn-num">IX.9</span><span class="sn-name">The decision rule</span></a></li><li class="sn-group">Wave 2</li>
+      <li><a href="/kvblockdiff-primer/plan/wave2-indexer/" data-page="plan-wave2-indexer"><span class="sn-num">IX.10</span><span class="sn-name">Wave 2: the indexer</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/wave2-measure/" data-page="plan-wave2-measure"><span class="sn-num">IX.11</span><span class="sn-name">Wave 2: what to measure</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/cost-model-and-paper/" data-page="plan-cost-model-and-paper"><span class="sn-num">IX.12</span><span class="sn-name">Cost model and paper</span></a></li><li class="sn-group">Honest edges</li>
+      <li><a href="/kvblockdiff-primer/plan/fixed-choices/" data-page="plan-fixed-choices"><span class="sn-num">IX.13</span><span class="sn-name">Fixed choices</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/ignored/" data-page="plan-ignored"><span class="sn-num">IX.14</span><span class="sn-name">Ignored on purpose</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/risks/" data-page="plan-risks"><span class="sn-num">IX.15</span><span class="sn-name">Risks and pivots</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-X)" open="">
+    <summary><span class="sn-roman">X</span><span class="sn-title">Summary and reference</span><span class="sn-count">8</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/reference/summary/" data-page="reference-summary"><span class="sn-num">X.1</span><span class="sn-name">Summary (TL;DR)</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/glossary/" data-page="reference-glossary" aria-current="page"><span class="sn-num">X.2</span><span class="sn-name">Glossary</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/notation/" data-page="reference-notation"><span class="sn-num">X.3</span><span class="sn-name">Notation</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/themes/" data-page="reference-themes"><span class="sn-num">X.4</span><span class="sn-name">Running themes</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/numbers/" data-page="reference-numbers"><span class="sn-num">X.5</span><span class="sn-name">Grounded numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/fp8-facts/" data-page="reference-fp8-facts"><span class="sn-num">X.6</span><span class="sn-name">FP8 facts</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/prior-art-map/" data-page="reference-prior-art-map"><span class="sn-num">X.7</span><span class="sn-name">Prior-art map</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/references/" data-page="reference-references"><span class="sn-num">X.8</span><span class="sn-name">References</span></a></li>
+    </ol>
+  </details>
+  <div class="sn-foot">
+    <a href="/kvblockdiff-primer/practice/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span>Flashcard practice</span></a>
+    <a href="/kvblockdiff-primer/reference/glossary/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-book"></use></svg><span>Glossary</span></a>
+    <a href="/kvblockdiff-primer/reference/notation/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-sigma"></use></svg><span>Notation &amp; colours</span></a>
+  </div>
+</nav>
+<div class="backdrop" hidden=""></div>
+
+<main id="main" class="main">
+<header class="banner">
+  <div class="banner-orn" aria-hidden="true"><svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMin slice" fill="none" stroke="currentColor" stroke-linecap="round">
+  <g opacity=".55" stroke-width=".8"><path d="M400 -40 L-500 340"></path><path d="M400 -40 L-400 340"></path><path d="M400 -40 L-300 340"></path><path d="M400 -40 L-200 340"></path><path d="M400 -40 L-100 340"></path><path d="M400 -40 L0 340"></path><path d="M400 -40 L100 340"></path><path d="M400 -40 L200 340"></path><path d="M400 -40 L300 340"></path><path d="M400 -40 L400 340"></path><path d="M400 -40 L500 340"></path><path d="M400 -40 L600 340"></path><path d="M400 -40 L700 340"></path><path d="M400 -40 L800 340"></path><path d="M400 -40 L900 340"></path><path d="M400 -40 L1000 340"></path><path d="M400 -40 L1100 340"></path><path d="M400 -40 L1200 340"></path><path d="M400 -40 L1300 340"></path>
+  </g>
+  <circle cx="400" cy="-40" r="120" stroke-width="1.2" opacity=".7"></circle>
+  <circle cx="400" cy="-40" r="150" stroke-width=".6" opacity=".6"></circle>
+  <path d="M10 290 C 60 200, 20 140, 90 90 S 160 40, 130 10" stroke-width="2"></path>
+  <path d="M40 300 C 90 230, 60 170, 120 130 S 200 90, 180 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M90 90 c 14 -4 26 6 22 20 c -10 -2 -18 -10 -22 -20z M120 130 c 14 -2 24 8 18 22 c -10 -4 -16 -12 -18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <path d="M790 290 C 740 200, 780 140, 710 90 S 640 40, 670 10" stroke-width="2"></path>
+  <path d="M760 300 C 710 230, 740 170, 680 130 S 600 90, 620 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M710 90 c -14 -4 -26 6 -22 20 c 10 -2 18 -10 22 -20z M680 130 c -14 -2 -24 8 -18 22 c 10 -4 16 -12 18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <circle cx="130" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle><circle cx="670" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle>
+</svg>
+</div>
+  <div class="banner-inner">
+    <a class="banner-part" href="/kvblockdiff-primer/reference/summary/"><span class="banner-roman">X</span><span class="banner-ptitle">Part X · Summary and reference</span></a>
+    <div class="banner-num" aria-label="Page X.2">X.2</div>
+    <h1>Glossary</h1><p class="lede">Every term on this site, grouped by kind. Each chip links to the page where the term is defined; hovering it anywhere on the site shows the same reminder.</p>
+  </div>
+</header>
+
+<div class="page-body">
+  <article class="prose">
+<p>The signature terms of this project carry an emblem and a colour of their own. The other terms are tinted by their category.</p>
+
+<section class="gl-cat" style="--tc:var(--cat-info)">
+  <h2 id="cat-info"><span class="swatch"></span>information theory</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-bit">
+      <div><a class="term plain" data-term="bit" href="/kvblockdiff-primer/school/bits/#def-bit" style="--tc:var(--cat-info)" data-def="II.2 Bits: twenty questions"><span class="term-text">bit</span></a><div class="gl-name">bit</div></div>
+      <div><div class="gl-short">The answer to one yes/no question; the unit of information. With <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> bits you can tell apart <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6644em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span></span></span> equally likely possibilities.</div></div>
+    </div>
+    <div class="gl-item" id="g-conditional-entropy">
+      <div><a class="term plain" data-term="conditional-entropy" href="/kvblockdiff-primer/school/side-information/#def-conditional-entropy" style="--tc:var(--cat-info)" data-def="II.5 Side information"><span class="term-text">conditional entropy</span></a><div class="gl-name">conditional entropy H(X | Y)</div></div>
+      <div><div class="gl-short">The average number of bits still needed to describe <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span></span></span></span> when <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span></span></span></span> is already known. Never more than <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-H f-info"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span><span class="mopen">(</span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span><span class="mclose">)</span></span></span></span>, on average.</div></div>
+    </div>
+    <div class="gl-item" id="g-cross-entropy">
+      <div><a class="term plain" data-term="cross-entropy" href="/kvblockdiff-primer/school/arithmetic/#def-cross-entropy" style="--tc:var(--cat-info)" data-def="II.8 Arithmetic coding and rANS"><span class="term-text">cross-entropy</span></a><div class="gl-name">cross-entropy</div></div>
+      <div><div class="gl-short">The average bits per symbol you pay when you code data with a model that is not exactly the data’s true distribution. Always at least the entropy; the gap is the price of a wrong model.</div></div>
+    </div>
+    <div class="gl-item" id="g-entropy">
+      <div><a class="term plain" data-term="entropy" href="/kvblockdiff-primer/school/entropy/#def-entropy" style="--tc:var(--cat-info)" data-def="II.4 Entropy: the average surprise"><span class="term-text">entropy</span></a><div class="gl-name">entropy H</div></div>
+      <div><div class="gl-short">The average surprisal of a source, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-H f-info"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span></span></span></span>, in bits per symbol — the fewest bits per symbol any lossless code can average.</div></div>
+    </div>
+    <div class="gl-item" id="g-mutual-information">
+      <div><a class="term plain" data-term="mutual-information" href="/kvblockdiff-primer/school/mutual-information/#def-mutual-information" style="--tc:var(--cat-info)" data-def="II.6 Mutual information"><span class="term-text">mutual information</span></a><div class="gl-name">mutual information I(X; Y)</div></div>
+      <div><div class="gl-short">How many bits knowing <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span></span></span></span> saves when describing <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-I f-info"><span class="mord mathnormal" style="margin-right:0.0785em;">I</span></span><span class="mopen">(</span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-H f-info"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span><span class="mopen">(</span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-H f-info"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span><span class="mopen">(</span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span><span class="mclose">)</span></span></span></span>. Also called redundancy or, loosely, similarity — all three are the same number of bits.</div></div>
+    </div>
+    <div class="gl-item" id="g-order-0-entropy">
+      <div><a class="term plain" data-term="order-0-entropy" href="/kvblockdiff-primer/school/entropy/#def-order-0-entropy" style="--tc:var(--cat-info)" data-def="II.4 Entropy: the average surprise"><span class="term-text">order-0 entropy</span></a><div class="gl-name">order-0 entropy (context-free entropy)</div></div>
+      <div><div class="gl-short">The entropy computed from symbol frequencies alone, ignoring any context such as the previous symbols. The best a code can do if it looks at each symbol in isolation.</div></div>
+    </div>
+    <div class="gl-item" id="g-perplexity">
+      <div><a class="term plain" data-term="perplexity" href="/kvblockdiff-primer/school/entropy/#def-perplexity" style="--tc:var(--cat-info)" data-def="II.4 Entropy: the average surprise"><span class="term-text">perplexity</span></a><div class="gl-name">perplexity</div></div>
+      <div><div class="gl-short"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8413em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-H f-info mtight"><span class="mord mathnormal mtight" style="margin-right:0.0813em;">H</span></span></span></span></span></span></span></span></span></span></span></span></span> — entropy expressed as an “effective number of equally likely choices”. Popular for language models; this site uses bits because bits × size = bytes on a wire.</div></div>
+    </div>
+    <div class="gl-item" id="g-probability">
+      <div><a class="term plain" data-term="probability" href="/kvblockdiff-primer/school/surprise/#def-probability" style="--tc:var(--cat-info)" data-def="II.3 Surprise"><span class="term-text">probability</span></a><div class="gl-name">probability p</div></div>
+      <div><div class="gl-short">How often an outcome happens in the long run, a number <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-p f-frac"><span class="mord mathnormal">p</span></span></span></span></span> between 0 and 1. All outcomes’ probabilities add up to 1 (their distribution).</div></div>
+    </div>
+    <div class="gl-item" id="g-rate-distortion">
+      <div><a class="term plain" data-term="rate-distortion" href="/kvblockdiff-primer/school/vq-vs-klt/#def-rate-distortion" style="--tc:var(--cat-info)" data-def="II.18 Codebooks versus rotations"><span class="term-text">rate–distortion</span></a><div class="gl-name">rate–distortion theory</div></div>
+      <div><div class="gl-short">The theory of the best trade-off between how many bits you spend and how much error you accept. For Gaussian data it gives hard bounds that tell us when a codebook cannot win.</div></div>
+    </div>
+    <div class="gl-item" id="g-redundancy">
+      <div><a class="term plain" data-term="redundancy" href="/kvblockdiff-primer/school/mutual-information/#def-redundancy" style="--tc:var(--cat-info)" data-def="II.6 Mutual information"><span class="term-text">redundancy</span></a><div class="gl-name">redundancy</div></div>
+      <div><div class="gl-short">The bits a message spends on things the receiver could have predicted. Removing redundancy is what every compressor does.</div></div>
+    </div>
+    <div class="gl-item" id="g-side-information">
+      <div><a class="term plain" data-term="side-information" href="/kvblockdiff-primer/school/side-information/#def-side-information" style="--tc:var(--cat-info)" data-def="II.5 Side information"><span class="term-text">side information</span></a><div class="gl-name">side information</div></div>
+      <div><div class="gl-short">Something the receiver already knows that is relevant to the message (an almanac, a dictionary). It makes the message cheaper to send, by exactly the mutual information.</div></div>
+    </div>
+    <div class="gl-item" id="g-slepian-wolf">
+      <div><a class="term plain" data-term="slepian-wolf" href="/kvblockdiff-primer/papers/classics/#def-slepian-wolf" style="--tc:var(--cat-info)" data-def="V.13 The classics we lean on"><span class="term-text">Slepian–Wolf</span></a><div class="gl-name">Slepian–Wolf coding (side information only at the decoder)</div></div>
+      <div><div class="gl-short">The 1973 theorem that <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span></span></span></span></span> can be sent losslessly at <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-H f-info"><span class="mord mathnormal" style="margin-right:0.0813em;">H</span></span><span class="mopen">(</span><span class="enclosing sym s-X f-object"><span class="mord mathnormal" style="margin-right:0.0785em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span><span class="mclose">)</span></span></span></span> bits even when only the receiver knows <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span></span></span></span> — the sender groups messages into bins and the receiver uses <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-Y f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">Y</span></span></span></span></span> to pick the right member. Its lossy sibling is Wyner–Ziv coding.</div></div>
+    </div>
+    <div class="gl-item" id="g-surprisal">
+      <div><a class="term plain" data-term="surprisal" href="/kvblockdiff-primer/school/surprise/#def-surprisal" style="--tc:var(--cat-info)" data-def="II.3 Surprise"><span class="term-text">surprisal</span></a><div class="gl-name">surprisal (self-information)</div></div>
+      <div><div class="gl-short">How surprising one outcome is, in bits, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-p f-frac"><span class="mord mathnormal">p</span></span></span></span></span>. Rare outcomes carry many bits; certain outcomes carry none. An ideal code spends exactly this many bits on the outcome.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-coding)">
+  <h2 id="cat-coding"><span class="swatch"></span>coding &amp; compression</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-vq">
+      <div><a class="term brand" data-term="vq" href="/kvblockdiff-primer/school/clusters/#def-vq" style="--tc:var(--t-vq)" data-def="II.17 Clusters and codebooks (VQ)"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-hive"></use></svg><span class="term-text">VQ</span></a><div class="gl-name">vector quantization (VQ) · “the Hive”</div></div>
+      <div><div class="gl-short">Describe each vector by the index of the nearest of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-C f-count"><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span></span> reference vectors (centroids) in a codebook. Losslessly, the index is a prediction and the exact residual is stored too; the index costs <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-C f-count"><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span></span> bits per vector.</div></div>
+    </div>
+    <div class="gl-item" id="g-amortization">
+      <div><a class="term plain" data-term="amortization" href="/kvblockdiff-primer/school/amortization/#def-amortization" style="--tc:var(--cat-coding)" data-def="II.24 Pay once, use many times"><span class="term-text">amortization</span></a><div class="gl-name">amortization</div></div>
+      <div><div class="gl-short">Spreading a one-time cost over everything that shares it. A dictionary of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-w f-count"><span class="mord mathnormal" style="margin-right:0.0269em;">w</span></span></span></span></span> entries’ worth shared by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> entries costs <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">8</span><span class="enclosing sym s-w f-count"><span class="mord mathnormal" style="margin-right:0.0269em;">w</span></span><span class="mord">/</span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> bits per element.</div></div>
+    </div>
+    <div class="gl-item" id="g-arithmetic-coding">
+      <div><a class="term plain" data-term="arithmetic-coding" href="/kvblockdiff-primer/school/arithmetic/#def-arithmetic-coding" style="--tc:var(--cat-coding)" data-def="II.8 Arithmetic coding and rANS"><span class="term-text">arithmetic coding</span></a><div class="gl-name">arithmetic coding</div></div>
+      <div><div class="gl-short">An entropy coder that codes a whole message as one number in a shrinking interval, so symbols can cost fractions of a bit. Near-ideal, but sequential: you must decode from the start.</div></div>
+    </div>
+    <div class="gl-item" id="g-code">
+      <div><a class="term plain" data-term="code" href="/kvblockdiff-primer/school/codes/#def-code" style="--tc:var(--cat-coding)" data-def="II.7 Codes and Huffman"><span class="term-text">code</span></a><div class="gl-name">code and codeword</div></div>
+      <div><div class="gl-short">A rule that turns each symbol into a string of bits (its codeword) and back. A prefix code is one where no codeword starts another, so a stream of codewords can be read without separators.</div></div>
+    </div>
+    <div class="gl-item" id="g-codebook">
+      <div><a class="term plain" data-term="codebook" href="/kvblockdiff-primer/school/clusters/#def-codebook" style="--tc:var(--cat-coding)" data-def="II.17 Clusters and codebooks (VQ)"><span class="term-text">codebook</span></a><div class="gl-name">codebook</div></div>
+      <div><div class="gl-short">The list of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-C f-count"><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span></span> reference vectors (centroids) used by vector quantization. On this site “codebook” means only this; the general word is dictionary.</div></div>
+    </div>
+    <div class="gl-item" id="g-context-modeling">
+      <div><a class="term plain" data-term="context-modeling" href="/kvblockdiff-primer/missed/context-modeling/#def-context-modeling" style="--tc:var(--cat-coding)" data-def="VII.11 Context modelling never loses"><span class="term-text">context modelling</span></a><div class="gl-name">context modelling</div></div>
+      <div><div class="gl-short">Instead of subtracting a prediction, use it as context — pick the probability table for the value based on the prediction. It can never do worse than ignoring the prediction, but it is not fixed-length.</div></div>
+    </div>
+    <div class="gl-item" id="g-entropy-coder">
+      <div><a class="term plain" data-term="entropy-coder" href="/kvblockdiff-primer/school/arithmetic/#def-entropy-coder" style="--tc:var(--cat-coding)" data-def="II.8 Arithmetic coding and rANS"><span class="term-text">entropy coder</span></a><div class="gl-name">entropy coder</div></div>
+      <div><div class="gl-short">Any coder that spends about <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-p f-frac"><span class="mord mathnormal">p</span></span></span></span></span> bits on a symbol of probability <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-p f-frac"><span class="mord mathnormal">p</span></span></span></span></span>, so its average rate approaches the entropy. Huffman, arithmetic coding and rANS are entropy coders.</div></div>
+    </div>
+    <div class="gl-item" id="g-escape">
+      <div><a class="term plain" data-term="escape" href="/kvblockdiff-primer/school/fixed-length/#def-escape" style="--tc:var(--cat-coding)" data-def="II.9 Fixed-length codes and escapes"><span class="term-text">escape</span></a><div class="gl-name">escape (and the escape stream)</div></div>
+      <div><div class="gl-short">A value too big for the fixed width is “escaped” — marked, and stored separately in full, in an escape stream of (position, raw value) pairs. Rare escapes keep the common case short.</div></div>
+    </div>
+    <div class="gl-item" id="g-fixed-length-code">
+      <div><a class="term plain" data-term="fixed-length-code" href="/kvblockdiff-primer/school/fixed-length/#def-fixed-length-code" style="--tc:var(--cat-coding)" data-def="II.9 Fixed-length codes and escapes"><span class="term-text">fixed-length code</span></a><div class="gl-name">fixed-length code</div></div>
+      <div><div class="gl-short">Every value gets the same number of bits, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-n f-count"><span class="mord mathnormal">n</span></span></span></span></span>. Wasteful compared with an entropy coder, but any value’s position is known in advance, so decoding is trivially parallel and random access is free.</div></div>
+    </div>
+    <div class="gl-item" id="g-grid-aware-model">
+      <div><a class="term plain" data-term="grid-aware-model" href="/kvblockdiff-primer/plan/fp8-target/#def-grid-aware-model" style="--tc:var(--cat-coding)" data-def="IX.5 Step 0: the exact 8-bit target"><span class="term-text">grid-aware model</span></a><div class="gl-name">grid-aware entropy model</div></div>
+      <div><div class="gl-short">An entropy model that describes the value, not the code number: a Laplace bump in value units, centred on the prediction, whose probability for each 8-bit code is the area over that code’s grid cell. Needed on E4M3, where a single bump in index space fits badly.</div></div>
+    </div>
+    <div class="gl-item" id="g-huffman">
+      <div><a class="term plain" data-term="huffman" href="/kvblockdiff-primer/school/codes/#def-huffman" style="--tc:var(--cat-coding)" data-def="II.7 Codes and Huffman"><span class="term-text">Huffman code</span></a><div class="gl-name">Huffman code</div></div>
+      <div><div class="gl-short">The best prefix code for known symbol probabilities, built by repeatedly merging the two rarest symbols. Codeword lengths are whole bits, close to each symbol’s surprisal.</div></div>
+    </div>
+    <div class="gl-item" id="g-index-tax">
+      <div><a class="term plain" data-term="index-tax" href="/kvblockdiff-primer/school/clusters/#def-index-tax" style="--tc:var(--cat-coding)" data-def="II.17 Clusters and codebooks (VQ)"><span class="term-text">index tax</span></a><div class="gl-name">index tax (the cost of naming a centroid)</div></div>
+      <div><div class="gl-short">The <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-C f-count"><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span></span> bits per vector that vector quantization spends to say which centroid was used. A codebook helps only if it saves more bits than this.</div></div>
+    </div>
+    <div class="gl-item" id="g-lossless">
+      <div><a class="term plain" data-term="lossless" href="/kvblockdiff-primer/tiny-files/notice-anything/#def-lossless" style="--tc:var(--cat-coding)" data-def="I.1 Notice anything?"><span class="term-text">lossless</span></a><div class="gl-name">lossless compression</div></div>
+      <div><div class="gl-short">Compression after which the original is rebuilt exactly, bit for bit. The opposite, lossy compression, keeps only an approximation.</div></div>
+    </div>
+    <div class="gl-item" id="g-lossy">
+      <div><a class="term plain" data-term="lossy" href="/kvblockdiff-primer/tiny-files/notice-anything/#def-lossy" style="--tc:var(--cat-coding)" data-def="I.1 Notice anything?"><span class="term-text">lossy</span></a><div class="gl-name">lossy compression</div></div>
+      <div><div class="gl-short">Compression that throws some detail away for good and rebuilds only an approximation (JPEG photos, 2-bit KV quantization). This project is lossless.</div></div>
+    </div>
+    <div class="gl-item" id="g-lz-match">
+      <div><a class="term plain" data-term="lz-match" href="/kvblockdiff-primer/tiny-files/one-at-a-time/#def-lz-match" style="--tc:var(--cat-coding)" data-def="I.2 Why one message alone won't shrink"><span class="term-text">LZ matching</span></a><div class="gl-name">LZ matching (Lempel–Ziv)</div></div>
+      <div><div class="gl-short">The trick at the heart of zip and zstd: when a string of bytes has appeared before, write “copy n bytes from k bytes back” instead of the bytes themselves.</div></div>
+    </div>
+    <div class="gl-item" id="g-prediction">
+      <div><a class="term plain" data-term="prediction" href="/kvblockdiff-primer/school/prediction/#def-prediction" style="--tc:var(--cat-coding)" data-def="II.10 Predict, then send the surprise"><span class="term-text">prediction</span></a><div class="gl-name">prediction and predictor</div></div>
+      <div><div class="gl-short">A guess <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-xhat f-object"><span class="mord katex-accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">^</span></span></span></span></span></span></span></span></span></span></span> of the next value made only from things the receiver also knows. The rule that makes the guess is the predictor.</div></div>
+    </div>
+    <div class="gl-item" id="g-predictive-coding">
+      <div><a class="term plain" data-term="predictive-coding" href="/kvblockdiff-primer/school/prediction/#def-predictive-coding" style="--tc:var(--cat-coding)" data-def="II.10 Predict, then send the surprise"><span class="term-text">predictive coding</span></a><div class="gl-name">lossless predictive coding (DPCM)</div></div>
+      <div><div class="gl-short">Predict each value from what is already known, store the exact integer residual, entropy-code the residual. Lossless audio (FLAC), lossless images (PNG filters) and this project all have this shape.</div></div>
+    </div>
+    <div class="gl-item" id="g-product-quantization">
+      <div><a class="term plain" data-term="product-quantization" href="/kvblockdiff-primer/school/vq-vs-klt/#def-product-quantization" style="--tc:var(--cat-coding)" data-def="II.18 Codebooks versus rotations"><span class="term-text">product quantization</span></a><div class="gl-name">product quantization (PQ)</div></div>
+      <div><div class="gl-short">Split each vector into <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="enclosing sym s-nsub f-count"><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">sub</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> pieces and give each piece its own small codebook. Much larger effective codebooks for the same storage; the same economics as plain VQ.</div></div>
+    </div>
+    <div class="gl-item" id="g-random-access">
+      <div><a class="term plain" data-term="random-access" href="/kvblockdiff-primer/school/fixed-length/#def-random-access" style="--tc:var(--cat-coding)" data-def="II.9 Fixed-length codes and escapes"><span class="term-text">random access</span></a><div class="gl-name">random access</div></div>
+      <div><div class="gl-short">Being able to decode any single item on its own, without decoding what came before it. Stream coders (zstd, arithmetic coding) give it up; fixed-length codes keep it.</div></div>
+    </div>
+    <div class="gl-item" id="g-rans">
+      <div><a class="term plain" data-term="rans" href="/kvblockdiff-primer/school/arithmetic/#def-rans" style="--tc:var(--cat-coding)" data-def="II.8 Arithmetic coding and rANS"><span class="term-text">rANS</span></a><div class="gl-name">rANS (range asymmetric numeral systems)</div></div>
+      <div><div class="gl-short">A modern entropy coder with arithmetic coding’s near-ideal rates and much faster decoding. Like arithmetic coding, it keeps a running state, so a stream decodes front to back.</div></div>
+    </div>
+    <div class="gl-item" id="g-residual">
+      <div><a class="term plain" data-term="residual" href="/kvblockdiff-primer/school/prediction/#def-residual" style="--tc:var(--cat-coding)" data-def="II.10 Predict, then send the surprise"><span class="term-text">residual</span></a><div class="gl-name">residual</div></div>
+      <div><div class="gl-short">The exact difference between a value and its prediction, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-r f-object"><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="enclosing sym s-x f-object"><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-xhat f-object"><span class="mord katex-accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">^</span></span></span></span></span></span></span></span></span></span></span>. In lossless coding it is an integer and is stored exactly; good predictions give small residuals that cost few bits.</div></div>
+    </div>
+    <div class="gl-item" id="g-trained-dictionary">
+      <div><a class="term plain" data-term="trained-dictionary" href="/kvblockdiff-primer/tiny-files/trained-dictionary/#def-trained-dictionary" style="--tc:var(--cat-coding)" data-def="I.3 The trained dictionary"><span class="term-text">trained dictionary</span></a><div class="gl-name">trained dictionary (zstd)</div></div>
+      <div><div class="gl-short">A zstd dictionary built from a sample of typical records and given to both sender and receiver in advance, so that even a single small record compresses as if the compressor had seen its siblings.</div></div>
+    </div>
+    <div class="gl-item" id="g-transform-coding-gain">
+      <div><a class="term plain" data-term="transform-coding-gain" href="/kvblockdiff-primer/school/coding-gain/#def-transform-coding-gain" style="--tc:var(--cat-coding)" data-def="II.16 What the rotation buys"><span class="term-text">transform coding gain</span></a><div class="gl-name">transform coding gain</div></div>
+      <div><div class="gl-short">The bits saved per element by rotating data to its KLT axes before coding, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathrm">AM</span></span><span class="mord">/</span><span class="mord"><span class="mord mathrm">GM</span></span><span class="mclose">)</span></span></span></span> of the eigenvalues. Large only when a few directions hold most of the spread.</div></div>
+    </div>
+    <div class="gl-item" id="g-zstd">
+      <div><a class="term plain" data-term="zstd" href="/kvblockdiff-primer/tiny-files/one-at-a-time/#def-zstd" style="--tc:var(--cat-coding)" data-def="I.2 Why one message alone won't shrink"><span class="term-text">zstd</span></a><div class="gl-name">Zstandard (zstd)</div></div>
+      <div><div class="gl-short">A widely used general-purpose lossless compressor. It replaces repeated byte strings with short references to an earlier copy and entropy-codes the rest; it can be primed with a trained dictionary.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-stats)">
+  <h2 id="cat-stats"><span class="swatch"></span>statistics</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-centroid">
+      <div><a class="term plain" data-term="centroid" href="/kvblockdiff-primer/school/clusters/#def-centroid" style="--tc:var(--cat-stats)" data-def="II.17 Clusters and codebooks (VQ)"><span class="term-text">centroid</span></a><div class="gl-name">centroid</div></div>
+      <div><div class="gl-short">The average point of a group of vectors; the representative stored in a codebook.</div></div>
+    </div>
+    <div class="gl-item" id="g-covariance">
+      <div><a class="term plain" data-term="covariance" href="/kvblockdiff-primer/school/correlation/#def-covariance" style="--tc:var(--cat-stats)" data-def="II.14 Channels that move together"><span class="term-text">covariance</span></a><div class="gl-name">covariance and correlation</div></div>
+      <div><div class="gl-short">How much two channels move together. Correlation is covariance rescaled to −1 … +1. Correlated channels can partly predict each other.</div></div>
+    </div>
+    <div class="gl-item" id="g-distribution">
+      <div><a class="term plain" data-term="distribution" href="/kvblockdiff-primer/school/surprise/#def-distribution" style="--tc:var(--cat-stats)" data-def="II.3 Surprise"><span class="term-text">distribution</span></a><div class="gl-name">probability distribution</div></div>
+      <div><div class="gl-short">The list of all possible outcomes together with their probabilities. A histogram of real data is an estimate of it.</div></div>
+    </div>
+    <div class="gl-item" id="g-gaussian">
+      <div><a class="term plain" data-term="gaussian" href="/kvblockdiff-primer/school/residual-shapes/#def-gaussian" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">Gaussian</span></a><div class="gl-name">Gaussian (normal) distribution</div></div>
+      <div><div class="gl-short">The bell curve. Sums of many small independent effects look Gaussian. For a given spread it is the most unpredictable shape, so it is the honest worst case.</div></div>
+    </div>
+    <div class="gl-item" id="g-histogram">
+      <div><a class="term plain" data-term="histogram" href="/kvblockdiff-primer/school/entropy/#def-histogram" style="--tc:var(--cat-stats)" data-def="II.4 Entropy: the average surprise"><span class="term-text">histogram</span></a><div class="gl-name">histogram</div></div>
+      <div><div class="gl-short">A count of how often each value (or range of values) occurs in a sample; the measured estimate of a distribution.</div></div>
+    </div>
+    <div class="gl-item" id="g-k-means">
+      <div><a class="term plain" data-term="k-means" href="/kvblockdiff-primer/school/clusters/#def-k-means" style="--tc:var(--cat-stats)" data-def="II.17 Clusters and codebooks (VQ)"><span class="term-text">k-means</span></a><div class="gl-name">k-means clustering</div></div>
+      <div><div class="gl-short">The standard way to fit a codebook — alternately assign every vector to its nearest centroid and move each centroid to the average of its vectors, until nothing changes.</div></div>
+    </div>
+    <div class="gl-item" id="g-laplace">
+      <div><a class="term plain" data-term="laplace" href="/kvblockdiff-primer/school/residual-shapes/#def-laplace" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">Laplace</span></a><div class="gl-name">Laplace distribution</div></div>
+      <div><div class="gl-short">A sharper, pointier cousin of the bell curve (two exponential tails) with scale <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-beta f-stat"><span class="mord mathnormal" style="margin-right:0.0528em;">β</span></span></span></span></span>. Prediction residuals usually look like this, so coders model them with it.</div></div>
+    </div>
+    <div class="gl-item" id="g-mean">
+      <div><a class="term plain" data-term="mean" href="/kvblockdiff-primer/school/residual-shapes/#def-mean" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">mean</span></a><div class="gl-name">mean μ</div></div>
+      <div><div class="gl-short">The average value, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-mu f-stat"><span class="mord mathnormal">μ</span></span></span></span></span>. Subtracting it is the simplest prediction of all.</div></div>
+    </div>
+    <div class="gl-item" id="g-monte-carlo">
+      <div><a class="term plain" data-term="monte-carlo" href="/kvblockdiff-primer/school/residual-shapes/#def-monte-carlo" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">Monte Carlo</span></a><div class="gl-name">Monte Carlo simulation</div></div>
+      <div><div class="gl-short">Checking a claim by simulating many random samples on a computer and measuring, instead of (or as well as) deriving it with formulas.</div></div>
+    </div>
+    <div class="gl-item" id="g-r-squared">
+      <div><a class="term plain" data-term="r-squared" href="/kvblockdiff-primer/school/exchange-rate/#def-r-squared" style="--tc:var(--cat-stats)" data-def="II.12 The exchange rate: variance explained → bits"><span class="term-text">R²</span></a><div class="gl-name">R² (fraction of variance explained)</div></div>
+      <div><div class="gl-short">The share of a value’s variance that a predictor accounts for, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8141em;"></span><span class="enclosing sym s-Rsq f-frac"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span> between 0 and 1. The residual keeps variance <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="enclosing sym s-Rsq f-frac"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord"><span class="enclosing sym s-sigma f-stat"><span class="mord mathnormal" style="margin-right:0.0359em;">σ</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>.</div></div>
+    </div>
+    <div class="gl-item" id="g-standard-deviation">
+      <div><a class="term plain" data-term="standard-deviation" href="/kvblockdiff-primer/school/residual-shapes/#def-standard-deviation" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">standard deviation</span></a><div class="gl-name">standard deviation σ</div></div>
+      <div><div class="gl-short">The typical distance of a value from the mean, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-sigma f-stat"><span class="mord mathnormal" style="margin-right:0.0359em;">σ</span></span></span></span></span>. Halving it saves one bit per value for bell-shaped data.</div></div>
+    </div>
+    <div class="gl-item" id="g-standardize">
+      <div><a class="term plain" data-term="standardize" href="/kvblockdiff-primer/school/vectors/#def-standardize" style="--tc:var(--cat-stats)" data-def="II.13 Vectors and channels"><span class="term-text">standardize</span></a><div class="gl-name">standardizing a channel</div></div>
+      <div><div class="gl-short">Subtract a channel’s mean and divide by its standard deviation, so every channel has mean 0 and spread 1 and channels measured in different units can be compared.</div></div>
+    </div>
+    <div class="gl-item" id="g-variance">
+      <div><a class="term plain" data-term="variance" href="/kvblockdiff-primer/school/residual-shapes/#def-variance" style="--tc:var(--cat-stats)" data-def="II.11 The shape of a residual"><span class="term-text">variance</span></a><div class="gl-name">variance σ²</div></div>
+      <div><div class="gl-short">The average squared distance from the mean, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8141em;"></span><span class="mord"><span class="enclosing sym s-sigma f-stat"><span class="mord mathnormal" style="margin-right:0.0359em;">σ</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> — how spread out values are. Its square root <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-sigma f-stat"><span class="mord mathnormal" style="margin-right:0.0359em;">σ</span></span></span></span></span> is the standard deviation.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-linalg)">
+  <h2 id="cat-linalg"><span class="swatch"></span>vectors &amp; linear algebra</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-klt">
+      <div><a class="term brand" data-term="klt" href="/kvblockdiff-primer/school/rotation/#def-klt" style="--tc:var(--t-klt)" data-def="II.15 Turning the axes (KLT)"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-compass"></use></svg><span class="term-text">KLT</span></a><div class="gl-name">Karhunen–Loève transform (KLT) · “the Compass”</div></div>
+      <div><div class="gl-short">The rotation of the axes that lines them up with the directions in which the data spreads most (the same thing as PCA). After it, the coordinates are uncorrelated and can be coded one by one with no loss of efficiency.</div></div>
+    </div>
+    <div class="gl-item" id="g-am-gm">
+      <div><a class="term plain" data-term="am-gm" href="/kvblockdiff-primer/school/coding-gain/#def-am-gm" style="--tc:var(--cat-linalg)" data-def="II.16 What the rotation buys"><span class="term-text">AM/GM</span></a><div class="gl-name">arithmetic mean over geometric mean</div></div>
+      <div><div class="gl-short">The ratio of the ordinary average of the eigenvalues to their geometric average. It is 1 when all are equal and grows when a few dominate; <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span> of it is the transform coding gain.</div></div>
+    </div>
+    <div class="gl-item" id="g-channel">
+      <div><a class="term plain" data-term="channel" href="/kvblockdiff-primer/school/vectors/#def-channel" style="--tc:var(--cat-linalg)" data-def="II.13 Vectors and channels"><span class="term-text">channel</span></a><div class="gl-name">channel (one element position, across many vectors)</div></div>
+      <div><div class="gl-short">One fixed position <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-c f-index"><span class="mord mathnormal">c</span></span></span></span></span> inside a vector, looked at across many vectors — like one sensor’s column in a table of readings. ‘Per-channel’ statistics are computed separately for each position.</div></div>
+    </div>
+    <div class="gl-item" id="g-covariance-matrix">
+      <div><a class="term plain" data-term="covariance-matrix" href="/kvblockdiff-primer/school/correlation/#def-covariance-matrix" style="--tc:var(--cat-linalg)" data-def="II.14 Channels that move together"><span class="term-text">covariance matrix</span></a><div class="gl-name">covariance matrix</div></div>
+      <div><div class="gl-short">The <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="enclosing sym s-d f-count"><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-d f-count"><span class="mord mathnormal">d</span></span></span></span></span> table of covariances between every pair of channels. Its eigenvectors are the KLT axes and its eigenvalues the spreads along them.</div></div>
+    </div>
+    <div class="gl-item" id="g-eigenvalue">
+      <div><a class="term plain" data-term="eigenvalue" href="/kvblockdiff-primer/school/rotation/#def-eigenvalue" style="--tc:var(--cat-linalg)" data-def="II.15 Turning the axes (KLT)"><span class="term-text">eigenvalue</span></a><div class="gl-name">eigenvectors and eigenvalues</div></div>
+      <div><div class="gl-short">For a covariance matrix, the eigenvectors are the natural axes of the data cloud and the eigenvalue <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-lambda f-stat"><span class="mord mathnormal">λ</span></span></span></span></span> of each is the variance along it.</div></div>
+    </div>
+    <div class="gl-item" id="g-lifting">
+      <div><a class="term plain" data-term="lifting" href="/kvblockdiff-primer/school/coding-gain/#def-lifting" style="--tc:var(--cat-linalg)" data-def="II.16 What the rotation buys"><span class="term-text">lifting</span></a><div class="gl-name">lifting (integer-reversible transforms)</div></div>
+      <div><div class="gl-short">A way to split a rotation into a few integer “shear” steps, each exactly reversible, so a transform can be lossless on integers. Used in lossless JPEG 2000.</div></div>
+    </div>
+    <div class="gl-item" id="g-low-rank">
+      <div><a class="term plain" data-term="low-rank" href="/kvblockdiff-primer/school/coding-gain/#def-low-rank" style="--tc:var(--cat-linalg)" data-def="II.16 What the rotation buys"><span class="term-text">low rank</span></a><div class="gl-name">low rank</div></div>
+      <div><div class="gl-short">Data whose spread lives mostly in a few directions (a few large eigenvalues, the rest small). The sharper the drop, the more a KLT saves.</div></div>
+    </div>
+    <div class="gl-item" id="g-pca">
+      <div><a class="term plain" data-term="pca" href="/kvblockdiff-primer/school/rotation/#def-pca" style="--tc:var(--cat-linalg)" data-def="II.15 Turning the axes (KLT)"><span class="term-text">PCA</span></a><div class="gl-name">principal component analysis (PCA)</div></div>
+      <div><div class="gl-short">The statistics name for the KLT — rotate to the directions of greatest spread. Same mathematics, different tradition.</div></div>
+    </div>
+    <div class="gl-item" id="g-plus-factorization">
+      <div><a class="term plain" data-term="plus-factorization" href="/kvblockdiff-primer/papers/classics/#def-plus-factorization" style="--tc:var(--cat-linalg)" data-def="V.13 The classics we lean on"><span class="term-text">PLUS factorization</span></a><div class="gl-name">PLUS factorization (a rotation as integer-reversible steps)</div></div>
+      <div><div class="gl-short">Writing a matrix as a reordering of its rows (P) times three triangular factors (L, U, S) whose diagonals hold only ones when the matrix is a rotation. Each factor can be applied to integers with rounding and undone exactly, so any rotation becomes a lossless integer transform — lifting for whole matrices.</div></div>
+    </div>
+    <div class="gl-item" id="g-rotation">
+      <div><a class="term plain" data-term="rotation" href="/kvblockdiff-primer/school/rotation/#def-rotation" style="--tc:var(--cat-linalg)" data-def="II.15 Turning the axes (KLT)"><span class="term-text">rotation</span></a><div class="gl-name">rotation (change of basis)</div></div>
+      <div><div class="gl-short">Describing the same points with a different set of perpendicular axes. Nothing about the data changes; only which numbers we write down.</div></div>
+    </div>
+    <div class="gl-item" id="g-sparse-coding">
+      <div><a class="term plain" data-term="sparse-coding" href="/kvblockdiff-primer/papers/lexico/#def-sparse-coding" style="--tc:var(--cat-linalg)" data-def="V.10 Lexico (2024)"><span class="term-text">sparse coding</span></a><div class="gl-name">sparse coding (a vector as a few atoms of a large dictionary)</div></div>
+      <div><div class="gl-short">Describe a vector as a weighted sum of a few vectors (“atoms”) picked from a large, fixed dictionary, and store only which atoms and their weights. VQ is the special case of one atom with weight 1; a KLT uses every axis with a weight.</div></div>
+    </div>
+    <div class="gl-item" id="g-vector">
+      <div><a class="term plain" data-term="vector" href="/kvblockdiff-primer/school/vectors/#def-vector" style="--tc:var(--cat-linalg)" data-def="II.13 Vectors and channels"><span class="term-text">vector</span></a><div class="gl-name">vector</div></div>
+      <div><div class="gl-short">An ordered list of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-d f-count"><span class="mord mathnormal">d</span></span></span></span></span> numbers, e.g. one weather reading (temperature, humidity, …) or one entry. Each number is an element.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-numbers)">
+  <h2 id="cat-numbers"><span class="swatch"></span>number formats</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-bf16">
+      <div><a class="term plain" data-term="bf16" href="/kvblockdiff-primer/school/integers-floats/#def-bf16" style="--tc:var(--cat-numbers)" data-def="II.19 Integers and floats"><span class="term-text">BF16</span></a><div class="gl-name">bfloat16 (BF16)</div></div>
+      <div><div class="gl-short">A 16-bit floating-point format with 8 exponent bits and 7 mantissa bits — the usual working format of language models.</div></div>
+    </div>
+    <div class="gl-item" id="g-exponent">
+      <div><a class="term plain" data-term="exponent" href="/kvblockdiff-primer/school/integers-floats/#def-exponent" style="--tc:var(--cat-numbers)" data-def="II.19 Integers and floats"><span class="term-text">exponent</span></a><div class="gl-name">exponent and mantissa</div></div>
+      <div><div class="gl-short">In a floating-point number, the exponent picks the power of two (the “binade”) and the mantissa picks the position inside it. In model data the exponent is predictable and the low mantissa bits are close to noise.</div></div>
+    </div>
+    <div class="gl-item" id="g-floating-point">
+      <div><a class="term plain" data-term="floating-point" href="/kvblockdiff-primer/school/integers-floats/#def-floating-point" style="--tc:var(--cat-numbers)" data-def="II.19 Integers and floats"><span class="term-text">floating point</span></a><div class="gl-name">floating point (sign, exponent, mantissa)</div></div>
+      <div><div class="gl-short">Numbers stored as sign × mantissa × 2^exponent. Spacing between neighbours grows with size, so relative precision is constant and the grid is logarithmic.</div></div>
+    </div>
+    <div class="gl-item" id="g-fp8">
+      <div><a class="term plain" data-term="fp8" href="/kvblockdiff-primer/school/fp8/#def-fp8" style="--tc:var(--cat-numbers)" data-def="II.20 Eight-bit floats and index space"><span class="term-text">FP8</span></a><div class="gl-name">8-bit floating point (E4M3, E5M2)</div></div>
+      <div><div class="gl-short">8-bit floats. E4M3 has 4 exponent and 3 mantissa bits (values up to 448), E5M2 has 5 and 2. Where KV-cache storage is heading.</div></div>
+    </div>
+    <div class="gl-item" id="g-index-space">
+      <div><a class="term plain" data-term="index-space" href="/kvblockdiff-primer/school/fp8/#def-index-space" style="--tc:var(--cat-numbers)" data-def="II.20 Eight-bit floats and index space"><span class="term-text">index space</span></a><div class="gl-name">index space (counting grid steps)</div></div>
+      <div><div class="gl-short">Number the representable values of a format in order, …, −1, 0, 1, …, and work with those integer indices. A residual of 1 then means “one grid step”, however big the step is.</div></div>
+    </div>
+    <div class="gl-item" id="g-integer-grid">
+      <div><a class="term plain" data-term="integer-grid" href="/kvblockdiff-primer/school/integers-floats/#def-integer-grid" style="--tc:var(--cat-numbers)" data-def="II.19 Integers and floats"><span class="term-text">INT8</span></a><div class="gl-name">INT8 with a scale (a uniform grid)</div></div>
+      <div><div class="gl-short">Store <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> as the nearest integer to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mord">/</span><span class="mord text"><span class="mord">scale</span></span></span></span></span>, between −127 and 127. Representable values are evenly spaced, so differences behave as in ordinary arithmetic.</div></div>
+    </div>
+    <div class="gl-item" id="g-quantization">
+      <div><a class="term plain" data-term="quantization" href="/kvblockdiff-primer/school/fp8/#def-quantization" style="--tc:var(--cat-numbers)" data-def="II.20 Eight-bit floats and index space"><span class="term-text">quantization</span></a><div class="gl-name">quantization (rounding to a grid)</div></div>
+      <div><div class="gl-short">Rounding numbers to the nearest point of a fixed grid of representable values. Done once, it defines the exact values our lossless coder must reproduce.</div></div>
+    </div>
+    <div class="gl-item" id="g-scale-group">
+      <div><a class="term plain" data-term="scale-group" href="/kvblockdiff-primer/papers/kivi/#def-scale-group" style="--tc:var(--cat-numbers)" data-def="V.7 KIVI (2024)"><span class="term-text">scale group</span></a><div class="gl-name">scale group (numbers that share one rounding ruler)</div></div>
+      <div><div class="gl-short">The set of numbers that are rounded with one shared ruler — one smallest value and one step size. Per-channel rounding makes each scale group one channel over a run of tokens (a column); per-token rounding makes it one token’s vector (a row).</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-systems)">
+  <h2 id="cat-systems"><span class="swatch"></span>memory, caches &amp; hardware</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-hisparse">
+      <div><a class="term brand" data-term="hisparse" href="/kvblockdiff-primer/landscape/hisparse/#def-hisparse" style="--tc:var(--t-hisparse)" data-def="III.6 HiSparse: a library with a reading desk"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-layers"></use></svg><span class="term-text">HiSparse</span></a><div class="gl-name">HiSparse (Xie et al., 2026) · “the Two-tier Library”</div></div>
+      <div><div class="gl-short">The production system we build on. It keeps each request’s full KV history in host memory and a small least-recently-used hot cache of raw entries per layer on the GPU. Model outputs are unchanged.</div></div>
+    </div>
+    <div class="gl-item" id="g-hot-cache">
+      <div><a class="term brand" data-term="hot-cache" href="/kvblockdiff-primer/landscape/hisparse/#def-hot-cache" style="--tc:var(--t-hot-cache)" data-def="III.6 HiSparse: a library with a reading desk"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-flame"></use></svg><span class="term-text">hot cache</span></a><div class="gl-name">hot cache (HiSparse&#39;s per-layer GPU buffer) · “the Hearth”</div></div>
+      <div><div class="gl-short">HiSparse’s small buffer of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-B f-count"><span class="mord mathnormal" style="margin-right:0.0502em;">B</span></span></span></span></span> raw entries per request per layer, kept in GPU memory and managed least-recently-used. Entries found there are hits; the rest are misses fetched from host memory.</div></div>
+    </div>
+    <div class="gl-item" id="g-bandwidth">
+      <div><a class="term plain" data-term="bandwidth" href="/kvblockdiff-primer/school/wires/#def-bandwidth" style="--tc:var(--cat-systems)" data-def="II.23 Wires and memories"><span class="term-text">bandwidth</span></a><div class="gl-name">bandwidth and latency</div></div>
+      <div><div class="gl-short">Bandwidth is how many bytes per second a link carries once data flows; latency is how long one request takes to start arriving. Many tiny scattered reads hurt both.</div></div>
+    </div>
+    <div class="gl-item" id="g-belady">
+      <div><a class="term plain" data-term="belady" href="/kvblockdiff-primer/school/reuse-distance/#def-belady" style="--tc:var(--cat-systems)" data-def="II.22 Reuse distance"><span class="term-text">Bélády</span></a><div class="gl-name">Bélády&#39;s optimal policy</div></div>
+      <div><div class="gl-short">The clairvoyant eviction policy — evict the item whose next use is furthest in the future. Impossible in practice, but it bounds what any policy could achieve.</div></div>
+    </div>
+    <div class="gl-item" id="g-cache">
+      <div><a class="term plain" data-term="cache" href="/kvblockdiff-primer/school/caches/#def-cache" style="--tc:var(--cat-systems)" data-def="II.21 The forecaster's desk"><span class="term-text">cache</span></a><div class="gl-name">cache</div></div>
+      <div><div class="gl-short">A small, fast memory that keeps copies of some items from a big, slow one. A request found in it is a hit; otherwise a miss, and the item must be fetched.</div></div>
+    </div>
+    <div class="gl-item" id="g-data-path">
+      <div><a class="term plain" data-term="data-path" href="/kvblockdiff-primer/papers/reading-guide/#def-data-path" style="--tc:var(--cat-systems)" data-def="V.1 How we read papers"><span class="term-text">data path</span></a><div class="gl-name">data path (where compressed KV bytes travel, and how they are read)</div></div>
+      <div><div class="gl-short">Where a compressed KV cache travels and how it is read back: a bulk transfer between machines, a network fetch of a stored prefix, the GPU-resident footprint, or the sparse-decode miss path of scattered single-entry reads. The path, more than the statistics, decides what a codec may look like.</div></div>
+    </div>
+    <div class="gl-item" id="g-disaggregation">
+      <div><a class="term plain" data-term="disaggregation" href="/kvblockdiff-primer/papers/splitzip/#def-disaggregation" style="--tc:var(--cat-systems)" data-def="V.4 SplitZip (2026)"><span class="term-text">disaggregated serving</span></a><div class="gl-name">disaggregated serving (prefill and decode on separate GPUs)</div></div>
+      <div><div class="gl-short">Running the prefill of a prompt and the decoding of its answer on different GPUs or machines. The finished KV cache of the prompt must then be shipped from the prefill side to the decode side, in one bulk transfer per request.</div></div>
+    </div>
+    <div class="gl-item" id="g-eviction">
+      <div><a class="term plain" data-term="eviction" href="/kvblockdiff-primer/school/caches/#def-eviction" style="--tc:var(--cat-systems)" data-def="II.21 The forecaster's desk"><span class="term-text">eviction</span></a><div class="gl-name">eviction</div></div>
+      <div><div class="gl-short">Removing an item from a full cache to make room for a new one. The eviction policy decides which item goes.</div></div>
+    </div>
+    <div class="gl-item" id="g-hbm">
+      <div><a class="term plain" data-term="hbm" href="/kvblockdiff-primer/school/wires/#def-hbm" style="--tc:var(--cat-systems)" data-def="II.23 Wires and memories"><span class="term-text">HBM</span></a><div class="gl-name">HBM (GPU memory)</div></div>
+      <div><div class="gl-short">High-bandwidth memory stacked next to the GPU — very fast, small (tens of GB) and expensive. The hot cache lives here.</div></div>
+    </div>
+    <div class="gl-item" id="g-hit-miss">
+      <div><a class="term plain" data-term="hit-miss" href="/kvblockdiff-primer/school/caches/#def-hit-miss" style="--tc:var(--cat-systems)" data-def="II.21 The forecaster's desk"><span class="term-text">hit / miss</span></a><div class="gl-name">hit and miss</div></div>
+      <div><div class="gl-short">A hit is a request served from the cache; a miss must fetch the item from slower memory. The miss rate <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-m f-frac"><span class="mord mathnormal">m</span></span></span></span></span> is the fraction of requests that miss.</div></div>
+    </div>
+    <div class="gl-item" id="g-dram">
+      <div><a class="term plain" data-term="dram" href="/kvblockdiff-primer/school/wires/#def-dram" style="--tc:var(--cat-systems)" data-def="II.23 Wires and memories"><span class="term-text">host DRAM</span></a><div class="gl-name">host memory (DRAM)</div></div>
+      <div><div class="gl-short">The CPU’s main memory — much larger than HBM, much slower to reach from the GPU. HiSparse keeps the full KV history here.</div></div>
+    </div>
+    <div class="gl-item" id="g-lru">
+      <div><a class="term plain" data-term="lru" href="/kvblockdiff-primer/school/caches/#def-lru" style="--tc:var(--cat-systems)" data-def="II.21 The forecaster's desk"><span class="term-text">LRU</span></a><div class="gl-name">least recently used (LRU)</div></div>
+      <div><div class="gl-short">The eviction policy that throws out the item whose last use was longest ago. Simple, and very good when recent use predicts future use.</div></div>
+    </div>
+    <div class="gl-item" id="g-miss-rate-curve">
+      <div><a class="term plain" data-term="miss-rate-curve" href="/kvblockdiff-primer/school/reuse-distance/#def-miss-rate-curve" style="--tc:var(--cat-systems)" data-def="II.22 Reuse distance"><span class="term-text">miss-rate curve</span></a><div class="gl-name">miss-rate curve m(B)</div></div>
+      <div><div class="gl-short">The miss rate of an LRU cache as a function of its size <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-B f-count"><span class="mord mathnormal" style="margin-right:0.0502em;">B</span></span></span></span></span>. One curve, read off the reuse distances, gives the miss rate at every size.</div></div>
+    </div>
+    <div class="gl-item" id="g-pcie">
+      <div><a class="term plain" data-term="pcie" href="/kvblockdiff-primer/school/wires/#def-pcie" style="--tc:var(--cat-systems)" data-def="II.23 Wires and memories"><span class="term-text">PCIe</span></a><div class="gl-name">PCIe link</div></div>
+      <div><div class="gl-short">The wire between host memory and the GPU. PCIe Gen5 ×16 carries about 64 GB/s each way (≈50 in practice) — roughly 100× less than HBM.</div></div>
+    </div>
+    <div class="gl-item" id="g-reuse-distance">
+      <div><a class="term plain" data-term="reuse-distance" href="/kvblockdiff-primer/school/reuse-distance/#def-reuse-distance" style="--tc:var(--cat-systems)" data-def="II.22 Reuse distance"><span class="term-text">reuse distance</span></a><div class="gl-name">reuse distance (stack distance)</div></div>
+      <div><div class="gl-short">For a request, the number of distinct other items requested since this item’s previous request. Under LRU with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-B f-count"><span class="mord mathnormal" style="margin-right:0.0502em;">B</span></span></span></span></span> slots, a request misses exactly when its reuse distance is at least <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-B f-count"><span class="mord mathnormal" style="margin-right:0.0502em;">B</span></span></span></span></span>.</div></div>
+    </div>
+    <div class="gl-item" id="g-trace-replay">
+      <div><a class="term plain" data-term="trace-replay" href="/kvblockdiff-primer/plan/wave2-indexer/#def-trace-replay" style="--tc:var(--cat-systems)" data-def="IX.10 Wave 2: simulating the indexer"><span class="term-text">trace replay</span></a><div class="gl-name">trace replay (re-running caches on recorded selections)</div></div>
+      <div><div class="gl-short">Recording which entries the (proxy) indexer selects at every decode step, then re-running the hot cache and the dictionary cache on that list. It measures miss rates, the δ-miss fraction and dictionary loads without running any kernel.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-llm)">
+  <h2 id="cat-llm"><span class="swatch"></span>transformers &amp; attention</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-indexer">
+      <div><a class="term brand" data-term="indexer" href="/kvblockdiff-primer/landscape/sparse-attention/#def-indexer" style="--tc:var(--t-indexer)" data-def="III.4 Sparse attention and the indexer"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-magnifier"></use></svg><span class="term-text">indexer</span></a><div class="gl-name">indexer (the selector of sparse attention) · “the Scout”</div></div>
+      <div><div class="gl-short">A cheap scorer that, at every layer and every decode step, looks over all past positions and picks the <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span></span></span></span></span> that attention will read. Its picks are announced before any KV bytes are touched.</div></div>
+    </div>
+    <div class="gl-item" id="g-attention">
+      <div><a class="term plain" data-term="attention" href="/kvblockdiff-primer/landscape/attention/#def-attention" style="--tc:var(--cat-llm)" data-def="III.2 Attention: looking back"><span class="term-text">attention</span></a><div class="gl-name">attention (query, key, value)</div></div>
+      <div><div class="gl-short">The step where a token looks back. Its query vector is compared with every stored key; the scores become weights; the output is the weighted mix of the stored values.</div></div>
+    </div>
+    <div class="gl-item" id="g-dsa">
+      <div><a class="term plain" data-term="dsa" href="/kvblockdiff-primer/landscape/sparse-attention/#def-dsa" style="--tc:var(--cat-llm)" data-def="III.4 Sparse attention and the indexer"><span class="term-text">DSA</span></a><div class="gl-name">DeepSeek Sparse Attention (DSA)</div></div>
+      <div><div class="gl-short">The top-k sparse attention of DeepSeek-V3.2 (also used by GLM-5.x), with a small trained “lightning indexer” that scores every past token cheaply.</div></div>
+    </div>
+    <div class="gl-item" id="g-head">
+      <div><a class="term plain" data-term="head" href="/kvblockdiff-primer/landscape/attention/#def-head" style="--tc:var(--cat-llm)" data-def="III.2 Attention: looking back"><span class="term-text">head</span></a><div class="gl-name">attention head and GQA</div></div>
+      <div><div class="gl-short">Attention is split into several heads that work in parallel on slices of the vectors. With grouped-query attention (GQA) several query heads share one key/value head, which shrinks the KV cache.</div></div>
+    </div>
+    <div class="gl-item" id="g-kv-cache">
+      <div><a class="term plain" data-term="kv-cache" href="/kvblockdiff-primer/landscape/kv-cache/#def-kv-cache" style="--tc:var(--cat-llm)" data-def="III.3 The KV cache and the entry"><span class="term-text">KV cache</span></a><div class="gl-name">KV cache</div></div>
+      <div><div class="gl-short">The stored keys and values of every previous token at every layer, kept so they need not be recomputed at each decode step. It grows by one entry per layer per token.</div></div>
+    </div>
+    <div class="gl-item" id="g-layer">
+      <div><a class="term plain" data-term="layer" href="/kvblockdiff-primer/landscape/tokens-and-decoding/#def-layer" style="--tc:var(--cat-llm)" data-def="III.1 How a language model writes"><span class="term-text">layer</span></a><div class="gl-name">layer</div></div>
+      <div><div class="gl-short">One of the <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-NL f-count"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> stacked processing stages of a transformer. Each layer has its own attention and its own part of the KV cache.</div></div>
+    </div>
+    <div class="gl-item" id="g-mla">
+      <div><a class="term plain" data-term="mla" href="/kvblockdiff-primer/landscape/kv-cache/#def-mla" style="--tc:var(--cat-llm)" data-def="III.3 The KV cache and the entry"><span class="term-text">MLA</span></a><div class="gl-name">multi-head latent attention (MLA)</div></div>
+      <div><div class="gl-short">DeepSeek’s variant of attention that stores one compressed latent vector per token per layer instead of separate keys and values. Still one fixed-size entry per position.</div></div>
+    </div>
+    <div class="gl-item" id="g-prefill-decode">
+      <div><a class="term plain" data-term="prefill-decode" href="/kvblockdiff-primer/landscape/tokens-and-decoding/#def-prefill-decode" style="--tc:var(--cat-llm)" data-def="III.1 How a language model writes"><span class="term-text">prefill / decode</span></a><div class="gl-name">prefill and decode</div></div>
+      <div><div class="gl-short">Prefill reads the whole prompt at once; decode then generates the answer one token per step, each step reading everything stored so far.</div></div>
+    </div>
+    <div class="gl-item" id="g-proxy-model">
+      <div><a class="term plain" data-term="proxy-model" href="/kvblockdiff-primer/plan/data/#def-proxy-model" style="--tc:var(--cat-llm)" data-def="IX.4 The data behind the harness"><span class="term-text">proxy model</span></a><div class="gl-name">proxy model (a small open model standing in for the real target)</div></div>
+      <div><div class="gl-short">The small open model whose KV cache wave 1 measures in place of the real sparse-attention target: Qwen3.5-2B’s full-attention layers, replicated on Qwen3-1.7B. It fits a 16 GB GPU; whether its statistics transfer is itself a risk.</div></div>
+    </div>
+    <div class="gl-item" id="g-rope">
+      <div><a class="term plain" data-term="rope" href="/kvblockdiff-primer/landscape/kv-cache/#def-rope" style="--tc:var(--cat-llm)" data-def="III.3 The KV cache and the entry"><span class="term-text">RoPE</span></a><div class="gl-name">rotary position embedding (RoPE)</div></div>
+      <div><div class="gl-short">The way many models tell attention where a token sits — by rotating pairs of key and query channels by an angle that grows with the position. Keys are more regular before this rotation than after it.</div></div>
+    </div>
+    <div class="gl-item" id="g-sparse-attention">
+      <div><a class="term plain" data-term="sparse-attention" href="/kvblockdiff-primer/landscape/sparse-attention/#def-sparse-attention" style="--tc:var(--cat-llm)" data-def="III.4 Sparse attention and the indexer"><span class="term-text">sparse attention</span></a><div class="gl-name">top-k sparse attention</div></div>
+      <div><div class="gl-short">Attention that reads only <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span></span></span></span></span> selected past entries per layer per step (chosen by an indexer) instead of all of them. Compute stops growing with context; storage does not.</div></div>
+    </div>
+    <div class="gl-item" id="g-token">
+      <div><a class="term plain" data-term="token" href="/kvblockdiff-primer/landscape/tokens-and-decoding/#def-token" style="--tc:var(--cat-llm)" data-def="III.1 How a language model writes"><span class="term-text">token</span></a><div class="gl-name">token</div></div>
+      <div><div class="gl-short">The unit of text a language model reads and writes — a word or a piece of one. A model generates one token per decode step.</div></div>
+    </div>
+    <div class="gl-item" id="g-tpot">
+      <div><a class="term plain" data-term="tpot" href="/kvblockdiff-primer/landscape/tokens-and-decoding/#def-tpot" style="--tc:var(--cat-llm)" data-def="III.1 How a language model writes"><span class="term-text">TPOT</span></a><div class="gl-name">time per output token (TPOT)</div></div>
+      <div><div class="gl-short">How long one decode step takes for a request — 30 ms in the reference setting. Every byte moved per step must fit into this time.</div></div>
+    </div>
+  </div>
+</section>
+<section class="gl-cat" style="--tc:var(--cat-project)">
+  <h2 id="cat-project"><span class="swatch"></span>this project&#39;s own words</h2>
+  <div class="gl-list">
+    <div class="gl-item" id="g-block">
+      <div><a class="term brand" data-term="block" href="/kvblockdiff-primer/idea/dictionary-delta-block/#def-block" style="--tc:var(--t-block)" data-def="IV.2 Dictionary, delta, block — precisely"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-tiles"></use></svg><span class="term-text">block</span></a><div class="gl-name">block (b consecutive entries of one request at one layer) · “the Row”</div></div>
+      <div><div class="gl-short"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> consecutive tokens’ entries of one request at one layer. A design knob of the algorithm (we choose <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span>), not a property of the data.</div></div>
+    </div>
+    <div class="gl-item" id="g-scope-block">
+      <div><a class="term brand" data-term="scope-block" href="/kvblockdiff-primer/homework/scope/#def-scope-block" style="--tc:var(--t-scope-block)" data-def="VI.13 Dictionary scope: global, request, block"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-brick"></use></svg><span class="term-text">block scope</span></a><div class="gl-name">block scope (one dictionary per block) · “the Brick”</div></div>
+      <div><div class="gl-short">A dictionary per block of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> tokens. Fits the local neighbourhood best, but there are many of them per request and they must be cached on the GPU.</div></div>
+    </div>
+    <div class="gl-item" id="g-cat-ladder">
+      <div><a class="term brand" data-term="cat-ladder" href="/kvblockdiff-primer/idea/cat-thread-ladder/#def-cat-ladder" style="--tc:var(--t-cat-ladder)" data-def="IV.11 The cat-thread ladder"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cat"></use></svg><span class="term-text">cat-thread ladder</span></a><div class="gl-name">the cat-thread ladder (the intuitive argument) · “the Ladder”</div></div>
+      <div><div class="gl-short">The intuitive argument for the project — an entry is less surprising against its thread than against everything, and least surprising against its own neighbourhood. Right in direction, leaky in its evidence, and harsh in its exchange rate.</div></div>
+    </div>
+    <div class="gl-item" id="g-curve">
+      <div><a class="term brand" data-term="curve" href="/kvblockdiff-primer/questions/framework-b/#def-curve" style="--tc:var(--t-curve)" data-def="VIII.6 Framework B: the compressibility curve and its roofline"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-roofline"></use></svg><span class="term-text">compressibility curve</span></a><div class="gl-name">the delta–dictionary compressibility curve · “the Arch”</div></div>
+      <div><div class="gl-short">For one algorithm at one block size, the points (dictionary cost per entry, delta size per entry) it reaches as its settings vary. The lower envelope over all algorithms is the roofline the data allows.</div></div>
+    </div>
+    <div class="gl-item" id="g-delta">
+      <div><a class="term brand" data-term="delta" href="/kvblockdiff-primer/tiny-files/trained-dictionary/#def-delta" style="--tc:var(--t-delta)" data-def="I.3 The trained dictionary"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-delta"></use></svg><span class="term-text">delta</span></a><div class="gl-name">delta δ (what is left to send once the dictionary is known) · “the Remainder”</div></div>
+      <div><div class="gl-short">The bytes needed to rebuild one item exactly, given its dictionary. For a KV entry, its size is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-dsz f-resource"><span class="mopen">∣</span><span class="mord mathnormal" style="margin-right:0.0379em;">δ</span><span class="mclose">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span>.</div></div>
+    </div>
+    <div class="gl-item" id="g-dictionary">
+      <div><a class="term brand" data-term="dictionary" href="/kvblockdiff-primer/tiny-files/trained-dictionary/#def-dictionary" style="--tc:var(--t-dictionary)" data-def="I.3 The trained dictionary"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-book"></use></svg><span class="term-text">dictionary</span></a><div class="gl-name">dictionary (side information shared by many items) · “the Almanac”</div></div>
+      <div><div class="gl-short">Information shared by many items and sent to the receiver once, so that each item can be sent as a short delta instead. A zstd trained dictionary, a codebook and a set of per-channel means are all dictionaries.</div></div>
+    </div>
+    <div class="gl-item" id="g-dictionary-cache">
+      <div><a class="term brand" data-term="dictionary-cache" href="/kvblockdiff-primer/idea/blockdiff-step-by-step/#def-dictionary-cache" style="--tc:var(--t-dictionary-cache)" data-def="IV.4 kv-blockdiff, step by step"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-shelf"></use></svg><span class="term-text">dictionary cache</span></a><div class="gl-name">dictionary cache (kv-blockdiff&#39;s resident dictionaries) · “the Bookshelf”</div></div>
+      <div><div class="gl-short">kv-blockdiff’s per-layer set of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="enclosing sym s-nD f-count"><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0278em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> block dictionaries kept in GPU memory. A miss in a block whose dictionary is on this shelf can be served by a delta.</div></div>
+    </div>
+    <div class="gl-item" id="g-entry">
+      <div><a class="term brand" data-term="entry" href="/kvblockdiff-primer/landscape/kv-cache/#def-entry" style="--tc:var(--t-entry)" data-def="III.3 The KV cache and the entry"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-tile"></use></svg><span class="term-text">entry</span></a><div class="gl-name">entry (one token&#39;s KV numbers at one layer) · “the Tile”</div></div>
+      <div><div class="gl-short">All the key and value numbers of one token at one layer, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="enclosing sym s-E f-object"><span class="mord mathnormal" style="margin-right:0.0576em;">E</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-l f-index mtight"><span class="mord mathnormal mtight" style="margin-right:0.0197em;">l</span></span><span class="mpunct mtight">,</span><span class="enclosing sym s-t f-index mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>, of size <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> bytes. The unit the indexer selects, the cache moves and our coder must rebuild.</div></div>
+    </div>
+    <div class="gl-item" id="g-fallen-apple">
+      <div><a class="term brand" data-term="fallen-apple" href="/kvblockdiff-primer/idea/fallen-apple/#def-fallen-apple" style="--tc:var(--t-fallen-apple)" data-def="IV.8 Fallen-apple similarity"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-apple"></use></svg><span class="term-text">fallen-apple similarity</span></a><div class="gl-name">KV&#39;s fallen-apple similarity · “the Apple”</div></div>
+      <div><div class="gl-short">Hypothesis: an entry is cheaper to store exactly given an entry of the same layer a small token distance <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-gap f-index"><span class="mord">Δ</span></span></span></span></span> away, and the closer the neighbour the cheaper. A curve over <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-gap f-index"><span class="mord">Δ</span></span></span></span></span>, not a threshold. ‘The apple does not fall far from the tree.’</div></div>
+    </div>
+    <div class="gl-item" id="g-scope-global">
+      <div><a class="term brand" data-term="scope-global" href="/kvblockdiff-primer/homework/scope/#def-scope-global" style="--tc:var(--t-scope-global)" data-def="VI.13 Dictionary scope: global, request, block"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-globe"></use></svg><span class="term-text">global scope</span></a><div class="gl-name">global scope (one dictionary for all requests) · “the Globe”</div></div>
+      <div><div class="gl-short">A dictionary fit once, offline, on a calibration corpus and shared by every request. Free at serving time; captures only what all texts have in common.</div></div>
+    </div>
+    <div class="gl-item" id="g-heavy-block">
+      <div><a class="term brand" data-term="heavy-block" href="/kvblockdiff-primer/idea/heavy-blocks/#def-heavy-block" style="--tc:var(--t-heavy-block)" data-def="IV.10 Lucky Louis, block by block"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-weight"></use></svg><span class="term-text">heavy block</span></a><div class="gl-name">heavy block · “the Anvil”</div></div>
+      <div><div class="gl-short">A block that holds many of the current step’s selections. If selections pile into a few heavy blocks for many steps, keeping their dictionaries on the GPU is cheap.</div></div>
+    </div>
+    <div class="gl-item" id="g-kv-blockdiff">
+      <div><a class="term brand" data-term="kv-blockdiff" href="/kvblockdiff-primer/idea/mapping/#def-kv-blockdiff" style="--tc:var(--t-kv-blockdiff)" data-def="IV.1 The idea, mapped onto the tiny files"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-delta"></use></svg><span class="term-text">kv-blockdiff</span></a><div class="gl-name">kv-blockdiff (this project&#39;s proposal) · “the Delta Store”</div></div>
+      <div><div class="gl-short">Store a long KV history as per-block dictionaries plus tiny per-entry deltas, so that a cache miss moves a delta instead of a raw entry and the GPU rebuilds the entry bit for bit.</div></div>
+    </div>
+    <div class="gl-item" id="g-loc">
+      <div><a class="term brand" data-term="loc" href="/kvblockdiff-primer/homework/loc/#def-loc" style="--tc:var(--t-loc)" data-def="VI.5 loc: the Anchor"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-anchor"></use></svg><span class="term-text">loc</span></a><div class="gl-name">location dictionary (loc) · “the Anchor”</div></div>
+      <div><div class="gl-short">The lightest dictionary: for each channel, a typical value (location) and spread (scale). Predict each element by its channel’s location; store the exact difference. Costs about 2 entries’ worth, no per-entry tax.</div></div>
+    </div>
+    <div class="gl-item" id="g-lucky-louis">
+      <div><a class="term brand" data-term="lucky-louis" href="/kvblockdiff-primer/landscape/lucky-louis/#def-lucky-louis" style="--tc:var(--t-lucky-louis)" data-def="III.8 The Lucky Louis property"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-clover"></use></svg><span class="term-text">Lucky Louis property</span></a><div class="gl-name">the Lucky Louis property of the indexer · “the Gambler”</div></div>
+      <div><div class="gl-short">From one decode step to the next, the indexer re-selects mostly the same positions, so a cache that bets on last round’s winners keeps winning. It is about WHICH entries are wanted, not about their bytes.</div></div>
+    </div>
+    <div class="gl-item" id="g-neighbour">
+      <div><a class="term brand" data-term="neighbour" href="/kvblockdiff-primer/idea/neighbour-similarity/#def-neighbour" style="--tc:var(--t-neighbour)" data-def="IV.7 Neighbour similarity"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-houses"></use></svg><span class="term-text">neighbour similarity</span></a><div class="gl-name">KV&#39;s neighbour similarity (umbrella term) · “the Neighbours”</div></div>
+      <div><div class="gl-short">The family of hypotheses that an entry costs fewer bits to store exactly when a neighbouring entry (along some axis of the KV tensor) is already known. Members: fallen-apple (token axis) and upstairs (layer axis).</div></div>
+    </div>
+    <div class="gl-item" id="g-raw-miss">
+      <div><a class="term brand" data-term="raw-miss" href="/kvblockdiff-primer/idea/blockdiff-step-by-step/#def-raw-miss" style="--tc:var(--t-raw-miss)" data-def="IV.4 kv-blockdiff, step by step"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-crate"></use></svg><span class="term-text">raw miss</span></a><div class="gl-name">raw miss (a miss served by the raw entry) · “the Crate”</div></div>
+      <div><div class="gl-short">A hot-cache miss whose block dictionary is not resident, so the full raw entry (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> bytes) crosses the link, exactly as in HiSparse today.</div></div>
+    </div>
+    <div class="gl-item" id="g-reference-setting">
+      <div><a class="term brand" data-term="reference-setting" href="/kvblockdiff-primer/landscape/reference-setting/#def-reference-setting" style="--tc:var(--t-reference-setting)" data-def="III.10 The reference setting"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-pin"></use></svg><span class="term-text">reference setting</span></a><div class="gl-name">reference setting (the frozen numbers for all napkin math) · “the Pin”</div></div>
+      <div><div class="gl-short">One fixed rig used for every estimate: HiSparse’s GLM-5.1 deployment converted to 8-bit storage — 78 sparse layers, top-2048 selection, 100K-token context, 0.64 KB entries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for KV.</div></div>
+    </div>
+    <div class="gl-item" id="g-scope-request">
+      <div><a class="term brand" data-term="scope-request" href="/kvblockdiff-primer/homework/scope/#def-scope-request" style="--tc:var(--t-scope-request)" data-def="VI.13 Dictionary scope: global, request, block"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-spool"></use></svg><span class="term-text">request scope</span></a><div class="gl-name">request scope (one dictionary per request) · “the Thread”</div></div>
+      <div><div class="gl-short">A dictionary fit on one request’s own history, loaded once when the request is admitted. Captures what is special about this conversation.</div></div>
+    </div>
+    <div class="gl-item" id="g-sib">
+      <div><a class="term brand" data-term="sib" href="/kvblockdiff-primer/homework/sib/#def-sib" style="--tc:var(--t-sib)" data-def="VI.8 sib: the Twin"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-twins"></use></svg><span class="term-text">sib</span></a><div class="gl-name">sibling dictionary (sib) · “the Twin”</div></div>
+      <div><div class="gl-short">Use another entry of the same block (the nearest “sibling”) as the prediction, plus a pointer to it. Cheap side information, but the residual is the difference of two noisy vectors, so its noise doubles.</div></div>
+    </div>
+    <div class="gl-item" id="g-solo">
+      <div><a class="term brand" data-term="solo" href="/kvblockdiff-primer/homework/solo-coding/#def-solo" style="--tc:var(--t-solo)" data-def="VI.2 Solo coding: the Hermit"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-lantern"></use></svg><span class="term-text">solo</span></a><div class="gl-name">solo coding (rung 0, no dictionary) · “the Hermit”</div></div>
+      <div><div class="gl-short">Coding each entry by itself with one fixed, global, context-free code (per-channel histograms fit once on a calibration corpus). Worth about 1.1–1.3× on 8-bit KV. The baseline every dictionary must beat.</div></div>
+    </div>
+    <div class="gl-item" id="g-upstairs">
+      <div><a class="term brand" data-term="upstairs" href="/kvblockdiff-primer/idea/upstairs/#def-upstairs" style="--tc:var(--t-upstairs)" data-def="IV.9 Upstairs similarity"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-stairs"></use></svg><span class="term-text">upstairs similarity</span></a><div class="gl-name">KV&#39;s upstairs similarity · “the Staircase”</div></div>
+      <div><div class="gl-short">Hypothesis: the entry of the same token one layer up is partly predictable from the entry below it. Layers are the floors of a building; tokens run along each floor.</div></div>
+    </div>
+    <div class="gl-item" id="g-victim-tier">
+      <div><a class="term brand" data-term="victim-tier" href="/kvblockdiff-primer/missed/victim-tier/#def-victim-tier" style="--tc:var(--t-victim-tier)" data-def="VII.16 A victim tier of deltas"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-lifebuoy"></use></svg><span class="term-text">victim tier</span></a><div class="gl-name">victim tier (a GPU tier of evicted entries&#39; deltas) · “the Lifebuoy”</div></div>
+      <div><div class="gl-short">A second GPU tier holding the deltas of entries just evicted from the hot cache. If one of them is selected again it is rebuilt on the GPU instead of being fetched over the link.</div></div>
+    </div>
+    <div class="gl-item" id="g-delta-miss">
+      <div><a class="term brand" data-term="delta-miss" href="/kvblockdiff-primer/idea/blockdiff-step-by-step/#def-delta-miss" style="--tc:var(--t-delta-miss)" data-def="IV.4 kv-blockdiff, step by step"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-dart"></use></svg><span class="term-text">δ-miss</span></a><div class="gl-name">δ-miss (a miss served by a delta) · “the Feather”</div></div>
+      <div><div class="gl-short">A hot-cache miss whose block dictionary is resident, so only the delta (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> bytes) crosses the link and the GPU rebuilds the entry.</div></div>
+    </div>
+    <div class="gl-item" id="g-big-question">
+      <div><a class="term plain" data-term="big-question" href="/kvblockdiff-primer/questions/two-kinds/#def-big-question" style="--tc:var(--cat-project)" data-def="VIII.1 Two kinds of questions"><span class="term-text">big-picture question</span></a><div class="gl-name">big-picture question (Q1–Q3)</div></div>
+      <div><div class="gl-short">An open-ended question the project exists to get closer to — Q1 (is there neighbour similarity?), Q2 (can a store use it?), Q3 (do misses pile into few blocks?). Too wide to answer with one experiment.</div></div>
+    </div>
+    <div class="gl-item" id="g-bpe">
+      <div><a class="term plain" data-term="bpe" href="/kvblockdiff-primer/homework/the-budget/#def-bpe" style="--tc:var(--cat-project)" data-def="VI.1 The bit budget"><span class="term-text">bpe</span></a><div class="gl-name">bits per element (bpe)</div></div>
+      <div><div class="gl-short">The rate of a lossless code in bits per 8-bit element, everything included (residuals, per-entry tax, amortized dictionary). Raw storage is 8; <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span></span><span class="mord">/8</span></span></span></span>.</div></div>
+    </div>
+    <div class="gl-item" id="g-calibration-set">
+      <div><a class="term plain" data-term="calibration-set" href="/kvblockdiff-primer/plan/data/#def-calibration-set" style="--tc:var(--cat-project)" data-def="IX.4 The data behind the harness"><span class="term-text">calibration set</span></a><div class="gl-name">calibration set (data kept apart for the global scope)</div></div>
+      <div><div class="gl-short">Sequences kept apart from the evaluation data. Every global-scope dictionary and model is fit on them. If they overlap the evaluation data, the global scope cheats; if they are too few, the global dictionary is poorly fit and the request-scope gain looks bigger than it is.</div></div>
+    </div>
+    <div class="gl-item" id="g-decision-rule">
+      <div><a class="term plain" data-term="decision-rule" href="/kvblockdiff-primer/plan/decision-rule/#def-decision-rule" style="--tc:var(--cat-project)" data-def="IX.9 The decision rule"><span class="term-text">decision rule</span></a><div class="gl-name">the decision rule of wave 1</div></div>
+      <div><div class="gl-short">The table, written before any data, that maps wave 1’s two scope gains <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7167em;vertical-align:-0.2861em;"></span><span class="enclosing sym s-gainreq f-info"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">req</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-gainblk f-info"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">blk</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> to what happens next: block scope, request scope, a cost-model decision, or a published negative.</div></div>
+    </div>
+    <div class="gl-item" id="g-delta-ratio">
+      <div><a class="term plain" data-term="delta-ratio" href="/kvblockdiff-primer/idea/dictionary-delta-block/#def-delta-ratio" style="--tc:var(--cat-project)" data-def="IV.2 Dictionary, delta, block — precisely"><span class="term-text">delta ratio</span></a><div class="gl-name">delta ratio ρ</div></div>
+      <div><div class="gl-short"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-dsz f-resource"><span class="mopen">∣</span><span class="mord mathnormal" style="margin-right:0.0379em;">δ</span><span class="mclose">∣</span></span><span class="mord">/</span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> — how much a miss shrinks. For 8-bit storage <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6776em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span></span><span class="mord">/8</span></span></span></span> (the rate also counts the amortized dictionary, which is not part of the delta).</div></div>
+    </div>
+    <div class="gl-item" id="g-scope">
+      <div><a class="term plain" data-term="scope" href="/kvblockdiff-primer/homework/scope/#def-scope" style="--tc:var(--cat-project)" data-def="VI.13 Dictionary scope: global, request, block"><span class="term-text">dictionary scope</span></a><div class="gl-name">dictionary scope</div></div>
+      <div><div class="gl-short">What a dictionary is fit on and shared by — global (all requests), request (one conversation) or block (b tokens). The one axis that organizes the whole design space.</div></div>
+    </div>
+    <div class="gl-item" id="g-weight">
+      <div><a class="term plain" data-term="weight" href="/kvblockdiff-primer/idea/dictionary-delta-block/#def-weight" style="--tc:var(--cat-project)" data-def="IV.2 Dictionary, delta, block — precisely"><span class="term-text">dictionary weight</span></a><div class="gl-name">dictionary weight w</div></div>
+      <div><div class="gl-short">A dictionary’s size measured in entries’ worth, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-w f-count"><span class="mord mathnormal" style="margin-right:0.0269em;">w</span></span></span></span></span>, so it is <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-Dsz f-resource"><span class="mopen">∣</span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mclose">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-w f-count"><span class="mord mathnormal" style="margin-right:0.0269em;">w</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> bytes. Amortized over a block it costs <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">8</span><span class="enclosing sym s-w f-count"><span class="mord mathnormal" style="margin-right:0.0269em;">w</span></span><span class="mord">/</span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> bits per element.</div></div>
+    </div>
+    <div class="gl-item" id="g-entropy-rate">
+      <div><a class="term plain" data-term="entropy-rate" href="/kvblockdiff-primer/homework/two-rates/#def-entropy-rate" style="--tc:var(--cat-project)" data-def="VI.10 Two rates for everything"><span class="term-text">entropy rate</span></a><div class="gl-name">entropy rate (the scientific number)</div></div>
+      <div><div class="gl-short">The rate an ideal entropy coder would reach on the residuals, plus the per-entry tax and the amortized dictionary. What arithmetic coding or rANS would achieve.</div></div>
+    </div>
+    <div class="gl-item" id="g-fixed-length-rate">
+      <div><a class="term plain" data-term="fixed-length-rate" href="/kvblockdiff-primer/homework/two-rates/#def-fixed-length-rate" style="--tc:var(--cat-project)" data-def="VI.10 Two rates for everything"><span class="term-text">fixed-length rate</span></a><div class="gl-name">fixed-length rate (the engineering number)</div></div>
+      <div><div class="gl-short">The rate of a fixed-length code with escapes on the residuals, plus the per-entry tax and the amortized dictionary. What a fast GPU decoder achieves, and directly the delta size of the store.</div></div>
+    </div>
+    <div class="gl-item" id="g-framework-question">
+      <div><a class="term plain" data-term="framework-question" href="/kvblockdiff-primer/questions/two-kinds/#def-framework-question" style="--tc:var(--cat-project)" data-def="VIII.1 Two kinds of questions"><span class="term-text">framework question</span></a><div class="gl-name">experiment-framework question (A–D)</div></div>
+      <div><div class="gl-short">A question asked together with its measuring set-up — what is varied, what is held fixed, how every byte is charged — and with each possible outcome and its meaning written down before any data. Frameworks A–D.</div></div>
+    </div>
+    <div class="gl-item" id="g-harness">
+      <div><a class="term plain" data-term="harness" href="/kvblockdiff-primer/plan/harness-interface/#def-harness" style="--tc:var(--cat-project)" data-def="IX.1 The harness: one interface"><span class="term-text">harness</span></a><div class="gl-name">the measurement harness</div></div>
+      <div><div class="gl-short">The small program that runs every dictionary algorithm through the same interface, charges every byte by the same rule, runs the controls and plots the results.</div></div>
+    </div>
+    <div class="gl-item" id="g-lever">
+      <div><a class="term plain" data-term="lever" href="/kvblockdiff-primer/idea/two-levers/#def-lever" style="--tc:var(--cat-project)" data-def="IV.15 What &quot;better than HiSparse&quot; means"><span class="term-text">lever</span></a><div class="gl-name">the two levers (cheaper misses, cheaper slots)</div></div>
+      <div><div class="gl-short">Lever 1 makes misses cheaper (move <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> instead of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> over the link); lever 2 makes hot-cache slots cheaper (store heavy blocks as deltas in GPU memory).</div></div>
+    </div>
+    <div class="gl-item" id="g-entry-tax">
+      <div><a class="term plain" data-term="entry-tax" href="/kvblockdiff-primer/homework/dictionary-shape/#def-entry-tax" style="--tc:var(--cat-project)" data-def="VI.4 The shape of every dictionary coder"><span class="term-text">per-entry tax</span></a><div class="gl-name">per-entry tax (side information sent with every entry)</div></div>
+      <div><div class="gl-short">Bits a dictionary coder must store with every single entry on top of its residual: which centroid (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-C f-count"><span class="mord mathnormal" style="margin-right:0.0715em;">C</span></span></span></span></span> bits), which sibling (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> bits), a flag. Spread over the entry’s <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-d f-count"><span class="mord mathnormal">d</span></span></span></span></span> elements it is the <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6151em;"></span><span class="enclosing sym s-tax f-info"><span class="mord"><span class="mord mathrm">tax</span></span></span></span></span></span> of the accounting.</div></div>
+    </div>
+    <div class="gl-item" id="g-roofline">
+      <div><a class="term plain" data-term="roofline" href="/kvblockdiff-primer/questions/framework-b/#def-roofline" style="--tc:var(--cat-project)" data-def="VIII.6 Framework B: the compressibility curve and its roofline"><span class="term-text">roofline</span></a><div class="gl-name">roofline (of the compressibility curve)</div></div>
+      <div><div class="gl-short">The lower envelope of the compressibility curves of all algorithms tried — the best trade-off between dictionary cost and delta size that the data allows.</div></div>
+    </div>
+    <div class="gl-item" id="g-scope-gain">
+      <div><a class="term plain" data-term="scope-gain" href="/kvblockdiff-primer/homework/scope/#def-scope-gain" style="--tc:var(--cat-project)" data-def="VI.13 Dictionary scope: global, request, block"><span class="term-text">scope gain</span></a><div class="gl-name">scope gains g_req and g_blk</div></div>
+      <div><div class="gl-short">The bits per element saved by narrowing the scope one rung — from global to request (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7167em;vertical-align:-0.2861em;"></span><span class="enclosing sym s-gainreq f-info"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">req</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></span>) and from request to block (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-gainblk f-info"><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">blk</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>), for the same type of dictionary.</div></div>
+    </div>
+    <div class="gl-item" id="g-shuffle-control">
+      <div><a class="term plain" data-term="shuffle-control" href="/kvblockdiff-primer/homework/rehearsal/#def-shuffle-control" style="--tc:var(--cat-project)" data-def="VI.18 A synthetic dress rehearsal"><span class="term-text">shuffle control</span></a><div class="gl-name">shuffle control</div></div>
+      <div><div class="gl-short">Rerun the measurement after shuffling tokens across sequences. Any gain that depends on neighbours being neighbours must vanish; a gain that survives is a bug.</div></div>
+    </div>
+    <div class="gl-item" id="g-delta-miss-fraction">
+      <div><a class="term plain" data-term="delta-miss-fraction" href="/kvblockdiff-primer/idea/blockdiff-step-by-step/#def-delta-miss-fraction" style="--tc:var(--cat-project)" data-def="IV.4 kv-blockdiff, step by step"><span class="term-text">δ-miss fraction</span></a><div class="gl-name">δ-miss fraction f_D</div></div>
+      <div><div class="gl-short"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-fD f-frac"><span class="mord"><span class="mord mathnormal" style="margin-right:0.1076em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0278em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>, the share of misses that are δ-misses (their dictionary was resident). Decided by the residency policy and by where misses land.</div></div>
+    </div>
+  </div>
+</section>
+
+  </article>
+</div>
+<script type="application/json" id="page-cards">[]</script>
+
+<nav class="pager" aria-label="Previous and next page">
+  <a class="pg pg-prev" href="/kvblockdiff-primer/reference/summary/" rel="prev" style="--pc:var(--part-X)"><span class="pg-dir">← previous</span><span class="pg-num">X.1</span><span class="pg-title">Summary (TL;DR)</span></a>
+  <a class="pg pg-next" href="/kvblockdiff-primer/reference/notation/" rel="next" style="--pc:var(--part-X)"><span class="pg-dir">next →</span><span class="pg-num">X.3</span><span class="pg-title">Notation</span></a>
+</nav>
+
+</main>
+
+<footer class="colophon">
+  <div class="orn-rule" aria-hidden="true"><svg viewBox="0 0 420 30" fill="none" stroke="currentColor" stroke-linecap="round">
+  <path d="M10 15 C 80 15, 110 4, 160 15 S 190 26, 196 15" stroke-width="1.2"></path>
+  <path d="M410 15 C 340 15, 310 4, 260 15 S 230 26, 224 15" stroke-width="1.2"></path>
+  <path d="M210 4 l9 11 -9 11 -9 -11z" stroke-width="1.2"></path><circle cx="210" cy="15" r="2.5" fill="currentColor"></circle>
+  <circle cx="160" cy="15" r="1.6" fill="currentColor"></circle><circle cx="260" cy="15" r="1.6" fill="currentColor"></circle>
+</svg>
+</div>
+  <p><b>kv-blockdiff</b> — A primer and research proposal on lossless dictionary coding of LLM KV caches. Written by Dmitry Borzov. Source, figures and analysis scripts: <a href="https://github.com/dborzov/kvblockdiff-primer">github.com/dborzov/kvblockdiff-primer</a>.</p>
+  <p class="small">Keys: <kbd>←</kbd> <kbd>→</kbd> previous / next page · <kbd>g</kbd> glossary · <kbd>p</kbd> practise flashcards. Hover any coloured term or symbol for a reminder.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "about": "The toy trace of the original proposal (one layer, one request). Used by Plate III.7 (HiSparse) and IV.5 (kv-blockdiff). Positions are token positions 0..15; blocks have b = 4 tokens (block j holds 4j..4j+3).",
+  "n": 16,
+  "B": 6,
+  "k": 4,
+  "b": 4,
+  "nD": 2,
+  "initialCache": [1, 10, 13, 2, 5, 9],
+  "initialDictionaries": [0, 2],
+  "steps": [[2, 5, 9, 14], [2, 5, 9, 11], [2, 9, 11, 15]],
+  "expected": {
+    "hisparse": [
+      {"hits": [2, 5, 9], "misses": [14], "evicted": [1], "cacheAfter": [10, 13, 14, 2, 5, 9]},
+      {"hits": [2, 5, 9], "misses": [11], "evicted": [10], "cacheAfter": [13, 14, 11, 2, 5, 9]},
+      {"hits": [2, 9, 11], "misses": [15], "evicted": [13], "cacheAfter": [14, 5, 15, 2, 9, 11]}
+    ],
+    "blockdiff": [
+      {"rawMisses": [14], "deltaMisses": [], "dictionariesAfter": [2, 3], "dictionaryLoads": [3]},
+      {"rawMisses": [], "deltaMisses": [11], "dictionariesAfter": [2, 3], "dictionaryLoads": []},
+      {"rawMisses": [], "deltaMisses": [15], "dictionariesAfter": [2, 3], "dictionaryLoads": []}
+    ],
+    "notes": "Resolve rule (HiSparse): misses evict the oldest resident entry not selected at this step; then hits are moved to the newest end, in the order of the selection list. Residency rule (kv-blockdiff toy): after each step keep the dictionaries of the n_D blocks with the most entries in the hot cache."
+  }
+}

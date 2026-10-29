@@ -1,0 +1,134 @@
+/* =====================================================================
+   Design tokens — the ONLY place colours, fonts and radii are defined.
+   Art Nouveau / Mucha-poster palette: vellum ground, aubergine ink,
+   saturated jewel tones. Every colour has a light and a dark value.
+   Other stylesheets use var(--…) only; never hard-code a colour there.
+   ===================================================================== */
+:root {
+  /* ground and ink */
+  --paper:   #f6ecd6;   /* vellum */
+  --paper-2: #eddcb8;   /* deeper vellum: plates, banners */
+  --paper-3: #fdf8ec;   /* light card ground */
+  --ink:     #2a1a2e;   /* aubergine ink */
+  --ink-2:   #5a4360;   /* secondary text */
+  --ink-3:   #8c7889;   /* captions, ticks */
+  --rule:    #cfae6c;   /* gilt hairlines */
+  --gold:    #b07d12;
+  --gold-2:  #e0b13c;
+  --shadow:  0 1px 0 rgba(255,255,255,.65) inset, 0 14px 34px -20px rgba(42,26,46,.55);
+  --shadow-pop: 0 18px 40px -16px rgba(42,26,46,.55);
+
+  /* the jewel palette (general use: figures, notes, categories) */
+  --vermilion: #c63f24;
+  --peacock:   #0b7a70;
+  --lapis:     #2856a6;
+  --amethyst:  #7b3a9c;
+  --saffron:   #c27a06;
+  --emerald:   #2b8644;
+  --carmine:   #b3264f;
+  --dusk:      #5a4874;
+  --rose:      #c9476e;
+  --sky:       #2f7fbf;
+  --sage:      #5f8a52;
+  --umber:     #8a5221;
+  --slate:     #4c5d7d;
+  --good: #2b8644;
+  --bad:  #c63f24;
+
+  /* one colour per Part (used by banners, nav, plate corners: var(--c)) */
+  --part-home: var(--gold);
+  --part-I:    var(--vermilion);   /* the tiny-file story */
+  --part-II:   var(--peacock);     /* back to school */
+  --part-III:  var(--lapis);       /* where things stand */
+  --part-IV:   var(--amethyst);    /* the idea */
+  --part-V:    var(--rose);        /* papers */
+  --part-VI:   var(--saffron);     /* homework */
+  --part-VII:  var(--umber);       /* what Dima missed */
+  --part-VIII: var(--emerald);     /* the questions */
+  --part-IX:   var(--carmine);     /* the plan */
+  --part-X:    var(--dusk);        /* reference */
+
+  /* glossary categories (plain terms are tinted by category) */
+  --cat-info:    #a35a00;   /* information theory */
+  --cat-coding:  #b3264f;   /* coding & compression */
+  --cat-stats:   #0b7a70;   /* statistics */
+  --cat-linalg:  #7b3a9c;   /* vectors & linear algebra */
+  --cat-numbers: #4f7d3e;   /* number formats */
+  --cat-systems: #2856a6;   /* memory, caches, hardware */
+  --cat-llm:     #8a5221;   /* transformers & attention */
+  --cat-project: #5a4874;   /* this project's own words */
+
+  /* math symbol families (the colour legend of every equation) */
+  --fam-index:    #4c5d7d;  /* positions & indices: t, l, c, j, Δ */
+  --fam-resource: #0b7a70;  /* bytes, seconds, bandwidth: e, |δ|, TPOT */
+  --fam-count:    #b3306b;  /* counts & design knobs: k, B, b, w, d */
+  --fam-frac:     #b56a00;  /* fractions & probabilities: m, ρ, f_D, p, R² */
+  --fam-info:     #6a3db3;  /* information, in bits: H, I, bpe */
+  --fam-stat:     #3b7d29;  /* statistics: σ, μ, λ */
+  --fam-object:   #7a4a1e;  /* objects: E, D, δ, K, V */
+
+  /* code */
+  --code-bg: #261a2d;
+  --code-fg: #f3e9d4;
+  --code-dim: #a38fa6;
+  --tok-kw: #f0b44c;
+  --tok-str: #7fd6c4;
+  --tok-num: #f08aa8;
+  --tok-fn: #9fc3ff;
+  --tok-com: #9a8aa0;
+  --tok-op: #e6cfa0;
+
+  /* type */
+  --f-display: "Federo", "Marcellus", "Cinzel", Georgia, serif;
+  --f-numeral: "Cinzel Decorative", "Cinzel", Georgia, serif;
+  --f-body:    "Alegreya", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --f-sc:      "Alegreya Sans SC", "Alegreya Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+  --f-mono:    "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* shape */
+  --r-lozenge: 4px 22px 4px 22px;
+  --r-card: 10px;
+  --r-arch: 50% 50% 0 0 / 90px 90px 0 0;
+  --col: 42rem;          /* reading column */
+  --side: 15rem;         /* margin notes */
+  --nav: 17.5rem;        /* left navigation */
+  --topbar: 52px;
+
+  --c: var(--gold);      /* current accent (overridden per Part) */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14161c; --paper-2: #1d2029; --paper-3: #1a1d25;
+    --ink: #f1e7d3; --ink-2: #cbbfae; --ink-3: #928a80; --rule: #6b5a33;
+    --gold: #e6b955; --gold-2: #f4cf72;
+    --shadow: 0 14px 34px -20px rgba(0,0,0,.85); --shadow-pop: 0 18px 40px -14px rgba(0,0,0,.9);
+    --vermilion: #ff7f5e; --peacock: #3fd0bf; --lapis: #7aa8ff; --amethyst: #c592ea;
+    --saffron: #f5b443; --emerald: #6fd18a; --carmine: #ff7aa0; --dusk: #b3a1d6;
+    --rose: #ff8fb0; --sky: #7cc2ff; --sage: #a5cf8f; --umber: #e0a368; --slate: #a6b6d8;
+    --good: #6fd18a; --bad: #ff7f5e;
+    --cat-info: #f5ad56; --cat-coding: #ff7aa0; --cat-stats: #3fd0bf; --cat-linalg: #c592ea;
+    --cat-numbers: #a5cf8f; --cat-systems: #7aa8ff; --cat-llm: #e0a368; --cat-project: #b3a1d6;
+    --fam-index: #a6b6d8; --fam-resource: #3fd0bf; --fam-count: #ff86b6; --fam-frac: #f7b955;
+    --fam-info: #b997ff; --fam-stat: #95d97a; --fam-object: #e8b07a;
+    --code-bg: #0d0e12; --code-fg: #efe6d2; --code-dim: #8d8191;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14161c; --paper-2: #1d2029; --paper-3: #1a1d25;
+  --ink: #f1e7d3; --ink-2: #cbbfae; --ink-3: #928a80; --rule: #6b5a33;
+  --gold: #e6b955; --gold-2: #f4cf72;
+  --shadow: 0 14px 34px -20px rgba(0,0,0,.85); --shadow-pop: 0 18px 40px -14px rgba(0,0,0,.9);
+  --vermilion: #ff7f5e; --peacock: #3fd0bf; --lapis: #7aa8ff; --amethyst: #c592ea;
+  --saffron: #f5b443; --emerald: #6fd18a; --carmine: #ff7aa0; --dusk: #b3a1d6;
+  --rose: #ff8fb0; --sky: #7cc2ff; --sage: #a5cf8f; --umber: #e0a368; --slate: #a6b6d8;
+  --good: #6fd18a; --bad: #ff7f5e;
+  --cat-info: #f5ad56; --cat-coding: #ff7aa0; --cat-stats: #3fd0bf; --cat-linalg: #c592ea;
+  --cat-numbers: #a5cf8f; --cat-systems: #7aa8ff; --cat-llm: #e0a368; --cat-project: #b3a1d6;
+  --fam-index: #a6b6d8; --fam-resource: #3fd0bf; --fam-count: #ff86b6; --fam-frac: #f7b955;
+  --fam-info: #b997ff; --fam-stat: #95d97a; --fam-object: #e8b07a;
+  --code-bg: #0d0e12; --code-fg: #efe6d2; --code-dim: #8d8191;
+  color-scheme: dark;
+}

@@ -1,0 +1,7 @@
+/* Part V (papers-b) figures. Tokens only (theme/assets/css/tokens.css); every class prefixed pb-. */
+.pb-cell { stroke: color-mix(in srgb, var(--ink) 10%, transparent); stroke-width: .6; cursor: default; }
+.pb-cell.pb-loud { stroke: color-mix(in srgb, var(--ink) 45%, transparent); stroke-width: 1.1; }
+.pb-group { fill: none; stroke: var(--c); stroke-width: 1.6; stroke-opacity: .75; pointer-events: none; }
+.pb-mark { stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.pb-under { fill: color-mix(in srgb, var(--ink-3) 30%, transparent); }
+.pb-sep { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 2 4; }

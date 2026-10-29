@@ -1,0 +1,48 @@
+/* Part VIII figures (questions.js). Tokens only; every class is prefixed q-. */
+.q-schem { align-self: flex-start; font-family: var(--f-sc); font-size: .8rem; letter-spacing: .04em; color: var(--ink-2);
+  border: 1px dashed var(--ink-3); border-radius: 999px; padding: .1rem .7rem; background: color-mix(in srgb, var(--paper-3) 70%, transparent); }
+
+/* sliders: keep the value on one line; let long names wrap on phones */
+.q-host .slider .num { white-space: nowrap; flex: none; }
+.q-host .slider .sl-name { white-space: normal; }
+
+/* decision regions (VIII.2) */
+.q-region { fill-opacity: .13; stroke: var(--paper-3); stroke-width: 1.5; transition: fill-opacity .2s; }
+.q-region.is-on { fill-opacity: .3; }
+
+/* compressibility curve axis break (VIII.6) */
+.q-break { fill: none; stroke: var(--ink-3); stroke-width: 1.4; }
+
+/* trace replay (VIII.7) */
+.q-band { fill: var(--ink); fill-opacity: .04; }
+.q-res { fill: var(--t-dictionary-cache); fill-opacity: .2; }
+.q-hit { fill: var(--ink-3); fill-opacity: .55; }
+.q-dm { fill: var(--t-delta-miss); stroke: var(--paper-3); stroke-width: 1; }
+.q-rm { fill: var(--t-raw-miss); stroke: var(--paper-3); stroke-width: 1; }
+
+/* frontier (VIII.8) */
+.q-extrap { fill: var(--ink); fill-opacity: .045; }
+.q-key { display: inline-block; width: .8em; height: .8em; border-radius: 50%; background: var(--kc); margin-right: .45em; vertical-align: -.05em; }
+
+/* axes of the KV tensor (VIII.10) */
+.q-cell { fill: var(--paper-3); stroke: var(--rule); stroke-width: 1; transition: fill .2s; }
+.q-cell.back { fill: var(--paper-2); opacity: .75; }
+.q-cell.pre { fill: color-mix(in srgb, var(--slate) 22%, var(--paper-3)); }
+.q-cell.gen { fill: color-mix(in srgb, var(--saffron) 30%, var(--paper-3)); }
+.q-cell.me { fill: var(--c); stroke: var(--ink-2); }
+.q-cell.nb { stroke: var(--ink-2); stroke-width: 1.4; opacity: 1; }
+.q-cell.nb1 { fill: color-mix(in srgb, var(--t-fallen-apple) 75%, var(--paper-3)); }
+.q-cell.nb2 { fill: color-mix(in srgb, var(--t-fallen-apple) 50%, var(--paper-3)); }
+.q-cell.nb4 { fill: color-mix(in srgb, var(--t-fallen-apple) 28%, var(--paper-3)); }
+.q-cell.up { fill: color-mix(in srgb, var(--t-upstairs) 65%, var(--paper-3)); }
+.q-cell.hd { fill: color-mix(in srgb, var(--t-neighbour) 70%, var(--paper-3)); }
+.q-me-t { fill: var(--paper-3); font-weight: 700; font-size: calc(13px * var(--fs)); }
+.q-small { fill: var(--ink); font-size: calc(10px * var(--fs)); }
+
+/* probe heat map (VIII.11) */
+.q-heat { stroke: none; }
+.q-heat:hover, .q-heat:focus { stroke: var(--ink); stroke-width: 1.5; outline: none; }
+
+.q-heatkey { display: flex; align-items: center; gap: .5rem; font-family: var(--f-sc); font-size: .82rem; color: var(--ink-2); }
+.q-ramp { display: inline-block; width: 8rem; height: .8rem; border-radius: 3px; border: 1px solid var(--rule);
+  background: linear-gradient(90deg, var(--paper-3), var(--t-curve)); }
