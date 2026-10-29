@@ -23,6 +23,7 @@
       bills: {
         label: 'The two bills, value by value',
         legend: false,
+        highlights: [],
         draw(box, ctx) {
           box.append(legend([['clerk 1: a code fit to the counts', series(0), 'box'], ['clerk 2: 3-bit slots + escape', series(1), 'box']]));
           const b = h('div'); box.append(b);
@@ -33,7 +34,8 @@
             width: 13, fill: 0.86,
             tip: (v, i) => { const r = ctx.rows[i]; return `<b>position ${r.i}: ${sgn(r.r)}</b> (seen ${r.count}× in 16)<br>clerk 1: ${fmt(r.ideal, 2)} bits<br>clerk 2: ${r.fixed} bits${r.esc ? ' — 3-bit slot + 8-bit raw value + 4-bit position' : ''}`; },
           });
-          rule(P, { y: WIDTH, label: '3-bit slot', color: 'var(--ink-3)' });
+          rule(P, { y: WIDTH, color: 'var(--ink-3)' });
+          svgText(P.g.top, P.x(8.5), P.y(WIDTH) - 8 * P.fs, 'every slot: 3 bits', { class: 'annot', 'text-anchor': 'middle' });
           const k = ctx.rows.findIndex(r => !fits(r.r));
           annotate(P, k, 15, 'the escape: 3 + 8 + 4 = 15 bits', { dx: -150, dy: -2, anchor: 'end' });
           const tot = j => ctx.rows.reduce((s, r) => s + (j ? r.fixed : r.ideal), 0);
@@ -43,7 +45,7 @@
       histogram: DS.views.histogram({ key: 'r', domain: [-4, 15], xlabel: 'residual', ylabel: 'how often', noun: 'residuals', xticks: [-3, 0, 3, 6, 9, 14], label: 'How often each value' }),
     },
     metrics: [
-      { id: 'ideal', label: 'clerk 1: a code fit to the counts', value: rows => sum(rows.map(r => r.ideal)), fmt: v => `${fmt(v, 1)} bits · ${fmt(v / 16, 2)} per value`,
+      { id: 'ideal', label: 'clerk 1: a code fit to the counts', value: rows => sum(rows.map(r => r.ideal)), fmt: v => `${fmt(v, 1)} ≈ ${Math.round(v)} bits · ${fmt(v / 16, 2)} per value`,
         note: 'The order-0 entropy of these sixteen values, times sixteen. Optimistic: the code is fit to the very values it codes, and its table of counts is not charged.' },
       { id: 'fixed', label: 'clerk 2: 3-bit slots and one escape', value: rows => sum(rows.map(r => r.fixed)), fmt: v => `${v} bits · ${fmt(v / 16, 2)} per value`,
         note: '16 × 3 = 48 bits of slots, plus 8 bits for the raw 14 and 4 bits saying it sits at position 15. Every value can be found and decoded alone: that is what the extra bits buy.' },

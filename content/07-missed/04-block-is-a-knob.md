@@ -110,9 +110,26 @@ One more thing to notice. A single neighbour saves at most 0.32 bit here, while 
 3. With $\vw = 2$ and a 2K drift length, the net stays within 0.06 bit of its best anywhere from 128 to 1,024 tokens. A light dictionary makes the choice forgiving.
 :::
 
+The toy channel is a model with a dial. Here are both panels measured on data instead: the Gull Rock temperatures of [[#school-prediction]], with half-hours in place of tokens. Panel A first.
+
+::: dataset fig-ma-temp-distance missed-distance view=curve,days hl=days metrics=g1,g6,g24,g48,half,shuf
+**Panel A on the Gull Rock temperatures: the distance curve.** *Plot:* bits per reading saved by knowing the one reading $\vgap$ half-hours earlier, from the exchange rate $\tfrac12\log_2\tfrac{1}{1-\vRsq}$ with the squared correlation of the two readings, for every gap from 1 to 672 (two weeks). Blue: the readings in time order. Vermilion: the same after the shuffle of [[#missed-two-localities]], the control. Grey lines mark whole days. "Two weeks" uses a log scale for the gap, "Three days" a plain one; the highlight marks whole days back. Hover for the value at any gap. *Table:* every gap. *Numbers:* the curve at a few gaps, and the control. Synthetic, seeded data from II.10.
+:::
+
+A curve can do things a threshold cannot. The saving falls from 2.99 bits at half an hour to 0.82 at three hours and to almost nothing at twelve. Then it climbs back to 0.83 bit a day later, because the same time yesterday knows the daily cycle. The shuffled control never rises above a hundredth of a bit.
+
+Now panel B, the knob. A per-block dictionary stores each block's mean, at the 7 bits of one reading, so it costs $7/\vb$ bits per reading.
+
+::: dataset fig-ma-temp-blocks missed-blocks view=knob metrics=best,cost,day,whole,shuf
+**Panel B on the Gull Rock temperatures: the block size as a knob.** *Plot:* bits per reading against the block size $\vb$ (readings, log scale). Dashed: what each block's mean saves, $\tfrac12\log_2$ of the total variance over the variance around the block means. Solid blue: the net after paying $7/\vb$ bits per reading for the means. Vermilion: the net on the shuffled readings, the control. The ring marks the best block size; grey lines mark one day and the whole four-week record. Hover a point for its numbers. *Table:* every block size. *Numbers:* the best size, the price, and the two ends. Synthetic, seeded data from II.10.
+:::
+
+It reads like panel B. The best block holds 6 readings, three hours, and nets 1.34 bits a reading. One block per day nets only 0.24: a day-long block holds a warm afternoon and a cold night, and its mean fits neither. One block for the whole record is the global mean and saves nothing, the Gull Rock version of a 128K-token block in a 100K-token request. On shuffled readings no block size pays at all.
+
 ::: takeaway
 - Panel A is about the data. Panel B is about our design. The best $\vb$ is where the data's gain meets the dictionary's price.
 - Light dictionaries are affordable at almost any block size; heavy ones need data with long memory.
+- On the Gull Rock temperatures the measured curve falls within hours and returns after a day; the best block is about three hours long.
 :::
 
 ## What changes in the plan {#changes}

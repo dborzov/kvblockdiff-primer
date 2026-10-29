@@ -87,6 +87,14 @@ print(f"block gain {gain(x):.3f} bit, after shuffling {gain(shuffled):.3f} bit")
 
 The exchange rate predicts $\tfrac12\log_2(596/400) \approx 0.29$ bit for this toy; the code finds 0.28, and nothing once the tokens are shuffled.
 
+Here is what that looks like, for one channel of the same recipe — 32 blocks again, but only their first 64 tokens, generated in your browser.
+
+::: dataset fig-hwb-planted homework-planted view=original,shuffled metrics=pred,gain,shuf
+**The shuffle control, seen.** *In order:* one channel of the toy, 32 blocks of 64 tokens (thin grey lines separate the blocks); each dot is a value in codes, each red segment the block's mean — the prediction a block loc dictionary would store. *Shuffled:* the same 2,048 values dealt at random across the blocks, with the new block means. The Numbers tab gives the gain the recipe predicts and the block gain measured on each version. Synthetic, seeded (planted offsets of spread 14, noise of spread 20, rounded to whole codes).
+:::
+
+In order, the red segments step up and down by tens of codes, and the measured gain is close to the predicted 0.29 bit. Shuffled, every segment lies on zero, and the gain is gone. Nothing about the values changed, only which values are neighbours.
+
 ::: takeaway
 - Synthetic data with planted structure at known scopes makes the method testable: it must find what was planted, at the right scope, and nothing else.
 - The shuffle control reruns everything on tokens permuted across sequences; block and request gains must vanish.

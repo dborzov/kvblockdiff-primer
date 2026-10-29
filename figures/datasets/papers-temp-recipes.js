@@ -35,18 +35,18 @@
       hover(bar, () => `<b>day ${r.day}, ${r.time}</b> (distance ${r.pos} from its anchor)<br>reading ${fmt(r.v / 10, 1)} °C<br>minus the anchor: ${sgn(r.a)} tenths<br>minus the reading before: ${sgn(r.r)} tenths`);
     });
     line(P2, rows.map((r, i) => [i, i ? r.r / 10 : NaN]), { color: series(2), width: 1.6 });
-    box.append(h('p', { class: 'fig-note', text: 'Dotted lines cut the readings into groups of ten (five hours). Each bar is what CacheGen’s recipe stores for one reading: its distance from the group’s first reading. The green line is what “the same as last time” stores. Bars grow along each group as the day warms or cools; the green line stays near zero.' }));
+    box.append(h('p', { class: 'fig-note', text: 'Dotted lines cut the readings into groups of ten (five hours). Each bar is what CacheGen’s recipe stores for one reading: its distance from the group’s first reading. The peacock line is what “the same as last time” stores. Bars grow along each group as the day warms or cools; the line stays near zero.' }));
   }
 
   // How far a reading strays from its anchor, by distance; the previous reading and the mean for comparison.
   function distance(box, ctx) {
     const s = byDist(ctx.rows).map(sd), sPrev = sd(ctx.rows.slice(1).map(r => r.r)), sAll = sd(ctx.rows.map(r => r.v));
-    box.append(legend([['minus the anchor, by distance', series(1), 'box'], ['minus the reading before', series(2), 'dash'], ['minus the four-week mean (the spread σ)', 'var(--ink-2)', 'dash']]));
+    box.append(legend([['minus the anchor, by distance', series(1), 'box'], [`minus the reading before: ${fmt(sPrev, 1)}`, series(2), 'dash'], [`minus the four-week mean (the spread σ): ${fmt(sAll, 1)}`, 'var(--ink-2)', 'dash']]));
     const b = h('div'); box.append(b);
-    const P = Plot(b, { xcats: range(1, G).map(String), y: [0, 27], h: 260, grid: 'y', xlabel: 'distance from the anchor (readings)', ylabel: 'typical size (tenths of °C)', label: 'Typical size of the difference from the anchor at each distance' });
+    const P = Plot(b, { xcats: range(1, G).map(String), y: [0, 28], h: 260, grid: 'y', xlabel: 'distance from the anchor (readings)', ylabel: 'typical size (tenths of °C)', label: 'Typical size of the difference from the anchor at each distance' });
     bars(P, s, { colors: () => mix(series(1), 75), labels: v => fmt(v, 1), tip: (v, i) => `<b>distance ${i + 1}</b> (${fmt((i + 1) / 2, 1)} hours after the anchor)<br>typical difference ${fmt(v, 1)} tenths<br>variance ÷ the readings’ variance: ${fmt((v / sAll) ** 2, 2)}` });
-    rule(P, { y: sPrev, label: `the reading before: ${fmt(sPrev, 1)}`, color: series(2) });
-    rule(P, { y: sAll, label: `σ of the readings: ${fmt(sAll, 1)}`, color: 'var(--ink-2)' });
+    rule(P, { y: sPrev, color: series(2) });
+    rule(P, { y: sAll, color: 'var(--ink-2)' });
     box.append(h('p', { class: 'fig-note', text: 'Standard deviations, in tenths of a degree, over all 1,344 readings. At distance 1 the anchor is the reading before; by distance 9, four and a half hours later, the difference is almost as wide as the readings themselves.' }));
   }
 
@@ -55,7 +55,8 @@
     const day = 3, rows = ctx.rows.filter(r => r.day === day);
     box.append(legend([['in tenths of a degree (the stored grid of Part II)', series(0)], ['in whole degrees (a 10× coarser grid)', series(3)]]));
     const b = h('div'); box.append(b);
-    const P = Plot(b, { x: [0, 47], y: [6.5, 15], h: 250, grid: 'y', xticks: [0, 12, 24, 36, 47], xfmt: i => hhmm(i), xlabel: `day ${day}, time`, ylabel: '°C', label: 'One day of temperatures on a fine and a coarse grid' });
+    const [lo, hi] = extent(rows.flatMap(r => [r.v / 10, r.deg]));
+    const P = Plot(b, { x: [0, 47], y: [Math.floor(lo) - 0.5, Math.ceil(hi) + 0.5], h: 250, grid: 'y', xticks: [0, 12, 24, 36, 47], xfmt: i => hhmm(i), xlabel: `day ${day}, time`, ylabel: '°C', label: 'One day of temperatures on a fine and a coarse grid' });
     line(P, rows.map((r, i) => [i, r.deg]), { color: series(3), width: 2.4, curve: 'step' });
     line(P, rows.map((r, i) => [i, r.v / 10]), { color: series(0), width: 1.4, markers: 1.8, tip: (p, i) => `<b>${rows[i].time}</b><br>${fmt(rows[i].v / 10, 1)} °C → ${rows[i].deg} °C` });
     box.append(h('p', { class: 'fig-note', text: 'On the coarse grid a reading has only a handful of possible values and mostly repeats the one before: fewer bits to spend, and fewer for a predictor to save.' }));
@@ -66,7 +67,7 @@
     const R = ctx.rows, g = [[histH(R.map(r => r.v)), histH(R.map(r => r.r))], [histH(R.map(r => r.deg)), histH(R.map(r => r.dr))]];
     box.append(legend([['each reading alone (order-0)', series(0), 'box'], ['minus the reading before', series(2), 'box']]));
     const b = h('div'); box.append(b);
-    const P = Plot(b, { xcats: ['tenths of a degree', 'whole degrees'], y: [0, 7.6], h: 270, grid: 'y', ylabel: 'bits per reading', label: 'Entropy of the readings and of the previous-value residuals on two grids' });
+    const P = Plot(b, { xcats: ['tenths of a degree', 'whole degrees'], y: [0, 8.4], h: 270, grid: 'y', ylabel: 'bits per reading', label: 'Entropy of the readings and of the previous-value residuals on two grids' });
     bars(P, g, { colors: (i, j) => series(j ? 2 : 0), width: 60, labels: v => fmt(v, 2),
       tip: (v, i, j) => `<b>${i ? 'whole degrees' : 'tenths'}, ${j ? 'minus the reading before' : 'each reading alone'}</b><br>${fmt(v, 2)} bits per reading` });
     g.forEach(([a, c], i) => svgText(P.g.top, P.x(i), P.y(Math.max(a, c)) - 26 * P.fs, `saves ${fmt(a - c, 2)} · ${fmtPct((a - c) / a, 0)}`, { class: 'annot', 'text-anchor': 'middle' }));
@@ -96,10 +97,10 @@
       anchors: { label: 'anchors (first of each group)', test: r => r.pos === 0 },
     },
     views: {
-      anchors: { label: 'Anchors and differences', draw: anchors, legend: false },
-      distance: { label: 'By distance from the anchor', draw: distance, legend: false },
-      staircase: { label: 'One day, two grids', draw: staircase, legend: false },
-      bill: { label: 'Bits on two grids', draw: bill, legend: false },
+      anchors: { label: 'Anchors and differences', draw: anchors, legend: false, highlights: [] },
+      distance: { label: 'By distance from the anchor', draw: distance, legend: false, highlights: [] },
+      staircase: { label: 'One day, two grids', draw: staircase, legend: false, highlights: [] },
+      bill: { label: 'Bits on two grids', draw: bill, legend: false, highlights: [] },
     },
     metrics: [
       { id: 'n', label: 'readings', value: rows => rows.length, fmt: (v, rows) => `${v.toLocaleString('en-US')} in ${Math.ceil(v / G)} groups of ${G}`,

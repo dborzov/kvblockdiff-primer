@@ -135,14 +135,22 @@ class Loc(DeltaCoder):
         return (r + D).astype(np.int16)
 ```
 
+A block can be any table of entries and channels. Take one you have met: the Gull Rock afternoon of [[#school-vectors]], twelve readings of five sensors. Read as a block, each reading is an entry and each sensor is a channel.
+
+::: dataset fig-plan-day-block gull-day view=channels metrics=means,bits-raw,bits-centred
+**The Gull Rock afternoon, read as a block.** *Plot:* one strip per channel (two thermometers, humidity, pressure, wind), each on its own scale; a vertical slice through all five is one reading — one entry. Hover to read an entry, click to select it. *Table:* the twelve readings. *Numbers:* each channel's mean, and the fixed-length bits of one reading written as it is and with each channel's mean subtracted. Synthetic data, seeded; the same readings as on II.13.
+:::
+
+Look at the pressure strip. Every reading sits near 1011 hPa, so most of each pressure value is the same in all twelve. Subtracting a location per channel takes 45 bits per reading down to 21 — and subtracting a location per channel is exactly what loc does. The barometer plays the part of an outlier channel of keys: a big constant that one dictionary entry absorbs.
+
 ::: figure fig-plan-decode-alone planDecodeAlone
-**One block, its loc dictionary, and one entry decoded alone.** First table: a toy block of six entries with five channels each (8-bit codes, seeded random numbers around five channel centres, one of them an outlier channel near +97). Second: the dictionary $\vD$, the median of each channel. Third: the deltas, each entry's codes minus $\vD$. Click an entry: it is rebuilt from $\vD$ and its own delta only (highlighted); the other deltas are not read. The readout compares the delta's size under a [[fixed-length-code|fixed-length code]] (each channel's width just covers its largest residual) with the 40 bits of the raw entry. Illustrative numbers.
+**The afternoon, its loc dictionary, and one reading decoded alone.** First table: the twelve readings of [[#fig-plan-day-block]] in whole sensor steps (tenths of a degree for the two thermometers, hundredths of humidity, tenths of a hectopascal, knots). Second: the dictionary $\vD$, the median of each channel. Third: the deltas, each reading minus $\vD$. Click a reading: it is rebuilt from $\vD$ and its own delta only (highlighted); the other deltas are not read. The readout compares the delta's size under a [[fixed-length-code|fixed-length code]] (each channel's width just covers its largest residual, sign included) with the reading written raw, as on II.13. Synthetic data, seeded.
 :::
 
 ::: try
-1. Click entry 0, then entry 5. The dictionary lights up every time; only one delta row does.
-2. Look at channel c3, the outlier near +97. Its residuals are as small as the others: the location absorbed the big constant.
-3. Compare the delta's bits with the raw 40 bits. That ratio is the [[delta-ratio|delta ratio]] of this toy block.
+1. Click 14:30, then 20:00. The dictionary lights up every time; only one delta row does.
+2. Look at the pressure column. 10,126 steps of 0.1 hPa need 15 bits raw; the residuals around the median need 6. The location absorbed the big constant.
+3. Compare the delta's 21 bits with the raw 45. That ratio is the [[delta-ratio|delta ratio]] of this toy block — before the dictionary's own bytes are charged, which is the next page's subject.
 :::
 
 ::: takeaway

@@ -98,7 +98,7 @@
         note: 'With no other entry to lean on, an entry shrinks by about a sixth — the same story as a Gull Rock message compressed alone (I.1).' },
       { id: 'delta', label: 'delta against the block dictionary', tex: '\\vdsz', mark: 'delta', short: 'average delta', value: rows => avg(rows.map(r => r.delta)),
         fmt: (v, rows) => `${fmt(v, 2)} B · ${Math.min(...rows.map(r => r.delta))} to ${Math.max(...rows.map(r => r.delta))} B`,
-        note: v => `$\\vrho = ${fmt(v / 8, 2)}$. Better than alone, though far from the sevenfold shrink of the radio messages: numbers that wander share a shape, never exact bytes.` },
+        note: v => `${fmt(v / 8, 2)} of the raw entry: the delta ratio $\\vrho$ of IV.2. Better than alone, though far from the radio messages’ 147 → 22 bytes: numbers that wander share a shape, never exact bytes.` },
       { id: 'dictb', label: 'one block dictionary', tex: '\\vDsz', value: () => DICT_BYTES, fmt: v => `${v} B · weight 2`,
         note: 'A typical value and a delta width per element. Like the radio almanac it is side information, but it serves only the 32 entries of its own block.' },
       { id: 'share', label: 'dictionary share of a stored block', value: rows => { const d = avg([...new Set(rows.map(r => r.block))].map(j => sum(rows.filter(r => r.block === j).map(r => r.delta)))); return DICT_BYTES / (DICT_BYTES + d); },

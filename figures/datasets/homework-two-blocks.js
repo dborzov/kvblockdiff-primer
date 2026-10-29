@@ -38,7 +38,7 @@
         if (!resid) {
           const a = rs[0]['a_' + c.key];
           line(P, [[xs[0] - 0.35, a], [xs[3] + 0.35, a]], { color: series(c.s), width: 1.6, dash: '5 4' });
-          if (bk === 'A' || P.fs < 1.3) svgText(P.g.top, P.x(xs[3] + 0.4), P.y(a) + 4 * P.fs, `${a}`, { class: 'val' });
+          svgText(P.g.top, P.x(xs[3] + 0.4), P.y(a) + 4 * P.fs, fmt(a), { class: 'val' });
         }
         line(P, rs.map((r, k) => [xs[k], resid ? r['r_' + c.key] : r[c.key]]), { color: series(c.s), width: 1.6, markers: 3.5 });
       });
@@ -82,7 +82,7 @@
     },
     metrics: [
       { id: 'anchors', label: 'anchors: block A · block B', value: rows => CH.map(c => [rows[0]['a_' + c.key], rows[4]['a_' + c.key]]),
-        fmt: v => CH.map((c, i) => `${c.name} ${v[i][0]} · ${v[i][1]}`).join('<br>'),
+        fmt: v => CH.map((c, i) => `${c.name} ${fmt(v[i][0])} · ${fmt(v[i][1])}`).join('<br>'),
         note: 'Each block’s median per channel, rounded down to a whole code. Six numbers in all: two per channel per block, which is why the Anchor’s weight is about two entries.' },
       { id: 'r2', label: 'variance explained by the block means', tex: '\\vRsq', value: rows => CH.map(c => shares(rows, c.key).r2),
         fmt: v => CH.map((c, i) => `${c.name} ${fmtPct(v[i], 1)}`).join('<br>'),

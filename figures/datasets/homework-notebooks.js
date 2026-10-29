@@ -78,7 +78,7 @@
         note: 'The block rung: the most local notebook is by far the best guesser here, because pressure changes slowly from one half hour to the next. Whether KV entries are like that — whether neighbours really are better guessers — is the bet of this project.' },
       { id: 'now', label: 'the notebooks now (after the last reading)', value: rows => [mean(rows.map(r => r.p)), rows.slice(-3).map(r => r.p)],
         fmt: v => `storm log ${fmt(v[0], 1)} · hour sheet ${v[1].map(x => x.toFixed(1)).join(', ')}`,
-        note: 'Two days into the storm: its readings average about 996 hPa, and the last hour read 978.9, 978.6, 978.2. The almanac still says 1013.' },
+        note: 'Two days into the storm: its readings average about 995.5 hPa, and the last hour read 978.9, 978.6, 978.2. The almanac still says 1013.' },
     ],
     code: `
 import numpy as np, pandas as pd

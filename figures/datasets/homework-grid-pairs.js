@@ -44,7 +44,7 @@
             const hl = ctx.hl && ctx.hl.test(r), sel = ctx.sel && ctx.sel.test(r);
             if (hl) el('rect', { x: 2, y: y0 - 4, width: 636, height: rowH - 6, rx: 8, style: `fill:${mix(series(1), 9)}` }, g);
             if (sel) el('rect', { x: 2, y: y0 - 4, width: 636, height: rowH - 6, rx: 8, style: 'fill:none;stroke:var(--c);stroke-width:1.5' }, g);
-            el('text', { x: L, y: y0 + 10 * fs, class: 'lbl', text: `value ${r.value}, prediction ${r.pred}` }, g);
+            el('text', { x: L, y: y0 + 10 * fs, class: 'lbl', text: `value ${fmt(r.value)}, prediction ${fmt(r.pred)}` }, g);
             el('text', { x: R, y: y0 + 10 * fs, 'text-anchor': 'end', class: 'val', text: `INT8 ${sgn(r.int8)} · E4M3 ${sgn(r.e4m3)}` }, g);
             const yI = y0 + 18 * fs + 14, yE = yI + 22, tk = 7;
             el('line', { x1: L, x2: R, y1: yI, y2: yI, style: `stroke:${mix('var(--rule)', 70)}` }, g);

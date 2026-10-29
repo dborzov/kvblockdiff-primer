@@ -44,13 +44,11 @@ On an evenly spaced [[integer-grid|INT8]] grid with a step of 2, the answer is *
 
 Five value–prediction pairs, both ways (E4M3 values in their own units; INT8 with a step of 2, the per-channel scale of a channel with spread 64):
 
-| value | prediction | INT8 residual (steps) | E4M3 residual (steps) |
-|---:|---:|---:|---:|
-| 104 | 96 | +4 | +1 |
-| 40 | 44 | −2 | −1 |
-| −60 | −52 | −4 | −2 |
-| 10 | 2 | +4 | +18 |
-| −3 | 6 | −5 | −144 |
+::: dataset fig-hwa-grid-pairs homework-grid-pairs view=rungs hl=worse metrics=smaller,total,cross tab=table
+**Five guesses on two grids.** *Table:* each value, its prediction, and the residual counted in grid steps on INT8 (step 2) and in rungs of E4M3 index space, with the E4M3 positions of both. *Rungs between guess and value:* one row per pair, zoomed on the stretch between the prediction (accent line) and the value (dark line), each row on its own scale; upper ticks are INT8 grid points, lower ticks E4M3 rungs (from the ladder of II.20). The highlight marks the pairs where E4M3 needs more steps. Hand-made pairs; grid positions computed exactly.
+:::
+
+Open the plot. In the top three rows E4M3's ticks are sparser than INT8's; in the last two they crowd together, and in the last one, which crosses zero, they fuse into a solid band of 144 rungs.
 
 Far from zero, E4M3's steps are coarse, so its residuals are *smaller* than INT8's. Near zero, its steps are tiny, so a small miss becomes a huge number of steps — and crossing zero means walking past every tiny value in between.
 

@@ -30,9 +30,15 @@ cards:
     sec: changes
 ---
 
-At the harbour office of Part II, the forecaster asks for the same five logbooks all morning. The lift to the archive hardly ever moves, and her small desk works beautifully.
+Remember the storm morning at the harbour office of Part II ([[#school-caches]])? The forecaster made 24 requests for the logbooks of 8 coastal stations, and 16 of them were for just two: Gull Rock and Seal Point. Her desk holds four logbooks. Under LRU the lift went down to the archive only 10 times, and 8 of those trips fetched a logbook for the first time, which no desk can avoid.
 
-Does that tell you whether logbook 31 reads like logbook 32? It does not. She could be re-reading five logbooks written in five different languages.
+::: dataset fig-ma-storm-which storm-morning view=raster,counts metrics=n,gs,lru4
+**The storm morning of II.21, seen again.** *Plot:* "The morning" has one row per logbook and one column per request, in order; each logbook keeps its own colour, and hovering or tapping a request shows when that logbook was last asked for. "Requests per logbook" counts them. The highlight buttons mark the first requests, or the misses of a 4-slot desk under LRU or FIFO. *Table:* every request, with whether it hits on a 4-slot desk. *Numbers:* how lopsided the morning is, and how few trips the desk needs. Hand-made toy data.
+:::
+
+Look at what the card is about. Every number on it describes *which* logbooks she asked for, and when. Not one of them looks inside a logbook.
+
+So does a good desk tell you whether the Gull Rock logbook reads like the Seal Point one? It does not. She could be re-reading two logbooks written in two different languages.
 
 ## What the first draft said {#claim}
 
@@ -100,6 +106,14 @@ One honest caveat. In a real model, the indexer's vectors and the stored entries
 - **The hit rate is no longer quoted as evidence for compression.** Not in the proposal, not in a paper.
 - **Fallen-apple similarity is measured on the bytes.** The plan measures the bits per element of an entry given a neighbour at token distance $\vgap$, at 8-bit precision, as a curve ([[#questions-framework-a]]). The "bytes shuffled" switch above is the [[shuffle-control]]: a real effect must vanish when it is flipped.
 - **The which-question goes where the design really needs it.** Block dictionaries are cheap to keep on the GPU only if misses pile into a few [[heavy-block|heavy blocks]] for many steps ([[#idea-heavy-blocks]]). That is a question about which entries, and traces like HiSparse's answer it ([[#questions-q3]]).
+
+Here is the same control on data from Part II. The four weeks of Gull Rock temperatures ([[#school-prediction]]) are dealt out in a random order: every reading kept, every neighbour lost.
+
+::: dataset fig-ma-shuffle-temp missed-shuffled view=orders,lag,histogram metrics=entropy,r2,exch,saved
+**The shuffle control, on the Gull Rock temperatures.** *Plot:* "In order and shuffled" draws the 1,344 half-hourly readings twice, as the thermometer wrote them (blue, against the day) and after a seeded shuffle (vermilion, against the position in the record). "Against the reading before" puts each reading over the one before it, for both orders; the dashed diagonal is the guess "the same as last time". "Histogram" counts the values, which is the same for both orders. *Table:* each position with its reading in order and the shuffled reading that landed there. *Numbers:* what one reading alone costs, and what the reading before is worth, in each order. Synthetic, seeded data from II.10; the shuffle has its own seed.
+:::
+
+The histogram and its entropy do not move: 6.53 bits a reading either way. The reading before goes from explaining 98.4 % of the variance to explaining practically nothing, and subtracting it goes from saving 2.91 bits to *costing* 0.49. Anything measured one value at a time is blind to the shuffle. A neighbour effect must die with it.
 
 :::: compare Two localities, side by side
 ::: col Lucky Louis property

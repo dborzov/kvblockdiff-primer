@@ -102,6 +102,20 @@ $$ {#eq-idea-rho}
 
 $\vrho = 1$ is no gain at all. $\vrho = 0.75$ means a delta of 480 bytes instead of a 640-byte entry, or 6 bits per element instead of 8. Smaller is better, and nothing is lost either way: the GPU rebuilds the original bit for bit.
 
+All three objects can be seen at work on the toy history of [[#idea-mapping]], cut into blocks of $\vb = 32$. Its dictionary is the lightest kind of the list above: per element, a typical value and the width of the deltas.
+
+::: dataset fig-idea-toy-dict idea-history view=leftovers,heat hl=b2 metrics=dict,widths,rho,shape
+**One block dictionary and its deltas, on the toy history** ([[#fig-idea-toy-history]] again). *Dictionary and deltas:* four of the eight elements over the 128 entries (dots); the gold line in each block is that element's typical value in $\vD_{\vj}$; each stick is an entry's leftover from it, which the delta stores; the label over each block is the fixed width of those leftovers, in bits. *The entries:* the whole history as a grid (colour = stored number). The highlight marks block 2. *Numbers:* block 0's dictionary, the delta size block by block, and $\vrho$. Synthetic, seeded; built so that neighbours are alike.
+:::
+
+Read it as the three definitions in action.
+
+- **The block** is just where the dashed lines fall. Move them and the gold lines move with them; the dots stay put.
+- **The dictionary** $\vD_0$ holds 8 typical values and 8 widths: 16 bytes, two entries' worth, so $\vw = 2$.
+- **The delta** of an entry in block 0 is its 8 leftovers at those widths: 44 bits instead of 64. Over the four blocks the toy's $\vrho$ is 0.68.
+
+The large element c0 needs only 3 or 4 bits per delta, the others 5 to 7: a steady channel is cheap once its typical value is known. The toy was built to make the bet come true, so its 0.68 shows how $\vrho$ is computed, not what real caches would give.
+
 | object | symbol | size in bytes | example, $\ve = 640$ B |
 |---|---|---|---|
 | entry | $\vE_{\vt}$ | $\ve$ | 640 B |

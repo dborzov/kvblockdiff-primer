@@ -20,8 +20,8 @@
       const b = h('div'); box.append(b);
       const P = Plot(b, { x: [0, NB * NT], y: [-95, 95], h: 280, xlabel: 'token (32 blocks of 64)', ylabel: 'value (codes)', xticks: range(0, NB * NT + 1, 512),
         label: `${label}: the channel’s values and each block’s mean` });
-      for (let k = 1; k < NB; k++) el('line', { x1: P.x(k * NT), x2: P.x(k * NT), y1: P.m.t, y2: P.m.t + P.ph, style: 'stroke:color-mix(in srgb, var(--rule) 45%, transparent);stroke-width:1' }, P.g.bg);
-      ctx.rows.forEach((r, i) => dot(P.g.data, P.x(i + 0.5), P.y(r[key]), 1.5 * P.fs, ctx.sel && ctx.sel.test(r) ? 'var(--c)' : 'color-mix(in srgb, ' + series(0) + ' 55%, transparent)'));
+      for (let k = 1; k < NB; k++) el('line', { x1: P.x(k * NT), x2: P.x(k * NT), y1: P.m.t, y2: P.m.t + P.ph, style: 'stroke:color-mix(in srgb, var(--rule) 25%, transparent);stroke-width:1' }, P.g.bg);
+      ctx.rows.forEach((r, i) => el('circle', { cx: P.x(i + 0.5), cy: P.y(r[key]), r: 1.6 * P.fs, style: `fill:${ctx.sel && ctx.sel.test(r) ? 'var(--c)' : 'color-mix(in srgb, ' + series(0) + ' 60%, transparent)'}` }, P.g.data));
       blockMeans(ctx.rows, key).forEach((m, k) => line(P, [[k * NT + 2, m], [(k + 1) * NT - 2, m]], { color: series(1), width: 2.6 }));
       box.append(h('p', { class: 'fig-note', text: note }));
     },

@@ -108,6 +108,14 @@ With the same 30 % average:
 - two "slow giants" at 99 %, the rest at 20 %: 0.56 bit, more than twice as much;
 - one giant at 99.9 %, the rest at 25 %: 0.51 bit.
 
+Real-looking data does this too. Take the five channels of the ten days at Gull Rock ([[#school-correlation]]) and predict each one from its own reading half an hour before.
+
+::: dataset fig-ma-channels missed-channels view=bars hl=giants metrics=avg,even,bits,flag
+**Five Gull Rock channels, predicted from half an hour before.** *Plot:* one bar per channel: the share of its variance explained by the guess "the same as last time", $\vRsq = 1 - \text{var(change)}/\text{var(channel)}$; the label above each bar is the bits per reading this saves, $\tfrac12\log_2\tfrac{1}{1-\vRsq}$. A channel whose previous reading is a worse guess than its mean is not predicted and counts as zero. The dashed line is the average. The highlight marks the slow channels. *Table:* the five channels. *Numbers:* the average, what it would buy if spread evenly, and what it buys as it is. Synthetic, seeded data from II.14.
+:::
+
+The average is 57 %, which spread evenly would buy 0.61 bit per element. Concentrated in three slow channels — both thermometers and the pressure — it buys 1.29, about twice as much. The wind's previous reading is a worse guess than its average, so the wind is not predicted at all: the per-channel "predict or not" flag of [[#missed-mantissa-and-grid]], at work on a toy.
+
 This is the escape hatch the earlier proposal named: a few channels with huge, slowly drifting values, which "compress like a dream". The literature on keys reports exactly such channels ([[#papers-kvquant]]). Values may not have them. If values show nothing, half of every entry stays at the solo rate, and the [[delta-ratio]] is capped near 0.85 ([[#homework-where-bits-come-from]]).
 
 So the plan changes in three ways.

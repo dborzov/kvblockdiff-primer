@@ -75,6 +75,14 @@ Suppose the history of one layer is stream-coded in chunks, so that the entries 
 3. Compare the link time with the 0.38 ms window. Which chunk sizes fit at all?
 :::
 
+The same arithmetic works on the toy world. The clerk of [[#school-fixed-length]] answered phone calls about single Gull Rock wind readings. Suppose twenty calls come in one day, each for one reading at a random time.
+
+::: dataset fig-ma-wind-calls missed-wind-reads view=reads metrics=H,fixed,c2,c32,c1024,c1
+**Twenty calls for single wind readings.** *Plot:* bits the office must read to answer 20 calls, each for one of the 1,024 readings of [[#fig-wind-data|the wind archive]] chosen at random, against the number of readings per stream chunk (both axes log scale). Vermilion: the archive is entropy-coded in chunks at 4.54 bits a reading, and every chunk that holds a wanted reading is decoded whole. Blue: the 5-bit slots with escapes of II.9, one slot read per call (5.54 bits on average). Dashed: one raw byte per reading. Hover a point for the chunks touched. *Table:* every chunk size. *Numbers:* the two rates and four chunk sizes. Expected values, computed exactly; the wind data is synthetic and seeded.
+:::
+
+Per reading, the slots cost 22 % more than the stream. Yet chunks of two already read 180 bits against the slots' 111, chunks of 32 read twenty times as much, and a single chunk means decoding the whole archive for every call. Only one reading per chunk reads fewer bits than the slots, and then every reading needs an address of its own. The shape of the store comes from how it is read.
+
 ::: takeaway
 - A coder that shares state across entries makes every miss drag its neighbours along.
 - With a 10–15 % rate gap, a chunk of two entries already loses.

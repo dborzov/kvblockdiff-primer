@@ -90,6 +90,14 @@ estimated in practice as the drop in lossless code length when the coder is allo
 $\vH(\vX \mid \vY)$, the [[conditional-entropy]], is the average number of bits still needed for $\vX$ once $\vY$ is known; it is never more than $\vH(\vX)$ on average. The difference is the mutual information $\vI(\vX; \vY)$ — redundancy, similarity and predictability are three names for this same number of bits ([[#school-mutual-information]]).
 :::
 
+You have made this measurement before. On [[#school-exchange-rate]] the neighbour was the Gull Rock temperature half an hour earlier, and the bits it saves were counted both ways: by the formula, and as a drop in measured code length.
+
+::: dataset fig-idea-temp-neighbour temp view=lag,timeline metrics=r2,exch,saved
+**A neighbour, measured in bits: the Gull Rock temperatures** ([[#fig-exchange-temp-lag]] again). *Against the previous reading:* every reading (vertical axis, °C) against the one half an hour before (horizontal axis); darker squares hold more readings; the dashed diagonal is the guess "the same as last time". *Four weeks:* the series itself. *Numbers:* the share of variance the neighbour explains, the bits saved by the exchange rate, and the bits saved as measured — histogram entropy of the readings minus that of what is left after the guess. Synthetic, seeded data.
+:::
+
+Here the neighbour saves 2.91 bits per reading as measured (2.99 by the formula), because a temperature barely moves in half an hour. Neighbour similarity asks the same question of a KV entry and the entry a few tokens back. Nobody knows the answer yet; the definition only fixes what will be counted.
+
 Why bits, and not the measures that papers often report?
 
 - **Cosine similarity** says two vectors point the same way. It can be close to 1 while most elements of the two entries are unrelated — a few large channels can dominate it. Lossless coding pays for every element. [[#idea-fallen-apple]] shows a concrete case.

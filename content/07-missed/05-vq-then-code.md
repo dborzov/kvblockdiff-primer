@@ -92,6 +92,14 @@ On the hill, every codebook narrows the leftover a lot and pays almost all of it
 
 On the clumps, the rotation finds nothing: the two elements are not correlated, so there is no better pair of axes. The codebook with one centroid per clump removes the whole spread between clumps, and its index is worth more than it costs.
 
+Both kinds of cloud have turned up before, at Gull Rock ([[#school-vq-vs-klt]]). The two mast thermometers were a hill: a rotation saved 1.47 bits per element, and no codebook caught up. The three weather moods were clumps.
+
+::: dataset fig-ma-regimes-again regimes view=scatter,counts metrics=n,counts,centroids,corr,klt
+**The clumps of Part II: Gull Rock's weather moods.** *Plot:* "Wind vs humidity" has one dot per reading, coloured by the mood the generator drew it from (blue calm, teal fog, purple storm), with each mood's average point as a diamond; drag a box to select readings. "How many of each" counts the moods. *Numbers:* the three centroids, which are the whole codebook, and what a rotation makes of the cloud. Synthetic: three bell-shaped clusters from a fixed seed (II.17).
+:::
+
+Three diamonds name the three islands; a rotation finds 0.05 bit per element, because a straight line through three islands describes none of them. Whether KV entries look more like the thermometers or more like the moods is the question this page ends on.
+
 ::: note numbers What changes with more dimensions
 In this 2-D toy the index costs $\tfrac12\log_2\vC$ bits per element, 1 bit for $\vC = 4$. In an entry of $\vd = 640$ elements it would cost $\log_2 4/640 \approx 0.003$ bits. Almost free! But on a bell-shaped cloud the most a codebook can narrow *beyond the rotation* shrinks by exactly the same factor $1/\vd$. That is the rate–distortion bound. Clumps escape it: the spread between clumps does not shrink as the dimension grows.
 :::

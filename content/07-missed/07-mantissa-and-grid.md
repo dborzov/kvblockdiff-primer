@@ -43,6 +43,14 @@ Here are six consecutive values of one well-behaved channel, written out as the 
 
 Notice anything? The first nine bits never change. The last seven change every time, and in no pattern you could guess.
 
+You have watched this happen before. [[#school-integers-floats]] stored the foot thermometer of the ten days at Gull Rock in BF16, 480 readings, and counted every bit.
+
+::: dataset fig-ma-bf16-again ten-days-bf16 view=raster,entropy hl=low metrics=range,exp,man,all
+**The Gull Rock thermometer in BF16, bit by bit (II.19).** *Plot:* "All 7,680 bits" draws one thin column per reading (480, in time order) and one row per bit position: sign (grey) at the top, then the 8 exponent bits (blue) and the 7 mantissa bits (red); a filled cell is a 1, and the number at the right of each row is that bit's entropy over the ten days. "Entropy of each bit" shows the same entropies as bars, from 0 (always the same) to 1 (a fair coin). The highlight marks the few readings below 8 °C, the only ones with a different exponent. *Table:* every reading with its 16 bits. *Numbers:* the information in each field. Derived from synthetic, seeded data.
+:::
+
+Nine stored bits of sign and exponent carry 0.22 bit of information. Seven mantissa bits carry 5.91, close to a coin flip each. The top of the number is nearly free; the bottom is nearly noise, exactly as in the six values above.
+
 ## What the first draft took for granted {#claim}
 
 Two quiet assumptions sat under the first draft. This is our paraphrase; the earlier proposal recorded the correction, not the sentences.

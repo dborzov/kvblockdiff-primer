@@ -35,7 +35,11 @@ Two clerks are asked how many bits they need to store them.
 - **The first clerk** builds a code fit to how often each value occurs — 0 five times, ±1 six times, and so on — and pays each value its [[surprisal]]. Total: **41 bits**, 2.56 bits per value. (With a code fit to these very sixteen values; that is optimistic.)
 - **The second clerk** gives every value the same 3-bit slot, enough for −3 … 3. The 14 does not fit: it becomes an [[escape]], stored as its raw 8-bit value plus a 4-bit note of where it was. Total: $16 \times 3 + 8 + 4 =$ **60 bits**, 3.75 per value.
 
-The second bill is almost half again as large. And the second clerk is the one we will hire.
+::: dataset fig-hwa-sixteen homework-sixteen view=bills,histogram hl=esc metrics=ideal,fixed,ratio,escape
+**Two clerks, one bill each.** *The two bills:* for each of the sixteen residuals, in order (labels on the axis), the bits the first clerk spends (blue: its surprisal under a code fit to how often it occurs) and the bits the second clerk spends (red: a 3-bit slot, plus 8 + 4 bits if it must be escaped); the grey line marks the 3-bit slot. *How often each value:* the histogram of the sixteen residuals; the highlighted bar is the one value that does not fit in 3 bits. Hand-made toy numbers.
+:::
+
+Read the bars in pairs. The first clerk is cheap on the common values (1.68 bits for a 0) and dear on the rare ones (4 bits); the second pays a flat 3 — and 15 for the 14. The second bill is almost half again as large. And the second clerk is the one we will hire.
 
 ## The scientific number and the engineering number {#two}
 

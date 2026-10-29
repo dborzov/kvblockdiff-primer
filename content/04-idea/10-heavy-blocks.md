@@ -55,6 +55,14 @@ How much does concentration matter? A toy indexer makes it visible.
 
 Notice what the hit rate does while you move the concentration slider: almost nothing. The per-entry property and the per-block property are different statistics, and only the second decides $\vfD$.
 
+The card below freezes two runs of the same toy, every step recorded: the default world with heavy blocks (concentration 80 %), and a world without them (concentration 0). Both keep 85 % of their picks from step to step.
+
+::: dataset fig-idea-heavy-worlds idea-heavy view=shares,raster,blocks metrics=hit,fD,loads,top4,misses
+**Two worlds, one Lucky Louis.** *Two shares, step by step:* top, the hit rate; bottom, the δ-miss fraction $\vfD$; each a rolling share over 10 steps, for the world with heavy blocks (solid) and without (dashed). *Where the selections land:* every selection of the 270 recorded steps, one panel per world, coloured as in the plate above. *Misses per block:* the share of all misses that landed in each of the 32 blocks, both worlds. Drag across a plot to select steps; the highlight marks steps with a dictionary load. *Table:* one row per step and world. Synthetic, seeded; the same simulator as the plate above.
+:::
+
+The top panel is the whole lesson. Two hit-rate lines, 87 % and 85 %, almost on top of each other; two $\vfD$ lines, 77 % and 13 %, far apart. A trace that shows a fine hit rate has told you nothing yet about $\vfD$.
+
 ::: takeaway
 - A heavy block holds many of the current step's selections.
 - The design needs Lucky Louis *per block*: selections crowding into a few blocks that stay busy for many steps.

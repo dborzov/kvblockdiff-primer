@@ -104,6 +104,19 @@ $$
 \underbrace{\tfrac12 \log_2 \frac{\mathrm{AM}(\vlambda + \vnu)}{\mathrm{GM}(\vlambda + \vnu)}}_{\text{bits saved per number, nothing dropped}}
 $$ {#eq-pb-shadow}
 
+The smallest spectrum we own has two numbers. In [[#school-rotation]] we turned the two thermometers of Gull Rock onto the axes of their own cloud: one axis for "how warm", one for "how much the two disagree". Here they are again.
+
+::: dataset fig-pb-kvtc-thermo thermo-axes view=cloud,timeline hl=disagree metrics=lambdas,total,bits
+**The two thermometers of the ten days, on their KLT axes.** *The cloud, turned:* each dot is one half-hourly reading (480 in all), placed by its coordinate along the cloud (horizontal, °C, roughly the average of the two thermometers) and across it (vertical, °C, roughly their difference), both centred; the axes are drawn to the same scale. Vermilion: readings whose thermometers disagree by more than usual. *Along and across, over ten days:* the same two coordinates in time order. The Numbers tab gives the two variances $\vlambda_1, \vlambda_2$ — this cloud's whole spectrum. Synthetic, seeded data, the same as on [[#school-rotation]].
+:::
+
+Run both stories on it. The spectrum is 5.91 and 0.025 °C², a step of more than 200 to 1.
+
+- **Lossy.** Allow an error of 1 % of the average variance and the water level rises above 0.025: the "disagree" axis gets zero bits. KVTC's recipe would keep how warm it was and drop the disagreement altogether — typically 0.16 °C along that axis, the square root of 0.025.
+- **Lossless.** Nothing may be dropped, so both axes are coded, each to its own spread. The averages of the two variances are $\mathrm{AM} = 2.97$ and $\mathrm{GM} = 0.39$, and [[#eq-pb-shadow]] gives $\tfrac12\log_2 (2.97 / 0.39) \approx 1.47$ bits per number — the 2.95 bits per reading of the card's last line, for its two numbers.
+
+The two thermometers already have the same spread, so standardizing them first changes nothing: this gain is all correlation, none of it channel sizes. With 64 axes the lossy story gets much more dramatic. The lossless one does not.
+
 ::: figure fig-pb-kvtc-spectrum pbKvtcSpectrum
 **One toy spectrum, two coders.** Horizontal: the 64 KLT axes, largest variance first. Vertical: variance (log scale; the average is 1). The variances follow $\vi^{-a}$ with the steepness $a$ set by the first slider. Lapis: the part of each axis above the water level, which gets bits; grey: below, dropped by the lossy coder. The second slider sets the allowed error (the average variance left unexplained); the water level follows from it (reverse water-filling, rate–distortion theory for Gaussian axes). The buttons add the rounding noise of a stored grid (INT8 at σ = 32 steps: 8·10⁻⁵; E4M3: about 7·10⁻⁴, our estimate; or 1 %). Left tile: the lossy rate in bits per number and the ratio against 16-bit numbers (an ideal coder; real ones need more). Right tile: the lossless shadow, [[#eq-pb-shadow]]. Illustrative spectrum, not measured.
 :::

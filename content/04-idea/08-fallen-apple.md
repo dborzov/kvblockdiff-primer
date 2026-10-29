@@ -61,6 +61,14 @@ The definition says nothing about blocks, on purpose. A curve has a shape: how m
 3. Set the saving next door to zero but keep the part that never fades. Then neighbours help no more than any entry of the same conversation: a per-request dictionary would do, and block dictionaries would add nothing.
 :::
 
+What would a measurement of the curve look like? The toy history of [[#idea-mapping]] can be measured exactly, because it is small and made up. It was built with a slow wander shared by neighbours, so it should show a fallen-apple curve — and it does.
+
+::: dataset fig-idea-toy-apple idea-history view=apple,heat metrics=apple1,apple8,apple32,shuf
+**The fallen-apple curve of the toy history** ([[#fig-idea-toy-history]] again). *Neighbours, by distance:* horizontal axis, the token distance $\vgap$ to the known neighbour (1 to 64, log scale); vertical axis, the bits per element that knowing $\vE_{\vt-\vgap}$ saves when storing $\vE_{\vt}$, estimated from the $\vRsq$ of a straight-line guess at the exchange rate of II.12 and averaged over the 8 elements. Red: the history as built. Dashed grey: the same entries in a shuffled order. The vertical line is the toy's block size. *The entries:* the history itself. Synthetic, seeded; a toy built so that the hypothesis holds, not a measurement of a real cache.
+:::
+
+The curve has the shape the definition asks about. Next door the neighbour saves 0.86 bit per element; eight tokens back, 0.25; at the distance of one block, almost nothing. Shuffled, nothing at all. Real KV caches will draw their own curve — maybe higher, maybe flat — and measuring it is the point of [[#questions-framework-a]].
+
 What makes the hypothesis plausible? Nearby tokens come from nearby hidden states. And the KV-quantization literature reports regular structure: keys have a few channels with large values that change slowly from token to token, and neighbouring tokens' values look alike ([[#papers-kivi]], [[#papers-kvquant]], [[#papers-cachegen]]). But all of it was observed at 16-bit or heavily quantized precision, and none of it was measured in bits. That a neighbour can never *hurt* on average is a theorem ([[#idea-what-is-right]]). That a closer neighbour helps *more*, and by how much, is the hypothesis.
 
 ::: takeaway
@@ -91,7 +99,13 @@ print(f"cosine similarity: {cos:.2f}")
 print(f"R² of the other {d-4} channels: {r2:.3f}")
 ```
 
-It prints a cosine similarity of 0.86 and an [[r-squared|R²]] of 0.000 for the other 636 channels. Four channels make the two vectors look like near-copies; the other 636 elements must be stored at full price.
+It prints a cosine similarity of 0.86 and an [[r-squared|R²]] of 0.000 for the other 636 channels. The card below draws one such pair, so you can see where the cosine comes from.
+
+::: dataset fig-idea-cosine-pair idea-cosine-pair view=strips,scatter,zoom hl=big metrics=cos,energy,cosrest,r2,bits
+**Two entries with a cosine of 0.86.** *The two entries:* the 640 elements of each (vertical axis) by element number (horizontal axis); both have four spikes of 30 at elements 0–3 (highlighted) and small, unrelated numbers everywhere else. *b against a, all 640:* each element of b against the same element of a; the four spikes sit far out on the diagonal, the rest is a blob at the origin. *b against a, the 636:* a zoom on the blob — a round cloud, no diagonal. Drag a box to select points. *Numbers:* the cosine, how much of the vectors' length the four spikes own, and what a predicts of the rest. Synthetic, seeded (its own random numbers, same recipe as the snippet).
+:::
+
+Four channels own 86 % of each vector's squared length, so they decide the cosine. Zoom in and the other 636 elements form a round cloud: knowing a's element tells you nothing about b's. Those 636 must be stored at full price.
 
 ::: theme which-vs-what
 Confusion 2 is the expensive one. HiSparse's hit rate is strong evidence about the indexer's queries and no evidence at all about fallen-apple similarity.

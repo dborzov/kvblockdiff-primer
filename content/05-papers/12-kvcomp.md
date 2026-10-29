@@ -74,6 +74,14 @@ A tempting explanation is the grid: after coarse rounding there are only a few b
 3. Raise $\vRsq$ to 90 %. The coarse grid now saves about half its bits; the fine grid saves 1.66 of 7.05.
 :::
 
+The same happens on data. Take the Gull Rock temperatures once more — the channel whose anchors we measured on [[#papers-cachegen]] — and store them twice: in tenths of a degree, as in Part II, and in whole degrees. The predictor is "the same as last time", which explains 98.4 % of their variance ([[#school-exchange-rate]]).
+
+::: dataset fig-pb-kvcomp-temp papers-temp-recipes view=staircase,bill metrics=steps,fine,coarse
+**The Gull Rock temperatures on a fine and a coarse grid.** *One day, two grids:* day 3, half-hour by half-hour (horizontal), in °C (vertical): the readings in tenths of a degree (lapis, with dots) and the same readings rounded to whole degrees (saffron staircase). *Bits on two grids:* entropy of the histogram in bits per reading, for each reading alone (lapis) and for its difference from the reading before (peacock), on each grid, over all 1,344 readings; the label above each pair gives the saving, in bits and as a share of the reading alone. Synthetic, seeded data: the temperatures of [[#school-prediction]].
+:::
+
+On tenths the channel spreads over 24 grid steps, and the predictor takes 6.53 bits to 3.63: it saves 2.91 bits, 44 % of the bill. On whole degrees it spreads over 2.4 steps, inside the coarse band of the figure, and the predictor takes 3.30 bits to 1.09: it saves only 2.21 bits, but 67 % of the bill.
+
 So the grid alone does not make predictors useless: in *share of the bits*, a predictor is worth more on a coarse grid. If KVComp was right to leave it out, the reasons lie elsewhere.
 
 - **Its rulers already did the predicting.** A ruler per channel per block of tokens *is* a location and a scale — exactly what the simplest predictor would supply. Whatever such a predictor explains, the rounding has already absorbed. A predictor must explain what is left *after* the ruler.

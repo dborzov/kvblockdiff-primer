@@ -1,0 +1,100 @@
+# Running example datasets of Part VII (missed): the Gull Rock data of Parts I–II, looked at again with the corrections
+# of "What Dima missed". All of them are derived from Part II's datasets. Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+missed-shuffled:
+  title: The temperatures, shuffled
+  blurb: The four weeks of Gull Rock temperatures twice — in the order the thermometer wrote them, and dealt out in a random order.
+  emblem: dice
+  unit: 1,344 readings × 2 orders
+  source: derived from Gull Rock temperatures
+  csv: gull-rock-temperature-shuffled.csv
+  story: >-
+    The shuffle control of Part VII on data the reader already knows. Shuffling keeps every value and the histogram, and
+    destroys every neighbour: the reading before goes from explaining 98 % of the variance to explaining nothing, and
+    subtracting it goes from saving three bits to costing half a bit. A real neighbour effect must vanish like this.
+missed-distance:
+  title: The temperature distance curve
+  blurb: How many bits one earlier temperature reading saves, for every gap from half an hour to two weeks, in order and shuffled.
+  emblem: ruler
+  unit: 672 gaps
+  source: derived from the shuffled temperatures
+  csv: gull-rock-temperature-distance-curve.csv
+  story: >-
+    The fallen-apple property measured as a curve over distance, the way the plan measures KV entries: three bits at
+    half an hour, under one bit at three hours, nothing at twelve, and back up one day later, because the days repeat. The
+    shuffled curve is the control and stays flat at zero.
+missed-blocks:
+  title: The temperatures in blocks
+  blurb: What a per-block dictionary holding the block's mean saves on the Gull Rock temperatures, against the block size, after paying for itself.
+  emblem: tiles
+  unit: 17 block sizes
+  source: derived from the shuffled temperatures
+  csv: gull-rock-temperature-blocks.csv
+  story: >-
+    The block size as a knob, on real (synthetic) data: the gain of the block mean falls as blocks grow past the
+    weather's memory, the price of storing a mean per block falls too, and the net has a broad best near two to four hours.
+    One block for the whole record saves nothing; on shuffled readings no block size pays.
+missed-orders:
+  title: Four guesses for the temperatures
+  blurb: FLAC's four fixed predictors — guess 0, the same as last time, continue the line, continue the parabola — on the Gull Rock temperatures.
+  emblem: gauge
+  unit: 1,341 readings × 4 guesses
+  source: derived from Gull Rock temperatures
+  csv: gull-rock-temperature-orders.csv
+  story: >-
+    Lossless audio's simplest predictors applied to the thermometer of II.10. Orders 1 and 2 tie near 3.6 bits a reading;
+    order 3 is almost a bit worse, because every extra past reading it combines brings its own sensor noise.
+missed-channels:
+  title: Ten days, channel by channel
+  blurb: How much of each of the five Gull Rock channels the reading half an hour before explains, and what that is worth in bits.
+  emblem: layers
+  unit: 5 channels
+  source: derived from Ten days at Gull Rock
+  csv: gull-rock-channel-r2.csv
+  story: >-
+    Three slow channels (both thermometers and the pressure) explain about 95 % each; humidity and wind almost nothing,
+    and the wind's previous reading is worse than its mean, so it is left unpredicted. Spread unevenly like this, the same
+    average buys about twice the bits it would if spread evenly: the escape hatch of VII.6.
+missed-spectrum:
+  title: The spectrum of ten days
+  blurb: The five eigenvalues of the standardized ten days at Gull Rock, and what each contributes to the bound on any rotation.
+  emblem: axes
+  unit: 5 directions
+  source: derived from Ten days at Gull Rock
+  csv: gull-rock-ten-days-spectrum.csv
+  story: >-
+    A spectrum in, a number out: the KLT bound of the five channels is about three quarters of a bit per element, and
+    nearly all of it comes from one almost empty direction — the two thermometers disagreeing.
+missed-lifted:
+  title: The thermometers, lifted
+  blurb: The two mast thermometers of the ten days, in whole tenths, turned by 45° with three integer shears — exactly undoable.
+  emblem: stairs
+  unit: 480 readings × 2
+  source: derived from Ten days at Gull Rock
+  csv: gull-rock-thermometers-lifted.csv
+  story: >-
+    The lossless version of the turn of II.15. Every pair comes back exactly, no two pairs collide, and the lifted
+    coordinates keep nearly all of the transform coding gain the eigenvalues promise.
+missed-sky-cost:
+  title: The season, report by report
+  blurb: What knowing the season does to the cost of each kind of Gull Rock sky report — cheaper on average, dearer for the unusual ones.
+  emblem: sun
+  unit: 16 kinds of report
+  source: derived from the sky archive
+  csv: gull-rock-sky-cost-by-season.csv
+  story: >-
+    The archive of II.3 counted by season and sky. Mutual information is the average saving, and it is never negative;
+    single reports that are unusual for their season (a sunny winter noon, a foggy summer one) cost more than without
+    the season.
+missed-wind-reads:
+  title: Twenty calls for single readings
+  blurb: Bits the harbour office must read to answer twenty calls for single Gull Rock wind readings, for stream chunks of every size against fixed-length slots.
+  emblem: telegraph
+  unit: 11 chunk sizes
+  source: derived from Gull Rock wind, exact expectations
+  csv: gull-rock-wind-single-reads.csv
+  story: >-
+    The access pattern of the miss path, in the toy world: scattered single reads. Fixed-length slots cost 22 % more per
+    reading than a stream coder, but a stream must decode a whole chunk per call; with two readings per chunk it is already worse than II.9's
+    fixed-length slots.

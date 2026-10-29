@@ -93,6 +93,14 @@ So at least 79 % of each channel's variance (83 % for 2.9×) would have to be sl
 3. Drift 85 % but moving fast (10 tokens): the anchor drifts away from later tokens of its group, and the previous token wins.
 :::
 
+One channel we can measure end to end is Part II's: the four weeks of Gull Rock temperatures ([[#school-prediction]]), a slow drift — the day's warming and cooling, the weather — plus a little fast noise. Cut the readings into groups of ten, CacheGen-style, and store every reading as its difference from its group's first.
+
+::: dataset fig-pb-cachegen-temp papers-temp-recipes view=anchors,distance metrics=n,sd,ancRatio,prevRatio,ancH
+**The Gull Rock temperatures, coded with anchors.** *Anchors and differences:* top, the first two days of readings in °C, cut into groups of ten (dotted lines; five hours each), with each group's anchor (vermilion dot); bottom, what is stored for every other reading — its difference from the anchor (bars) — and, for comparison, the difference from the reading just before (peacock line). Hover a bar for both. *By distance from the anchor:* the typical size (standard deviation, tenths of a degree) of the difference from the anchor at each distance 1 to 9, over all 1,344 readings, against the reading before and the spread of the readings themselves. Synthetic, seeded data: the temperatures of [[#school-prediction]].
+:::
+
+On this channel the anchor passes CacheGen's test: its differences are 3.2 times narrower in variance than the readings, right next to the paper's 2.4–2.9×, and worth about 0.8 bits per reading. The second view is the opening table's pattern, measured: the farther a reading sits from its anchor, the wider the difference. And the reading just before does far better, 63 times narrower and worth about 3 bits. Within five hours the day moves; within half an hour it hardly does. Anchors buy parallel decoding, and on a channel that drifts this fast they pay for it in bits — the trade of the figure's fast-drift setting (10 tokens).
+
 ::: note warning Where we are not convinced
 - **The baseline of the 2.4–2.9× is not clear** from what we could read — pooled or per channel, 16-bit or rounded.
 - **No shuffle control.** The comparison that would make the observation a measurement is the same statistic on tokens shuffled across texts.

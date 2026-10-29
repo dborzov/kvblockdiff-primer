@@ -64,6 +64,14 @@ Read the table by rows, not columns.
 - The **deltas are almost everything**. Even the heavy dictionary is under a tenth of the block.
 - The dictionary still **adds** something to every entry: $\vw/\vb$ of an entry's size, spread evenly over the block. At $\vw = 256$ that turns a 0.75 into a 0.81.
 
+The same scales work on the toy history of [[#idea-mapping]], where every byte is computed rather than assumed. Its blocks are tiny, only $\vb = 32$ entries, so the tax shows.
+
+::: dataset fig-idea-toy-blocks idea-entry-sizes view=blocks,delta metrics=dictb,delta,share,allin
+**The toy history's blocks on the scales** ([[#fig-idea-toy-sizes]] again). *Block by block:* for each of the four blocks, the raw block (grey: 32 entries of 8 bytes) and the stored block, split into its dictionary (gold, 16 bytes) and its 32 deltas, bars to scale; the label gives the stored total and its share of raw. *With the block dictionary:* each entry coded alone (pale) and as a delta (solid), in bytes. *Numbers:* the dictionary, the average delta, the dictionary's share and the all-in cost per entry. Computed from the synthetic, seeded toy history.
+:::
+
+In the toy, the dictionary is 8 % of a stored block, and it lifts the all-in cost of an entry from $\vrho = 0.680$ to $\vrho + \vw/\vb = 0.680 + 2/32 = 0.742$ of raw. The same dictionary on a block of 4,096 entries would add 0.0005. Small blocks pay a real tax.
+
 So the question "how big should the dictionary be?" becomes a trade. A heavier dictionary can predict better and push $\vrho$ down, but it charges a larger $\vw/\vb$. Part VI does that trade with information theory ([[#homework-amortization-rule]]).
 
 ::: takeaway

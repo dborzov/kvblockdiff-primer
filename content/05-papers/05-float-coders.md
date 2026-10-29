@@ -45,7 +45,7 @@ Part II met the same split in numbers you can look at: the foot thermometer of t
 **Ten days of Gull Rock temperatures in BF16, bit by bit.** *All 7,680 bits:* one thin column per reading (480, in time order), one row per bit — the sign, the 8 exponent bits e7…e0 and the 7 mantissa bits m6…m0, in three colours; a filled cell is a 1, and the number at the right of each row is that bit's entropy over the ten days. *Entropy of each bit:* the same entropies as bars, from 0 (always the same) to 1 (a coin flip). Synthetic, seeded data, the same as on [[#school-integers-floats]].
 :::
 
-The rows tell the whole story of this page. The sign and exponent rows are solid stripes; the mantissa rows are static. The temperatures are an extreme case — all positive and between 6 and 16 °C, they fall into just two binades, so sign and exponent together carry 0.22 bits. Numbers centred on zero, like the bell curve above or a KV cache, reach into more binades: 2.54 bits. The mantissa is noise in both: 5.91 of its 7 bits for the temperatures, nearly all 7 for the bell curve.
+The rows tell the whole story of this page. The sign and exponent rows are solid stripes, or nearly; the mantissa rows are static. The temperatures are an extreme case — all positive and between 6 and 16 °C, they fall into just two binades, so sign and exponent together carry 0.22 bits. Numbers centred on zero, like the bell curve above or a KV cache, reach into more binades: 2.54 bits. The mantissa is noise in both: 5.91 of its 7 bits for the temperatures, nearly all 7 for the bell curve.
 
 Every coder on this page is a different way of cashing in those 5.5 spare exponent bits. None of them finds much anywhere else.
 

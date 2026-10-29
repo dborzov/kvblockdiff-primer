@@ -62,6 +62,14 @@ The residual is then written with a Rice code: a few fixed bits plus a short una
 
 Points 2 and 3 are worth a second look. A residual is a *difference*, and the variances of independent noises add. Order 1 doubles the noise variance; order 2 multiplies it by 6; order 3 by 20. This is exactly why the [[sib]] dictionary, which predicts an entry from a noisy sibling, starts with doubled noise ([[#homework-sib]]).
 
+The Gull Rock thermometer of [[#school-prediction]] takes the same test. Its four weeks of readings are slow and smooth, with a tenth of a degree of sensor noise on each.
+
+::: dataset fig-missed-temp-orders missed-orders view=bits,hist,day hl=fronts metrics=h0,h1,h2,h3,sd
+**FLAC's four guesses on the Gull Rock temperatures.** *Plot:* "Bits per reading" is the entropy of each guess's residual histogram, the bits an ideal coder pays per reading (the line marks the readings' fixed width of 7 bits). "Residual shapes" overlays how often each residual occurs for orders 1, 2 and 3. "One day with a front" shows day 4: the temperature on top, the three residuals below; the highlight marks readings taken while a front passes. *Table:* every reading with its three residuals, in tenths of a degree. *Numbers:* the four costs and the residuals' spreads. Synthetic, seeded data from II.10.
+:::
+
+Order 1, the guess of II.10, takes a reading from 6.54 bits to 3.62. Order 2 ties it at 3.61: the straight line follows the slow daily swing, and pays for that in noise. Order 3 is worse by almost a bit, 4.42. A slow, noisy channel wants a short memory.
+
 Now line up the family.
 
 | codec | predicts each value from | stores | codes the residual with |

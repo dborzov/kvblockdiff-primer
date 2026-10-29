@@ -7,7 +7,7 @@
 // helpers: the E4M3 grid and rounding exactly as plan_harness.py, shared with figures/plan.js.
 (function () {
   const NE = 4, NC = 8, T = 8192, D = 64, TB = 2048, BS = [256, 512, 1024, 2048, 4096];
-  const SHOW = 9, OUT = 1;                  // the channel drawn (centred near zero) and an outlier channel for the table
+  const SHOW = 24, OUT = 1;                 // the channel drawn (centred near zero) and an outlier channel for the table
 
   // ---- E4M3, exactly as analysis/plan_harness.py
   function rint(v) { const f = Math.floor(v), d = v - f; return d > 0.5 ? f + 1 : d < 0.5 ? f : (f % 2 === 0 ? f : f + 1); }
@@ -34,16 +34,16 @@
   const e4value = i => Math.sign(i) * E4[Math.abs(i)];
 
   // ---- small statistics on integer codes
-  function histBits(codes) {
-    const c = new Map();
-    for (const v of codes) c.set(v, (c.get(v) || 0) + 1);
+  function histBits(codes) {                // codes are integers in -255 … 255
+    const c = new Int32Array(511);
+    for (const v of codes) c[v + 255]++;
     let H = 0;
-    c.forEach(n => { const p = n / codes.length; H -= p * Math.log2(p); });
+    for (const n of c) if (n) { const p = n / codes.length; H -= p * Math.log2(p); }
     return H;
   }
   function median(a) { const s = Float64Array.from(a).sort(); const n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; }
-  /** the source's model: one Laplace bump per channel in index space, over the alphabet lo…hi */
-  function indexLaplaceBits(codes, lo, hi) {
+  /** the source's model: one Laplace bump per channel in index space, over the harness's alphabet -255 … 255 */
+  function indexLaplaceBits(codes, lo = -255, hi = 255) {
     const m = Math.round(median(codes));
     let ad = 0; for (const v of codes) ad += Math.abs(v - m);
     const beta = Math.max(ad / codes.length, 0.25);
@@ -143,8 +143,8 @@
         i8[k] = clamp(rint(x / i8scale[c]), -127, 127);
         e4[k] = e4index(e4round(x / e4scale));
       }
-      out.h8.push(histBits(i8)); out.l8.push(indexLaplaceBits(i8, -127, 127));
-      out.h4.push(histBits(e4)); out.l4.push(indexLaplaceBits(e4, -126, 126)); out.g4.push(gridBits(e4, E4VALS, 126));
+      out.h8.push(histBits(i8)); out.l8.push(indexLaplaceBits(i8));
+      out.h4.push(histBits(e4)); out.l4.push(indexLaplaceBits(e4)); out.g4.push(gridBits(e4, E4VALS, 126));
     }
     return Object.fromEntries(Object.entries(out).map(([k, v]) => [k, mean(v)]));
   });

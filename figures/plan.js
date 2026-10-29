@@ -5,8 +5,9 @@
    planLadderGrid (IX.7), planTimeline (IX.8), planDecision (IX.9),
    planSelections (IX.10), planReplaySweep (IX.11), planFrontier (IX.12),
    planRisks (IX.15).
-   Harness numbers come from analysis/plan_harness.py → figures/data/plan-harness.json.
-   Everything else is computed here, from seeded generators or closed formulas.
+   Harness numbers come from analysis/plan_harness.py → figures/data/plan-harness.json, transcribed into the
+   dataset 'plan-ladder' (figures/datasets/plan-ladder.js). The E4M3 helpers live in 'plan-synth', the synthetic
+   indexer trace and its replay in 'plan-trace'. Everything else is computed here, from seeded generators or closed formulas.
    ===================================================================== */
 window.FIG = window.FIG || {};
 
@@ -17,36 +18,8 @@ window.FIG = window.FIG || {};
   const pow2 = v => 2 ** v;
   const fmtB = b => (b >= 1024 ? `${b / 1024}K` : `${b}`);
 
-  /** round half to even (numpy's rint) */
-  function rint(v) {
-    const f = Math.floor(v), d = v - f;
-    if (d > 0.5) return f + 1;
-    if (d < 0.5) return f;
-    return f % 2 === 0 ? f : f + 1;
-  }
-
-  // ---- E4M3, exactly as analysis/plan_harness.py
-  const E4 = (() => {
-    const g = [0];
-    for (let m = 1; m < 8; m++) g.push(m / 8 * 2 ** -6);
-    for (let e = 1; e < 16; e++) for (let m = 0; m < 8; m++) g.push((1 + m / 8) * 2 ** (e - 7));
-    g.pop();                                   // the NaN pattern
-    return g;                                  // 127 values, 0 … 448
-  })();
-  function e4round(x) {
-    const ax = Math.min(Math.abs(x), 448);
-    const e = Math.floor(Math.log2(Math.max(ax, 2 ** -6)));
-    const step = 2 ** (e - 3);
-    const q = Math.min(rint(ax / step) * step, 448);
-    return q === 0 ? 0 : Math.sign(x) * q;
-  }
-  function e4index(q) {                       // q must be on the grid
-    let lo = 0, hi = E4.length - 1;
-    const a = Math.abs(q);
-    while (lo < hi) { const mid = (lo + hi) >> 1; if (E4[mid] < a) lo = mid + 1; else hi = mid; }
-    return q < 0 ? -lo : lo;
-  }
-  const e4value = i => Math.sign(i) * E4[Math.abs(i)];
+  // ---- E4M3, exactly as analysis/plan_harness.py: one copy, in the rehearsal set's dataset file
+  const { E4, rint, e4round, e4index, e4value } = DS.spec('plan-synth').helpers;
 
   // ---- small statistics
   function histEntropy(codes) {
@@ -83,91 +56,24 @@ window.FIG = window.FIG || {};
     return bits / codes.length;
   }
 
-  // ---- the synthetic indexer trace shared by IX.10 and IX.11 (a JS twin of test_wave2)
-  const TR = { n: 4096, b: 256, dk: 16, k: 128, steps: 300, heads: 4 };
-  const traceCache = new Map();
-  function makeTrace(strength, drift, seed = 'plan-trace') {
-    const key = `${strength}|${drift}|${seed}`;
-    if (!traceCache.has(key)) traceCache.set(key, buildTrace(strength, drift, seed));
-    return traceCache.get(key);
-  }
-  function buildTrace(strength, drift, seed) {
-    const r = rng(seed);
-    const nb = TR.n / TR.b;
-    const topics = range(nb).map(() => range(TR.dk).map(() => r.normal()));
-    const K = new Float64Array(TR.n * TR.dk);
-    for (let p = 0; p < TR.n; p++) {
-      const t = topics[Math.floor(p / TR.b)];
-      for (let c = 0; c < TR.dk; c++) K[p * TR.dk + c] = strength * t[c] + r.normal();
-    }
-    let q = range(TR.heads).map(() => range(TR.dk).map(() => r.normal()));
-    const sel = [];
-    const score = new Float64Array(TR.n), prob = new Float64Array(TR.n);
-    const sq = Math.sqrt(TR.dk);
-    for (let s = 0; s < TR.steps; s++) {
-      q = q.map(v => v.map(x => x + drift * r.normal()));
-      prob.fill(0);
-      for (const qh of q) {                       // softmax per head, summed over heads
-        let mx = -Infinity;
-        for (let p = 0; p < TR.n; p++) {
-          let a = 0;
-          for (let c = 0; c < TR.dk; c++) a += qh[c] * K[p * TR.dk + c];
-          score[p] = a / sq;
-          if (score[p] > mx) mx = score[p];
-        }
-        let Z = 0;
-        for (let p = 0; p < TR.n; p++) { score[p] = Math.exp(score[p] - mx); Z += score[p]; }
-        for (let p = 0; p < TR.n; p++) prob[p] += score[p] / Z;
-      }
-      const idx = Array.from(range(TR.n));
-      idx.sort((a, b) => prob[b] - prob[a]);
-      sel.push(idx.slice(0, TR.k));
-    }
-    return sel;
-  }
-  /** token LRU + dictionary LRU, as replay() in analysis/plan_harness.py */
-  function replay(selections, B, b, nD, policy) {
-    const cache = new Map(), dcache = new Map();   // Map keeps insertion order: first = least recent
-    let misses = 0, total = 0, dmisses = 0, loads = 0;
-    const touch = (m, key) => { m.delete(key); m.set(key, null); };
-    for (const Sarr of selections) {
-      const S = new Set(Sarr);
-      const fresh = Sarr.filter(p => !cache.has(p));
-      Sarr.forEach(p => { if (cache.has(p)) touch(cache, p); });
-      for (const p of fresh) {
-        if (cache.size >= B) { for (const v of cache.keys()) { if (!S.has(v)) { cache.delete(v); break; } } }
-        cache.set(p, null);
-        const j = Math.floor(p / b);
-        if (dcache.has(j)) { dmisses++; touch(dcache, j); }
-      }
-      let wanted;
-      if (policy === 'heaviest') {
-        const cnt = new Map();
-        for (const p of cache.keys()) { const j = Math.floor(p / b); cnt.set(j, (cnt.get(j) || 0) + 1); }
-        wanted = [...cnt.entries()].sort((a, c) => c[1] - a[1]).slice(0, nD).map(e => e[0]);
-      } else wanted = [...new Set(fresh.map(p => Math.floor(p / b)))];
-      for (const j of wanted) {
-        if (dcache.has(j)) { touch(dcache, j); continue; }
-        loads++;
-        if (dcache.size >= nD) dcache.delete(dcache.keys().next().value);
-        dcache.set(j, null);
-      }
-      misses += fresh.length; total += Sarr.length;
-    }
-    return { m: misses / total, fD: dmisses / Math.max(misses, 1), nload: loads / selections.length };
-  }
+  // ---- the synthetic indexer trace of IX.10 and IX.11 and its replay: one copy, in the rehearsal trace's dataset file
+  const { TR, makeTrace, replay } = DS.spec('plan-trace').helpers;
 
   /* =================================================================
      IX.1 — planDecodeAlone: a loc dictionary, and one entry decoded alone
      ================================================================= */
   FIG.planDecodeAlone = (host) => {
-    const r = rng('plan-decode');
-    const centres = [40, -12, 3, 97, -55], spread = [3, 2, 4, 2, 3];
-    const X = range(6).map(() => centres.map((c, j) => Math.round(c + spread[j] * r.normal())));
-    const D = centres.map((_, j) => Math.round(median(X.map(row => row[j]))));
+    // The Gull Rock afternoon of II.13 (DS 'gull-day') as a block: 12 entries, 5 channels, each value in whole sensor
+    // steps (tenths of a degree, hundredths of humidity, tenths of a hPa, knots). The loc dictionary is the median per channel.
+    const STEP = [['low', 10], ['mast', 10], ['hum', 100], ['pres', 10], ['wind', 1]];
+    const day = DS.rows('gull-day');
+    const X = day.map(r => STEP.map(([k, f]) => Math.round(r[k] * f)));
+    const D = STEP.map((_, j) => rint(median(X.map(row => row[j]))));
     const R = X.map(row => row.map((v, j) => v - D[j]));
     const width = range(5).map(j => Math.max(1, Math.ceil(Math.log2(2 * Math.max(...R.map(row => Math.abs(row[j]))) + 1))));
-    let sel = 2;
+    const raw = DS.metric('gull-day', 'bits-raw');                 // II.13: whole sensor steps plus a sign bit
+    const names = day.map(r => r.time);
+    let sel = 3;
     const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
     const grid = h('div', { class: 'pl-da' });
     const ro = readout();
@@ -177,7 +83,7 @@ window.FIG = window.FIG || {};
       const t = h('div', { class: 'pl-da-t' + (opts.cls ? ' ' + opts.cls : '') });
       t.append(h('div', { class: 'pl-da-h', html: title }));
       const body = h('div', { class: 'pl-da-body', style: `grid-template-columns: auto repeat(5, minmax(2.4rem, 1fr))` });
-      body.append(h('span', { class: 'pl-da-c pl-da-k' }, ''), ...range(5).map(j => h('span', { class: 'pl-da-c pl-da-k', html: `c${j}` })));
+      body.append(h('span', { class: 'pl-da-c pl-da-k' }, ''), ...['foot', 'top', 'hum.', 'pres.', 'wind'].map(t => h('span', { class: 'pl-da-c pl-da-k', html: t })));
       rows.forEach((row, i) => {
         const on = opts.isOn(i), used = opts.isUsed(i);
         body.append(h('span', { class: 'pl-da-c pl-da-k', text: opts.rowName(i) }));
@@ -191,17 +97,17 @@ window.FIG = window.FIG || {};
     }
     function draw() {
       grid.replaceChildren(
-        tableOf('the block <small>(8-bit codes)</small>', X, { rowName: i => `entry ${i}`, show: v => sgn(v), isOn: i => i === sel, isUsed: () => false, click: i => { sel = i; draw(); } }),
+        tableOf('the block <small>(whole sensor steps)</small>', X, { rowName: i => names[i], show: v => sgn(v), isOn: i => i === sel, isUsed: () => false, click: i => { sel = i; draw(); } }),
         tableOf(tex('\\vD') + ' <small>(one per block)</small>', [D], { rowName: () => 'location', show: v => sgn(v), isOn: () => false, isUsed: () => true, cls: 'pl-da-dict' }),
-        tableOf('the deltas <small>(residuals)</small>', R, { rowName: i => `δ ${i}`, show: v => sgn(v), isOn: () => false, isUsed: i => i === sel, dim: true, click: i => { sel = i; draw(); } }),
+        tableOf('the deltas <small>(residuals)</small>', R, { rowName: i => `δ ${names[i]}`, show: v => sgn(v), isOn: () => false, isUsed: i => i === sel, dim: true, click: i => { sel = i; draw(); } }),
       );
       const rebuilt = R[sel].map((v, j) => v + D[j]);
       const ok = rebuilt.every((v, j) => v === X[sel][j]);
       const dBits = width.reduce((a, b) => a + b, 0);
       ro.set([
-        [`entry ${sel} rebuilt`, `${rebuilt.map(sgn).join(', ')} ${ok ? '— bit for bit ✓' : '✗'}`],
-        ['read from memory', `${tex('\\vD')} + δ ${sel} only (the other ${X.length - 1} deltas untouched)`],
-        ['delta size', `${dBits} bits (widths ${width.join('+')}) vs ${5 * 8} bits raw`],
+        [`the ${names[sel]} reading, rebuilt`, `${rebuilt.map(sgn).join(', ')} ${ok ? '— bit for bit ✓' : '✗'}`],
+        ['read from memory', `${tex('\\vD')} + δ ${names[sel]} only (the other ${X.length - 1} deltas untouched)`],
+        ['delta size', `${dBits} bits (widths ${width.join(' + ')}) against ${sum(raw)} bits raw (${raw.join(' + ')})`],
       ]);
     }
     draw();
@@ -255,10 +161,8 @@ window.FIG = window.FIG || {};
   /* =================================================================
      IX.3 — planControlsRun: the harness on the synthetic set, with the shuffle
      ================================================================= */
-  FIG.planControlsRun = async (host) => {
-    const res = await fetch(KV.prefix + 'assets/figs/data/plan-harness.json');
-    if (!res.ok) throw new Error('plan-harness.json: HTTP ' + res.status);
-    const J = await res.json();
+  FIG.planControlsRun = (host) => {
+    const J = DS.spec('plan-ladder').helpers.J;      // the harness's printout, transcribed from figures/data/plan-harness.json
     let fmtSel = 'int8', rate = 'entropy', show = 'both';
     const box = h('div'), ro = readout();
     host.append(controls(

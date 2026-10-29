@@ -35,7 +35,13 @@ Some of the most useful ideas in this proposal are older than the people writing
 
 ## Side information at the decoder: Slepian–Wolf and Wyner–Ziv {#side-info}
 
-Back on Gull Rock, the station has two thermometers, and the mainland already knows the reading $\vY$ of the upper one. The lower one's reading $\vX$ is a 3-bit code, and the two never differ in more than one bit. How many bits must the station send for $\vX$?
+Back on Gull Rock, the station has two thermometers, one at the foot of the mast and one at the top. Here they are over ten days, as in [[#school-correlation]]: they almost always agree.
+
+::: dataset fig-papers-classics-thermo ten-days view=thermo hl=table metrics=diff,corr-thermo,bits-thermo
+**The two thermometers of the ten days.** Each dot is one half-hourly reading (480 in all): the foot thermometer on the horizontal axis, the top one on the vertical axis, both in °C; the dashed line is "top = foot + the average difference". Highlighted: the six readings tabled on [[#school-correlation]]. The Numbers tab gives the difference, the correlation, and what knowing one thermometer saves on the other. Synthetic, seeded data, the same as on [[#school-correlation]].
+:::
+
+Knowing one thermometer saves about 2.9 bits on the other — if the sender knows it too. Now shrink the pair to a cartoon. The mainland already knows the reading $\vY$ of the upper one. The lower one's reading $\vX$ is a 3-bit code, and the two never differ in more than one bit. How many bits must the station send for $\vX$?
 
 If the station knows $\vY$ too, the answer is from [[#school-side-information]]: given $\vY$ there are only four possibilities ($\vY$ itself, or one of three single flips), so 2 bits. Here is the surprise: **the station does not need to know $\vY$.** Split the eight codes into four bins of two, each code paired with its exact opposite:
 
@@ -137,11 +143,17 @@ def unrotate_int(x, y, theta):        # the same shears, undone in reverse order
     x = x - round(a * y)
     return x, y
 
-u, v = rotate_int(113, 117, np.pi / 4)        # readings in tenths of a degree
-print((u, v), unrotate_int(u, v, np.pi / 4))  # (-3, 163) (113, 117)
+u, v = rotate_int(114, 108, np.pi / 4)        # foot and top, in tenths of a degree
+print((u, v), unrotate_int(u, v, np.pi / 4))  # (4, 157) (114, 108)
 ```
 
-The exact rotation of (113, 117) is (−2.83, 162.63): the integer version is off by less than one step in each coordinate, and comes back exactly.
+The pair is the first reading of the Gull Rock afternoon ([[#school-vectors]]): 11.4 °C at the foot of the mast, 10.8 °C at the top, and 45° is close to the angle of the thermometers' own axes. The exact rotation of (114, 108) is (4.24, 156.98): the integer version is off by less than one step in each coordinate, and comes back exactly.
+
+Part II already used the smallest member of this family on that afternoon: two lifting steps (in that page's throwaway letters, $d$ = top − foot and $s$ = foot + ⌊$d$/2⌋), an exactly reversible average and difference ([[#school-coding-gain]]).
+
+::: dataset fig-papers-classics-lift gull-day view=lift metrics=lift-d,lift-exact
+**The afternoon's two thermometers, lifted.** Top: the foot and top thermometers over twelve half-hourly readings, in whole tenths of a degree, with $s$ = foot + ⌊$d$/2⌋ (dashed), roughly their average. Bottom, on the same vertical scale: the difference $d$ = top − foot (bars, labelled); hover a bar for the arithmetic. The Numbers tab checks that every reading comes back exactly. Synthetic, seeded data, the same as on [[#school-coding-gain]].
+:::
 
 ::: define plus-factorization
 - **What it is:** for a whole $\vd \times \vd$ matrix, a factorization into four pieces named P, L, U and S — a reordering of channels (P), then three triangular factors (L, U and a special S) whose diagonals hold only ones when the matrix is a rotation — introduced by Pengwei Hao (2004), after Hao and Shi's triangular elementary reversible matrices (2001). Each factor is a batch of shears, so any rotation (determinant 1) becomes an exactly reversible integer transform.

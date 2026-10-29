@@ -3,6 +3,7 @@ title: The access pattern decides the layout
 nav: The access pattern decides the layout
 lede: Run zstd over a whole KV history and it might compress nicely — and be useless, because the miss path never reads a history front to back. It reads a few hundred scattered entries per layer per step, each one alone. That one fact decides what the stored format must look like.
 group: The idea
+vendor: [pako.min.js]
 cards:
   - q: Why is a bulk stream codec like zstd the wrong form for the miss path?
     a: To decode one entry it must decode everything before it in the chunk
@@ -58,6 +59,23 @@ There are two families of compressed layout, and they behave very differently wh
 - To read entry $\vt$, read its slot (and the dictionary, if cold).
 :::
 ::::
+
+The Gull Rock messages of Part I already priced this choice, three ways, on the same 96 messages.
+
+::: dataset fig-idea-layout-gull message-sizes view=chain,log metrics=loglater,chain,dict,alone
+**Three layouts for the Gull Rock messages** ([[#fig-tiny-deltas]] again). *Day two, three ways:* one column per day-two message; pale bar, the message compressed alone; solid bar, compressed against the shared dictionary of 24 day-one messages; short violet tick, compressed against the message just before it. *Added to the log:* what each message adds when appended to one compressed log (solid) against its size alone (pale). DEFLATE (pako, level 9), computed live, in bytes. Hover a column for its sizes; drag to select a stretch.
+:::
+
+Line the three layouts up against the miss path's one demand, *decode this item alone*:
+
+| layout | bytes per message | to decode message $\vt$ you need |
+|---|---|---|
+| one compressed log (bulk stream) | 10.3 | every message before it |
+| against the message before (a chain) | 21.1 | the message before, decoded — and so on back |
+| against a shared dictionary | 22.1 | the dictionary only |
+| alone | 124.5 | nothing |
+
+The log is the most compact and the least usable. The dictionary layout gives up a factor of two in size and buys random access. kv-blockdiff makes the same trade, with a block dictionary in place of the shared one.
 
 ::: theme access-pattern
 The redundancy between entries may well be there; a bulk codec run over the whole history would find it. But the miss path never reads a history as a whole. How the data is read sets the shape of the coder before any statistics are looked at — exactly as for the Gull Rock messages.

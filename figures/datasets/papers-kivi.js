@@ -44,10 +44,10 @@
   function lines(box, ctx) {
     const hl = ctx.hl, bigOn = hl && hl === DS.spec('papers-kivi').highlights.big, loudOn = hl && hl === DS.spec('papers-kivi').highlights.loud;
     box.append(legend([['one channel (a column of the table)', series(0)], ...(bigOn ? [['the two big key channels, c2 and c5', series(1)]] : []), ...(loudOn ? [['the loud value tokens, t3 and t8', series(1), 'band']] : [])]));
-    [['key', 'keys', [-10.5, 13.5]], ['value', 'values', [-8.5, 5]]].forEach(([key, name, dom]) => {
+    [['key', 'keys', [-10.5, 13.5]], ['value', 'values', [-9.5, 5.5]]].forEach(([key, name, dom]) => {
       const b = h('div'); box.append(b);
       const X = table(ctx.rows, key);
-      const P = Plot(b, { x: [-0.4, T - 0.6], y: dom, h: key === 'key' ? 250 : 210, grid: 'y', xticks: range(T), xfmt: v => `t${v}`,
+      const P = Plot(b, { x: [-0.4, T - 0.6], y: dom, h: key === 'key' ? 260 : 230, grid: 'y', xticks: range(T), xfmt: v => `t${v}`,
         xlabel: key === 'value' ? 'token' : null, ylabel: name, label: `The ${name} of the toy cache, one line per channel` });
       if (loudOn && key === 'value') LOUD.forEach(t => el('rect', { x: P.x(t - 0.42), y: P.m.t, width: P.x(t + 0.42) - P.x(t - 0.42), height: P.ph, style: `fill:${mix(series(1), 16)}` }, P.g.bg));
       rule(P, { y: 0, dash: false, color: 'var(--ink-3)' });
@@ -72,12 +72,12 @@
     const groups = [];
     [['key', 'keys'], ['value', 'values']].forEach(([key, name]) => {
       const X = table(ctx.rows, key);
-      groups.push({ name: `${name}, per channel`, v: cols(X).map(span), who: i => `channel c${i}` });
-      groups.push({ name: `${name}, per token`, v: X.map(span), who: i => `token t${i}` });
+      groups.push({ name: `${name} · channel`, v: cols(X).map(span), who: i => `channel c${i}` });
+      groups.push({ name: `${name} · token`, v: X.map(span), who: i => `token t${i}` });
     });
     box.append(legend([['one ruler (a column or a row)', series(0), 'dot'], ['their average', series(1), 'line']]));
     const b = h('div'); box.append(b);
-    const P = Plot(b, { ycats: groups.map(g => g.name), x: [0, 23], h: 250, grid: 'x', xlabel: 'length of the ruler (largest − smallest number it covers)', label: 'How long each ruler must be' });
+    const P = Plot(b, { ycats: groups.map(g => g.name), x: [0, 23], h: 260, grid: 'x', xlabel: 'ruler length (largest − smallest)', label: 'How long each ruler must be' });
     groups.forEach((g, i) => {
       g.v.forEach((v, j) => {
         const d = dot(P.g.data, P.x(v), P.y(i) + ((j % 3) - 1) * 6 * P.fs, 3.4 * P.fs, series(0), { tabindex: 0 });
@@ -87,7 +87,7 @@
       el('line', { x1: P.x(m), x2: P.x(m), y1: Y - 14 * P.fs, y2: Y + 14 * P.fs, style: `stroke:${series(1)};stroke-width:2.5` }, P.g.top);
       svgText(P.g.top, P.x(m) + 6 * P.fs, Y - 9 * P.fs, fmt(m, 1), { class: 'val' });
     });
-    box.append(h('p', { class: 'fig-note', text: 'Each dot is one ruler: the range of one column (per channel) or one row (per token). Short rulers mean fine marks for the same number of bits.' }));
+    box.append(h('p', { class: 'fig-note', text: 'Each dot is one ruler: the range of one column (keys · channel, values · channel) or of one row (keys · token, values · token). Short rulers mean fine marks for the same number of bits.' }));
   }
 
   DS.define('papers-kivi', {

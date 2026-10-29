@@ -27,17 +27,18 @@ plan-ladder:
     E4M3, at global, request and block scope (b from 256 to 4096), on the original and on the shuffled rehearsal set,
     each with its entropy rate and fixed-length rate. It is Table 1 of wave 1 filled in on synthetic data (IX.8), the
     source of the "four readings" of the same structure (IX.7), and the presets of the decision rule (IX.9).
-plan-resid:
-  title: The two rates on the temperature residuals
-  blurb: The Gull Rock temperature residuals priced the harness's two ways — by a fitted Laplace model and by a fixed-width field with escapes.
+plan-wind-rates:
+  title: The wind, priced two ways
+  blurb: The Gull Rock wind's half-hourly changes, priced as the harness prices residuals — by a fitted Laplace model and by a fixed-width field with escapes.
   emblem: ruler
-  unit: 1,344 residuals · tenths of °C
-  source: derived from Temperature residuals
-  csv: gull-rock-residual-rates.csv
+  unit: 1,023 changes · knots
+  source: derived from Gull Rock wind
+  csv: gull-rock-wind-rates.csv
   story: >-
-    The previous-value residuals of II.10–II.11, run through the rate functions of analysis/plan_harness.py: laplace_fit
-    and entropy_rate for the scientific number, fl_widths and fixed_length_rate for the engineering one. The field width is
-    chosen so that at most half a percent of residuals escape; each escape costs its 8 raw bits.
+    Each wind reading of II.9 minus the one before ("the same as last time", II.12), run through the rate functions of
+    analysis/plan_harness.py: laplace_fit and entropy_rate for the scientific number, fl_widths and fixed_length_rate for
+    the engineering one. The field width is chosen so that at most half a percent of the changes escape; each escape costs
+    its 8 raw bits. The three escapes are the onsets of the storms.
 plan-trace:
   title: The rehearsal trace
   blurb: Three hundred decode steps of an exact top-k indexer over 4,096 synthetic keys in 16 blocks — which positions each step selects, and how they pile into blocks.

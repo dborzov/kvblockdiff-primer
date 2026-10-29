@@ -42,6 +42,14 @@ Here are four predictions on the E4M3 grid, the 8-bit float format of [[#school-
 
 Notice anything? The same miss of 1.0 costs 2 steps far from zero and 96 steps across zero. A residual counted in grid steps (in [[index-space]]) depends on *where* the prediction lands, not only on how good it is.
 
+The ladder of [[#school-fp8]] shows why. Here it is again, with the rungs near zero highlighted.
+
+::: dataset fig-missed-e4m3-again e4m3 view=linear,ladder hl=tenth metrics=unit,tenth,gap
+**The E4M3 ladder (II.20).** *Plot:* "The ladder (even scale)" shows all 253 values of the format against their index, on an even value axis, with the band of indices whose value lies between −1 and 1 shaded; "The ladder (log scale)" puts each non-negative value at its index on a logarithmic value axis. Red marks the highlighted rungs (choose which). *Table:* every rung: index, value, bits and kind. *Numbers:* how the rungs crowd towards zero. Exact: computed from the format.
+:::
+
+Almost half of the 253 rungs sit between −1 and 1, and 57 of them between −0.1 and 0.1. Near 12 the rungs are a whole unit apart. A prediction that misses across zero walks down one side of that crowd and up the other.
+
 ::: note history What the first draft did not use
 It took "predict, subtract, code the residual" as the only way to use a prediction. Item 10 of the old list names the alternative: *context modelling (coding X with the prediction as context) never loses, unlike subtraction on a log grid.* VII.7 showed the problem ([[#missed-mantissa-and-grid]]); this page is the cure, and its price.
 :::

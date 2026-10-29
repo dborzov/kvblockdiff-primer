@@ -34,10 +34,18 @@ cards:
 The forecaster at the harbour office plays a game with Gull Rock. Before each pressure reading arrives, she writes down a guess. If the station makes the same guess, it only has to radio how wrong it was — and a small error is cheap to send. She keeps three notebooks for this.
 
 - **The almanac.** Fifty years of averages for the whole coast. On 28 October the pressure is typically 1013 hPa. Printed once, owned by everybody, never rewritten.
-- **The storm log.** Notes she started when this storm arrived two days ago. It sits low, around 1005, and keeps falling.
-- **The hour sheet.** The last hour, reading by reading: 1001.2, 1001.0, 1000.9.
+- **The storm log.** Notes she started when this storm arrived two days ago. So far the storm has averaged about 995.5 hPa, and it keeps falling.
+- **The hour sheet.** The last hour, reading by reading: 978.9, 978.6, 978.2.
 
 Each notebook is narrower than the one before, and each guesses better. Each is also more work. The almanac costs her nothing. A storm log must be written for every storm. The hour sheet is torn up and rewritten every hour. And the station has to keep identical copies of all of them, or its guesses will not match hers.
+
+The storm is the one Part I's station radioed in ([[#tiny-files-notice-anything]]). Here is its pressure, with the guess each notebook makes before every reading: the almanac's 1013, the storm's average so far, and the reading just before.
+
+::: dataset fig-hwb-notebooks homework-notebooks view=guesses,misses metrics=rms,reqgain,blkgain,now
+**Three notebooks on one storm.** *Readings and guesses:* the pressure of the Gull Rock station messages (black, hPa), one reading every half hour from 28 Oct 14:30 to 30 Oct 14:00, with each notebook's guess for that reading — the almanac (dashed, 1013 hPa), the storm log (the average of the storm's readings so far) and the hour sheet (the reading before, drawn as steps). Hover for values. *How far off, on average:* each notebook's typical miss, the root mean square of reading minus guess over the 95 readings that have a history. Derived from the station messages, which are synthetic and seeded.
+:::
+
+The almanac misses by about 20 hPa, the storm log by about 10, the hour sheet by less than half a hectopascal. Halving the typical miss saves a bit ([[#school-residual-shapes]]): knowing this storm is worth about one bit per reading, and knowing the last half hour almost five more. The narrowest notebook wins by far — on this data, where neighbours really are alike.
 
 ## Three notebooks, three scopes {#three-notebooks}
 
@@ -129,7 +137,7 @@ Both compare the *same* type ([[loc]] against loc, [[klt]] against KLT), so the 
 A predictor that explains a share $\vRsq$ of the variance saves $\tfrac12 \log_2 \frac{1}{1-\vRsq}$ bits per element, for bell-shaped data.
 :::
 
-Here is the variance budget of [[#idea-the-trap]] (30 % global, 20 % thread, 20 % block, 30 % noise — **illustrative**), run through the exchange rate:
+Here is the variance budget of [[#idea-the-trap]] (30 % global, 20 % thread, 20 % block, 30 % noise — **illustrative**), run through the exchange rate (move the shares yourself in [[#fig-hwa-ladder]]):
 
 | rung | variance explained so far | bits saved so far | gain of this rung |
 |---|---|---|---|

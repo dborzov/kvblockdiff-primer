@@ -31,15 +31,13 @@ cards:
     sec: twin
 ---
 
-Two entries from the same block, first 8 elements of each, as [[integer-grid|INT8]] codes (illustrative numbers):
+Two entries from the same block, entries 1307 and 2954, first 8 elements of each, as [[integer-grid|INT8]] codes (illustrative numbers):
 
-| element | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|
-| entry 1307 | 42 | −23 | 63 | 11 | −53 | 18 | 29 | −7 |
-| entry 2954 | 39 | −20 | 65 | 6 | −51 | 14 | 31 | −9 |
-| difference | 3 | −3 | −2 | 5 | −2 | 4 | −2 | 2 |
+::: dataset fig-hwa-twins homework-twins view=both,diff metrics=spread,saved,pointer
+**Two near-duplicate entries.** *The two entries:* the first eight elements of entry 1307 (blue) and entry 2954 (teal) side by side, with their difference (red), in INT8 codes. *What is sent:* the difference alone, on the same scale, with its values. Hover a bar for the three numbers. Hand-made toy numbers.
+:::
 
-They are near-duplicates: the same token in the same kind of context, perhaps. If the receiver already has entry 2954, it could send entry 1307 as the bottom row plus a note saying "like 2954". That is the fourth dictionary.
+They are near-duplicates: the same token in the same kind of context, perhaps. If the receiver already has entry 2954, it could send entry 1307 as the difference plus a note saying "like 2954" — eight numbers within ±5 instead of eight that swing over a hundred codes. That is the fourth dictionary.
 
 ## Borrow a sibling {#twin}
 

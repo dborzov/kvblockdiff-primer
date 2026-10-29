@@ -18,7 +18,7 @@
       labels: diffOnly ? (v => sgn(v)) : false,
       tip: (v, i) => { const r = ctx.rows[i]; return `<b>element ${r.el}</b><br>entry 1307: ${r.a}<br>entry 2954: ${r.b}<br>difference: ${sgn(r.diff)}`; },
     });
-    if (diffOnly) annotate(P, 3, 8, 'the same scale as the entries:\nthe difference hugs zero', { dx: 30, dy: -50 });
+    if (diffOnly) annotate(P, 6.5, 0, 'the same scale as the entries:\nthe difference hugs zero', { dx: -40, dy: -70, anchor: 'end' });
   }
 
   DS.define('homework-twins', {

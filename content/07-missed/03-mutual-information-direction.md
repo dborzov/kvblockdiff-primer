@@ -94,6 +94,14 @@ So the theorem has a precise shape. Knowing more never costs more **on average**
 3. Watch the rare value *d* as the strength grows. Its cost climbs past 5 bits at strength 0.9.
 :::
 
+The same shape turns up in data you have met. The Gull Rock sky archive of [[#school-side-information]] has 4,096 noon reports, each with its season. Here is every kind of report, priced without the season and with it.
+
+::: dataset fig-ma-sky-cost missed-sky-cost view=bar,outcomes hl=dearer metrics=H,condH,mi,dearer,worst
+**The sky archive, priced with and without the season.** *Plot:* "Paid and saved" is the bar of the figure above for the archive: the average cost of a report with nothing known, and with the season known, split into what is still paid (red) and what the season saves (green). "Report by report" has one bar per season and sky: how much one such report's surprisal, $-\log_2 \vp$, changes once the season is known (green: cheaper, red: dearer); the number beside each bar is how many reports of that kind the archive holds. *Table:* the 16 kinds, with their counts and both costs. *Numbers:* the averages, and how many reports get dearer. Synthetic, seeded data from II.3, counted exactly.
+:::
+
+On average the season saves 0.17 bit a report, and that green part can never be negative. Yet a third of the reports get *dearer*. A sunny noon in winter costs 2.00 bits once you know it is winter, against 0.98 without. They are outnumbered two to one by the ordinary reports that get cheaper, so the average still falls.
+
 ::: takeaway
 - Red is paid, green is saved, and together they are always the whole bar.
 - Knowing more never hurts on average; a single unusual entry can still cost more.
