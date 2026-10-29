@@ -33,7 +33,7 @@ Here is a number to sit with: **13 GB**. That is the KV cache of a single 128K-t
 The arithmetic is short. Every token leaves one [[entry]] at each of the $\vNL$ layers, and each entry has $\ve$ bytes:
 
 $$
-\text{KV bytes of one request} = \underbrace{\vL}_{\text{tokens}} \times \underbrace{\vNL}_{\text{layers}} \times \underbrace{\ve}_{\text{bytes per entry}}
+\text{KV bytes} = \underbrace{\vL}_{\text{tokens}} \times \underbrace{\vNL}_{\text{layers}} \times \underbrace{\ve}_{\text{bytes per entry}}
 $$ {#eq-landscape-kv-bytes}
 
 For GLM-5.1, $\vNL \times \ve$ is about 100 KB per token in BF16 (78 layers of 1.28 KB), or 50 KB if the entries were stored with 8 bits per number.
@@ -72,9 +72,10 @@ The obvious move is to keep the history somewhere bigger. The machine has such a
 So keep each request's whole history in host DRAM, and at every step bring up over the link the entries the [[indexer]] selected — $\vk$ per layer. Attention reads only those anyway. How much rides the lift?
 
 $$
-\text{bytes per step} = \underbrace{\vk}_{2048} \times \underbrace{\vNL}_{78} \times \underbrace{\ve}_{1.28\ \text{KB}} \approx 204\ \text{MB},
-\qquad
-\frac{204\ \text{MB}}{\underbrace{\vtpot}_{30\ \text{ms}}} \approx 6.8\ \text{GB/s per request}
+\begin{aligned}
+\text{per step} &= \underbrace{\vk}_{2048} \times \underbrace{\vNL}_{78} \times \underbrace{\ve}_{1.28\ \text{KB}} \approx 204\ \text{MB} \\[4pt]
+\text{per second} &= \frac{204\ \text{MB}}{\underbrace{\vtpot}_{30\ \text{ms}}} \approx 6.8\ \text{GB/s}
+\end{aligned}
 $$ {#eq-landscape-naive}
 
 A PCIe link carries about 50 GB/s in practice (64 on paper). It is full at **about seven requests** (nine on paper). HiSparse's paper puts it at "a dozen"; we could not reproduce that number from the figures it gives, but whether the limit is seven or twelve, it is a small fraction of what the GPU could compute.

@@ -47,7 +47,7 @@ The hope was natural.
 Lossless coding converts at a fixed exchange rate, from [[#school-exchange-rate]]:
 
 $$
-\Delta\text{bits} \;=\; \tfrac12 \log_2 \frac{1}{\underbrace{1 - \vRsq}_{\text{share of the variance left over}}} \quad \text{per element}
+\Delta\text{bits} \;=\; \tfrac12 \log_2 \frac{1}{\underbrace{1 - \vRsq}_{\text{variance left}}} \quad \text{per element}
 $$ {#eq-ma-exchange}
 
 | bits saved per element | variance the predictor must explain |

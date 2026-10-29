@@ -48,10 +48,10 @@ It treated "the entry" as one bag of numbers. Item 14 of the old list splits it 
 :::
 
 ::: try
-1. At the default speed (0.001 radian per token) and blocks of 64, the block's arc is tiny: RoPE costs PLACEHOLDER_A bits.
-2. Slide θ to 0.1: each block traces most of a ring, and the cost jumps to PLACEHOLDER_B bits per element.
-3. At θ = 1 (the fastest pairs) the ring is complete and the loc prediction is useless: PLACEHOLDER_C bits.
-4. Back at θ = 0.01, grow the block from 64 to 1,024 tokens. A slow pair that was harmless in small blocks becomes expensive in large ones: what matters is θ times $\vb$.
+1. At the default speed (0.001 radian per token) and blocks of 64, each block traces a tiny arc: RoPE costs 0.06 bit per element.
+2. Slide θ to 0.01. A block now spans 0.64 radian of turning, and the cost jumps to 1.55 bits per element.
+3. At θ = 0.1 or 1 (the fast pairs) each block covers the whole ring and the loc prediction is useless: 3.89 bits.
+4. Back at θ = 0.01, shrink the block to 16 tokens (0.29 bit), then grow it to 1,024 (3.86 bits). What matters is θ times $\vb$.
 :::
 
 So RoPE's damage is uneven. Fast pairs are scrambled at any block size. Slow pairs survive in small blocks and fail in large ones. Either way the fix is the same and cheap: **store the key as it was before RoPE**. The decoder rebuilds the pre-RoPE key bit for bit, then applies the rotation for the known position $\vt$. That is a handful of multiplications per element, outside the hard part of the pipeline. KVQuant quantizes keys before RoPE for the same reason ([[#papers-kvquant]]).
@@ -97,7 +97,7 @@ Values may be mostly the part no predictor can explain. A lossless code still pa
 
 - **Dump keys before RoPE**, values as they are, and report keys and values separately in every table ([[#plan-data]], [[#plan-fixed-choices]]).
 - **Use different coders for the two halves** if the data says so. When values show nothing beyond solo, code them with a global, context-free table: no dictionary, no residency. Spend dictionaries on keys only.
-- **Plan for $\vrho$ ≈ 0.85.** Then lever 1 alone moves the link bound by under 1.2×, and the case must also rest on cheaper slots: lever 2 or the [[victim-tier|victim tier]] ([[#missed-victim-tier]]). This is risk R2 of [[#plan-risks]].
+- **Plan for $\vrho$ ≈ 0.85.** Then lever 1 alone moves the link bound by under 1.2×, and the case must also rest on cheaper slots: lever 2 or the victim tier of [[#missed-victim-tier]]. This is risk R2 of [[#plan-risks]].
 - **Models without separate keys and values.** With MLA ([[mla]]) an entry is one latent vector, not K and V. The same rule applies to whatever parts the entry has: measure each part's $\vrho$ separately, and average by bytes.
 
 ::: takeaway

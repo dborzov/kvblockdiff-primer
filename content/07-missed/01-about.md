@@ -100,27 +100,26 @@ nodes:
   - {id: rate, col: 1, row: 5, title: "A harsh exchange rate", text: "One bit needs 75 % of the variance explained.", link: missed-harsh-exchange-rate, term: r-squared}
   - {id: grid, col: 1, row: 6, title: "Mantissa and grid", text: "BF16's low bits are noise; the 8-bit grid is not neutral.", link: missed-mantissa-and-grid, term: fp8}
   - {id: access, col: 1, row: 7, title: "The access pattern", text: "Scattered single reads rule out stream codecs.", link: missed-access-pattern, term: random-access}
-  - {id: pc, col: 2, row: 1, title: "Predictive coding", text: "The real home: predict, keep the residual, side information at both ends.", link: missed-predictive-coding, term: predictive-coding}
-  - {id: lift, col: 2, row: 2, title: "Lifting", text: "How a rotation becomes exactly reversible.", link: missed-lifting, term: lifting}
-  - {id: ctx, col: 2, row: 3, title: "Context modelling", text: "Use the prediction as context: it never loses.", link: missed-context-modeling, cat: coding}
-  - {id: stack, col: 2, row: 4, title: "The stack-distance curve", text: "One curve behind every cache number.", link: missed-stack-distance, term: reuse-distance}
-  - {id: bounds, col: 2, row: 5, title: "Bounds before building", text: "Compute the ceiling before the coder.", link: missed-rate-distortion-bounds, term: rate-distortion}
-  - {id: light, col: 3, row: 1, title: "Light dictionaries first", text: "Location and scale, resident for every block.", link: missed-light-dictionaries-first, term: loc}
-  - {id: rope, col: 3, row: 2, title: "Keys before RoPE", text: "Keys and values as two problems.", link: missed-keys-before-rope, term: rope}
-  - {id: victim, col: 3, row: 3, title: "A victim tier of deltas", text: "Keep evicted entries as deltas on the GPU.", link: missed-victim-tier, term: victim-tier}
-  - {id: result, col: 3, row: 4, title: "A measurement is a result", text: "The distance curve is worth publishing either way.", link: missed-a-measurement-is-a-result, term: shuffle-control}
+  - {id: stack, col: 2, row: 1, title: "The stack-distance curve", text: "One curve behind every cache number.", link: missed-stack-distance, term: reuse-distance}
+  - {id: pc, col: 2, row: 2, title: "Predictive coding", text: "The real home: predict, keep the residual, side information at both ends.", link: missed-predictive-coding, term: predictive-coding}
+  - {id: lift, col: 2, row: 3, title: "Lifting", text: "How a rotation becomes exactly reversible.", link: missed-lifting, term: lifting}
+  - {id: bounds, col: 2, row: 4, title: "Bounds before building", text: "Compute the ceiling before the coder.", link: missed-rate-distortion-bounds, term: rate-distortion}
+  - {id: ctx, col: 2, row: 6, title: "Context modelling", text: "Use the prediction as context: it never loses.", link: missed-context-modeling, cat: coding}
+  - {id: victim, col: 3, row: 1, title: "A victim tier of deltas", text: "Keep evicted entries as deltas on the GPU.", link: missed-victim-tier, term: victim-tier}
+  - {id: result, col: 3, row: 3, title: "A measurement is a result", text: "The distance curve is worth publishing either way.", link: missed-a-measurement-is-a-result, term: shuffle-control}
+  - {id: light, col: 3, row: 4, title: "Light dictionaries first", text: "Location and scale, resident for every block.", link: missed-light-dictionaries-first, term: loc}
+  - {id: rope, col: 3, row: 5, title: "Keys before RoPE", text: "Keys and values as two problems.", link: missed-keys-before-rope, term: rope}
 edges:
-  - [mi, pc, "formal home"]
-  - [pc, lift, "lossless rotation"]
-  - [grid, ctx, "never loses"]
-  - [vq, bounds, "a bound"]
-  - [vq, light, "the default"]
-  - [knob, light, "any b affordable"]
-  - [rate, rope, "dominant channels"]
   - [loc2, stack, "which entries"]
   - [stack, victim, "read off the curve"]
-  - [access, victim, "decode on promotion"]
-  - [loc2, result, "measure the bytes"]
+  - [mi, pc, "formal home"]
+  - [pc, lift, "lossless rotation"]
+  - [knob, result, "the distance curve"]
+  - [vq, bounds, "a bound"]
+  - [bounds, light, "so: light first"]
+  - [rate, rope, "dominant channels"]
+  - [grid, ctx, "never loses"]
+  - [access, ctx, "off the GPU path"]
 ```
 
 Every page in this Part has the same five steps.

@@ -60,7 +60,7 @@ There are two ways to use $\vxhat$.
 2. **Context.** Store $\vx$ itself, but pick its probability table according to $\vxhat$. A prediction near zero gets a wide table; a prediction near 5 a narrow one.
 
 ::: define context-modeling
-- **What it is:** [[=context-modeling|Context modelling]] means coding a value with a probability table *chosen by* the prediction, rather than subtracting the prediction. Each value costs $-\log_2 \vp(\vx \mid \vxhat)$ bits.
+- **What it is:** coding a value with a probability table *chosen by* the prediction, rather than subtracting the prediction. Each value costs $-\log_2 \vp(\vx \mid \vxhat)$ bits.
 - **Example:** JPEG-LS picks one of several hundred code tables from the local gradients around each pixel; arithmetic coders in text compressors pick a table from the last few characters.
 - **Easy to confuse with:** subtraction with a per-block table. The table must come from the right *shape* of the surprise, not just its width (see the note below).
 :::

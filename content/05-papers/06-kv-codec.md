@@ -45,7 +45,7 @@ The codec, step by step:
 4. **Decode.** The GPU's built-in video-decoding chip, not its compute cores, decodes chunks of about 10,000 tokens, while the next chunk is still on the network.
 
 ::: figure fig-papers-kvcodec-layout paVideoLayout
-**KV-Codec's pipeline, as we read it.** A toy KV cache of three layers (stacked sheets), 12 tokens (columns of a sheet) and 8 channels per token (rows), with illustrative values drawn as shades. Step through: the cache; the lossy rounding to a few integer levels; each token's numbers turned into one frame, three layers as its colour planes; the video coder's two predictions — from the previous frame (token distance 1, the token axis) and from neighbouring pixels in the same frame (the channel axis); and decoding, which rebuilds whole chunks. The layout follows the paper's description and summaries; the frame contents are our reading, not a verified detail.
+**KV-Codec's pipeline, as we read it.** A toy KV cache of three layers (stacked sheets), 8 tokens (columns of a sheet) and 8 channels per token (rows), with illustrative values drawn as shades. Step through: the cache; the lossy rounding to a few integer levels; each token's numbers turned into one frame, three layers as its colour planes; the video coder's two predictions — from the previous frame (token distance 1, the token axis) and from neighbouring pixels in the same frame (the channel axis); and decoding, which rebuilds whole chunks. The layout follows the paper's description and summaries; the frame contents are our reading, not a verified detail.
 :::
 
 ::: aside reminder Fallen-apple similarity
@@ -72,7 +72,7 @@ In our vocabulary, KV-Codec is lossless predictive coding of rounded entries wit
 :::: compare What KV-Codec tells us — and what it does not
 ::: col It tells us
 - **Layout is half the codec.** The same numbers, with half of them swapped between heads, compress 2.4× worse. For a coder that predicts from neighbours, what sits next to what decides the outcome — the access-pattern lesson of [[#idea-data-layout]] from the other side.
-- **Video chips are free decoders** for bulk paths: they sit idle during serving and do not compete with attention for compute cores.
+- **Video chips are free decoders** for bulk paths: a serving stack otherwise leaves them unused, and they do not compete with attention for compute cores.
 - **At rounded precision, neighbour prediction pays** enough that a stock video coder is worth running.
 :::
 ::: col It does not tell us

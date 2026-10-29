@@ -73,8 +73,8 @@ The first change is easiest to see by sliding along RoPE's pairs. Each pair turn
 :::
 
 ::: try
-1. Pair 4, window at 1K. After RoPE the channel swings over its whole range several times in 64 tokens; its spread grows from about 0.3 to about 6.4, roughly 4.4 bits more per number for an exact copy.
-2. Slide to pair 40. Now the turn is slow (a full turn every ~2,000 tokens): after RoPE the channel looks *large and slowly varying* — but its level depends on where the window is. Try the start buttons.
+1. Pair 4, window at 1K. After RoPE the channel swings over its whole range every 11 tokens; its level averages out to 0.2 and its spread grows from 0.31 to 6.46 — roughly 4.4 more bits per number for an exact copy.
+2. Slide to pair 40. The turn is slow (a full turn every ~2,000 tokens), and inside the window the channel stays steady (spread 0.31 → 0.35). Now try the start buttons: its level is +8.9 at 0, −8.9 at 1K, +8.4 at 10K and −5.6 at 100K. After RoPE this channel looks *large and slowly varying* — and wanders between +9 and −9 across the text.
 3. Slide to pair 63. RoPE barely moves anything over 64 tokens; before and after look alike.
 :::
 
@@ -85,8 +85,9 @@ The third change, escapes, is a trade you can count.
 :::
 
 ::: try
-1. No escapes: three planted numbers stretch the ruler to a step of about 3.4, and the typical error is about 0.95.
-2. Escape 1 % (one number): the step roughly halves. Escape 2 % (three numbers): the step falls to about 1.3 and the error to about 0.37, for under 0.6 extra bits per number.
+1. No escapes: three planted numbers stretch the ruler to a step of 3.43, and the typical error of the rest is 0.85.
+2. Escape 1 % (one number): the step shrinks to 2.64. Escape 2 % (three numbers): step 1.22, error 0.37, for 0.54 extra bits per number.
+3. Escape 5 %: step 0.98 and error 0.28, but the escapes now cost 1.08 bits per number. The first few escapes buy the most.
 :::
 
 ::: takeaway
@@ -111,6 +112,8 @@ Hooper, Kim, Mohammadzadeh, Mahoney, Shao, Keutzer and Gholami, NeurIPS 2024 (ar
 The last row is the subtle one. With per-token rulers, rounding *after* RoPE is better. Pre-RoPE helps only when the ruler runs along the channel — because that is exactly where RoPE does its damage.
 
 **What it tells us.** Keys have per-channel structure that is *cleaner before RoPE*. For a lossless coder this is the single most transferable piece of advice in the lossy literature: store K before RoPE, so the simplest per-channel dictionary sees a steady channel instead of a swinging one. It also tells us that key and value numbers have heavy tails: a few numbers per vector stretch any ruler, which is the situation [[escape|escapes]] exist for.
+
+Pair 40 of the figure adds a warning for our own measurement. After RoPE, a slow pair makes a steady channel *drift* with position: a per-block dictionary would follow it, a global one would not. Measured on post-RoPE keys, part of a block-scope gain would be RoPE — predictable from the position alone — and not neighbours being alike. Measuring before RoPE keeps the two apart.
 
 **What it does not tell us.** How many bits the steady channel costs to store exactly. The figure's "extra bits" is our rule of thumb from [[#school-residual-shapes]] (halve the spread, save a bit), applied to a toy. The real number needs the spread of each channel *within* a block and *across* the whole text, on the 8-bit grid — measured, not inferred from perplexity.
 

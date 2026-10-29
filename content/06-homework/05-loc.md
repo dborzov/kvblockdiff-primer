@@ -22,7 +22,7 @@ cards:
   - q: Why does subtracting one fixed, global location per channel save nothing for an ideal entropy coder?
     a: Entropy does not depend on where a histogram sits, only on its shape
     wrong: ["Because the location costs too many bytes", "Because subtracting is not lossless", "Because channels are independent"]
-    why: Shifting every value by the same constant leaves every probability unchanged. The Anchor's gain comes from locations that change from block to block — drift. (A fixed-length code is different: there, centring narrows the code.)
+    why: 'Shifting every value by the same constant leaves every probability unchanged. The Anchor''s gain comes from locations that change from block to block — drift. (A fixed-length code is different: there, centring narrows the code.)'
     sec: gain
   - q: When does loc lose bits compared with solo coding?
     a: Only by its own small dictionary cost (8 × 2 / b bits per element), or on the E4M3 grid when the prediction is poor

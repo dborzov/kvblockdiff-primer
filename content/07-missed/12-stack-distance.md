@@ -116,7 +116,7 @@ The curve is a property of the stream of requests alone — of *which* entries t
 
 ## What changes in the plan {#plan}
 
-- **Measure the curve, don't extrapolate it.** Wave 2 replays the proxy trace once and records every stack distance ([[#plan-wave2-measure]]). Every $\vB$, lever 2 and the [[victim-tier|victim tier]] ([[#missed-victim-tier]]) are then read off directly.
+- **Measure the curve, don't extrapolate it.** Wave 2 replays the proxy trace once and records every stack distance ([[#plan-wave2-measure]]). Every $\vB$, lever 2 and the victim tier of [[#missed-victim-tier]] are then read off directly.
 - **Use the same tool one level up.** The [[dictionary-cache]] is itself an LRU cache whose items are blocks. Its miss rate at every $\vnD$ is the stack-distance curve of block requests: one more pass over the same trace.
 - **Stop optimising eviction.** With LRU within ~5 points of Bélády, the design spends its effort on cheaper slots and cheaper misses.
 

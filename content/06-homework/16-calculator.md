@@ -15,13 +15,13 @@ cards:
     why: Cheaper misses lift the link bound quickly. After that, the hot cache plus resident dictionaries decide how many requests fit.
     sec: scenarios
   - q: 'With a hot cache of 4096 raw slots, what is the most lever 1 (cheaper misses) can ever give in the reference setting?'
-    a: About 146 requests per GPU, 1.34× HiSparse
+    a: About 147 requests per GPU, 1.34× HiSparse
     wrong: ["About 436, 4×", "Unlimited, as ρ approaches 0", "About 109, no gain at all"]
-    why: The hot cache alone takes 205 MB per request and 30 GB holds 146 of them, however small the misses get.
+    why: The hot cache alone takes 205 MB per request and 30 GB holds about 147 of them, however small the misses get.
     sec: scenarios
   - q: Per-block dictionaries of weight 256, all kept on the GPU ($\vb = 4096$), give about how many requests per GPU?
     a: About 57 — fewer than HiSparse's 109
-    wrong: ["About 199", "About 146", "About 117"]
+    wrong: ["About 199", "About 147", "About 117"]
     why: 25 dictionaries of 256 entries per layer outweigh the hot cache itself, so memory per request more than doubles.
     sec: scenarios
   - q: 'What does an assumed $\vrho = 0.55$ mean in bits per element?'
@@ -66,9 +66,9 @@ With the reference setting and the assumed dictionary numbers, the chart reads l
 | design | link | memory | $\vN$ |
 |:--|--:|--:|--:|
 | HiSparse, $\vB$ = 2K | 49 | 293 | 49 |
-| HiSparse, $\vB$ = 4K | 109 | 146 | **109** |
+| HiSparse, $\vB$ = 4K | 109 | 147 | **109** |
 | HiSparse, $\vB$ = 8K | 219 | 73 | 73 |
-| solo, $\vrho$ = .88 | 124 | 146 | 124 |
+| solo, $\vrho$ = .88 | 124 | 147 | 124 |
 | request, $\vw$ = 256, $\vrho$ = .75 | 146 | 138 | **138** |
 | block, $\vw$ = 32, $\vrho$ = .65 | 168 | 123 | 123 |
 | block, $\vw$ = 256, $\vrho$ = .55 | 199 | 57 | 57 |
@@ -76,7 +76,7 @@ With the reference setting and the assumed dictionary numbers, the chart reads l
 
 Five lessons, in order of how much they surprised us.
 
-- **Memory binds as soon as misses get cheaper.** In every design with deltas the memory bound is the smaller one. And with 4096 raw slots per layer, memory can never hold more than 146 requests: **lever 1 alone is capped at about 1.34× in this setting.** Going further needs cheaper slots ([[lever]] 2) — see [[#idea-two-levers]].
+- **Memory binds as soon as misses get cheaper.** In every design with deltas the memory bound is the smaller one. And with 4096 raw slots per layer, memory can never hold more than about 147 requests: **lever 1 alone is capped at about 1.34× in this setting.** Going further needs cheaper slots ([[lever]] 2) — see [[#idea-two-levers]].
 - **Solo coding sets the bar.** A single global code with no dictionaries at all ($\vrho \approx 0.88$, the fixed-length [[solo]] rate) already gives 124. Light block dictionaries kept on the GPU give 123: they win on the link and lose it again in memory.
 - **Weight and residency decide the outcome.** Light dictionaries are harmless anywhere. Heavy per-block dictionaries, all kept, cost more memory than the hot cache and *lose* (57).
 - **A dictionary cache rescues heavy dictionaries — conditionally.** With 4 of 25 kept, 85 % of misses served as deltas and a load every 20 steps per layer, it reaches 117. Both numbers come from trace replay ([[#questions-framework-c]]); drag $\vfD$ down and the rescue fails.

@@ -41,7 +41,7 @@ That is a lot of reading for nothing. Newer models stop doing it.
 - **Easy to confuse with** attention itself. The indexer only *chooses*; attention still does the real lookup, on the chosen entries.
 :::
 
-The best-known design is [[=dsa|DSA]], the sparse attention of DeepSeek-V3.2, also used by GLM-5.x. Its "lightning indexer" scores each stored position with a few small dot products, clips negative ones to zero and adds them up. It then keeps the top $\vk = 2048$ positions per layer. Here is the idea in numpy:
+The best-known design is [[=dsa|DSA]], the sparse attention of DeepSeek-V3.2, also used by GLM-5.x. Its "lightning indexer" scores each stored position with a few small dot products, clips the negative ones to zero and adds them up with learned weights. It then keeps the top $\vk = 2048$ positions per layer. Here is the idea in numpy:
 
 ```python an indexer and sparse attention for one head
 import numpy as np
@@ -52,29 +52,32 @@ def softmax(s):
     return e / e.sum()
 
 def indexer_topk(q_idx, K_idx, k):
-    """The indexer: a cheap score for every stored position, then keep the k best."""
-    scores = np.maximum(K_idx @ q_idx, 0)        # DSA-style: tiny keys, dot products clipped at zero
+    """The indexer: a cheap score for every stored position; keep the k best."""
+    # DSA-style: tiny keys, dot products clipped at zero
+    scores = np.maximum(K_idx @ q_idx, 0)
     return np.argsort(scores)[-k:]               # S: the k selected positions
 
 def sparse_attention(q, K, V, S):
     """Attention for one head that reads only the selected positions S."""
-    wts = softmax(K[S] @ q / np.sqrt(len(q)))     # k scores instead of one per stored token
+    wts = softmax(K[S] @ q / np.sqrt(len(q)))     # k scores, not one per token
     return wts @ V[S]                             # weighted mix of k values
 
 n_stored, k = 100_000, 2048
-K_idx = rng.normal(size=(n_stored, 16))           # the indexer's own small key per position
-K, V = rng.normal(size=(2, n_stored, 64))         # the stored keys and values of one head
+K_idx = rng.normal(size=(n_stored, 16))   # the indexer's own small keys
+K, V = rng.normal(size=(2, n_stored, 64))  # stored keys and values, one head
 S = indexer_topk(rng.normal(size=16), K_idx, k)
 out = sparse_attention(rng.normal(size=64), K, V, S)
-print(len(S), "of", n_stored, "entries read; output has", out.shape[0], "numbers")
-# 2048 of 100000 entries read; output has 64 numbers
+print(len(S), "of", n_stored, "read; output has", out.shape[0], "numbers")
+# 2048 of 100000 read; output has 64 numbers
 ```
 
 In symbols, attention at layer $\vl$ and step $\vt$ becomes
 
 $$
-\text{output} = \sum_{\vt' \in \vS_{\vt}} \text{weight}_{\vt'} \times \text{value}_{\vt'},
-\qquad \underbrace{\vS_{\vt}}_{\text{chosen by the indexer}} \text{ has } \underbrace{\vk}_{2048} \text{ positions,}
+\begin{aligned}
+\text{output} &= \sum_{\vt' \in \vS_{\vt}} \text{weight}_{\vt'} \times \text{value}_{\vt'} \\[4pt]
+\underbrace{\vS_{\vt}}_{\text{the indexer's picks}} &: \ \underbrace{\vk}_{2048} \text{ positions}
+\end{aligned}
 $$ {#eq-landscape-sparse}
 
 with the softmax taken over the $\vk$ selected scores only. (Random numbers stand in for real keys in the snippet, so its output means nothing; the point is the shape of the computation.)

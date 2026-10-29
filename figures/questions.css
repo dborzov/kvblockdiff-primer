@@ -2,9 +2,13 @@
 .q-schem { align-self: flex-start; font-family: var(--f-sc); font-size: .8rem; letter-spacing: .04em; color: var(--ink-2);
   border: 1px dashed var(--ink-3); border-radius: 999px; padding: .1rem .7rem; background: color-mix(in srgb, var(--paper-3) 70%, transparent); }
 
+/* sliders: keep the value on one line; let long names wrap on phones */
+.q-host .slider .num { white-space: nowrap; flex: none; }
+.q-host .slider .sl-name { white-space: normal; }
+
 /* decision regions (VIII.2) */
-.q-region { fill-opacity: .16; stroke: var(--paper-3); stroke-width: 1.5; transition: fill-opacity .2s; }
-.q-region.is-on { fill-opacity: .4; }
+.q-region { fill-opacity: .13; stroke: var(--paper-3); stroke-width: 1.5; transition: fill-opacity .2s; }
+.q-region.is-on { fill-opacity: .3; }
 
 /* compressibility curve axis break (VIII.6) */
 .q-break { fill: none; stroke: var(--ink-3); stroke-width: 1.4; }

@@ -109,8 +109,8 @@ $$ {#eq-pb-shadow}
 :::
 
 ::: try
-1. Steepness 1.5, error 5 %: the lossy coder keeps all 64 axes at 1.07 bits per number, 15×. The lossless rotation saves 1.09 bits per number.
-2. Steepness 2.0: lossy keeps 20 axes, 40×; lossless 1.98 bits. At 2.5: lossy 91×, lossless 2.99 bits. The lossy number grows like a ratio, the lossless one like a logarithm.
+1. Steepness 2.0, error 5 %: the lossy coder keeps 20 of the 64 axes at 0.40 bits per number on average — 40×. The same rotation, losslessly, saves 1.98 bits per number.
+2. Steepness 1.5: lossy 15×, lossless 1.09 bits. Steepness 2.5: lossy 91×, lossless 2.99 bits. The lossy number grows like a ratio, the lossless one like a logarithm.
 3. At steepness 2.5, switch the grid noise to 1 %: the lossless gain falls to 2.37 bits. The lossy coder does not care — it dropped those axes anyway.
 :::
 

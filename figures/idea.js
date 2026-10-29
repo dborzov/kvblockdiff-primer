@@ -369,7 +369,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout(), tally = h('div');
     const sr = slider(texify('delta ratio $\\vrho$'), 0.3, 1, 0.05, rho, v => { rho = v; render(); });
     const sw = slider(texify('dictionary weight $\\vw$'), 1, 16, 1, w, v => { w = v; render(); });
-    host.append(legend([key('var(--good)', 'hit'), key(T('delta-miss'), 'δ-miss: fetch ρ·e'), key(T('raw-miss'), 'raw miss: fetch e'), key(tint(T('dictionary-cache'), 35), 'block whose dictionary is resident')], { shape: 'box' }), box);
+    host.append(legend([key(tint('var(--ink-3)', 45), 'hit: nothing moves'), key(T('delta-miss'), 'δ-miss: fetch ρ·e'), key(T('raw-miss'), 'raw miss: fetch e'), key(tint(T('dictionary-cache'), 35), 'block whose dictionary is resident')], { shape: 'box' }), box);
     const narrow = isNarrow(host);
     const tw = narrow ? 19 : 28, gap = narrow ? 2 : 3, bgap = narrow ? 6 : 12, x0 = narrow ? 10 : 100;
     const W = narrow ? 380 : 680;
@@ -393,7 +393,7 @@ window.FIG = window.FIG || {};
       for (let p = 0; p < n; p++) {
         const sel = s.S.includes(p);
         let fill = 'var(--paper-3)';
-        if (sel && s.hits && s.hits.includes(p)) fill = tint('var(--good)', 35);
+        if (sel && s.hits && s.hits.includes(p)) fill = tint('var(--ink-3)', 30);
         if (sel && s.deltaMisses && s.deltaMisses.includes(p)) fill = tint(T('delta-miss'), 45);
         if (sel && s.rawMisses && s.rawMisses.includes(p)) fill = tint(T('raw-miss'), 45);
         rect(g, px(p), yH, tw, tw, { fill, stroke: sel ? 'var(--ink)' : 'var(--rule)', sw: sel ? 2.2 : 1, rx: 4 });
@@ -404,7 +404,7 @@ window.FIG = window.FIG || {};
       const cx0 = narrow ? 10 : 100, cw = narrow ? 34 : 40, cg = narrow ? 6 : 10;
       s.cacheAfter.forEach((p, k) => {
         let fill = 'var(--paper-3)';
-        if (s.hits && s.hits.includes(p)) fill = tint('var(--good)', 35);
+        if (s.hits && s.hits.includes(p)) fill = tint('var(--ink-3)', 30);
         if (s.deltaMisses && s.deltaMisses.includes(p)) fill = tint(T('delta-miss'), 45);
         if (s.rawMisses && s.rawMisses.includes(p)) fill = tint(T('raw-miss'), 45);
         rect(g, cx0 + k * (cw + cg), yC, cw, 30, { fill, stroke: 'var(--ink-2)', rx: 5 });
@@ -711,7 +711,7 @@ window.FIG = window.FIG || {};
       }
       txt(g, x0 + bw + 12, y0 - 14, 'D', { anchor: 'start', cls: 'val' });
       txt(g, x0, y0 + FL * (ch + gy) + 18, 'tokens run along each floor →', { anchor: 'start', cls: 'val' });
-      ro.set([['entry', `E[${l}, ${t}]`], ['its upstairs neighbour', l > 0 ? `E[${l - 1}, ${t}], one floor down` : 'none (ground floor)'],
+      ro.set([['entry', `E[${l}, ${t}]`], ['predicted from', l > 0 ? `E[${l - 1}, ${t}], one floor down` : 'nothing below (ground floor)'],
         ['dictionaries per block of tokens', `${Math.ceil(NL_REF / gsz)} for ${NL_REF} layers`]]);
     }
     draw();
@@ -954,7 +954,7 @@ window.FIG = window.FIG || {};
 
   FIG.leakSim = function (host) {
     const ETAS = [0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1, 1.5];
-    let leta = Math.log10(0.3), mode = 'iid';
+    let leta = -0.6, mode = 'iid';            // η = 10^−0.6 ≈ 0.25
     const KEYS = { iid: leakKeys(0, 'iv13-keys'), copy: leakKeys(0.95, 'iv13-keys') };
     const R2 = { iid: neighbourR2(KEYS.iid), copy: neighbourR2(KEYS.copy) };
     const curves = { iid: null, copy: null };

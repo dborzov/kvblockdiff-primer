@@ -75,8 +75,10 @@ The cells of the grid in [[#fig-landscape-decode]] now get their proper name.
 :::
 
 $$
-\vE_{\vl,\vt} = \big(\underbrace{\vK[\vl, \vh, \vt, \cdot\,]}_{\text{keys of every head } \vh},\ \underbrace{\vV[\vl, \vh, \vt, \cdot\,]}_{\text{values of every head } \vh}\big),
-\qquad \ve = \underbrace{\vd}_{\text{numbers in the entry}} \times \text{bytes per number}
+\begin{aligned}
+\vE_{\vl,\vt} &= \big(\underbrace{\vK[\vl, \vh, \vt, \cdot\,]}_{\text{keys, every head } \vh},\ \underbrace{\vV[\vl, \vh, \vt, \cdot\,]}_{\text{values, every head } \vh}\big) \\[4pt]
+\ve &= \underbrace{\vd}_{\text{numbers}} \times \text{bytes per number}
+\end{aligned}
 $$ {#eq-landscape-entry}
 
 ::: aside reminder Vectors and channels (II.13)
@@ -108,7 +110,7 @@ The key is turned *before* it is stored. That matters for compression.
 :::
 
 ::: try
-1. Switch between *before* and *after*. Same keys, same information — but after the turn each channel's numbers vary five or six times as much.
+1. Switch between *before* and *after*. Same keys, same information — but after the turn each channel's numbers vary six or seven times as much.
 2. Set the angle to 0°. RoPE then does nothing (real models use a different angle for every pair, some tiny, some large).
 :::
 

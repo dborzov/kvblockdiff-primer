@@ -106,7 +106,7 @@ The almanac saves 0.16 bits per report, about 9 %. The figure lets you make the 
 :::
 
 ::: note intuition A sharp almanac about summer is still a vague almanac
-“Sunny three times in four” sounds very informative, yet the whole almanac saves only a tenth of the cost. It is sharp about summer and vague about the rest of the year. Knowing the gist of a situation often buys surprisingly few bits — a pattern that will come back, in a much more expensive setting, in Part IV.
+“Sunny three times in four” sounds very informative, yet the whole almanac saves only a tenth of the cost. It is sharp about summer and vague about the rest of the year. Knowing the gist of a situation often buys surprisingly few bits — a pattern that will come back, in a much more expensive setting, in Part IV ([[#idea-the-trap]]).
 :::
 
 ::: takeaway

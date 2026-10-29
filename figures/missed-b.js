@@ -380,7 +380,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), tbl = h('div'), ro = readout();
     host.append(controls(
       slider('block size b', 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtSI(pow2(v), 0)} tokens`),
-      slider(texify('assumed $\\vrho$ (same for every type)'), 0.5, 1, 0.01, rho, v => { rho = v; draw(); })), box, tbl, ro);
+      slider(texify('assumed $\\vrho$'), 0.5, 1, 0.01, rho, v => { rho = v; draw(); })), box, tbl, ro);
     const P = Plot(box, { ycats: TYPES.map(t => t[0]), x: [0, 180], h: 270, xlabel: 'requests per GPU, N = min(link bound, HBM bound)', grid: 'x', label: 'Requests per GPU for each dictionary type kept resident for every block' });
     function calc(w, isNone) {
       const b = pow2(lb), extra = isNone ? 0 : REF.L / b * w, B = 4096, m = 0.134;
@@ -422,7 +422,7 @@ window.FIG = window.FIG || {};
     };
     const box = h('div'), ro = readout();
     host.append(controls(
-      slider('rotation speed θ (radians per token)', -4, 0, 0.05, lth, v => { lth = v; draw(); }, v => (Math.pow(10, v) < 0.01 ? Math.pow(10, v).toExponential(1) : fmt(Math.pow(10, v), 3))),
+      slider('speed θ (rad / token)', -4, 0, 0.05, lth, v => { lth = v; draw(); }, v => (Math.pow(10, v) < 0.01 ? Math.pow(10, v).toExponential(1) : fmt(Math.pow(10, v), 3))),
       slider('block size b', 4, 10, 1, lb, v => { lb = v; draw(); }, v => `${pow2(v)} tokens`),
       seg([['both', 'both'], ['pre', 'before RoPE'], ['post', 'after RoPE']], show, v => { show = v; draw(); }, 'Which keys')),
     legend([['before RoPE (one block)', 'var(--ink-3)', 'dot'], ['after RoPE (same block)', series(1), 'dot'], ['block mean = the loc prediction', series(0), 'dot'], ['after RoPE, all 2048 tokens', faint(series(1), 30), 'dot']]), box, ro);

@@ -1,5 +1,6 @@
 ---
 title: SplitZip (2026)
+group: Lossless coders
 nav: SplitZip
 lede: A lossless coder for shipping KV caches between GPUs. It codes only the floating-point exponents, with a fixed 4-bit code and escapes — the cleanest published measurement of how much a KV number shrinks on its own.
 cards:
@@ -64,7 +65,7 @@ SplitZip lives on the bulk-transfer [[data-path]] of one particular way of servi
 The codec, step by step:
 
 1. **Split.** Each BF16 number becomes two bytes in two streams: sign + mantissa (stored raw — treated as noise) and the 8-bit exponent.
-2. **Fit a table, once.** On calibration data, offline, find the 16 most frequent exponent values. In our words this is a [[dictionary]] of the lightest kind — fit once and shared by every request (the global scope of [[#homework-scope]]). The paper calls it a "codebook"; on this site that word is reserved for VQ.
+2. **Fit a table, once.** On calibration data, offline, find the 16 most frequent exponent values. In our words this is a [[dictionary]] of the lightest kind, fit once and shared by every request — a *global* dictionary, in the language of [[#homework-scope|Part VI]]. The paper calls it a "codebook"; on this site that word is reserved for VQ.
 3. **Code.** Each exponent in the table becomes a 4-bit codeword — a [[fixed-length-code]] with $\vn = 4$; two codewords fill a byte.
 4. **Escape.** Any other exponent is an [[escape]]: its position and raw value go to a separate escape stream.
 5. **Decode.** Look each 4-bit code up in the 16-entry table, patch the escaped positions, glue the bytes back. Every bit returns.
@@ -76,19 +77,19 @@ A [[fixed-length-code]] spends exactly $\vn$ bits on every value; values that do
 The cost per number is easy to write down:
 
 $$
-\text{bits per BF16 number} = \underbrace{8}_{\text{sign + mantissa, raw}} + \underbrace{\vn}_{\text{exponent code}} + \underbrace{\veps \times (\text{bits per escape})}_{\text{the escape stream}}
+\text{bits per number} = \underbrace{8}_{\text{raw byte}} + \underbrace{\vn}_{\text{code}} + \underbrace{\veps \times \text{escape cost}}_{\text{escapes}}
 $$ {#eq-papers-splitzip-bits}
 
 With $\vn = 4$, the 99.8 % coverage the paper reports for Qwen3-32B ($\veps = 0.002$), and 40 bits per escape (our assumption: a 32-bit position plus the raw exponent byte), that is $8 + 4 + 0.08 = 12.08$ bits, a ratio of $16 / 12.08 = 1.324$ — the paper's measured ratio to the third digit. The figure lets you run the same arithmetic on a toy.
 
 ::: figure fig-papers-splitzip-escapes paEscapes wide
-**The escape mechanism on a toy exponent histogram.** Bars: the share of numbers with each exponent-field value (horizontal axis: the raw field value of the chosen format; vertical axis: per cent of all numbers). The toy data are illustrative: eight [[channel|channels]] of bell-shaped numbers whose widths are spread over the number of binades (powers of two) set by the slider, plus one outlier channel about 11 times wider than the widest of them; shares are computed exactly from the bell curve, not sampled. Coloured bars are covered by the table and get a codeword; red bars are escaped. The strip below codes 32 sample numbers drawn from the same toy (fixed seed): each cell shows the exponent field and its codeword, or ESC. The tiles compute [[#eq-papers-splitzip-bits]] and the ratio, next to the ratio an ideal [[entropy-coder]] would reach on the same exponents. For FP8 the numbers are first scaled so the widest channel's extremes sit near 256.
+**The escape mechanism on a toy exponent histogram.** Bars: the share of numbers with each exponent-field value (horizontal axis: the raw field value of the chosen format; vertical axis: per cent of all numbers). The toy data are illustrative: eight [[channel|channels]] of bell-shaped numbers whose widths are spread over the number of binades (powers of two) set by the slider, plus one outlier channel about 11 times wider than the widest of them; shares are computed exactly from the bell curve, not sampled. Teal bars are covered by the table and get a codeword; red bars are escaped (switch to the log scale to see the rare ones). The strip below codes 32 sample numbers drawn from the same toy (fixed seed): each cell shows the exponent field and its codeword, or ESC. The tiles compute [[#eq-papers-splitzip-bits]] and the ratio, next to the ratio an ideal [[entropy-coder]] would reach on the same exponents. For FP8 the numbers are first scaled so the widest channel's extremes sit near 256.
 :::
 
 ::: try
-1. The default (BF16, 4-bit code, 40-bit escapes) covers 99.78 % of numbers: 12.09 bits each, **1.324×**. An ideal entropy coder on the same exponents would reach 1.414×.
+1. The default (BF16, 4-bit code, 40-bit escapes) covers 99.78 % of numbers: 12.09 bits each, **1.323×** — within a hair of the paper's 1.324× on real KV. An ideal entropy coder on the same exponents would reach 1.414×.
 2. Switch to a 3-bit code on BF16: coverage drops to 87.5 %, and the escapes eat the whole gain (1.00×).
-3. Choose FP8 E4M3 with a 3-bit code: 12 bits per 8-bit number, **0.67×** — the data grows. Untick the outlier channel: 96.5 % covered, still 0.95×.
+3. Choose FP8 E4M3 with a 3-bit code: 12 bits per 8-bit number, **0.67×** — the data grows. Untick the outlier channel: 96.5 % covered, still 0.95×. Switch the bars to a log scale to see the escaped values at all.
 4. Set the spread to 0 and untick the outlier: one plain bell curve, 2.54 bits of exponent entropy, an ideal ratio of 1.52×. That is the territory of [[#papers-float-coders]].
 :::
 

@@ -316,9 +316,8 @@ window.FIG = window.FIG || {};
             victim = desk.reduce((a, b) => (nextUse(b) > nextUse(a) ? b : a));
           }
           evicted = victim.id;
-          desk = desk.filter(o => o !== victim);
-        }
-        desk.push({ id, last: t, added: t });
+          desk[desk.indexOf(victim)] = { id, last: t, added: t };   // the new item takes the victim's slot
+        } else desk.push({ id, last: t, added: t });
       }
       steps.push({ t, id, hit: !!found, evicted, desk: desk.map(o => ({ ...o })) });
     });

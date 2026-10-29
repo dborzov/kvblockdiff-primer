@@ -83,17 +83,16 @@ window.FIG = window.FIG || {};
       legend([['selected, found in the cache (hit)', series(0), 'box'], ['selected, not in the cache (miss)', series(1), 'box'], ['stored value above zero', series(2), 'box'], ['below zero', series(3), 'box']]),
       box, h('div', { class: 'kpis' }, tiles.hit, tiles.bits));
 
-    const W = 640, x0 = 56, x1 = 626, cw = (x1 - x0) / N;
+    const W = 640, x0 = 20, x1 = 620, cw = (x1 - x0) / N;
     const D = Diagram(box, { w: W, h: 330, label: 'Selections per step above, stored bytes below, same token positions', grow: 0.3 });
     const f = D.fs, rowH = 6.2, top = 24 * f;
     const gSel = el('g', {}, D.svg), gNow = el('g', {}, D.svg), gBytes = el('g', {}, D.svg);
-    svgText(D.svg, x0, 14 * f, 'which positions the indexer selects (last 26 steps, newest at the bottom)', { class: 'lbl' });
+    svgText(D.svg, x0, 14 * f, 'selected positions, step by step ↓', { class: 'lbl' });
     const yBytes = top + SHOW * rowH + 30 * f;
     const cellH = (D.H - yBytes - 22 * f) / CH;
-    svgText(D.svg, x0, yBytes - 8 * f, 'what is stored there: 8 channels per entry', { class: 'lbl' });
+    svgText(D.svg, x0, yBytes - 8 * f, 'what they store: 8 channels', { class: 'lbl' });
     svgText(D.svg, x0, D.H - 6 * f, 'token position 0', { class: 'lbl' });
     svgText(D.svg, x1, D.H - 6 * f, String(N - 1), { class: 'lbl', 'text-anchor': 'end' });
-    svgText(D.svg, x0 - 6 * f, top + 8, 'steps', { class: 'lbl', 'text-anchor': 'end' });
 
     function drawBytes() {
       gBytes.replaceChildren();
@@ -233,7 +232,7 @@ window.FIG = window.FIG || {};
       rule(PB, { y: 0, dash: false, color: 'var(--ink-3)' });
       line(PB, bs.map(x => [x, gBlock(x, E)]), { color: series(2), dash: true });
       line(PB, bs.map(x => [x, net(x)]), { color: series(0) });
-      rule(PB, { x: L, label: 'a 100K-token request:\nbeyond, b is the request' });
+      rule(PB, { x: L, label: '100K-token request' });
       if (bv > 0) el('circle', { cx: PB.x(bb), cy: PB.y(bv), r: 5.5 * PB.fs, style: 'fill:var(--paper-3);stroke:var(--ink);stroke-width:2' }, PB.g.top);
       knob.setAttribute('cx', PB.x(b)); knob.setAttribute('cy', PB.y(clamp(net(b), -0.4, 0.75)));
       ro.set([
@@ -482,7 +481,7 @@ window.FIG = window.FIG || {};
     const sl = slider('variance the prediction explains, R²', 0, 0.999, 0.001, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 1));
     const box = h('div'), ro = readout();
     host.append(controls(sl), legend([['sign', series(7), 'box'], ['exponent', series(0), 'box'], ['mantissa', series(1), 'box']]), box, ro);
-    const D = Diagram(box, { w: 640, h: 214, label: 'Probability that each bit of the value differs from the same bit of its prediction', grow: 0.5 });
+    const D = Diagram(box, { w: 640, h: 210, label: 'Probability that each bit of the value differs from the same bit of its prediction', grow: 0.5 });
     const f = D.fs, g = el('g', {}, D.svg);
     function flips(R2) {
       const a = Math.sqrt(R2), b = Math.sqrt(1 - R2);
@@ -503,25 +502,22 @@ window.FIG = window.FIG || {};
       return { s: Hc(cs), e: Hc(ce), m: Hc(cm) };
     })();
     function rowOf(probs, fields, y, name) {
-      const n = probs.length, X0 = 110, X1 = 620, cw = (X1 - X0) / 16;
-      svgText(g, X0 - 10 * f, y + 30 * f, name, { class: 'lbl', 'text-anchor': 'end' });
+      const X0 = 12, X1 = 628, cw = (X1 - X0) / 16, ch = 46 * f;
+      svgText(g, X0, y - 8 * f, name, { class: 'lbl' });
       probs.forEach((p, k) => {
         const x = X0 + k * cw, fld = fields[k], col = fld === 's' ? series(7) : fld === 'e' ? series(0) : series(1);
-        const ch = 54 * f;
-        el('rect', { x: x + 1, y, width: cw - 2, height: ch, rx: 3, style: `fill:color-mix(in srgb, ${col} 12%, var(--paper));stroke:${col};stroke-width:1` }, g);
+        el('rect', { x: x + 1.5, y, width: cw - 3, height: ch, rx: 3, style: `fill:color-mix(in srgb, ${col} 12%, var(--paper));stroke:${col};stroke-width:1` }, g);
         const fh = ch * Math.min(1, p / 0.5);
-        el('rect', { x: x + 1, y: y + ch - fh, width: cw - 2, height: fh, rx: 3, style: `fill:${col};fill-opacity:.85` }, g);
+        el('rect', { x: x + 1.5, y: y + ch - fh, width: cw - 3, height: fh, rx: 3, style: `fill:${col};fill-opacity:.85` }, g);
         svgText(g, x + cw / 2, y + ch + 14 * f, `${Math.round(p * 100)}`, { class: 'val', 'text-anchor': 'middle' });
       });
-      return n;
     }
     function draw() {
       const [pb, pe] = flips(R2);
       g.replaceChildren();
       const fb = ['s', ...'eeeeeeee', ...'mmmmmmm'], fe = ['s', ...'eeee', ...'mmm'];
-      svgText(g, 110, 14 * f, 'chance (%) that a bit differs from the same bit of the prediction · 50 = a coin flip', { class: 'lbl' });
-      rowOf(pb, fb, 26 * f, 'BF16 (16 bits)');
-      rowOf(pe, fe, 26 * f + 100 * f, 'E4M3 (8 bits)');
+      rowOf(pb, fb, 26 * f, 'BF16 · 16 bits');
+      rowOf(pe, fe, 26 * f + 96 * f, 'E4M3 · 8 bits');
       const coin = ps => ps.filter(p => p >= 0.4).length;
       ro.set([
         ['coin-flip bits (chance ≥ 40 %)', `BF16: ${coin(pb)} of 16 · E4M3: ${coin(pe)} of 8`],
@@ -555,28 +551,28 @@ window.FIG = window.FIG || {};
     host.append(controls(sZ, h('span', { class: 'fig-note', text: 'Drag the value and the prediction, or focus them and use the arrow keys.' })),
       legend([['the value', 'var(--c)', 'dot'], ['the prediction', series(4), 'dot']]), box, ro);
     let P = null, kv = null, kp = null;
-    // lanes (y in data units): E4M3 ticks 2.6–3.1, its residual 2.3; handles 1.75; INT8 ticks 0.75–1.25, its residual 0.45
+    // lanes (y in data units): E4M3 ticks 2.95–3.4, its residual 2.65; handles 2.15; INT8 ticks 0.95–1.4, its residual 0.6
     function build() {
       box.replaceChildren();
       const R = zoom === 'wide' ? 4 : 0.6;
       v = clamp(v, -R, R); p = clamp(p, -R, R);
-      P = Plot(box, { x: [-R, R], y: [0.2, 3.5], h: 250, yticks: [], grid: false, xlabel: 'value of one channel (its standard deviation = 1)', label: 'Grid points of E4M3 and INT8 on one number line' });
+      P = Plot(box, { x: [-R, R], y: [0.2, 3.85], h: 300, yticks: [], grid: false, xlabel: 'value of one channel (its standard deviation = 1)', label: 'Grid points of E4M3 and INT8 on one number line' });
       const gE = el('g', {}, P.g.bg), gI = el('g', {}, P.g.bg);
-      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(3.25), 'E4M3 grid points', { class: 'lbl' });
-      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(1.4), 'INT8 grid points (scale 4/127)', { class: 'lbl' });
+      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(3.62), 'E4M3 grid points', { class: 'lbl' });
+      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(1.62), 'INT8 grid points (scale 4/127)', { class: 'lbl' });
       GRID.forEach(gv => [gv, -gv].forEach(x => {
-        if (Math.abs(x) <= R) el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(3.05), y2: P.y(2.6), style: `stroke:${series(0)};stroke-width:1;stroke-opacity:.7` }, gE);
+        if (Math.abs(x) <= R) el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(3.4), y2: P.y(2.95), style: `stroke:${series(0)};stroke-width:1;stroke-opacity:.7` }, gE);
       }));
       for (let i = -127; i <= 127; i++) {
         const x = i * SCALE;
-        if (Math.abs(x) <= R) el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(1.2), y2: P.y(0.75), style: `stroke:${series(2)};stroke-width:1;stroke-opacity:.7` }, gI);
+        if (Math.abs(x) <= R) el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(1.4), y2: P.y(0.95), style: `stroke:${series(2)};stroke-width:1;stroke-opacity:.7` }, gI);
       }
       P.g.marks = el('g', {}, P.g.data);
       kp = el('circle', { class: 'handle', r: 7.5 * P.fs, style: `fill:${series(4)}` }, P.g.top);
       kv = el('circle', { class: 'handle', r: 7.5 * P.fs }, P.g.top);
       const step = [R / 100, 0];
-      draggable(kv, P, ([x]) => { v = clamp(x, -R, R); draw(); }, null, { get: () => [v, 1.75], step, label: 'the value' });
-      draggable(kp, P, ([x]) => { p = clamp(x, -R, R); draw(); }, null, { get: () => [p, 1.75], step, label: 'the prediction' });
+      draggable(kv, P, ([x]) => { v = clamp(x, -R, R); draw(); }, null, { get: () => [v, 2.15], step, label: 'the value' });
+      draggable(kp, P, ([x]) => { p = clamp(x, -R, R); draw(); }, null, { get: () => [p, 2.15], step, label: 'the prediction' });
       hover(kv, () => `<b>value ${fmt(v, 3)}</b><br>E4M3 index ${idxE(v)} · INT8 index ${idxI(v)}`);
       hover(kp, () => `<b>prediction ${fmt(p, 3)}</b><br>E4M3 index ${idxE(p)} · INT8 index ${idxI(p)}`);
       draw();
@@ -584,14 +580,14 @@ window.FIG = window.FIG || {};
     function draw() {
       const m = P.g.marks;
       m.replaceChildren();
-      [v, p].forEach((x, i) => el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(3.1), y2: P.y(0.35), style: `stroke:${i ? series(4) : 'var(--c)'};stroke-width:1.2;stroke-dasharray:3 3` }, m));
-      [[2.3, idxE, series(0)], [0.45, idxI, series(2)]].forEach(([y, idx, col]) => {
+      [v, p].forEach((x, i) => el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(3.45), y2: P.y(0.4), style: `stroke:${i ? series(4) : 'var(--c)'};stroke-width:1.2;stroke-dasharray:3 3` }, m));
+      [[2.65, idxE, series(0)], [0.6, idxI, series(2)]].forEach(([y, idx, col]) => {
         const lo = Math.min(p, v), hi = Math.max(p, v);
         el('line', { x1: P.x(lo), x2: P.x(hi), y1: P.y(y), y2: P.y(y), style: `stroke:${col};stroke-width:${7 * P.fs};stroke-opacity:.45;stroke-linecap:round` }, m);
         const right = P.x(hi) < P.m.l + P.pw * 0.7;
         svgText(m, right ? P.x(hi) + 10 * P.fs : P.x(lo) - 10 * P.fs, P.y(y) + 4 * P.fs, `${Math.abs(idx(v) - idx(p))} steps apart`, { class: 'val', 'text-anchor': right ? 'start' : 'end' });
       });
-      [kv, kp].forEach((k, i) => { k.setAttribute('cx', P.x(i ? p : v)); k.setAttribute('cy', P.y(1.75)); });
+      [kv, kp].forEach((k, i) => { k.setAttribute('cx', P.x(i ? p : v)); k.setAttribute('cy', P.y(2.15)); });
       const rE = idxE(v) - idxE(p), rI = idxI(v) - idxI(p);
       ro.set([
         ['value', fmt(v, 3)], ['prediction', fmt(p, 3)],

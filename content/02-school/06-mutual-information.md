@@ -63,7 +63,7 @@ Now run it the other way. The season, one of four equally likely, has $\vH(\vY) 
 The figure draws this as two overlapping bars, and lets you swap the season for other kinds of side information.
 
 ::: figure fig-mi-bars siInfoBars
-**Two overlapping bars.** Top bar: the entropy of the sky report $\vH(\vX)$, 1.75 bits. Bottom bar: the entropy of what the receiver knows, $\vH(\vY)$. Their overlap (violet) is the mutual information $\vI(\vX;\vY)$; the rest of the top bar is what must still be sent, $\vH(\vX \mid \vY)$; the rest of the bottom bar is $\vH(\vY \mid \vX)$. One bit is 140 units wide. Choose what the receiver knows: the season (Gull Rock's almanac), the previous report (with a **stickiness** slider: the chance that the sky simply carries on from half an hour before; otherwise the next report is drawn afresh from the sky distribution — an illustrative model, not measured data), nothing, or the report itself.
+**Two overlapping bars.** Top bar: the entropy of the sky report $\vH(\vX)$, 1.75 bits. Bottom bar: the entropy of what the receiver knows, $\vH(\vY)$. Their overlap (violet) is the mutual information $\vI(\vX;\vY)$; the rest of the top bar is what must still be sent, $\vH(\vX \mid \vY)$; the rest of the bottom bar is $\vH(\vY \mid \vX)$. All lengths are drawn to one scale in bits. Choose what the receiver knows: the season (Gull Rock's almanac), the previous report (with a **stickiness** slider: the chance that the sky simply carries on from half an hour before; otherwise the next report is drawn afresh from the sky distribution — an illustrative model, not measured data), nothing, or the report itself.
 :::
 
 ::: try

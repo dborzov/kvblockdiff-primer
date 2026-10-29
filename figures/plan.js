@@ -212,7 +212,7 @@ window.FIG = window.FIG || {};
      ================================================================= */
   FIG.planBill = (host) => {
     const d = 1024;                          // elements per entry in the proxy model
-    const SET = 3;                           // coder settings, bytes per channel (centre, scale, width+flag)
+    const SET = 3;                           // coder settings, bytes per channel (centre, scale, width)
     const types = [
       { id: 'loc', name: 'loc', w: 1 + SET, side: () => 0, sideTxt: 'none' },
       { id: 'klt', name: 'KLT, rank 16', w: 32 + SET, side: () => 16 * 8 / d, sideTxt: '16 coefficients × 8 bits per entry (assumed width)' },

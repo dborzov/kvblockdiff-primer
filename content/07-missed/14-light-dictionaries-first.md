@@ -106,7 +106,7 @@ columns: [Wave 1 asks, Then, So]
 nodes:
   - {id: q, col: 1, row: 1, title: "Do loc and the KLT bound capture the gain?", text: "Compare them with VQ on the same blocks.", link: plan-experiment-1b}
   - {id: light, col: 2, row: 1, title: "Yes: light dictionaries", text: "All resident; every miss a δ-miss; no loads.", link: missed-light-dictionaries-first/residency, term: loc}
-  - {id: lever1, col: 3, row: 1, title: "Lever 1, then the victim tier", text: "Same decoder, no residency policy.", link: missed-victim-tier, term: victim-tier}
+  - {id: lever1, col: 3, row: 1, title: "Lever 1, then the victim tier", text: "Same decoder, no residency policy.", link: missed-victim-tier}
   - {id: heavy, col: 2, row: 2, title: "No: the data clusters", text: "Codebooks beat loc + KLT by a margin.", link: missed-rate-distortion-bounds/vq, term: vq}
   - {id: c, col: 3, row: 2, title: "Framework C decides", text: "Where misses land; δ-miss share and loads per step.", link: questions-framework-c, term: dictionary-cache}
 edges:

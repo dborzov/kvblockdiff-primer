@@ -1,5 +1,6 @@
 ---
 title: HiSparse (2026)
+group: The system we sit under
 nav: HiSparse
 lede: The system this whole proposal sits under, read as a paper — what it claims, the seven numbers we borrow from it, and the questions that one trace cannot answer.
 cards:

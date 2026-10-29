@@ -28,7 +28,7 @@ Changes from the code in the source proposal (each one is a bug fix or a missing
     the evaluated block itself, which flatters the global scope);
   * an escape is marked by the one field value the width rule never uses, so it costs 8 raw bits and
     no position (the source charged 8 + log2(rows): a bulk-stream layout, not a random-access one);
-  * the coder's own settings (centre, scale, width, flag) are charged to block/request dictionaries;
+  * the coder's own settings (centre, scale, width) are charged to block/request dictionaries;
   * `nbytes` and the per-channel "predict or not" flag, mentioned but not written in the source;
   * the entropy rate uses a grid-aware model (a value-domain Laplace integrated over each code's
     grid cell): the source's index-space Laplace charges E4M3 solo coding 8.4 bits per element on
@@ -369,7 +369,7 @@ def rebuild_entry(buf, coder, D, n):
 # 5. Scoring one coder at one scope (the accounting rule)
 # =====================================================================================
 
-MODEL_BYTES_PER_CHANNEL = 3   # the coder's own settings: centre m, scale beta, width n and flag bit
+MODEL_BYTES_PER_CHANNEL = 3   # the coder's own settings: centre m, scale beta, width n (a byte each)
 
 
 def rate_of(coder, X, F, charge, grid):
@@ -396,7 +396,8 @@ def score(X_eval, X_calib, coder, scope, b=None, fmt="int8"):
         units = [(X_eval[s], X_eval[s], True) for s in range(n_seq)]
     elif scope == "block":           # one dictionary per block of b entries
         assert T % b == 0, "a partial last block would be dropped silently"
-        units = [(X_eval[s, j * b:(j + 1) * b],) * 2 + (True,) for s in range(n_seq) for j in range(T // b)]
+        blocks = [X_eval[s, j * b:(j + 1) * b] for s in range(n_seq) for j in range(T // b)]
+        units = [(X, X, True) for X in blocks]
     else:
         raise ValueError(scope)
     grid = grid_values(fmt)
@@ -659,7 +660,6 @@ def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w") as f:
         json.dump(out, f, indent=1)
-    print("\nsolo (global):", out["solo"])
     print(f"\n{'format':7}{'coder':10}{'data':6}{'rate':9}{'global':>8}{'request':>9}{'best b':>8}{'bpe':>7}{'g_req':>7}{'g_blk':>7}")
     for fmt in gains:
         for name in gains[fmt]:
@@ -669,6 +669,7 @@ def main():
                     req = ladder[fmt][name][tag]["request"][0 if rate == "entropy" else 1]
                     print(f"{fmt:7}{name:10}{tag:6}{rate:9}{g['bpe_global']:8.3f}{req:9.3f}{g['best_b']:8d}"
                           f"{g['bpe_best']:7.3f}{g['gainreq']:7.3f}{g['gainblk']:7.3f}")
+    print("solo (global): " + " · ".join(f"{f} entropy {v['entropy']:.3f}, fixed {v['fixed']:.1f}" for f, v in out["solo"].items()))
     print(f"\nall controls passed in {out['seconds']} s -> {os.path.relpath(OUT)}")
 
 

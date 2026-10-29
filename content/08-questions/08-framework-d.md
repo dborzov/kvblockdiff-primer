@@ -72,7 +72,8 @@ One choice makes the comparison fair. HiSparse is free to pick its own hot-cache
 1. At the defaults (50 GB/s, 30 GB, $\vrho = 0.75$), HiSparse peaks at about 127 requests, at $\vB \approx$ 4.7K. One dictionary per request reaches about 141: **1.11×**, not the 1.33× that $1/\vrho$ suggests.
 2. Hover at $\vB$ = 4,096. There HiSparse serves 109 requests and the per-request line 138: 1.26×. A comparison at a fixed $\vB$ flatters lever 1, because HiSparse could close part of the gap by retuning.
 3. Slide the link to 450 GB/s. HiSparse is now memory-bound at the smallest allowed cache and serves 293. Lever 1 alone *loses* (0.89×): its dictionaries take memory and the link no longer matters. Levers 1 + 2 still win by 14 %.
-4. Back at 50 GB/s, set $\vrho = 0.5$. Lever 1 reaches 1.34×, a victim tier 1.50×, and both levers 1.89×.
+4. Back at 50 GB/s, set $\vrho = 0.5$. Lever 1 reaches 1.34×, a victim tier 1.52×, and both levers 1.89×.
+5. Watch where the victim-tier line peaks: at the smallest raw cache. Once evicted entries can be kept as deltas, it pays to keep fewer raw ones. The victim tier is lever 2 by the back door — in this model, which charges nothing for decoding on promotion.
 :::
 
 Why only 1.11×? When misses get cheaper, the link limit rises, so the best cache shrinks, so each request needs less memory too. The gain is shared between the two limits, and it comes out close to the square root of $1/\vrho$.

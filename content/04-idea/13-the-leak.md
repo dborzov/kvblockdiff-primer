@@ -55,9 +55,9 @@ Make that exact with a [[monte-carlo]] experiment. Draw 4,096 keys of $\vd = 32$
 :::
 
 ::: try
-1. Leave $\veta$ at 0.3. The overlap ({{LK_OV}}) and the hit rate ({{LK_HIT}}) sit near HiSparse's 70 % and 87 % — from keys whose neighbour R² is {{LK_R2_IID}}.
-2. Slide $\veta$ down to 0.05: almost every selection repeats. Up to 1: the cache stops working. The query's speed is the dial.
-3. Switch to keys that are close copies of their neighbours. R² jumps to about {{LK_R2_COPY}} — about {{LK_BITS_COPY}} bits per element saved — and the hit-rate curve barely moves.
+1. Leave $\veta$ at 0.25. The overlap (76 %) and the hit rate (86 %) sit near HiSparse's 70 % and 87 % — from keys whose neighbour R² is 0.000.
+2. Slide $\veta$ down to 0.05: 95 % of selections repeat. Up to 1: the hit rate falls to 37 %. The query's speed is the dial.
+3. Switch to keys that are close copies of their neighbours. R² jumps to 0.90 — about 1.66 bits per element a neighbour could save — and the hit-rate curve barely moves.
 :::
 
 The same experiment fits in a few lines of numpy:
@@ -65,7 +65,7 @@ The same experiment fits in a few lines of numpy:
 ```python HiSparse-like hit rates from keys with nothing to compress
 import numpy as np
 rng = np.random.default_rng(1)
-d, n, k, B, eta = 32, 4096, 64, 128, 0.3
+d, n, k, B, eta = 32, 4096, 64, 128, 0.25
 keys = rng.standard_normal((n, d))                  # i.i.d.: no key says anything about its neighbour
 q = rng.standard_normal(d); q /= np.linalg.norm(q)
 cache, prev, overlap, hits = [], set(), [], []
@@ -83,7 +83,7 @@ r2 = np.mean([np.corrcoef(keys[:-1, c], keys[1:, c])[0, 1] ** 2 for c in range(d
 print(f"overlap {np.mean(overlap):.2f}  LRU hit rate {np.mean(hits):.2f}  neighbour R² {r2:.4f}")
 ```
 
-It prints `overlap 0.71  LRU hit rate 0.82  neighbour R² 0.0003` — HiSparse-like caching from keys that cannot be compressed by a single bit. (Its random numbers differ from the figure's, so the last digits differ too.)
+It prints `overlap 0.75  LRU hit rate 0.86  neighbour R² 0.0003` — HiSparse-like caching from keys that cannot be compressed by a single bit. (Its random numbers differ from the figure's, so the last digit can differ too.) Across the figure's runs, any drift between 0.2 and 0.4 gives an overlap of 63–80 % and a hit rate of 74–90 %.
 
 ::: takeaway
 - Independent random keys plus a slowly drifting query give HiSparse-like overlap and hit rates.

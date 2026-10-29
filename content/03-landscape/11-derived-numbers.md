@@ -46,10 +46,12 @@ each one a scattered read of one raw [[entry]], $\ve = 640$ bytes.
 **2. Link traffic per request.** Over all 78 layers, and per second:
 
 $$
-\underbrace{274 \times \vNL \times \ve}_{274 \times 78 \times 640\ \text{B} \;\approx\; 13.7\ \text{MB per step}}
-\div \underbrace{\vtpot}_{30\ \text{ms}} \approx 0.46\ \text{GB/s per request}
-\quad\Longrightarrow\quad
-\frac{\vWlink}{0.46\ \text{GB/s}} = \frac{50}{0.46} \approx 110\ \text{requests}
+\begin{aligned}
+\text{per step} &= 274 \times \vNL \times \ve \\
+&= 274 \times 78 \times 640\ \text{B} \approx 13.7\ \text{MB} \\[4pt]
+\text{per second} &= 13.7\ \text{MB} \div \underbrace{\vtpot}_{30\ \text{ms}} \approx 0.46\ \text{GB/s} \\[4pt]
+\text{requests} &= \frac{\vWlink}{0.46\ \text{GB/s}} = \frac{50}{0.46} \approx 110
+\end{aligned}
 $$ {#eq-landscape-link-bound}
 
 So a 50 GB/s link can feed about **110 requests** per GPU on misses alone.
@@ -57,9 +59,11 @@ So a 50 GB/s link can feed about **110 requests** per GPU on misses alone.
 **3. GPU memory per request.** Every slot of every layer's hot cache holds one raw entry:
 
 $$
-\underbrace{\vB \times \vNL \times \ve}_{4096 \times 78 \times 640\ \text{B} \;\approx\; 204\ \text{MB}}
-\quad\Longrightarrow\quad
-\frac{\vMhbm}{204\ \text{MB}} = \frac{30\ \text{GB}}{204\ \text{MB}} \approx 147\ \text{requests}
+\begin{aligned}
+\text{per request} &= \vB \times \vNL \times \ve \\
+&= 4096 \times 78 \times 640\ \text{B} \approx 204\ \text{MB} \\[4pt]
+\text{requests} &= \frac{\vMhbm}{204\ \text{MB}} = \frac{30\ \text{GB}}{204\ \text{MB}} \approx 147
+\end{aligned}
 $$ {#eq-landscape-memory-bound}
 
 So 30 GB of GPU memory holds the hot caches of about **147 requests**. With $\vB = 8192$ each request needs 409 MB, and only about 73 fit.

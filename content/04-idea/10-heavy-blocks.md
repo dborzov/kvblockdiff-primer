@@ -47,10 +47,10 @@ How much does concentration matter? A toy indexer makes it visible.
 :::
 
 ::: try
-1. Set concentration to 0. The hot cache still hits about {{HB_HIT0}} of selections — Lucky Louis is intact — yet only {{HB_FD0}} of misses are δ-misses, and the busiest blocks change all the time.
-2. Set concentration to 80 % (the default). Now {{HB_FD80}} of misses are δ-misses, with about {{HB_LOAD80}} dictionary loads per step.
-3. Keep 80 % and shorten the topic lifetime to 3 steps. Heavy blocks that do not stay heavy force more loads.
-4. Set $\vnD = 1$, then 8. More shelves catch more misses, at the price of GPU memory.
+1. Set concentration to 0. The hot cache still hits about 85 % of selections — Lucky Louis is intact — yet only 13 % of misses are δ-misses, and the shelf changes most steps (0.66 loads per step).
+2. Back to 80 % (the default): 77 % of misses are δ-misses, with 0.14 dictionary loads per step — one load every seven steps.
+3. Keep 80 % and shorten the topic lifetime to 3 steps. Heavy blocks that do not *stay* heavy are almost as bad as none: $\vfD$ falls to 29 % and loads triple.
+4. Set $\vnD = 1$, then 8: $\vfD$ goes from 25 % to 81 %. More shelves catch more misses, at the price of GPU memory.
 :::
 
 Notice what the hit rate does while you move the concentration slider: almost nothing. The per-entry property and the per-block property are different statistics, and only the second decides $\vfD$.

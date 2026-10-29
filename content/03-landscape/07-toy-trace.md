@@ -72,9 +72,10 @@ Now count what the three steps cost.
 
 ::: keycard The economy of HiSparse, per request and per layer
 $$
-\underbrace{\text{link bytes per step}}_{\text{the lift}} = \text{misses} \times \ve,
-\qquad
-\underbrace{\text{GPU bytes}}_{\text{the desk}} = \vB \times \ve
+\begin{aligned}
+\underbrace{\text{link bytes per step}}_{\text{the lift}} &= \text{misses} \times \ve \\[4pt]
+\underbrace{\text{GPU bytes}}_{\text{the desk}} &= \vB \times \ve
+\end{aligned}
 $$
 
 HiSparse makes the number of misses small by caching well. It does not change what a miss costs, or what a slot costs: both are one raw entry.

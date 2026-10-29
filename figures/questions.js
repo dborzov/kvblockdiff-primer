@@ -10,6 +10,7 @@ window.FIG = window.FIG || {};
 
   // ------------------------------------------------------------ shared bits
   const schem = (txt) => h('div', { class: 'q-schem', html: txt || 'Schematic · no data yet' });
+  const mark = host => { host.classList.add('q-host'); return host; };
   const SOLO_BITS = 6.24;          // solo coding, ideal coder: ≈ 0.78 × 8 bits (II/VI: order-0 entropy 6.2–6.5)
   const FIX = 1.13;                // fixed-length overhead over the ideal rate (assumed: middle of the 10–15 % gap)
 
@@ -17,9 +18,9 @@ window.FIG = window.FIG || {};
   FIG.qDecision = (host) => {
     let gr = 0.3, gb = 0.55;
     const box = h('div'), ro = readout();
-    const sR = slider(texify('request-scope gain $\\vgainreq$'), 0, 1.5, 0.01, gr, v => { gr = v; draw(); }, v => `${fmt(v, 2)} bit`);
-    const sB = slider(texify('block-scope gain $\\vgainblk$'), 0, 1.5, 0.01, gb, v => { gb = v; draw(); }, v => `${fmt(v, 2)} bit`);
-    host.append(schem('Schematic · the decision rule, drawn before any data'), controls(sR, sB), box, ro);
+    const sR = slider(texify('request gain $\\vgainreq$ (bit)'), 0, 1.5, 0.01, gr, v => { gr = v; draw(); }, v => fmt(v, 2));
+    const sB = slider(texify('block gain $\\vgainblk$ (bit)'), 0, 1.5, 0.01, gb, v => { gb = v; draw(); }, v => fmt(v, 2));
+    mark(host).append(schem('Schematic · the decision rule, drawn before any data'), controls(sR, sB), box, ro);
     const P = Plot(box, {
       x: [0, 1.5], y: [0, 1.5], h: 400, xlabel: 'gain of a per-request dictionary (bits per element)',
       ylabel: 'extra gain of per-block dictionaries', label: 'Regions of the wave-1 decision rule over the two scope gains',
@@ -72,12 +73,12 @@ window.FIG = window.FIG || {};
   FIG.qBar = (host) => {
     let mode = 'ideal', gain = 0.6, dict = 0.06;
     const box = h('div'), ro = readout();
-    host.append(
+    mark(host).append(
       schem('Schematic · illustrative bits, no data yet'),
       controls(
         seg([['ideal', 'ideal entropy coder'], ['fixed', 'fixed-length GPU code']], mode, v => { mode = v; draw(); }, 'which rate'),
-        slider('dictionary saves (vs solo, ideal)', 0, 2, 0.05, gain, v => { gain = v; draw(); }, v => `${fmt(v, 2)} bit`),
-        slider(texify('dictionary cost $8\\vw/\\vb$'), 0, 1, 0.01, dict, v => { dict = v; draw(); }, v => `${fmt(v, 2)} bit`),
+        slider('saving over solo (bit)', 0, 2, 0.05, gain, v => { gain = v; draw(); }, v => fmt(v, 2)),
+        slider(texify('dictionary $8\\vw/\\vb$ (bit)'), 0, 1, 0.01, dict, v => { dict = v; draw(); }, v => fmt(v, 2)),
       ),
       legend([['delta (crosses the link on a miss)', 'var(--t-delta)', 'box'], ['dictionary, amortized (stored, resident)', 'var(--t-dictionary)', 'box']]),
       box, ro,
@@ -126,16 +127,17 @@ window.FIG = window.FIG || {};
     const bits = (s, D) => { const c = s.sReq + s.sLoc * Math.exp(-D / s.lam); return 0.5 * log2(1 / Math.max(1e-9, 1 - c * c)); };
     const xs = linspace(0, 15, 76).map(v => Math.pow(2, v));
     const box = h('div'), ro = readout();
-    const sQ = slider('request share of variance', 0, 0.9, 0.01, cur.sReq, v => { cur.sReq = v; fix('q'); draw(); }, v => fmtPct(v, 0));
-    const sL = slider('local share of variance', 0, 0.9, 0.01, cur.sLoc, v => { cur.sLoc = v; fix('l'); draw(); }, v => fmtPct(v, 0));
-    const sT = slider(texify('decay length (tokens)'), 1, 13, 0.25, log2(cur.lam), v => { cur.lam = Math.pow(2, v); draw(); }, v => fmt(Math.pow(2, v), 0));
+    const pct = v => `${Math.round(100 * v)}%`;
+    const sQ = slider('request share', 0, 0.9, 0.01, cur.sReq, v => { cur.sReq = v; fix('q'); draw(); }, pct);
+    const sL = slider('local share', 0, 0.9, 0.01, cur.sLoc, v => { cur.sLoc = v; fix('l'); draw(); }, pct);
+    const sT = slider('decay length', 1, 13, 0.25, log2(cur.lam), v => { cur.lam = Math.pow(2, v); draw(); }, v => fmt(Math.pow(2, v), 0));
     const pick = seg([['local', 'fallen-apple'], ['request', 'per-request'], ['none', 'nothing']], world, v => {
       world = v; cur = Object.assign({}, PRE[v]); sQ.set(cur.sReq); sL.set(cur.sLoc); sT.set(log2(cur.lam)); draw();
     }, 'which world');
     function fix(which) {      // shares cannot exceed 98 % together; the rest is noise
       if (cur.sReq + cur.sLoc > 0.98) { if (which === 'q') { cur.sLoc = 0.98 - cur.sReq; sL.set(cur.sLoc); } else { cur.sReq = 0.98 - cur.sLoc; sQ.set(cur.sReq); } }
     }
-    host.append(schem('Schematic · a toy channel model, no KV data'), controls(pick, sQ, sL, sT),
+    mark(host).append(schem('Schematic · a toy channel model, no KV data'), controls(pick, sQ, sL, sT),
       legend([['your world', 'var(--c)'], ['fallen-apple world', 'var(--t-fallen-apple)', 'dash'], ['per-request world', 'var(--t-scope-request)', 'dash'], ['nothing world', 'var(--ink-3)', 'dash'], ['after shuffling', 'var(--carmine)', 'dot']]),
       box, ro);
     const P = Plot(box, { x: [1, 32768], xlog: 2, y: [0, 1.6], h: 340, xticks: [1, 4, 16, 64, 256, 1024, 4096, 32768], xfmt: v => v >= 1024 ? `${v / 1024}K` : String(v),
@@ -171,19 +173,19 @@ window.FIG = window.FIG || {};
     let world = 'corr', mode = 'ideal', lb = 12;   // b = 2^lb
     // schematic gains in bits per element over solo, per world; loosely shaped after the VI.7 Monte Carlo
     const FAM = [
-      { id: 'loc', name: 'loc', color: 'var(--t-loc)', set: [
+      { id: 'loc', name: 'loc', short: 'loc', color: 'var(--t-loc)', set: [
         { hp: 'location only', w: 1, g: { corr: 0.2, clus: 0.22, none: 0.01 } },
         { hp: 'location + scale', w: 2, g: { corr: 0.26, clus: 0.28, none: 0.015 } }] },
-      { id: 'klt', name: 'KLT, rank r', color: 'var(--t-klt)', set: [4, 8, 16, 32, 64, 320].map(r => ({
+      { id: 'klt', name: 'KLT, rank r', short: 'KLT', color: 'var(--t-klt)', set: [4, 8, 16, 32, 64, 320].map(r => ({
         hp: r === 320 ? 'full basis (bound)' : `rank ${r}`, w: 2 * r, g: { corr: 0.26 + 0.36 * (1 - Math.exp(-r / 12)), clus: 0.28 + 0.4 * (1 - Math.exp(-r / 12)), none: 0.0 } })) },
-      { id: 'vq', name: 'VQ, C centroids', color: 'var(--t-vq)', set: [16, 64, 256, 1024, 4096].map(C => ({
+      { id: 'vq', name: 'VQ, C centroids', short: 'VQ', color: 'var(--t-vq)', set: [16, 64, 256, 1024, 4096].map(C => ({
         hp: `C = ${C}`, w: C, side: log2(C) / D_EL, g: { corr: 0.26 + 0.16 * Math.min(1, log2(C) / 12), clus: 0.28 + 1.3 * Math.min(1, log2(C) / 10), none: 0.0 } })) },
-      { id: 'sib', name: 'sib', color: 'var(--t-sib)', set: [{ hp: 'nearest sibling', w: 0, sideB: true, g: { corr: -0.15, clus: 0.55, none: -0.5 } }] },
+      { id: 'sib', name: 'sib', short: 'sib', color: 'var(--t-sib)', set: [{ hp: 'nearest sibling', w: 0, sideB: true, g: { corr: -0.15, clus: 0.55, none: -0.5 } }] },
     ];
     const WORLDS = { corr: 'correlated, bell-shaped', clus: 'clustered', none: 'no structure' };
     const box = h('div'), ro = readout();
     const sB = slider(texify('block size $\\vb$'), 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmt(Math.pow(2, v), 0)} tokens`);
-    host.append(
+    mark(host).append(
       schem('Schematic · invented point clouds, no data yet'),
       controls(
         seg([['corr', 'correlated data'], ['clus', 'clustered data'], ['none', 'no structure']], world, v => { world = v; draw(); }, 'which world'),
@@ -196,14 +198,14 @@ window.FIG = window.FIG || {};
       box, ro,
     );
     const P = Plot(box, {
-      x: [1e-5, 10], xlog: true, y: [0.4, 1.06], h: 400,
+      x: [1e-5, 10], xlog: true, y: [0.55, 1.05], h: 400,
       xticks: [ZERO, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10], xfmt: v => (v === ZERO ? '0' : v >= 1 ? String(v) : String(+v.toPrecision(1))),
       xlabel: 'dictionary cost per entry, w / b (entries’ worth)', ylabel: 'delta ratio ρ', label: 'The compressibility curve: delta size against dictionary cost',
     });
     // axis break between "0" and the log part
     const bx = P.x(3.2e-5), by = P.H - P.m.b;
     el('path', { d: `M${bx - 5 * P.fs} ${by + 5 * P.fs}l${6 * P.fs} ${-10 * P.fs}M${bx} ${by + 5 * P.fs}l${6 * P.fs} ${-10 * P.fs}`, class: 'q-break' }, P.g.axes);
-    const tipFor = (f, s, x, y) => `<b>${f.name} · ${s.hp}</b><br>w = ${s.w} entries’ worth, b = ${Math.pow(2, lb)}<br>dictionary ${x === ZERO ? '0' : fmt(x, 4)} + delta ${fmt(y, 3)} = <b>${fmt((x === ZERO ? 0 : x) + y, 3)}</b> of an entry<br>= ${fmt(8 * ((x === ZERO ? 0 : x) + y), 2)} bits per element`;
+    const tipFor = (f, s, x, y) => `<b>${f.short} · ${s.hp}</b><br>w = ${s.w} entries’ worth, b = ${Math.pow(2, lb)}<br>dictionary ${x === ZERO ? '0' : fmt(x, 4)} + delta ${fmt(y, 3)} = <b>${fmt((x === ZERO ? 0 : x) + y, 3)}</b> of an entry<br>= ${fmt(8 * ((x === ZERO ? 0 : x) + y), 2)} bits per element`;
     function draw() {
       P.clear();
       const b = Math.pow(2, lb), f = mode === 'ideal' ? 1 : FIX;
@@ -211,7 +213,7 @@ window.FIG = window.FIG || {};
       const loc = 0.6 + 0.4 * 2048 / (2048 + b);       // smaller blocks fit a little better (schematic)
       // break-even region: total = x + ρ < solo
       const xs = [ZERO, ...linspace(-5, log2(solo * 0.999) / log2(10), 80).map(v => Math.pow(10, v))];
-      area(P, xs.map(x => [x, 0.4, Math.max(0.4, solo - (x === ZERO ? 0 : x))]), { color: 'var(--good)', opacity: 0.1 });
+      area(P, xs.map(x => [x, 0.55, Math.max(0.55, solo - (x === ZERO ? 0 : x))]), { color: 'var(--good)', opacity: 0.1 });
       rule(P, { y: 1, label: 'raw entries (HiSparse)' });
       rule(P, { y: solo, label: `solo coding · ${fmt(solo, 2)}`, color: 'var(--t-solo)' });
       const pts = [];
@@ -240,7 +242,7 @@ window.FIG = window.FIG || {};
       const light = Math.min(solo, ...pts.filter(p => p.x === ZERO || p.x <= 0.01).map(p => p.y));
       ro.set([
         ['world', WORLDS[world]],
-        ['best total', cand.tot < solo ? `${cand.f.name} · ${cand.s.hp}: ${fmt(8 * cand.tot, 2)} bits per element, ${fmt(8 * (solo - cand.tot), 2)} below solo` : 'nothing beats solo coding'],
+        ['best total', cand.tot < solo ? `${cand.f.short} · ${cand.s.hp}: ${fmt(8 * cand.tot, 2)} bits per element, ${fmt(8 * (solo - cand.tot), 2)} below solo` : 'nothing beats solo coding'],
         ['roofline at w/b ≤ 0.01', `ρ = ${fmt(light, 3)}`],
       ]);
     }
@@ -301,7 +303,7 @@ window.FIG = window.FIG || {};
     const verdict = h('div', { class: 'readout' });
     const sC = slider('concentration into hot spots', 0, 1, 0.05, conc, v => { conc = v; draw(); }, v => fmtPct(v, 0));
     const sN = slider(texify('resident dictionaries $\\vnD$'), 1, 8, 1, nD, v => { nD = v; draw(); });
-    host.append(
+    mark(host).append(
       schem('Toy trace · a made-up indexer, not a real one'),
       controls(sC, seg([[64, 'b = 64'], [128, 'b = 128'], [256, 'b = 256']], b, v => { b = v; draw(); }, 'block size'), sN,
         btn('New trace', () => { seed++; draw(); })),
@@ -311,7 +313,7 @@ window.FIG = window.FIG || {};
     const g = el('g', {}, DG.svg);
     const left = 46 * DG.fs, top = 10, bot = DG.H - 26 * DG.fs, right = DG.W - 8;
     const colW = (right - left) / SHOW, yOf = p => top + (bot - top) * p / L;
-    const SP = Plot(small, { x: [1, 8], y: [0, 1], h: 210, xticks: range(1, 9), xlabel: 'resident dictionaries per layer n_D', ylabel: 'δ-miss fraction', label: 'δ-miss fraction against number of resident dictionaries' });
+    const SP = Plot(small, { x: [1, 8], y: [0, 1], h: 210, xticks: range(1, 9), xlabel: 'number of resident dictionaries per layer', ylabel: 'δ-miss fraction', label: 'δ-miss fraction against number of resident dictionaries' });
     function draw() {
       const key = `${seed}|${conc}`;
       if (key !== traceKey) { trace = makeTrace(); traceKey = key; }
@@ -341,7 +343,7 @@ window.FIG = window.FIG || {};
       verdict.innerHTML = `<span><b>reading</b>${v}</span>`;
       SP.clear();
       const curve = range(1, 9).map(n => [n, replay(b, n, false).fD]);
-      rule(SP, { y: 0.8, label: 'f_D = 0.8', color: 'var(--ink-3)' });
+      rule(SP, { y: 0.8, label: '0.8', color: 'var(--ink-3)' });
       rule(SP, { y: 0.5, label: '0.5', color: 'var(--ink-3)' });
       line(SP, curve, { color: 'var(--t-delta-miss)', markers: true, tip: p => `n_D = ${p[0]}: f_D = ${fmtPct(p[1], 0)}` });
       const c = curve[nD - 1];
@@ -356,7 +358,19 @@ window.FIG = window.FIG || {};
     let W = 50, M = 30, rho = 0.75, fD = 0.85, showVictim = true;
     const m = Bs => 0.134 * Math.pow(Bs / 4096, -1.08);          // HiSparse's three points, power-law fit (III.9)
     const Bgrid = linspace(log2(2048), log2(16384), 121).map(v => Math.pow(2, v));
-    const BVgrid = [0, ...linspace(6, 15, 37).map(v => Math.pow(2, v))];
+    // best victim-tier size for a given B: the link limit rises with B_V, the memory limit falls; take the crossing
+    function limits(Bs, BV) {
+      const T = m(Bs + BV) * k * NL * e * rho;
+      return [W * 1e9 * TPOT / T, M * 1e9 / (NL * e * (Bs + rho * BV + 256))];
+    }
+    function bestVictim(Bs) {
+      let [l0, h0] = limits(Bs, 0);
+      if (l0 >= h0) return h0;                       // memory already binds: no victim tier
+      let lo = 0, hi = 32768;
+      if (limits(Bs, hi)[0] < limits(Bs, hi)[1]) return limits(Bs, hi)[0];
+      for (let it = 0; it < 50; it++) { const mid = (lo + hi) / 2, [l, hh] = limits(Bs, mid); if (l < hh) lo = mid; else hi = mid; }
+      return Math.min(...limits(Bs, lo));
+    }
     function N(Bs, o) {
       const T = m(Bs + (o.BV || 0)) * k * NL * e * (o.fD * o.rho + (1 - o.fD)) + (o.nload || 0) * NL * (o.w || 0) * e;
       const Nl = W * 1e9 * TPOT / T;
@@ -364,18 +378,18 @@ window.FIG = window.FIG || {};
       return Math.min(Nl, M * 1e9 / Mr);
     }
     const SYS = [
-      { id: 'his', name: 'HiSparse', color: 'var(--t-hisparse)', f: Bs => N(Bs, { rho: 1, fD: 1 }) },
-      { id: 'req', name: 'lever 1 · request scope (w = 256)', color: 'var(--t-scope-request)', f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
-      { id: 'blk', name: 'lever 1 · block scope, 4 resident (w = 32)', color: 'var(--t-scope-block)', f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
-      { id: 'vic', name: 'lever 1 + victim tier (best size)', color: 'var(--t-victim-tier)', f: Bs => Math.max(...BVgrid.map(BV => N(Bs, { rho, fD: 1, wres: 256, BV }))) },
-      { id: 'lv2', name: 'levers 1 + 2 · deltas in the hot cache', color: 'var(--t-kv-blockdiff)', f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
+      { id: 'his', name: 'HiSparse', color: series(0), f: Bs => N(Bs, { rho: 1, fD: 1 }) },
+      { id: 'req', name: 'lever 1 · request scope (w = 256)', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
+      { id: 'blk', name: 'lever 1 · block scope, 4 resident (w = 32)', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
+      { id: 'vic', name: 'lever 1 + victim tier (best size)', color: series(4), f: Bs => bestVictim(Bs) },
+      { id: 'lv2', name: 'levers 1 + 2 · deltas in the hot cache', color: series(1), f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
     ];
     const box = h('div'), tbl = h('div');
-    host.append(
+    mark(host).append(
       schem('Schematic · assumed ρ and f<sub>D</sub>, reference setting otherwise'),
       controls(
-        slider('link bandwidth', 25, 450, 5, W, v => { W = v; draw(); }, v => `${v} GB/s`),
-        slider('GPU memory for KV', 10, 80, 1, M, v => { M = v; draw(); }, v => `${v} GB`),
+        slider('link', 25, 450, 5, W, v => { W = v; draw(); }, v => `${v} GB/s`),
+        slider('GPU memory', 10, 80, 1, M, v => { M = v; draw(); }, v => `${v} GB`),
         slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
         slider(texify('$\\vfD$ (block scope)'), 0, 1, 0.01, fD, v => { fD = v; draw(); }),
         btn('victim tier', (ev, b) => { showVictim = !showVictim; b.setAttribute('aria-pressed', String(showVictim)); draw(); }, { pressed: showVictim })),
@@ -427,7 +441,7 @@ window.FIG = window.FIG || {};
     ];
     const PAGES = ['VIII.9 dictionaries', 'VIII.10 measurements', 'VIII.11 automation & probes'];
     const box = h('div');
-    host.append(schem('Our judgement · not data'), legend(PAGES.map((p, i) => [p, series(i), 'dot'])), box);
+    mark(host).append(schem('Our judgement · not data'), legend(PAGES.map((p, i) => [p, series(i), 'dot'])), box);
     const P = Plot(box, { x: [0, 1], y: [0, 1], h: 380, xticks: [0, 0.5, 1], yticks: [0, 0.5, 1], xfmt: v => (v === 0 ? 'cheap' : v === 1 ? 'costly' : ''), yfmt: v => (v === 0 ? 'long shot' : v === 1 ? 'likely' : ''),
       xlabel: 'cost to test', ylabel: 'odds of a useful answer', label: 'Parked questions placed by cost to test and odds of a useful answer' });
     svgText(P.g.bg, P.x(0.03), P.y(0.95), 'cheap and promising:\ndo these first', { class: 'annot' });
@@ -452,7 +466,7 @@ window.FIG = window.FIG || {};
     };
     const cap = h('div', { class: 'readout' });
     const box = h('div');
-    host.append(schem('Diagram · one request, a few tokens, layers and two heads'),
+    mark(host).append(schem('Diagram · one request, a few tokens, layers and two heads'),
       controls(seg([['token', 'token axis'], ['layer', 'layer axis'], ['head', 'head axis'], ['split', 'prefill vs generated']], mode, v => { mode = v; draw(); }, 'which neighbour')),
       box, cap);
     const D = Diagram(box, { w: 640, h: 270, label: 'Grid of entries by token, layer and head with the neighbour of the selected question highlighted', grow: 0.5 });
@@ -503,7 +517,7 @@ window.FIG = window.FIG || {};
     };
     const bits = (l, D) => PAT[pat].amp(l) * Math.exp(-D / PAT[pat].lam(l));
     const box = h('div'), ro = readout();
-    host.append(schem('Schematic · three invented patterns, no data'),
+    mark(host).append(schem('Schematic · three invented patterns, no data'),
       controls(seg([['graded', 'graded with depth'], ['uniform', 'all layers alike'], ['few', 'a few layers']], pat, v => { pat = v; draw(); }, 'which pattern')),
       box, ro);
     const D = Diagram(box, { w: 640, h: 300, label: 'Heat map of bits saved by layer and token distance (invented)' });
@@ -519,7 +533,10 @@ window.FIG = window.FIG || {};
       });
       [0, 4, 8, 12, 15].forEach(i => svgText(g, lx + (i + 0.5) * cw, by + 16 * D.fs, DS[i] >= 1024 ? `${DS[i] / 1024}K` : String(DS[i]), { class: 'lbl', 'text-anchor': 'middle' }));
       [0, 5, 11].forEach(l => svgText(g, lx - 8, by - (l + 0.5) * chh + 4, `layer ${l}`, { class: 'lbl', 'text-anchor': 'end' }));
-      svgText(g, (lx + rx) / 2, D.H - 4, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
+      svgText(g, (lx + rx) / 2 - 60, D.H - 4, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
+      [0, 0.25, 0.5, 0.75, 1].forEach((f, i) => el('rect', { x: 500 + i * 18, y: D.H - 16, width: 17, height: 12, class: 'q-heat', style: `fill:color-mix(in srgb, var(--t-curve) ${Math.round(100 * f)}%, var(--paper-3))` }, g));
+      svgText(g, 494, D.H - 6, '0', { class: 'lbl', 'text-anchor': 'end' });
+      svgText(g, 596, D.H - 6, '1.1 bit', { class: 'lbl' });
       ro.set([['what we would read', PAT[pat].read]]);
     }
     draw();

@@ -46,9 +46,11 @@ Think of an ordinary lookup first. A Python dictionary maps a key to a value: as
 The function that turns scores into weights is the **softmax**: raise $e$ to the power of each score, then divide by the total, so the weights are positive and add up to 1.
 
 $$
-\text{weight}_{\vt} = \frac{e^{\,\text{score}_{\vt}}}{\sum_{\vt'} e^{\,\text{score}_{\vt'}}}, \qquad
-\text{output} = \sum_{\vt} \underbrace{\text{weight}_{\vt}}_{\text{how much to listen}} \times \underbrace{\text{value}_{\vt}}_{\text{what token } \vt \text{ says}},
-\qquad \text{score}_{\vt} = \underbrace{\vq \cdot \text{key}_{\vt}}_{\text{how well it matches}}
+\begin{aligned}
+\text{score}_{\vt} &= \underbrace{\vq \cdot \text{key}_{\vt}}_{\text{how well it matches}} \\[4pt]
+\text{weight}_{\vt} &= \frac{e^{\,\text{score}_{\vt}}}{\sum_{\vt'} e^{\,\text{score}_{\vt'}}} \\[4pt]
+\text{output} &= \sum_{\vt} \underbrace{\text{weight}_{\vt}}_{\text{how much to listen}} \times \underbrace{\text{value}_{\vt}}_{\text{what } \vt \text{ says}}
+\end{aligned}
 $$ {#eq-landscape-attention}
 
 The sums run over all stored positions $\vt'$ and $\vt$. (Real models also divide each score by the square root of the key's length, to keep scores in a sensible range. It changes nothing in the story.)
@@ -115,7 +117,8 @@ Here is one decode step of a toy model, written to show where memory is kept and
 ```python setup for the decode step below
 import numpy as np
 rng = np.random.default_rng(0)
-WIDTH, N_LAYERS, N_Q, N_KV, HEAD_W = 64, 4, 8, 2, 16   # hidden width, layers, query heads, KV heads, head width
+# hidden width, layers, query heads, key/value heads, head width
+WIDTH, N_LAYERS, N_Q, N_KV, HEAD_W = 64, 4, 8, 2, 16
 Wq = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_Q * HEAD_W))
 Wk = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_KV * HEAD_W))
 Wv = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_KV * HEAD_W))
@@ -129,27 +132,33 @@ def softmax(s):
 
 ```python one decode step of a toy GQA model, written to expose the stored keys and values
 def decode_step(x, keys, values):
-    """x: the new token's hidden state. keys[l], values[l]: what earlier tokens left at layer l."""
+    """x: the new token's hidden state.
+    keys[l], values[l]: what earlier tokens left at layer l."""
     for l in range(N_LAYERS):
-        q = (x @ Wq[l]).reshape(N_Q, HEAD_W)      # this token's queries, one per query head
-        key = (x @ Wk[l]).reshape(N_KV, HEAD_W)   # its key ...
-        val = (x @ Wv[l]).reshape(N_KV, HEAD_W)   # ... and its value, one per key/value head
-        keys[l].append(key); values[l].append(val)  # the stored memory grows by one token per layer
-        K, V = np.stack(keys[l]), np.stack(values[l])  # [tokens so far, N_KV, HEAD_W]
+        # this token's queries (one per query head), key and value
+        q = (x @ Wq[l]).reshape(N_Q, HEAD_W)
+        key = (x @ Wk[l]).reshape(N_KV, HEAD_W)
+        val = (x @ Wv[l]).reshape(N_KV, HEAD_W)
+        # the stored memory grows by one token per layer
+        keys[l].append(key); values[l].append(val)
+        K, V = np.stack(keys[l]), np.stack(values[l])  # [tokens, N_KV, HEAD_W]
         out = []
         for qh in range(N_Q):
-            h = qh // (N_Q // N_KV)               # GQA: query heads 0-3 share key/value head 0, 4-7 head 1
-            wts = softmax(K[:, h] @ q[qh] / np.sqrt(HEAD_W))  # one weight per stored token: reads EVERY key
-            out.append(wts @ V[:, h])             # weighted mix of the stored values
-        x = x + np.concatenate(out) @ Wo[l]       # the layer's answer is added to the hidden state
-        # (a feed-forward block follows here; it never looks back, so we leave it out)
+            h = qh // (N_Q // N_KV)  # GQA: heads 0-3 -> KV head 0, 4-7 -> 1
+            # one weight per stored token: this reads EVERY stored key
+            wts = softmax(K[:, h] @ q[qh] / np.sqrt(HEAD_W))
+            out.append(wts @ V[:, h])      # weighted mix of the stored values
+        # the layer's answer is added to the hidden state
+        x = x + np.concatenate(out) @ Wo[l]
+        # (a feed-forward block follows; it never looks back, so we skip it)
     return x
 
 keys = [[] for _ in range(N_LAYERS)]
 values = [[] for _ in range(N_LAYERS)]
-for t in range(5):                                 # five steps; random vectors stand in for tokens
+for t in range(5):            # five steps; random vectors stand in for tokens
     x = decode_step(rng.normal(size=WIDTH), keys, values)
-print(len(keys[0]), keys[0][0].shape)              # 5 (2, 16): five tokens stored, 2 heads x 16 numbers each
+print(len(keys[0]), keys[0][0].shape)
+# 5 (2, 16): five tokens stored, each key 2 heads x 16 numbers
 ```
 
 Three lines carry the whole story of this site.

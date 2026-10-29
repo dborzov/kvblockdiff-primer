@@ -1,5 +1,6 @@
 ---
 title: The classics we lean on
+group: Old theory
 nav: The classics
 lede: Five old results that this proposal quietly depends on — coding against what only the receiver knows, one curve for every cache size, the clairvoyant cache, and rotations that work on integers. Each with a toy, and with our honest read of how much we need it.
 cards:

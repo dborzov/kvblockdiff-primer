@@ -53,8 +53,10 @@ It was tempting for good reasons.
 Here is the ledger every codebook must balance, in bits per element of a $\vd$-element vector.
 
 $$
-\text{net} \;=\; \underbrace{\text{narrowing}}_{\tfrac12\log_2\frac{\text{variance before}}{\text{variance of the residual}}} \;-\; \underbrace{\frac{\log_2 \vC}{\vd}}_{\text{the index, per entry}} \;-\; \underbrace{\frac{8\vC}{\vb}}_{\text{the codebook, shared by a block}}
+\text{net} \;=\; \underbrace{\text{narrowing}}_{\text{what the centroid buys}} \;-\; \underbrace{\frac{\log_2 \vC}{\vd}}_{\text{the index}} \;-\; \underbrace{\frac{8\vC}{\vb}}_{\text{the codebook}}
 $$ {#eq-ma-vq-ledger}
+
+The narrowing is the exchange rate applied to the leftover: $\tfrac12\log_2$ of the variance before, over the variance of the residual. The index is paid by every entry. The codebook is paid once per block of $\vb$ entries.
 
 ::: aside reminder Index tax and rate–distortion
 [[#school-clusters]]: naming one of $\vC$ centroids costs $\log_2 \vC$ bits. [[#school-vq-vs-klt]]: [[rate-distortion]] theory says that on Gaussian data, spending $R$ bits per vector shrinks the leftover's variance by at most a factor $2^{-2R/\vd}$ per element beyond what a rotation already gets.

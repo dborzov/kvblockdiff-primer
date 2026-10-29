@@ -76,23 +76,25 @@ def hisparse_resolve(S, cache, B, fetch):
     hits   = [p for p in S if p in cache]
     misses = [p for p in S if p not in cache]
     for p in misses:
-        if len(cache) >= B:                            # full: evict the oldest entry NOT selected now
+        if len(cache) >= B:
+            # full: evict the oldest entry that is NOT selected now
             victim = next(v for v in cache if v not in S)
             cache.pop(victim)
-        cache[p] = fetch(p)                            # e bytes over the link, one scattered read
-    for p in hits:                                     # hits move to the newest end, above the misses
+        cache[p] = fetch(p)      # e bytes over the link, one scattered read
+    for p in hits:               # hits move to the newest end, after the misses
         cache.move_to_end(p)
-    return [cache[p] for p in S]                       # the k entries attention will read
+    return [cache[p] for p in S] # the k entries attention will read
 
-# the toy trace of the next page: 16 positions, B = 6 slots, k = 4 selections per step
+# the toy trace of the next page: 16 positions, B = 6 slots, k = 4 per step
 cache = OrderedDict((p, f"E{p}") for p in [1, 10, 13, 2, 5, 9])
 for S in [[2, 5, 9, 14], [2, 5, 9, 11], [2, 9, 11, 15]]:
     before = list(cache)
     hisparse_resolve(S, cache, B=6, fetch=lambda p: f"E{p}")
-    print(S, "misses:", [p for p in S if p not in before], "cache now:", list(cache))
-# [2, 5, 9, 14] misses: [14] cache now: [10, 13, 14, 2, 5, 9]
-# [2, 5, 9, 11] misses: [11] cache now: [13, 14, 11, 2, 5, 9]
-# [2, 9, 11, 15] misses: [15] cache now: [14, 5, 15, 2, 9, 11]
+    print(S, "misses:", [p for p in S if p not in before],
+          "cache:", list(cache))
+# [2, 5, 9, 14] misses: [14] cache: [10, 13, 14, 2, 5, 9]
+# [2, 5, 9, 11] misses: [11] cache: [13, 14, 11, 2, 5, 9]
+# [2, 9, 11, 15] misses: [15] cache: [14, 5, 15, 2, 9, 11]
 ```
 
 In words, each step does four things:

@@ -56,7 +56,7 @@ $$ {#eq-plan-bill}
 The figure puts four bills side by side, for an entry of $\vd = 1024$ elements — the entry size of the model we will measure ([[#plan-data]]).
 
 ::: figure fig-plan-bill planBill
-**Four bills at one block size.** Each bar is the rate of one dictionary type in bits per element: residual (lapis), side channel (vermilion), dictionary share $8\vw/\vb$ (saffron). The dashed line marks raw storage, 8 bits. Weights include 3 bytes per channel of coder settings that the harness also charges (centre, scale, width and flag): loc $\vw = 4$; KLT rank 16 $\vw = 35$ (16 basis vectors in BF16); VQ $\vw = 259$ (16 sub-codebooks of 256 centroids on 64-element pieces); sib $\vw = 3$. Side channels: KLT 16 coefficients per entry at an **assumed** 8 bits each; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. The residual is **one assumed value for all four**, so that only the taxes differ — the real residuals are what wave 1 measures. Slide the block size and the residual; hover a bar for its lines.
+**Four bills at one block size.** Each bar is the rate of one dictionary type in bits per element: residual (lapis), side channel (vermilion), dictionary share $8\vw/\vb$ (saffron). The dashed line marks raw storage, 8 bits. Weights include 3 bytes per channel of coder settings that the harness also charges (centre, scale and width): loc $\vw = 4$; KLT rank 16 $\vw = 35$ (16 basis vectors in BF16); VQ $\vw = 259$ (16 sub-codebooks of 256 centroids on 64-element pieces); sib $\vw = 3$. Side channels: KLT 16 coefficients per entry at an **assumed** 8 bits each; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. The residual is **one assumed value for all four**, so that only the taxes differ — the real residuals are what wave 1 measures. Slide the block size and the residual; hover a bar for its lines.
 :::
 
 ::: try
@@ -139,7 +139,7 @@ The third line of the bill depends on the scope, and the rule is short.
 Two consequences follow.
 
 - **Request scope is block scope with $\vb = \vL$.** The same code path, with the block stretched to the whole sequence. One of the controls checks this to the bit ([[#plan-controls]]).
-- **The coder's own settings are part of the dictionary.** A narrow-scope dictionary must also ship its coder's model: per channel a centre, a scale, a width and a one-bit "predict or not" flag. The harness charges 3 bytes per channel for them. That makes loc weigh $\vw = 4$ instead of the $\vw \approx 2$ of [[#homework-loc]] — still under 0.07 bit per element at $\vb = 512$.
+- **The coder's own settings are part of the dictionary.** A narrow-scope dictionary must also ship its coder's model: per channel a centre, a scale and a width, which the harness charges at 3 bytes per channel, plus a one-bit "predict or not" flag when the coder uses one. That makes loc weigh $\vw = 4$ instead of the $\vw \approx 2$ of [[#homework-loc]] — still under 0.07 bit per element at $\vb = 512$.
 
 ::: theme every-tax
 Even the coder's own model is a tax. A narrow scope must ship it with every dictionary, and the harness charges it like any other byte.

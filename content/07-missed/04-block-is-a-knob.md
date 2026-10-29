@@ -82,8 +82,10 @@ The property and the knob live on different axes. The figure puts them one above
 - **Panel B, the knob:** a per-block dictionary that stores the block's local level, like [[loc]] does. You choose its block size $\vb$ and its [[weight]] $\vw$.
 
 $$
-\text{net}(\vb) \;=\; \underbrace{\text{gain}(\vb)}_{\text{set by the data: fades once blocks outgrow the drift}} \;-\; \underbrace{\frac{8\vw}{\vb}}_{\text{set by the dictionary: shrinks as blocks grow}}
+\text{net}(\vb) \;=\; \underbrace{\text{gain}(\vb)}_{\text{set by the data}} \;-\; \underbrace{\frac{8\vw}{\vb}}_{\text{set by the dictionary}}
 $$ {#eq-ma-knob}
+
+The gain fades once blocks grow longer than the data's drift; the dictionary's cost shrinks as blocks grow. Somewhere in between they balance.
 
 ::: figure fig-ma-knob maKnob
 **A property and a knob for one toy channel.** *Panel A:* bits per element saved by knowing one neighbour at token distance $\vgap$ (horizontal, tokens, log scale), from the exchange rate $\tfrac12\log_2\tfrac{1}{1-\vRsq}$ with the neighbour's $\vRsq$. The shaded part covers the distances that fit inside one block of the chosen size; the dashed line marks the drift length. *Panel B:* bits per element saved by a per-block dictionary that stores the block's level, against block size $\vb$ (tokens, log scale). Dashed: its gain. Solid: the net after paying $8\vw/\vb$ for the dictionary. Ring: the best block size; knob: your choice (drag it, or focus it and use the arrow keys). The grey band beyond the dotted line is longer than a 100K-token request. *Controls:* drift length of the data; dictionary weight $\vw$. Illustrative model: drift is a random process with exponentially fading memory holding 60 % of the variance, the rest is independent noise; exact formulas, no sampling.
@@ -91,10 +93,12 @@ $$ {#eq-ma-knob}
 
 Read the best block size off panel B for a few settings:
 
-| drift length | $\vw = 2$ (loc) | $\vw = 32$ (rank-16 basis) | $\vw = 256$ (codebook) |
+| drift length | $\vw = 2$ | $\vw = 32$ | $\vw = 256$ |
 |---|---|---|---|
-| 2K tokens | $\vb \approx 326$, net 0.56 bit | $\vb \approx$ 1,700, net 0.30 | never pays |
-| 16K tokens | $\vb \approx 875$, net 0.62 | $\vb \approx$ 3,800, net 0.52 | $\vb \approx$ 13,600, net 0.30 |
+| 2K tokens | 326 (0.56) | 1,700 (0.30) | never pays |
+| 16K tokens | 875 (0.62) | 3,800 (0.52) | 13,600 (0.30) |
+
+Each cell is the best block size in tokens, with the net bits saved per element in brackets. The columns are [[loc]] ($\vw = 2$), a rank-16 basis ($\vw = 32$) and a 256-centroid codebook ($\vw = 256$).
 
 The best block size moves when the data changes, and it moves when the dictionary changes. It is the *output* of the analysis.
 

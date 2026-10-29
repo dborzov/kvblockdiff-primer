@@ -166,8 +166,8 @@ window.FIG = window.FIG || {};
       const s0 = sd(preA), s1 = sd(postA);
       ro.set([
         ['turn per token', `${fmt(om, om < 0.01 ? 5 : 3)} rad (a full turn every ${fmtSI(2 * Math.PI / om, 1)} tokens)`],
-        ['spread before', `${fmt(s0, 2)}`],
-        ['spread after', `${fmt(s1, 2)}`],
+        ['level before → after', `${fmt(mean(preA), 1)} → ${fmt(mean(postA), 1)}`],
+        ['spread before → after', `${fmt(s0, 2)} → ${fmt(s1, 2)}`],
         ['3-bit ruler step', `${fmt((hi0 - lo0) / 7, 2)} → ${fmt((hi1 - lo1) / 7, 2)}`],
         ['≈ extra bits for an exact copy', `${fmt(Math.max(0, lg2(s1 / s0)), 1)}`],
       ]);
@@ -219,7 +219,7 @@ window.FIG = window.FIG || {};
      versus the lossless shadow (the KLT gain, ½ log2 AM/GM, with the stored grid's noise floor). */
   FIG.pbKvtcSpectrum = (host) => {
     const d = 64;
-    let alpha = 1.5, logD = Math.log10(0.05), nu = 0;
+    let alpha = 2, logD = Math.log10(0.05), nu = 0;
     const spec = a => { const l = range(d).map(i => Math.pow(i + 1, -a)); const m = mean(l); return l.map(v => v / m); };
     function waterLevel(l, Dm) {
       let lo = 1e-12, hi = Math.max(...l);
@@ -335,7 +335,7 @@ window.FIG = window.FIG || {};
         ['variance explained', pct(st.R2)],
         ['saved', `${fmt(st.saved, 2)} bits per number`],
         ['tax', `${fmt(st.tax, 2)} bits per number`],
-        ['net', `${fmtS(st.net, 2)} bits per number`],
+        ['net', `${fmtS(Math.abs(st.net) < 0.005 ? 0 : st.net, 2)} bits per number`],
       ]);
     }
     draw();

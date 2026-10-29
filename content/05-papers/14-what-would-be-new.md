@@ -113,9 +113,9 @@ nodes:
   - {id: c2, col: 3, row: 2, title: "2. The data path", text: "An exact delta store for misses.", link: idea-blockdiff-step-by-step, term: kv-blockdiff}
   - {id: c3, col: 3, row: 3, title: "3. The economics", text: "Requests per GPU with dictionaries.", link: questions-framework-d, term: heavy-block}
 edges:
-  - [lossy, m1, "tolerance ≠ bits"]
-  - [lossless, m1, "no context"]
-  - [lossless, m2, "streams"]
+  - [lossy, m1]
+  - [lossless, m1]
+  - [lossless, m2]
   - [hisparse, m3]
   - [m1, c1]
   - [m2, c2]

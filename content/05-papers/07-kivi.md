@@ -83,7 +83,7 @@ KIVI's answer: keys share rulers **per channel** (columns, in runs of 32 tokens)
 
 The rule behind the picture: **share a ruler among numbers of similar size.** In keys the numbers of one column are alike; in values the numbers of one row are.
 
-Per-channel rulers have a practical snag. A column's ruler needs several tokens before it can be laid, but tokens arrive one at a time during decoding. KIVI keeps the newest tokens unrounded until a full group of 32 has arrived; in its experiments a window of the most recent 128 tokens stays at 16 bits. (KIVI calls this window the "residual". On this site a [[residual]] is something else — the exact difference between a value and its prediction — so we say *full-precision tail*.)
+Per-channel rulers have a snag: a column's ruler needs several tokens, but decoding adds one token at a time. KIVI keeps the newest tokens at 16 bits until a group of 32 is complete — in its experiments, the latest 128. (KIVI calls this window the "residual"; on this site a [[residual]] is the exact difference from a prediction, so we say *full-precision tail*.)
 
 ::: takeaway
 - KIVI rounds keys and values to 2 bits with min–max rulers.
@@ -111,11 +111,11 @@ $$
 \underbrace{\vn}_{\text{bits of code}} + \underbrace{\frac{2 \times 16}{\vngrp}}_{\text{ruler, shared by } \vngrp \text{ numbers}} = 2 + \frac{32}{32} = 3 \ \text{bits per number}
 $$ {#eq-pb-kivi-cost}
 
-So by our count "2-bit" KIVI is about 5× smaller than 16 bits, not 8×, before the tail. Nothing wrong with that — every helper charges a tax — but it is the number to compare.
+So by our count "2-bit" KIVI is about 5× smaller than 16 bits, not 8×, before the tail. Every helper charges a tax.
 
-**What KIVI tells us.** It tells us *where structure lives*. If one ruler per column works for keys, each key channel must have a typical size of its own that persists over tokens. If it fails for values, value channels do not; their size varies by token instead. It also tells us that attention tolerates very coarse rounding when the ruler follows that structure.
+**What KIVI tells us:** *where structure lives*. If one ruler per column works for keys, each key channel has a typical size of its own that persists over tokens; value channels do not — their size varies by token. And attention tolerates very coarse rounding when the ruler follows that structure.
 
-**What it does not tell us.** How many bits an *exact* copy needs. Rounding to four marks throws away everything below the step, and a [[lossless]] coder must keep all of it, noise included. For an exact copy the only currency is variance explained:
+**What it does not tell us:** how many bits an *exact* copy needs. Rounding throws away everything below the step; a [[lossless]] coder must keep all of it, noise included. Its only currency is variance explained:
 
 ::: aside reminder The exchange rate (II.12)
 A predictor that explains a share $\vRsq$ of a number's variance leaves a residual with variance $(1-\vRsq)\vsigma^2$. For bell-shaped data that saves $\tfrac12\log_2\frac{1}{1-\vRsq}$ bits per number: 75 % explained buys 1 bit, 94 % buys 2. See [[#school-exchange-rate]].
@@ -125,12 +125,12 @@ A predictor that explains a share $\vRsq$ of a number's variance leaves a residu
 $\tfrac12\log_2 \dfrac{1}{1-\vRsq}$ bits per number — and KIVI reports no $\vRsq$.
 :::
 
-The predictor KIVI points to is "each channel's typical value". Its gain on 8-bit keys is set by how much of a key's spread is *between* channels versus *within* one — our lightest dictionary, worked out in [[#homework-loc]]. KIVI measures neither spread on any grid.
+The predictor KIVI points to is "each channel's typical value". Its gain is set by how much of a key's spread lies *between* channels rather than *within* one ([[#homework-loc]]). KIVI measures neither spread.
 
 ::: note warning Where we are not convinced
-- **"Values have no per-channel structure" is an absence in a plot.** The paper reports no obvious pattern in values and chooses per-token rulers by reasoning about how rounding errors reach the attention output. That is not a measurement that value channels are unpredictable.
-- **Drift is assumed, not shown.** KIVI lays a fresh ruler every 32 tokens because it must (it does no offline calibration). It never compares that with one fixed ruler per channel for the whole text. So it cannot tell us whether a channel's typical value *moves* — and only movement makes per-block dictionaries beat global ones.
-- **Older models.** The evidence is magnitude plots of a few layers of Llama-2-era models. Newer models (grouped heads, partial RoPE, latent caches) may differ.
+- **"Values have no per-channel structure" is an absence in a plot.** The paper sees no obvious pattern in values and picks per-token rulers by reasoning about how errors reach the attention output. That does not show value channels are unpredictable.
+- **Drift is assumed, not shown.** KIVI lays a fresh ruler every 32 tokens because it does no calibration. It never compares that with one fixed ruler per channel for the whole text — and only a *moving* typical value makes per-block dictionaries beat global ones.
+- **Older models.** The evidence is magnitude plots of a few layers of Llama-2-era models. Newer designs (grouped heads, partial RoPE, latent caches) may differ.
 :::
 
 ::: takeaway
@@ -141,11 +141,10 @@ The predictor KIVI points to is "each channel's typical value". Its gain on 8-bi
 
 ## Connections {#connections}
 
-- **A lossy cousin of our lightest dictionary.** Per channel, per 32 tokens, KIVI keeps a smallest value and a step: a location and a scale. Our per-channel location-and-scale dictionary ([[#homework-loc]]) keeps the same two numbers per channel — but uses them to *predict* each number and store the exact difference. KIVI's 32-token groups are a block size; whether such blocks beat one global dictionary is the scope question of [[#homework-scope]].
-- **Keys and values are separate problems.** If even KIVI needs two different rulers, a lossless coder should expect two different dictionaries — see [[#missed-keys-before-rope]].
+**A lossy cousin of our lightest dictionary.** Per channel, per 32 tokens, KIVI keeps a smallest value and a step — a location and a scale. Our per-channel location-and-scale dictionary ([[#homework-loc]]) keeps the same two numbers but uses them to *predict*, storing the exact difference. Whether 32-token blocks beat one global dictionary is the scope question of [[#homework-scope]].
 
 ::: theme noise-floor
-KIVI keeps 2 bits of every number and drops the rest; the model barely notices. An exact copy cannot drop anything. Whatever in the six low bits no predictor can explain is paid in full — which is why "survives 2 bits" says almost nothing about lossless size.
+KIVI keeps 2 bits of every number and drops the rest; the model barely notices. An exact copy drops nothing: whatever below the ruler's step no predictor can explain is paid in full. "Survives 2 bits" says almost nothing about lossless size.
 :::
 
 :::: compare KIVI and its neighbour KVQuant

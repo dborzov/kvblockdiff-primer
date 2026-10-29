@@ -347,5 +347,82 @@ window.FIG = window.FIG || {};
     draw();
   };
 
+  // ================================================================== VI.7  VQ: the Hive
+  FIG.hwaVqCheck = async (host) => {
+    const d = await data('homework-a-vq.json');
+    let which = 'correlated';
+    const box = h('div');
+    const ro = readout();
+    host.append(controls(seg([['correlated', 'correlated, bell-shaped (rank 8)'], ['clustered', '32 clusters']], which, v => { which = v; draw(); }, 'data set')),
+      legend([['gross: what the residual saves', series(0), 'box'], ['tax: index + codebook', series(1), 'box'], ['net = gross − tax', 'var(--good)', 'box'], ['KLT gain (no tax)', BRAND.klt, 'dash']]), box, ro);
+    const Cs = d.correlated.rows.map(r => r.C);
+    const P = Plot(box, { xcats: Cs.map(String), y: [-1.5, 2.4], h: 320, xlabel: 'codebook size C (centroids)', ylabel: 'bits per element', grid: 'y', label: 'VQ gross saving, tax and net against codebook size' });
+    function draw() {
+      const D_ = d[which];
+      P.clear();
+      el('line', { x1: P.m.l, x2: P.W - P.m.r, y1: P.y(0), y2: P.y(0), style: 'stroke:var(--ink-2);stroke-width:1.2' }, P.g.data);
+      bars(P, D_.rows.map(r => [r.gross, r.tax, r.net]), {
+        colors: (i, j, v) => (j === 0 ? series(0) : j === 1 ? series(1) : v < 0 ? 'var(--bad)' : 'var(--good)'),
+        labels: (v, i, j) => (j === 2 ? fmtS(v, 2) : ''), width: 22,
+        tip: (v, i, j) => { const r = D_.rows[i]; return `<b>C = ${r.C}</b><br>gross ${fmt(r.gross, 3)} bits<br>tax ${fmt(r.tax, 3)} = index ${fmt(r.tax_index, 3)} + codebook ${fmt(r.tax_codebook, 3)}<br>net <b>${fmtS(r.net, 3)}</b><br><i>Gaussian bound on gross: KLT + index = ${fmt(r.bound_gross, 3)}</i>`; },
+      });
+      rule(P, { y: D_.klt_formula, label: `KLT gain ${fmt(D_.klt_formula, 2)} (no tax)`, color: BRAND.klt });
+      const best = D_.rows.reduce((a, r) => (r.net > a.net ? r : a));
+      ro.set([['best VQ net', `${fmtS(best.net, 2)} bits at C = ${best.C}`], ['KLT, formula', `${fmt(D_.klt_formula, 2)} bits`], ['KLT, rotated and measured', `${fmt(D_.klt_measured, 2)} bits`], ['KLT basis, if charged', `${fmt(D_.klt_basis_cost, 3)} bits`]]);
+    }
+    draw();
+  };
+
+  // ================================================================== VI.8  sib: the Twin
+  FIG.hwaSibTwins = (host) => {
+    let f = 0.3, nu = 0.1;
+    const D = 640, PTR = 12 / D, FLAG = 1 / D;
+    const twin = v => 0.5 * Math.log2(1 / (2 * v));
+    const box = h('div');
+    const kT = kpi('a twinned entry saves', '', 'bits per element vs the Anchor', BRAND.sib);
+    const kN = kpi('whole block, net', '', 'bits per element vs the Anchor', BRAND.sib);
+    host.append(controls(
+      slider('entries with a twin', 0, 1, 0.01, f, v => { f = v; draw(); }, v => fmtPct(v, 0)),
+      slider('noise share', 0.01, 1, 0.01, nu, v => { nu = v; draw(); }, v => fmtPct(v, 0)),
+    ), legend([['entry with a true twin', BRAND.sib], ['entry with no twin: random sibling', BRAND.sib, 'dash'], ['the Anchor (reference)', BRAND.loc]]), box, h('div', { class: 'kpis' }, kT, kN));
+    const P = Plot(box, { x: [0, 1], y: [-0.8, 3], h: 290, xlabel: 'noise share σ²_noise / (σ²_own + σ²_noise)', ylabel: 'bits per element vs the Anchor', xfmt: v => fmtPct(v, 0), label: 'Bits saved by the Twin against the Anchor' });
+    line(P, linspace(0.01, 1, 200).map(v => [v, twin(v)]), { color: BRAND.sib, width: 2.6 });
+    line(P, [[0, -0.5], [1, -0.5]], { color: BRAND.sib, dash: '7 5' });
+    line(P, [[0, 0], [1, 0]], { color: BRAND.loc, width: 1.6 });
+    annotate(P, 0.5, 0, 'twins stop helping at 50 %', { dx: 30, dy: -40 });
+    const mark = el('g', {}, P.g.top);
+    function draw() {
+      const g = Math.max(0, twin(nu) - PTR);
+      mark.replaceChildren();
+      dot(mark, P.x(nu), P.y(twin(nu)), 6 * P.fs, 'var(--c)');
+      kT.set(fmtS(twin(nu), 2), `before its 12-bit pointer (${fmt(PTR, 3)} per element)`);
+      kN.set(fmtS(f * g - FLAG, 2), `${fmtPct(f, 0)} twinned, the rest use the Anchor; 1 flag bit per entry`);
+    }
+    draw();
+  };
+
+  FIG.hwaSibNearest = async (host) => {
+    const d = await data('homework-a-sib.json');
+    let ptr = false;
+    const ds = [...new Set(d.rows.map(r => r.d))];
+    const box = h('div');
+    const tog = btn('add the pointer tax', (e, b) => { ptr = !ptr; b.setAttribute('aria-pressed', String(ptr)); draw(); }, { pressed: false });
+    host.append(controls(tog), legend([...ds.map((v, i) => [`d = ${v}`, series(i)]), ['random sibling', 'var(--ink-3)', 'dash']]), box);
+    const P = Plot(box, { x: [16, 4096], xlog: 2, y: [-0.8, 1.0], h: 300, xlabel: 'block size b (siblings to choose from)', ylabel: 'bits per element vs the Anchor', label: 'Nearest-sibling penalty against block size, per entry length', xticks: [16, 64, 256, 1024, 4096] });
+    function draw() {
+      P.clear();
+      line(P, [[16, 0], [4096, 0]], { color: BRAND.loc, width: 1.4 });
+      line(P, [[16, 0.5], [4096, 0.5]], { color: 'var(--ink-3)', dash: '7 5' });
+      ds.forEach((dv, i) => {
+        const pts = d.rows.filter(r => r.d === dv).map(r => [r.b, r.pen_nearest + (ptr ? r.pointer : 0)]);
+        line(P, pts, { color: series(i), markers: true, name: `d = ${dv}`, tip: p => `<b>d = ${dv}, b = ${p[0]}</b><br>${fmtS(p[1], 3)} bits per element${ptr ? ' (pointer included)' : ''}` });
+      });
+      svgText(P.g.top, P.x(4096) - 6 * P.fs, P.y(0.5) - 6 * P.fs, 'random sibling +0.5', { class: 'lbl', 'text-anchor': 'end' });
+      svgText(P.g.top, P.x(16) + 6 * P.fs, P.y(0) + 14 * P.fs, 'the Anchor', { class: 'lbl' });
+    }
+    draw();
+    crosshair(P, { xname: 'b =', xfmt: v => String(v), yfmt: v => fmtS(v, 3) });
+  };
+
   window.HWA = hwa;
 })();

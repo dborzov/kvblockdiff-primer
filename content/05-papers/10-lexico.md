@@ -112,13 +112,14 @@ $\vRsq \geq 82\,\%$ of every vector's variance, before a single bit is won.
 The figure plays this out on a toy: 128 random atoms in 32 dimensions, and one vector built from three of them plus noise.
 
 ::: figure fig-pb-lexico-sparse pbLexicoSparse
-**Sparse coding of one toy vector, and what it would be worth losslessly.** Top: the 32 numbers of the vector (lapis bars) and its approximation from the chosen atoms (vermilion dots). Bottom: bits per number against the number of atoms used — saved by the prediction (peacock, Eq. [[#eq-pb-lexico-net]] first term, using the share of the vector's energy explained), the tax of 7 index bits + 8 weight bits per atom spread over 32 numbers (saffron, dashed), and the net (lapis, bold). Atoms are chosen by orthogonal matching pursuit. The slider sets the number of atoms; the buttons set how much noise (that no atom can explain) the vector carries. Seeded random toy; the 128 atoms are random directions, not learned.
+**Sparse coding of one toy vector, and what it would be worth losslessly.** Top: the 32 numbers of the vector (lapis bars) and its approximation from the chosen atoms (vermilion dots). Bottom: bits per number against the number of atoms used — saved by the prediction (peacock, the first term of [[#eq-pb-lexico-net]], using the share of the vector's energy explained), the tax of 7 index bits + 8 weight bits per atom spread over 32 numbers (saffron, dashed), and the net (lapis, bold). Atoms are chosen by orthogonal matching pursuit. The slider sets the number of atoms; the buttons set how much noise (that no atom can explain) the vector carries. Seeded random toy; the 128 atoms are random directions, not learned.
 :::
 
 ::: try
-1. Some noise, 3 atoms: the three true atoms are found and explain almost all the variance; the net is clearly positive.
-2. Add atoms one by one. Each extra atom explains a sliver of noise but pays 15 bits: the net falls and turns negative.
-3. Much noise: the same three atoms are found, but the net peaks lower and earlier. What no atom can explain sets the floor.
+1. Some noise, 3 atoms: the three true atoms (#5, #40, #97) are found and explain 95 % of the variance. Saved 2.10 bits per number, tax 1.41, net +0.69.
+2. Add atoms one by one: net +0.40 with 4 atoms, +0.04 with 5, −0.27 with 6. Each extra atom explains a sliver of noise and pays 15 bits.
+3. Much noise: the same three atoms are found but explain only 80 %, and the net never rises above zero. What no atom can explain sets the floor.
+4. Little noise: 3 atoms net +1.93 bits per number. Lossless sparse coding pays only on nearly noiseless data.
 :::
 
 **What Lexico tells us.** A dictionary fitted once, on generic text, describes the KV vectors of quite different tasks well enough for the model. Much of the structure in KV is therefore *global* — shared by all texts of a model — not special to one conversation.

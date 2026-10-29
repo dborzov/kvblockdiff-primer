@@ -48,9 +48,10 @@ So HiSparse's three numbers are three readings of one curve: the share of select
 ```python a power law through HiSparse's three LRU points
 import numpy as np
 B = np.array([2048, 4096, 8192]); m = np.array([0.30, 0.134, 0.067])
-slope, icpt = np.polyfit(np.log(B / 2048), np.log(m), 1)   # a straight line in log-log
-print(round(slope, 2), round(np.exp(icpt), 3))             # -1.08 0.294
-print(np.round(np.exp(icpt) * (B / 2048) ** slope, 3))     # [0.294 0.139 0.066]: within 4 % of the data
+# a straight line in log-log coordinates
+slope, icpt = np.polyfit(np.log(B / 2048), np.log(m), 1)
+print(round(slope, 2), round(np.exp(icpt), 3))          # -1.08 0.294
+print(np.round(np.exp(icpt) * (B / 2048) ** slope, 3))  # [0.294 0.139 0.066]
 ```
 
 $$

@@ -55,7 +55,7 @@ What the theorem does *not* say is how big the steps are. They can be zero. The 
 4. Try any combination: the bars never go up.
 :::
 
-With the defaults, the toy's rungs read {{LT_HE}}, {{LT_HT}} and {{LT_HB}} bits. The theorem guarantees the order; the sliders set the gaps. For KV caches, nobody has measured the gaps at 8 bits.
+With the defaults, the toy's rungs read 3.17, 2.60 and 2.43 bits: steps of 0.57 and 0.17 bit. The theorem guarantees the order; the sliders set the gaps. For KV caches, nobody has measured the gaps at 8 bits.
 
 This is why the ladder becomes the plan. The three rungs are exactly the three dictionary scopes — one dictionary for everything, one per request, one per block ([[#homework-scope]]) — and measuring each rung in bits is the core of the first experiment ([[#plan-experiment-1b]]). The intuitive argument was, all along, a measurement plan in disguise.
 

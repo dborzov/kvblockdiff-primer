@@ -54,6 +54,8 @@ window.FIG = window.FIG || {};
   const MB = v => `${fmt(v / 1e6, v < 1e7 ? 2 : 1)} MB`;
   const tok = n => (n >= 1024 && n % 1024 === 0 ? `${n / 1024}K` : n >= 1000 && n % 1000 === 0 ? `${n / 1000}K` : String(n));
   const T = s => tex(s);
+  // plots get taller in a narrow column, so that the phone-scaled text has room
+  const tall = (box, hh) => (box.getBoundingClientRect().width < 520 ? Math.round(hh * 1.55) : hh);
 
   // ------------------------------------------------------------ HTML stacked bars (VI.15, VI.16)
   function stackRows(rows, max) {
@@ -156,7 +158,7 @@ window.FIG = window.FIG || {};
     const slTau = slider('affordable up to', 0.05, 1, 0.05, tau, v => { tau = v; draw(); }, v => `${fmt(v, 2)} bit`);
     host.append(controls(slTau, h('span', { class: 'fig-note', text: 'Drag the gold handle along the axis, or focus it and use the arrow keys.' })),
       legend(TYPES.map(t => [`${t.name} · ${T(`\\vw = ${t.w}`)}`, t.color, t.dash ? 'dash' : 'line'])), box, tbl);
-    const P = Plot(box, { x: [64, 262144], xlog: 2, y: [0.001, 100], ylog: 10, h: 380,
+    const P = Plot(box, { x: [64, 262144], xlog: 2, y: [0.001, 100], ylog: 10, h: tall(box, 380),
       xticks: [64, 256, 1024, 4096, 16384, 65536, 262144], xfmt: v => tok(v),
       yfmt: v => (v >= 1 ? fmt(v, 0) : String(v)),
       xlabel: 'block size b (tokens per dictionary)', ylabel: 'dictionary bits per element',
@@ -175,7 +177,8 @@ window.FIG = window.FIG || {};
       P.clear('data', 'bg');
       area(P, [[64, 0.001, tau], [262144, 0.001, tau]], { color: 'var(--good)', opacity: 0.1 });
       area(P, [[L, 0.001, 100], [262144, 0.001, 100]], { color: 'var(--ink-3)', opacity: 0.1 });
-      svgText(P.g.bg, P.x(L) + 6 * P.fs, P.y(60), 'longer than\nthe request', { class: 'lbl' });
+      svgText(P.g.bg, P.x(262144) - 5 * P.fs, P.y(40), 'longer than\na request', { class: 'lbl', 'text-anchor': 'end' });
+      svgText(P.g.bg, P.x(70), P.y(0.0016), `affordable: ≤ ${fmt(tau, 2)} bit per element`, { class: 'lbl' });
       TYPES.forEach(t => {
         const pts = [64, 262144].map(x => [x, 8 * t.w / x]);
         line(P, pts, { color: t.color, dash: t.dash, width: 2.5 });
@@ -183,7 +186,7 @@ window.FIG = window.FIG || {};
         if (bmin >= 64 && bmin <= 262144) dot(P.g.data, P.x(bmin), P.y(tau), 4.2 * P.fs, t.color);
       });
       P.g.top.querySelectorAll('.hwb-tmp').forEach(n => n.remove());
-      const rl = rule(P, { y: tau, label: `affordable: ≤ ${fmt(tau, 2)} bit`, color: 'var(--good)' });
+      const rl = rule(P, { y: tau, color: 'var(--good)' });
       rl.classList.add('hwb-tmp');
       const rb = rule(P, { x: b, label: `b = ${tok(b)}`, color: 'var(--c)', dash: false });
       rb.classList.add('hwb-tmp');
@@ -207,7 +210,7 @@ window.FIG = window.FIG || {};
     let id = 'req';
     const eq = h('div', { class: 'hwb-eq' });
     const bars = h('div');
-    const kp = { link: kpi(T('\\vNlink'), '', 'link-bound', series(0)), hbm: kpi(T('\\vNhbm'), '', 'memory-bound', series(1)), n: kpi(T('\\vN'), '', '') };
+    const kp = { link: kpi(T('\\vNlink'), '', 'link-bound', 'var(--ink-2)'), hbm: kpi(T('\\vNhbm'), '', 'memory-bound', 'var(--ink-2)'), n: kpi(T('\\vN'), '', '') };
     const note = h('p', { class: 'fig-note' });
     host.append(controls(seg(OPTS, id, v => { id = v; draw(); }, 'scenario')), eq, legend([
       ['δ-misses', series(0), 'box'], ['raw misses', series(1), 'box'], ['dictionary loads', series(3), 'box'],
@@ -215,7 +218,7 @@ window.FIG = window.FIG || {};
     function draw() {
       const s = scen(SCEN.find(x => x.id === id)), r = econ(s), r0 = econ(scen(SCEN[1]));
       const mk = `${fmt(r.m, 3)} \\cdot ${s.k} \\cdot ${s.NL} \\cdot ${s.e}\\,\\text{B}`;
-      eq.innerHTML = tex(`\\begin{aligned}\\vTstep &= \\underbrace{${mk}}_{\\text{all misses: } ${fmt(r.miss / 1e6, 1)}\\text{ MB}} \\cdot \\big[\\underbrace{${fmt(r.fD, 2)}}_{\\vfD} \\cdot \\underbrace{${fmt(r.rho, 2)}}_{\\vrho} + (1 - ${fmt(r.fD, 2)})\\big] + \\underbrace{${fmt(r.nload, 2)}}_{\\vnload} \\cdot ${s.NL} \\cdot \\underbrace{${s.scope === 'hisparse' ? 0 : s.w}}_{\\vw} \\cdot ${s.e}\\,\\text{B} = ${fmt(r.T / 1e6, 2)}\\text{ MB} \\\\[4pt] \\vMreq &= ${s.NL} \\cdot ${s.e}\\,\\text{B} \\cdot (\\underbrace{${s.B}}_{\\vB} + \\underbrace{${fmt(r.wres, 0)}}_{\\vwres}) = ${fmt(r.M / 1e6, 0)}\\text{ MB}\\end{aligned}`, true);
+      eq.innerHTML = tex(`\\begin{aligned}\\vTstep &= \\underbrace{${mk}}_{\\text{all misses: } ${fmt(r.miss / 1e6, 1)}\\text{ MB}} \\\\ &\\quad \\times \\big[\\underbrace{${fmt(r.fD, 2)}}_{\\vfD} \\cdot \\underbrace{${fmt(r.rho, 2)}}_{\\vrho} + (1 - ${fmt(r.fD, 2)})\\big] \\\\ &\\quad + \\underbrace{${fmt(r.nload, 2)}}_{\\vnload} \\cdot ${s.NL} \\cdot \\underbrace{${s.scope === 'hisparse' ? 0 : s.w}}_{\\vw} \\cdot ${s.e}\\,\\text{B} \\\\ &= ${fmt(r.T / 1e6, 2)}\\text{ MB} \\\\[8pt] \\vMreq &= ${s.NL} \\cdot ${s.e}\\,\\text{B} \\cdot (\\underbrace{${s.B}}_{\\vB} + \\underbrace{${fmt(r.wres, 0)}}_{\\vwres}) \\\\ &= ${fmt(r.M / 1e6, 0)}\\text{ MB}\\end{aligned}`, true);
       const maxT = Math.max(r.T, r0.T) * 1.02, maxM = Math.max(r.M, r0.M) * 1.02;
       bars.replaceChildren(
         h('div', { class: 'hwb-shead', text: 'bytes moved over the link per step, per request' }),
@@ -301,7 +304,7 @@ window.FIG = window.FIG || {};
       chartBox.replaceChildren();
       const vmax = Math.max(...rows.flatMap(r => [r.Nlink, r.Nhbm]).filter(Number.isFinite));
       const top = Math.max(50, Math.ceil(vmax * 1.12 / 50) * 50);
-      P = Plot(chartBox, { ycats: rows.map(r => r.short), x: [0, top], h: 420, grid: 'x', m: { r: 30 },
+      P = Plot(chartBox, { ycats: rows.map(r => r.short), x: [0, top], h: tall(chartBox, 420), grid: 'x', m: { r: 30 },
         xlabel: 'concurrent decode requests per GPU', label: 'Link-bound and memory-bound requests per GPU for each scenario' });
       bars(P, rows.map(r => [Math.min(r.Nlink, top), Math.min(r.Nhbm, top)]), { horizontal: true, colors: [series(0), series(1)], width: 15, fill: 0.84,
         tip: (v, i) => { const r = rows[i]; return `<b>${r.name}</b><br>link-bound ${fmt(r.Nlink, 0)} · memory-bound ${fmt(r.Nhbm, 0)}<br><b>${fmt(r.N, 0)} requests per GPU</b> (${r.binds === 'link' ? 'the link binds' : 'memory binds'})${r.assumed ? '<br><i>ρ, w, f_D, loads assumed</i>' : ''}`; } });
@@ -312,22 +315,22 @@ window.FIG = window.FIG || {};
         el('text', { x: P.x(Math.min(top, Math.max(r.Nlink, r.Nhbm))) + 6 * P.fs, y: Y + 4 * P.fs, class: 'val', style: 'font-weight:700', text: fmt(r.N, 0) }, P.g.top);
       });
       const base = rows.find(r => r.id === 'hs4');
-      if (base) rule(P, { x: base.N, label: `HiSparse at 4K: ${base.N}`, dash: '3 4' });
+      if (base) rule(P, { x: base.N, label: `HiSparse 4K: ${fmt(base.N, 0)}`, dash: '3 4' });
     }
     function run() {
       const S = Object.assign({}, p);
       const r0 = econ(Object.assign({}, S, { scope: 'hisparse' })), r = econ(S);
       const warn = r.decode > p.dec * 1e9;
-      out.replaceChildren(table(['per request, per GPU', 'HiSparse', 'kv-blockdiff'], [
-        [`bytes moved per step ${T('\\vTstep')}`, MB(r0.T), MB(r.T)],
-        ['… of which dictionary loads', '—', MB(r.parts.loads)],
-        [`GPU memory per request ${T('\\vMreq')}`, MB(r0.M), MB(r.M)],
-        [`link-bound requests ${T('\\vNlink')}`, fmt(r0.Nlink, 0), fmt(r.Nlink, 0)],
-        [`memory-bound requests ${T('\\vNhbm')}`, fmt(r0.Nhbm, 0), fmt(r.Nhbm, 0)],
+      out.replaceChildren(table(['', 'HiSparse', 'kv-blockdiff'], [
+        [`bytes per step ${T('\\vTstep')}`, MB(r0.T), MB(r.T)],
+        ['… dictionary loads', '—', MB(r.parts.loads)],
+        [`memory per request ${T('\\vMreq')}`, MB(r0.M), MB(r.M)],
+        [`link-bound ${T('\\vNlink')}`, fmt(r0.Nlink, 0), fmt(r.Nlink, 0)],
+        [`memory-bound ${T('\\vNhbm')}`, fmt(r0.Nhbm, 0), fmt(r.Nhbm, 0)],
         { cells: [`<b>requests per GPU ${T('\\vN')}</b>`, `<b>${fmt(r0.N, 0)}</b>`, `<b>${fmt(r.N, 0)}</b>`], cls: 'sum' },
-        [`resident dictionary weight ${T('\\vwres')}`, '0', `${fmt(r.wres, 0)} entries per layer`],
-        ['one-off load at admission', '—', r.admit ? MB(r.admit) : '—'],
-        ['decoder output needed', '—', { html: `${fmt(r.decode / 1e9, 0)} GB/s${warn ? ' — more than the decoder' : ''}`, cls: warn ? 'neg' : '' }],
+        [`resident weight ${T('\\vwres')}`, '0', `${fmt(r.wres, 0)} entries`],
+        ['load at admission', '—', r.admit ? MB(r.admit) : '—'],
+        ['decoder output needed', '—', { html: `${fmt(r.decode / 1e9, 0)} GB/s${warn ? ' (too fast)' : ''}`, cls: warn ? 'neg' : '' }],
       ], { left: [0] }));
       kp.hs.set(fmt(r0.N, 0), `requests per GPU · ${r0.binds === 'link' ? 'link-bound' : 'memory-bound'}`);
       kp.kv.set(fmt(r.N, 0), `requests per GPU · ${r.binds === 'link' ? 'link-bound' : 'memory-bound'}`);
@@ -355,7 +358,7 @@ window.FIG = window.FIG || {};
       slider(texify('$\\vfD$ (assumed)'), 0.3, 1, 0.01, fD, v => { fD = v; draw(); }),
       slider(texify('$\\vnD$'), 1, 16, 1, nD, v => { nD = v; draw(); }, v => fmt(v, 0))),
     legend(WS.map(t => [`${t.name}, ${T(`\\vw = ${t.w}`)}`, t.color, t.dash ? 'dash' : 'line'])), box, tbl);
-    const P = Plot(box, { x: [0.001, 10], xlog: 10, y: [0, 2], h: 360, xfmt: v => String(v),
+    const P = Plot(box, { x: [0.001, 10], xlog: 10, y: [0, 2], h: tall(box, 360), xfmt: v => String(v),
       xlabel: 'dictionary loads per step per layer, n_load', ylabel: 'link bytes vs HiSparse',
       label: 'Link traffic relative to HiSparse against the dictionary load rate' });
     const knob = el('circle', { class: 'handle', r: 8 * P.fs }, P.g.top);
@@ -372,13 +375,15 @@ window.FIG = window.FIG || {};
       const floor = fD * rho + (1 - fD);
       area(P, [[0.001, 1, 2], [10, 1, 2]], { color: 'var(--bad)', opacity: 0.07 });
       WS.forEach(t => line(P, xs.map(x => [x, floor + x * t.w / mk]), { color: t.color, dash: t.dash, width: 2.5 }));
-      [rule(P, { y: 1, label: 'HiSparse: break-even', color: 'var(--bad)' }),
-        rule(P, { y: floor, label: `no loads: ${fmt(floor, 2)}`, color: 'var(--good)' }),
+      svgText(P.g.top, P.x(0.0012), P.y(1) - 6 * P.fs, 'HiSparse: break-even', { class: 'lbl hwb-tmp' });
+      svgText(P.g.top, P.x(0.0012), P.y(floor) + 15 * P.fs, `no loads: ${fmt(floor, 2)}`, { class: 'lbl hwb-tmp' });
+      [rule(P, { y: 1, color: 'var(--bad)' }),
+        rule(P, { y: floor, color: 'var(--good)' }),
         rule(P, { x: nl, color: 'var(--c)', dash: false })].forEach(g => g.classList.add('hwb-tmp'));
       P.g.top.append(knob);
       knob.setAttribute('cx', P.x(nl)); knob.setAttribute('cy', P.y(P.y0));
       WS.forEach(t => { const y = floor + nl * t.w / mk; if (y < 2) dot(P.g.top, P.x(nl), P.y(y), 4.5 * P.fs, t.color).classList.add('hwb-tmp'); });
-      tbl.replaceChildren(table(['dictionary', T('\\vw'), `traffic at ${T('\\vnload')} = ${fmt(nl, nl < 0.01 ? 4 : 3)}`, 'break-even loads per step', `steps each of ${T('\\vnD')} = ${nD} must stay useful`],
+      tbl.replaceChildren(table(['dictionary', T('\\vw'), `traffic at ${fmt(nl, nl < 0.01 ? 4 : 3)}`, `break-even ${T('\\vnload')}`, 'min. lifetime, steps'],
         WS.map(t => {
           const y = floor + nl * t.w / mk, nstar = fD * (1 - rho) * mk / t.w;
           return [t.name, String(t.w), { html: `${fmt(y, 2)}×`, cls: y < 1 ? 'pos' : 'neg' }, fmt(nstar, nstar < 0.1 ? 3 : 2), `≥ ${fmt(Math.max(1, nD / nstar), 0)}`];
@@ -401,7 +406,7 @@ window.FIG = window.FIG || {};
       slider(texify('requests per GPU $\\vN$'), 20, 300, 1, N, v => { N = v; draw(); }, v => fmt(v, 0)),
       seg([[2048, 'B = 2K'], [4096, 'B = 4K'], [8192, 'B = 8K']], B, v => { B = +v; draw(); }, 'hot-cache size')),
     legend([['fixed-length decoders', series(2), 'box'], ['entropy-coded decoders', series(3), 'box'], ['needed: miss path', 'var(--ink)', 'line'], ['needed: lever 2 (every read decodes)', 'var(--bad)', 'dash']]), box, ro);
-    const P = Plot(box, { ycats: DEC.map(d => d.name), x: [5, 5000], xlog: 10, h: 300, grid: 'x',
+    const P = Plot(box, { ycats: DEC.map(d => d.name), x: [5, 5000], xlog: 10, h: tall(box, 300), grid: 'x',
       xlabel: 'decoder output, GB/s (log scale)', label: 'Decoder throughput against what the miss path needs' });
     function draw() {
       P.clear();
@@ -442,7 +447,8 @@ window.FIG = window.FIG || {};
       legend([...TY.map(t => [`${t.name}, block scope`, t.color, t.dash ? 'dash' : 'line']),
         ['global scope', 'var(--t-scope-global)', 'line'], ['request scope', 'var(--t-scope-request)', 'dash']]), box, ro);
     const Y0 = 5.95, Y1 = 7.5;
-    const P = Plot(box, { x: [104, 10000], xlog: 2, y: [Y0, Y1], h: 420, xticks: D.b, xfmt: v => tok(v),
+    const X1 = 9500, XL = 11000;            // flat lines stop at X1; their labels sit in the gutter beyond
+    const P = Plot(box, { x: [104, 36000], xlog: 2, y: [Y0, Y1], h: tall(box, 420), xticks: D.b, xfmt: v => tok(v),
       xlabel: 'block size b (tokens)', ylabel: 'bits per element, all included',
       label: 'Lossless rate against block size for four dictionary types, with global and request lines' });
     const partTip = (t, p, b, v) => `<b>${t.name}, b = ${tok(b)}</b><br>${fmt(v, 3)} bits per element<br>residual ${fmt(p.resid, 3)}`
@@ -451,14 +457,20 @@ window.FIG = window.FIG || {};
       P.clear();
       const R = D[run];
       rule(P, { x: D.meta.true_block, label: 'true block length' });
+      const labels = [];
+      TY.forEach(t => {
+        if (!on[t.id] || R.global[t.id] == null) return;
+        const short = t.id === 'klt' ? 'KLT' : t.name;
+        line(P, [[104, R.global[t.id]], [X1, R.global[t.id]]], { color: 'var(--t-scope-global)', width: 1.8, dash: t.id === 'klt' ? '7 5' : null });
+        line(P, [[104, R.request[t.id]], [X1, R.request[t.id]]], { color: 'var(--t-scope-request)', width: 1.8, dash: '2 4' });
+        labels.push({ y: P.y(R.global[t.id]), text: `global ${short}` }, { y: P.y(R.request[t.id]), text: `request ${short}` });
+      });
+      labels.sort((u, v) => u.y - v.y);
+      const gap = 13 * P.fs;
+      labels.forEach((l, i) => { l.at = i ? Math.max(l.y, labels[i - 1].at + gap) : l.y; });
+      labels.forEach(l => svgText(P.g.top, P.x(XL), l.at + 4 * P.fs, l.text, { class: 'lbl' }));
       TY.forEach(t => {
         if (!on[t.id]) return;
-        if (R.global[t.id] != null) {
-          line(P, [[104, R.global[t.id]], [10000, R.global[t.id]]], { color: 'var(--t-scope-global)', width: 1.8, dash: t.id === 'klt' ? '7 5' : null });
-          svgText(P.g.top, P.x(112), P.y(R.global[t.id]) - 5 * P.fs, `global ${t.name}`, { class: 'lbl' });
-          line(P, [[104, R.request[t.id]], [10000, R.request[t.id]]], { color: 'var(--t-scope-request)', width: 1.8, dash: '2 4' });
-          svgText(P.g.top, P.x(9600), P.y(R.request[t.id]) + 14 * P.fs, `request ${t.name}`, { class: 'lbl', 'text-anchor': 'end' });
-        }
         const pts = D.b.map((b, i) => [b, R.block[t.id][i] == null ? NaN : Math.min(R.block[t.id][i], Y1 + 1)]);
         line(P, pts, { color: t.color, dash: t.dash, width: 2.6, markers: 4.2,
           tip: (pt) => { const i = D.b.indexOf(pt[0]); return partTip(t, R.parts[t.id][i], pt[0], R.block[t.id][i]); } });

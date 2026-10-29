@@ -195,7 +195,7 @@ window.FIG = window.FIG || {};
 
   /* ---------------------------------------------------------------- V.4 SplitZip's escapes on a toy histogram */
   FIG.paEscapes = (host) => {
-    const st = { fmt: 'bf16', n: 4, esc: 40, spread: 3.5, outlier: true };
+    const st = { fmt: 'bf16', n: 4, esc: 40, spread: 3.5, outlier: true, log: false };
     const r = rng('papers-a-escapes');
     const draws = range(32).map(() => ({ ch: r.int(9), z: r.normal(0, 1) }));   // channel 8 = the outlier
     const box = h('div'), ro = readout(), strip = h('div', { class: 'pa-strip', role: 'list', 'aria-label': 'Codewords of 32 sample numbers' });
@@ -215,8 +215,9 @@ window.FIG = window.FIG || {};
         seg([[24, '24 bits / escape'], [40, '40 bits / escape']], st.esc, v => { st.esc = v; draw(); }, 'Cost of one escape'),
       ),
       controls(
-        slider('spread of channel widths', 0, 6, 0.5, st.spread, v => { st.spread = v; draw(); }, v => `${fmt(v, 1)} binades`),
+        slider('spread of widths (binades)', 0, 6, 0.5, st.spread, v => { st.spread = v; draw(); }, v => fmt(v, 1)),
         outBtn,
+        seg([[false, 'linear scale'], [true, 'log scale']], st.log, v => { st.log = v; draw(); }, 'Vertical scale'),
       ),
       legend([['exponent value with a codeword', series(2), 'box'], ['escaped value', series(1), 'box']]),
       box,
@@ -230,15 +231,18 @@ window.FIG = window.FIG || {};
       const F = FMT[st.fmt], sc = toyScales(st.spread, st.outlier), Hh = exponentHist(st.fmt, sc);
       const cs = codeStats(st.fmt, Hh, st.n, st.esc);
       const shown = range(Hh.length).filter(f => Hh[f] > 2e-5);
-      const lo = Math.min(...shown), hi = Math.max(...shown), ymax = Math.max(...Hh) * 100 * 1.15;
+      const lo = Math.min(...shown), hi = Math.max(...shown), ymax = Math.max(...Hh) * 100 * (st.log ? 2 : 1.15);
+      const yfloor = 1e-3;                                                  // log scale: shares below 0.001 % are not drawn
       box.replaceChildren();
-      P = Plot(box, { x: [lo - 0.8, hi + 0.8], y: [0, ymax], h: 260, grid: 'y', yn: 4, yfmt: v => fmt(v, 0) + '%',
+      P = Plot(box, { x: [lo - 0.8, hi + 0.8], y: st.log ? [yfloor, ymax] : [0, ymax], ylog: st.log, h: 260, grid: 'y', yn: 4,
+        yticks: st.log ? [0.001, 0.01, 0.1, 1, 10] : undefined, yfmt: v => (st.log ? (v < 0.1 ? String(v) : fmt(v, v < 1 ? 1 : 0)) : fmt(v, 0)) + '%',
         xticks: range(lo, hi + 1, Math.max(1, Math.ceil((hi - lo + 1) / 12))),
         xlabel: `${F.label} exponent field (raw value)`, ylabel: 'share of numbers', label: 'Histogram of exponent values with covered and escaped values' });
       const bw = Math.max(1.5, (P.x(1) - P.x(0)) * 0.78);
       range(lo, hi + 1).forEach(f => {
-        const v = Hh[f] * 100, cov = cs.covered.has(f);
-        const b = el('rect', { x: P.x(f) - bw / 2, y: P.y(v), width: bw, height: Math.max(0, P.y(0) - P.y(v)), rx: 1.5,
+        const v = Hh[f] * 100, cov = cs.covered.has(f), base = st.log ? yfloor : 0;
+        if (st.log && v <= yfloor) return;
+        const b = el('rect', { x: P.x(f) - bw / 2, y: P.y(v), width: bw, height: Math.max(0, P.y(base) - P.y(v)), rx: 1.5,
           style: `fill:${cov ? series(2) : series(1)}` }, P.g.data);
         const k = cs.order.indexOf(f);
         hover(b, () => `<b>field ${f}</b>${f === 0 ? ' (zero / subnormal)' : ''}<br>${fmt(v, 3)} % of numbers<br>${cov ? (cs.full ? 'every value has a codeword' : `codeword ${k.toString(16).toUpperCase()} (${st.n} bits)`) : 'escaped: position + raw value'}`);
@@ -299,9 +303,9 @@ window.FIG = window.FIG || {};
       box.replaceChildren();
       const bits = mode === 'bits';
       P = Plot(box, {
-        ycats: ROWS.map(r => r.name), x: bits ? [9.5, 16.4] : [0.95, 1.62], h: 400, grid: 'x', m: { t: 34 },
+        ycats: ROWS.map(r => r.name), x: bits ? [8.4, 16.3] : [0.95, 1.62], h: 400, grid: 'x', m: { t: 34 },
         xfmt: v => (bits ? fmt(v, 0) : fmt(v, 1) + '×'), xn: 6,
-        xlabel: bits ? 'bits per BF16 number (bars: bits saved below 16)' : 'compression ratio (original ÷ compressed)',
+        xlabel: bits ? 'bits per BF16 number' : 'compression ratio (original ÷ compressed)',
         label: 'Compression ratios of lossless float coders on one BF16 KV workload',
       });
       const val = r => (bits ? 16 / r.v : r.v);
@@ -334,7 +338,12 @@ window.FIG = window.FIG || {};
     const shade = v => 0.12 + 0.83 * (v - lo) / (hi - lo);
     const q = v => Math.round(3 * (v - lo) / (hi - lo)) / 3;                // 4 rounding levels
     const LC = [series(1), series(5), series(0)];                          // the three colour planes
-    const D = Diagram(host, { w: 640, h: 250, label: 'KV-Codec pipeline: KV cache, rounding, frames, prediction, decoding', grow: 0.4 });
+    // Wide: sheets on the left, frames to the right. Narrow (phones): sheets on top, frames below, bigger.
+    const compact = (host.getBoundingClientRect().width || 640) < 520;
+    const L = compact
+      ? { h: 500, sx: 250, sy: 62, FX: 26, FY: 300, px: 15, gap: 11 }
+      : { h: 260, sx: 46, sy: 70, FX: 246, FY: 95, px: 10, gap: 6 };
+    const D = Diagram(host, { w: 640, h: L.h, label: 'KV-Codec pipeline: KV cache, rounding, frames, prediction, decoding' });
     const g = el('g', {}, D.svg);
     const fs = D.fs;
     const steps = [
@@ -342,9 +351,10 @@ window.FIG = window.FIG || {};
       { label: 'Round every number to a few integer levels. This is the only lossy step: what follows rebuilds the integers exactly, not the originals.' },
       { label: 'Each token becomes one small frame (its 8 channels as a 4 × 2 picture); its three layers become the frame’s three colour planes.' },
       { label: 'The video coder predicts each frame from the previous one — the previous token, token distance 1 — and from neighbouring pixels: neighbouring channels of the same token. It stores the exact residual.' },
-      { label: 'Decoding runs on the GPU’s video chip, a whole chunk at a time (about 10,000 tokens). One single token cannot be decoded alone.' },
+      { label: 'Decoding runs on the GPU’s video chip, a whole chunk at a time (about 10,000 tokens). A frame predicted from the one before cannot be decoded without it, so one token cannot be decoded alone.' },
     ];
-    function sheets(rounded, x0, y0) {
+    function sheets(rounded) {
+      const x0 = L.sx, y0 = L.sy;
       for (let l = LAY - 1; l >= 0; l--) {
         const ox = x0 + l * 12, oy = y0 - l * 12;
         el('rect', { x: ox - 2, y: oy - 2, width: T * cell + 4, height: C * cell + 4, rx: 3, style: 'fill:var(--paper);stroke:var(--rule)' }, g);
@@ -356,41 +366,43 @@ window.FIG = window.FIG || {};
       el('text', { x: x0 + T * cell / 2, y: y0 + C * cell + 18 * fs, class: 'lbl', 'text-anchor': 'middle', text: 'tokens →' }, g);
       el('text', { x: 0, y: 0, transform: `translate(${x0 - 9} ${y0 + C * cell / 2}) rotate(-90)`, class: 'lbl', 'text-anchor': 'middle', text: 'channels' }, g);
     }
-    const FX = 250, FY = 95, fw = 4 * 9, fh = 2 * 9, gap = 10;
+    const { FX, FY, px, gap } = L, fw = 4 * px, fh = 2 * px;
+    const fx = t => FX + t * (fw + gap);
     function frames(hl) {
       range(T).forEach(t => {
-        const x = FX + t * (fw + gap);
+        const x = fx(t);
         for (let l = LAY - 1; l >= 0; l--) {
           const ox = x + l * 3, oy = FY - l * 3;
           el('rect', { x: ox - 1, y: oy - 1, width: fw + 2, height: fh + 2, rx: 2, style: `fill:var(--paper);stroke:${t === hl ? 'var(--c)' : 'var(--rule)'};stroke-width:${t === hl ? 2 : 1}` }, g);
           if (l === 0) range(C).forEach(c => {
             const v = vals[0][t][c];
-            el('rect', { x: ox + (c % 4) * 9, y: oy + Math.floor(c / 4) * 9, width: 8, height: 8, style: `fill:${LC[0]};fill-opacity:${shade(lo + q(v) * (hi - lo)).toFixed(3)}` }, g);
+            el('rect', { x: ox + (c % 4) * px, y: oy + Math.floor(c / 4) * px, width: px - 1, height: px - 1, style: `fill:${LC[0]};fill-opacity:${shade(lo + q(v) * (hi - lo)).toFixed(3)}` }, g);
           });
         }
         el('text', { x: x + fw / 2, y: FY + fh + 16 * fs, class: 'lbl', 'text-anchor': 'middle', text: `t${t}` }, g);
       });
-      el('text', { x: FX, y: FY - 26 * fs, class: 'lbl', text: 'one frame per token (3 planes = 3 layers)' }, g);
+      el('text', { x: FX, y: FY - 20 * fs, class: 'lbl', text: compact ? 'one frame per token' : 'one frame per token (3 planes = 3 layers)' }, g);
     }
     stepper(host, {
       steps, label: s => s.label,
       render(i) {
         g.replaceChildren();
-        sheets(i >= 1, 46, 70);
-        if (i >= 1) el('text', { x: 46 + T * cell / 2 + 12, y: 34 * fs, class: 'annot', 'text-anchor': 'middle', text: i === 1 ? 'rounded: lossy' : 'rounded' }, g);
+        sheets(i >= 1);
+        if (i >= 1) el('text', { x: L.sx + T * cell / 2 + 12, y: L.sy - 34, class: 'annot', 'text-anchor': 'middle', text: i === 1 ? 'rounded: lossy' : 'rounded' }, g);
         if (i >= 2) {
-          arrow(g, 46 + T * cell + 40, 120, FX - 14, 120, 'var(--ink-2)', 2);
+          if (compact) arrow(g, L.sx + T * cell / 2, L.sy + C * cell + 28 * fs, L.sx + T * cell / 2, FY - 32 * fs, 'var(--ink-2)', 2);
+          else arrow(g, L.sx + T * cell + 40, 120, FX - 14, 120, 'var(--ink-2)', 2);
           frames(i === 3 ? 5 : -1);
         }
         if (i === 3) {
-          const xa = FX + 4 * (fw + gap) + fw / 2, xb = FX + 5 * (fw + gap) + fw / 2;
-          el('path', { d: `M${xa} ${FY + fh + 24 * fs} Q${(xa + xb) / 2} ${FY + fh + 50 * fs} ${xb} ${FY + fh + 24 * fs}`, style: 'fill:none;stroke:var(--c);stroke-width:2' }, g);
-          arrow(g, xb - 6, FY + fh + 30 * fs, xb, FY + fh + 24 * fs, 'var(--c)', 2);
-          el('text', { x: (xa + xb) / 2, y: FY + fh + 64 * fs, class: 'annot', 'text-anchor': 'middle', text: 'from the previous token (Δ = 1)' }, g);
-          el('text', { x: xb + fw / 2 + 4, y: FY - 10 * fs, class: 'annot', 'text-anchor': 'middle', text: 'and from neighbouring pixels' }, g);
+          const xa = fx(4) + fw / 2, xb = fx(5) + fw / 2, y = FY + fh + 22 * fs;
+          el('path', { d: `M${xa} ${y} Q${(xa + xb) / 2} ${y + 26 * fs} ${xb} ${y}`, style: 'fill:none;stroke:var(--c);stroke-width:2' }, g);
+          arrow(g, xb - 5, y + 6, xb, y, 'var(--c)', 2);
+          arrow(g, fx(5) + px * 1.5, FY + px * 0.5, fx(5) + px * 2.6, FY + px * 0.5, 'var(--ink)', 1.4);
+          svgText(g, compact ? 320 : (xa + xb) / 2, y + 44 * fs, 'from the previous token (Δ = 1)\nand from neighbouring pixels', { class: 'annot', 'text-anchor': 'middle' });
         }
         if (i === 4) {
-          const x0 = FX - 4, x1 = FX + T * (fw + gap) - gap + 10, y = FY + fh + 30 * fs;
+          const x0 = FX - 4, x1 = fx(T - 1) + fw + 10, y = FY + fh + 34 * fs;
           el('path', { d: `M${x0} ${y - 6} V${y} H${x1} V${y - 6}`, style: 'fill:none;stroke:var(--c);stroke-width:2' }, g);
           el('text', { x: (x0 + x1) / 2, y: y + 18 * fs, class: 'annot', 'text-anchor': 'middle', text: 'decoded together, as one video chunk' }, g);
         }

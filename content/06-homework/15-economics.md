@@ -20,9 +20,9 @@ cards:
     why: No deltas (every miss moves a full entry), no dictionaries to load, none to keep.
     sec: special-case
   - q: In the reference setting with $\vB = 4096$, HiSparse serves about 109 requests per GPU. What limits it?
-    a: The link; GPU memory would allow about 146
-    wrong: ["GPU memory; the link would allow about 146", "The decoder's speed", "The number of layers"]
-    why: '13.7 MB per step per request against 1.5 GB per 30 ms step gives 109; 205 MB per request against 30 GB gives 146.'
+    a: The link; GPU memory would allow about 147
+    wrong: ["GPU memory; the link would allow about 147", "The decoder's speed", "The number of layers"]
+    why: '13.7 MB per step per request against 1.5 GB per 30 ms step gives 109; 205 MB per request against 30 GB gives 147.'
     sec: special-case
   - q: A request-scope dictionary with $\vw = 256$ and an assumed $\vrho = 0.75$ lifts the reference setting from 109 to about…
     a: 138 requests per GPU, now limited by GPU memory
@@ -84,7 +84,7 @@ A dictionary adds two taxes to HiSparse's bill: link bytes for loading it ($\vnl
 Set $\vrho = 1$, $\vnload = 0$ and $\vwres = 0$ — no deltas, nothing to load, nothing to keep — and the formulas become HiSparse's own arithmetic from [[#landscape-derived-numbers]]. With the reference setting at $\vB = 4096$ (miss rate $\vm = 13.4\,\%$):
 
 - $\vTstep = 0.134 \times 2048 \times 78 \times 640\text{ B} \approx 13.7$ MB, so $\vNlink = 1.5\text{ GB} / 13.7\text{ MB} \approx 109$.
-- $\vMreq = 78 \times 640\text{ B} \times 4096 \approx 205$ MB, so $\vNhbm = 30\text{ GB} / 205\text{ MB} \approx 146$.
+- $\vMreq = 78 \times 640\text{ B} \times 4096 \approx 205$ MB, so $\vNhbm = 30\text{ GB} / 205\text{ MB} \approx 147$.
 - **109 requests per GPU, limited by the link.** At $\vB = 8192$ the misses halve (link allows 219) but the memory doubles: **73, limited by memory.**
 
 Now add a request-scope dictionary with $\vw = 256$ and an **assumed** $\vrho = 0.75$. Each request loads it once, at admission (12.8 MB), so $\vnload = 0$ and $\vwres = 256$.
@@ -96,7 +96,7 @@ Now add a request-scope dictionary with $\vw = 256$ and an **assumed** $\vrho = 
 That flip is the general pattern. Cheaper misses ([[lever]] 1) raise the link bound until GPU memory becomes the wall; past that point, only lighter or fewer resident dictionaries, or cheaper slots (lever 2), help. The figure lets you take the formula apart for five designs.
 
 ::: figure fig-hwb-anatomy hwbAnatomy
-**The two budgets, term by term.** Choose a design. Top: $\vTstep$ and $\vMreq$ with the reference setting's numbers substituted. Middle: the same as bars, the chosen design under HiSparse at $\vB = 4096$ (megabytes, decimal; hover a segment for its size). Link bytes split into δ-misses (blue), raw misses (red) and dictionary loads (gold); GPU memory into the hot cache (teal) and resident dictionaries (purple). Bottom: the link-bound and memory-bound request counts and their minimum, rounded down. All designs use $\vB = 4096$; counts are rounded to whole requests. **Assumed, not measured:** $\vrho$ (0.75 for request scope, 0.65 for light and 0.55 for heavy block dictionaries), $\vw$, $\vfD = 0.85$ and $\vnload = 0.05$ for the dictionary cache.
+**The two budgets, term by term.** Choose a design. Top: $\vTstep$ and $\vMreq$ with the reference setting's numbers substituted. Middle: the same as bars, the chosen design under HiSparse at $\vB = 4096$ (megabytes, decimal; hover a segment for its size). Link bytes split into δ-misses (blue), raw misses (red) and dictionary loads (gold); GPU memory into the hot cache (teal) and resident dictionaries (purple). Bottom: the link-bound and memory-bound request counts and their minimum. All designs use $\vB = 4096$; counts are rounded to whole requests. **Assumed, not measured:** $\vrho$ (0.75 for request scope, 0.65 for light and 0.55 for heavy block dictionaries), $\vw$, $\vfD = 0.85$ and $\vnload = 0.05$ for the dictionary cache.
 :::
 
 ::: try
