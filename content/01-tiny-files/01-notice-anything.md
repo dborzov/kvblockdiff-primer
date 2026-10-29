@@ -87,13 +87,21 @@ Take a moment with the three messages before reading on. Then compare your list 
 - **The values barely move.** The temperature drifts by a few tenths of a degree. The pressure falls by a few tenths of a hectopascal (a storm is coming). The station’s name, the wind direction and the sky do not change at all.
 - **Even what changes is predictable.** The time goes up by exactly thirty minutes, every time. Knowing the 15:00 message, you could write most of the 15:30 message before it arrives — and you would get almost every character right.
 
-The figure below shows this for twelve messages in a row. They are printed the way they actually travel over the radio: compact, without the spaces and line breaks. Every character that is the same as in the message just above it is faded out. Only what is new stays bright.
+Those three messages are the start of a longer story. Here are the first two days of the station's archive: 96 messages, drawn as a weather chart and listed exactly as the mainland received them.
+
+::: dataset fig-tiny-messages station-messages view=weather,messages hl=changes metrics=n,bytes,skeleton,new,words,pressure,windmax
+**Two days of Gull Rock messages, 28 October 14:30 to 30 October 14:00.** *Plot:* **The weather** draws what the messages report, one column per message: the sky (top band, darker for heavier rain), the air pressure (hPa), the wind speed (knots; the label says where the wind blows from whenever that changes) and the temperature (°C). Hover or tap to read a message, or use the arrow keys; drag across to select a stretch. Red dots mark the five messages in which a word changes. **The messages** lists all 96 as sent, keys and punctuation dimmed, values coloured; click one to select it. *Table:* every message's values, its length in bytes, and how many characters differ from the message before. *Numbers:* what stays fixed and what moves, with what each number means. *Code:* recomputes the numbers from the CSV. Synthetic data from a fixed seed.
+:::
+
+A storm comes in over the two days. The pressure falls from 1012.6 to 978.2 hPa, the wind rises from 14 to 51 knots and swings round from south-west to west, and the overcast sky turns to heavy rain. Now switch to **The messages**. Every line has the same shape. The 88 bytes of keys and punctuation never change, and in two days a word changes only five times.
+
+The figure below zooms in on the first twelve messages. They are printed the way they actually travel over the radio: compact, without the spaces and line breaks. Every character that is the same as in the message just above it is faded out. Only what is new stays bright.
 
 ::: figure fig-repeats recordRepeats
 **Twelve consecutive messages from Gull Rock, one per line**, in the compact form sent over the radio. Faded characters are identical to the same character of the previous message; bright, highlighted characters are new. The right column counts the new bytes in each message. Click a line to select it; the readout below compares it with the message before. Untick the switch to see the messages plain.
 :::
 
-Only a handful of characters per message are new — about one byte in twenty-five. The other twenty-four say nothing that the mainland could not have guessed from the previous message.
+Only a handful of characters per message are new — about one byte in twenty-five here, and one in twenty-seven over the whole two days (the *Numbers* tab of [[#fig-tiny-messages]]). The other twenty-four say nothing that the mainland could not have guessed from the previous message.
 
 ::: note intuition A familiar feeling
 This is the feeling of reading a pile of near-identical forms: after the second one your eyes skip straight to the few boxes that differ. A good compressor should do exactly what your eyes do — send only the boxes that differ.
@@ -122,7 +130,13 @@ You would expect a message that is almost entirely predictable to shrink a lot. 
 **One message, compressed by itself.** The selected message is compressed with DEFLATE (the algorithm of zip and gzip; here the pako library at its strongest setting, level 9), live in your browser. The bars show the size of the message before and after, in bytes. Choose another message from the list to try again.
 :::
 
-About one sixth disappears. The rest stays. And it is the same for every message: every time, the compressor gives back almost all of the bytes we just agreed were predictable.
+About one sixth disappears. The rest stays. The card below runs the same experiment on all 96 messages of the archive.
+
+::: dataset fig-tiny-alone message-sizes view=alone marks=alone metrics=alone,saved
+**Every message, compressed alone.** One column per message of [[#fig-tiny-messages]], in the order sent: the pale bar is the raw message, the solid bar the same message compressed by itself with DEFLATE (pako, level 9, computed live in your browser), in bytes. The grey line is the average. Hover or tap a column for its sizes; drag across to select a stretch. *Numbers:* the average and the share saved.
+:::
+
+The solid bars form a flat wall at about 124 bytes. Calm or storm, overcast or rain, the compressor gives back almost all of the bytes we just agreed were predictable.
 
 ::: pull
 The stream of messages is wildly redundant. Yet each message, compressed alone, barely shrinks.

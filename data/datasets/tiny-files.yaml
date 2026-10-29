@@ -1,0 +1,37 @@
+# Running example datasets of Part I (tiny-files): the Gull Rock station's radio messages. Fields: title, blurb (one
+# sentence), emblem (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer,
+# reference page only), csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+station-messages:
+  title: Gull Rock station messages
+  blurb: The first two days of the station's radio archive — 96 short JSON messages, one every half hour, as a storm comes in.
+  emblem: envelope
+  unit: 96 messages · ~147 bytes each
+  source: synthetic, seeded
+  csv: gull-rock-messages.csv
+  story: >-
+    Starts 28 Oct 2026 14:30Z with the three messages of page I.1. Temperature, humidity, pressure and wind take small
+    seeded random steps every half hour (seed 7) with a steady drift: the pressure falls 34 hPa, the wind rises from 14 to 51 knots
+    and veers from SW to W, and the sky goes from overcast to heavy rain. It teaches the tiny-file problem: a fixed skeleton
+    with slowly drifting values, so each message is nearly predictable from the one before. Day one is messages 1–48, day two 49–96.
+message-sizes:
+  title: Gull Rock message sizes
+  blurb: What each of the 96 station messages costs on the radio — raw, compressed alone, appended to a log, and against a dictionary.
+  emblem: zip
+  unit: 96 messages · bytes
+  source: DEFLATE, computed live
+  csv: gull-rock-message-sizes.csv
+  story: >-
+    Derived from the station messages with DEFLATE (pako, level 9, raw), computed in the browser on every page that shows it.
+    The dictionary is the last 24 messages of day one (3,522 bytes); "with previous" uses the message just before as the
+    dictionary. It carries Part I's argument in one table: 124 bytes alone, about 10 added to a log, about 22 with a dictionary.
+fine-readings:
+  title: Gull Rock fine readings
+  blurb: The first twelve half-hours as the instruments measured them, finer than the messages round them — four numbers a row.
+  emblem: ruler
+  unit: 12 rows · 4 instruments
+  source: synthetic, seeded
+  csv: gull-rock-fine-readings.csv
+  story: >-
+    Each value is its message's value plus a seeded jitter (seed 29) that stays inside the message's rounding, so every
+    reading rounds back to what the message sent. It teaches that numbers can be alike in value without sharing bytes, and
+    that for numbers the dictionary becomes a prediction (typical values) and the delta a leftover.

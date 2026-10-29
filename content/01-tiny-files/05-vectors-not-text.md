@@ -28,6 +28,12 @@ cards:
 
 Strip the JSON away from the Gull Rock messages and keep only what the instruments measured: four numbers every half hour. Better still, keep them as the instruments measured them. The thermometer resolves a hundredth of a degree; the message rounds that to a tenth. Here are the same twelve half-hours as on page [[#tiny-files-notice-anything]], as plain rows of numbers.
 
+::: dataset fig-tiny-fine fine-readings view=measured,leftover metrics=equal,deflate,bitsraw,typical,bitsmean,bitsprev
+**The first twelve readings of [[#fig-tiny-messages]], as measured.** One panel per instrument, sharing the time axis (28 October, 14:30 to 20:00). *As measured:* dots are the readings to the instrument's finer step (0.01 °C, 0.1 %, 0.01 hPa, 0.1 knot); the grey dashes are the rounded values the messages sent. *Minus the typical value:* the dashed gold line is each column's average over the twelve rows, and each blue stick is a row's leftover from it. Hover or tap a dot for its numbers. The finer digits are illustrative: a seeded jitter that stays inside each message's rounding.
+:::
+
+The four curves wander smoothly. Neighbouring readings are close, but look at the last digits: they are almost never equal.
+
 ## Nothing to copy {#nothing-to-copy}
 
 ::: figure fig-tiny-rows numberRows

@@ -532,6 +532,12 @@ Two files, so that several writers can add datasets side by side:
 | `categories` | `key`, `order` (category order), `catLabel(c)`, `catSeries(c, i)`, `xlabel`, `ylabel`, `noun`, `h`, `label` |
 
 Every built-in view takes `after(P, ctx)` to draw extra marks on top (fits, reference curves, annotations).
+Any view (built-in or custom) may also carry `highlights: ['gales', …]` (the highlights it can show; the
+highlight picker offers only those), `legend: false` (no automatic "all rows / highlight" legend, for a view
+that draws its own key; `legend: 'hl'` keeps only the highlight's entry) and `note` (a sentence or `ctx => html` shown under the plot).
+A dataset spec may carry extra fields such as `helpers: {…}` for figures that share its logic
+(`DS.spec('<id>').helpers`). Custom views must style with inline `style` or classes from `figures.css`:
+the card may be shown on a page of another Part, which does not load that Part's stylesheet.
 A **custom view** is any `{ label, draw(box, ctx) }`: put a `Plot`/`Diagram` in `box` and use
 `ctx.rows`, `ctx.hl` (`{label, test}` or null), `ctx.sel`, `ctx.select({label, test})`, `ctx.marks`, `ctx.idx`.
 Use custom views when the natural picture of the data is not a standard chart: a grid of JSON messages, a

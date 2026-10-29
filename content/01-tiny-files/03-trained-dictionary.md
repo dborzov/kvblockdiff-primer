@@ -98,6 +98,14 @@ What the numbers say:
 3. Find where the plot flattens. Past that point a bigger dictionary costs more to ship and buys almost nothing.
 :::
 
+Here is every day-two message, in the order sent, against the 24-message dictionary. It is the same archive as on page [[#tiny-files-notice-anything]].
+
+::: dataset fig-tiny-deltas message-sizes view=dictionary marks=dict metrics=dsize,dict,stale
+**Day two, with a dictionary.** One column per day-two message (29 October 14:30 to 30 October 14:00). Pale bar: the message compressed alone. Solid bar: its delta $\vdelta$, the message compressed with the dictionary $\vD$ of the last 24 day-one messages. DEFLATE with a preset dictionary, pako level 9, computed live, in bytes; the grey line is the average delta. Hover or tap a column for its sizes; drag across to select a stretch.
+:::
+
+Look at the solid bars from left to right. They climb from 14 bytes to the mid-20s as the storm moves away from what the samples saw. That is the dictionary going stale, one message at a time.
+
 The same thing in a few lines of Python, with the two messages before 15:30 as the whole dictionary:
 
 ```python a dictionary of two earlier messages, at both ends

@@ -296,12 +296,19 @@
     function drawPlot() {
       plotBox.replaceChildren();
       const v = spec.views[st.view], box = h('div');
+      const hs = hlSeg(v);
+      if (hs) plotBox.append(controls(hs));
       plotBox.append(box);
-      v.draw(box, ctx());
+      const c = ctx();
+      if (c.hl && v.highlights && !v.highlights.includes(st.hl)) c.hl = null;   // this view does not show that highlight
+      v.draw(box, c);
+      if (c.hl && v.legend !== false) plotBox.append(legend([...(v.legend === 'hl' ? [] : [['all rows', BASE, 'box']]), [esc(c.hl.label), HL, v.legend === 'hl' ? 'dot' : 'box']]));
       if (v.note) plotBox.append(h('p', { class: 'fig-note', html: typeof v.note === 'function' ? v.note(ctx()) : v.note }));
     }
-    const hlSeg = () => {
-      const keys = Object.keys(spec.highlights);
+    // A view may list the highlights it can show (view.highlights = ['gales', …]) and turn off the
+    // automatic "all rows / highlight" legend (view.legend = false) when it draws its own key.
+    const hlSeg = (v) => {
+      const keys = Object.keys(spec.highlights).filter(k => !v || !v.highlights || v.highlights.includes(k));
       if (!keys.length) return null;
       return h('span', { class: 'ds-ctl' }, h('span', { class: 'ds-ctl-k', text: 'highlight' }),
         seg([[null, 'none'], ...keys.map(k => [k, esc(spec.highlights[k].label)])], st.hl, v => { st.hl = v; refresh(); }, 'Highlight rows'));
@@ -311,10 +318,8 @@
         plotBox = h('div', { class: 'ds-plotbox' });
         const kids = [];
         if (viewIds.length > 1) kids.push(h('span', { class: 'ds-ctl' }, h('span', { class: 'ds-ctl-k', text: 'view' }), seg(viewIds.map(v => [v, esc(spec.views[v].label)]), st.view, v => { st.view = v; drawPlot(); }, 'Choose a view of the data')));
-        const hs = hlSeg(); if (hs) kids.push(hs);
         plotCtl = kids.length ? controls(...kids) : null;
         panels.plot.append(...[plotCtl, plotBox].filter(Boolean));
-        if (st.hl) panels.plot.append(legend([['all rows', BASE, 'box'], [esc(spec.highlights[st.hl].label), HL, 'box']]));
         drawPlot();
       },
       table() {

@@ -88,7 +88,13 @@ Some points on the curve:
 | 48 (a day) | 642 B | 13.4 B |
 | 96 (two days) | 1,106 B | 11.5 B |
 
-The compressor did not get any smarter. It got context. The first message still costs about 124 bytes; every later message finds its near-twin 149 bytes back and adds only 10 or 11.
+The compressor did not get any smarter. It got context. To see where the context pays, take the log apart again, message by message: how many bytes does each message add when it is appended to the log? The card brings back the archive of [[#fig-tiny-messages]].
+
+::: dataset fig-tiny-log message-sizes view=log hl=first marks=loglater metrics=logfirst,loglater,logday,log96
+**What each message adds to the log.** One column per message, in the order sent. Pale bar: the message compressed alone. Solid bar: how much the compressed log grows when this message is appended (compressed size of messages 1 to i, minus that of messages 1 to i − 1). DEFLATE, pako level 9, computed live, in bytes. The red dot marks the first message; the grey line is the average added by the later ones. Hover or tap a column for its sizes; drag across to select a stretch.
+:::
+
+One tall column, then a floor. The first message still costs about 124 bytes. Every later message finds its near-twin 149 bytes back and adds only 10 or 11. The second message adds a little more (23 bytes), because the log has only one line to copy from yet.
 
 You can check the start of the curve in Python, whose `zlib` module speaks the same raw DEFLATE:
 

@@ -31,7 +31,7 @@
       const rows = ctx.rows.filter(o.only || (() => true));
       const i0 = rows[0].i, i1 = rows[rows.length - 1].i;
       const keys = [o.back, o.front, o.tick].filter(Boolean);
-      box.append(legend(keys.map(k => [SER[k].label, SER[k].color, k === o.tick ? 'line' : 'box']).concat(ctx.hl ? [[esc(ctx.hl.label), series(1), 'dot']] : [])));
+      box.append(legend(keys.map(k => [SER[k].label, k === o.back ? tint(SER[k].color, 40) : SER[k].color, k === o.tick ? 'line' : 'box']).concat(ctx.hl ? [[esc(ctx.hl.label), series(1), 'dot']] : [])));
       const P = Plot(appendBox(box), {
         x: [i0 - 0.5, i1 + 0.5], y: [0, o.ymax], h: o.h || 250, grid: 'y', yticks: o.yticks,
         xticks: H().TICKS.filter(t => t >= i0 && t <= i1).concat(i0 > 0 ? [i0] : []), xfmt: v => (v === i0 && i0 > 0 ? '29 Oct 14:30' : H().TICKNAME[v]),
@@ -61,6 +61,7 @@
   /* Running totals of day one, three ways: the same 48 messages, the same compressor. */
   const totals = {
     label: 'Running total, day one',
+    legend: 'hl',
     draw(box, ctx) {
       const rows = ctx.rows.filter(r => r.day === 1);
       const ways = ['raw', 'alone', 'log'];
@@ -68,7 +69,7 @@
       const cum = {};
       ways.forEach(k => { let s = 0; cum[k] = rows.map(r => [r.i + 1, (s += r[k])]); });
       const P = Plot(appendBox(box), {
-        x: [0, 52], y: [0, 7600], h: 280, xticks: [0, 8, 16, 24, 32, 40, 48], yticks: [0, 2000, 4000, 6000], yfmt: v => (v ? `${v / 1000}k` : '0'),
+        x: [0, 52], y: [0, 7600], h: box.clientWidth > 0 && box.clientWidth < 520 ? 400 : 280, xticks: [0, 8, 16, 24, 32, 40, 48], yticks: [0, 2000, 4000, 6000], yfmt: v => (v ? `${v / 1000}k` : '0'),
         xlabel: 'messages sent on day one', ylabel: 'bytes over the radio, so far', label: 'Running total of bytes for the 48 messages of day one, three ways',
       });
       if (ctx.sel) rows.forEach(r => { if (ctx.sel.test(r)) el('rect', { x: P.x(r.i + 0.5), width: P.x(1) - P.x(0), y: P.m.t, height: P.ph, style: `fill:${tint('var(--c)', 14)}` }, P.g.bg); });
@@ -79,7 +80,9 @@
       });
       if (ctx.hl) rows.forEach(r => { if (ctx.hl.test(r)) dot(P.g.data, P.x(r.i + 1), P.y(cum.log[rows.indexOf(r)][1]), 3 * P.fs, series(1)); });
       const yl = cum.log[47][1], ya = cum.alone[47][1];
-      annotate(P, 48, (yl + ya) / 2, `the same data,\n${fmt(ya / yl, 1)}× apart`, { dx: -96, dy: 0, anchor: 'end' });
+      const bx = P.x(48) - 14 * P.fs;   // a bracket between the two compressed totals
+      el('path', { d: `M${bx + 5 * P.fs},${P.y(ya)} H${bx} V${P.y(yl)} H${bx + 5 * P.fs}`, style: 'fill:none;stroke:var(--ink-2);stroke-width:1.2' }, P.g.top);
+      svgText(P.g.top, bx - 6 * P.fs, P.y((yl + ya) / 2) - 6 * P.fs, `the same data,\n${fmt(ya / yl, 1)}× apart`, { class: 'annot', 'text-anchor': 'end' });
       crosshair(P, { series: ways.map(k => ({ name: k === 'log' ? 'as one log' : SER[k].label, pts: cum[k], color: SER[k].color })), xname: 'after', xfmt: v => `${v} message${v === 1 ? '' : 's'}`, yfmt: v => `${nf(v)} B` });
     },
   };
@@ -116,7 +119,8 @@
     views: {
       alone: columns({ label: 'Each alone', back: 'raw', front: 'alone', ymax: 165, yticks: [0, 50, 100, 150], title: 'Raw and compressed size of each of the 96 messages' }),
       log: columns({ label: 'Added to the log', back: 'alone', front: 'log', ymax: 140, yticks: [0, 25, 50, 75, 100, 125], title: 'What each message costs alone and when appended to the log' }),
-      dictionary: columns({ label: 'Day two, with a dictionary', only: r => r.day === 2, back: 'alone', front: 'dict', tick: 'chain', ymax: 140, yticks: [0, 25, 50, 75, 100, 125], title: 'Day-two messages: compressed alone, with the dictionary, and with the previous message' }),
+      dictionary: columns({ label: 'Day two, with a dictionary', only: r => r.day === 2, back: 'alone', front: 'dict', ymax: 140, yticks: [0, 25, 50, 75, 100, 125], title: 'Day-two messages: compressed alone and with the dictionary' }),
+      chain: columns({ label: 'Day two, three ways', only: r => r.day === 2, back: 'alone', front: 'dict', tick: 'chain', ymax: 140, yticks: [0, 25, 50, 75, 100, 125], title: 'Day-two messages: compressed alone, with the dictionary, and with the previous message' }),
       total: totals,
     },
     metrics: [

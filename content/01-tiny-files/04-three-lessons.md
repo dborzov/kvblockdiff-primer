@@ -35,15 +35,14 @@ On the last page a 147-byte message became a 22-byte [[delta]]. It is tempting t
 
 ## Lesson 1: the redundancy was always there {#always-there}
 
-Here are the 48 messages of day one, sent three ways. The compressor is DEFLATE every time.
+Here are the 48 messages of day one, sent three ways: raw, each compressed alone, and all compressed together as one log. The compressor is DEFLATE every time. The card follows the radio bill message by message through the day.
 
-| how the 48 messages travel | bytes in total | per message |
-|---|---:|---:|
-| raw | 7,090 | 147.7 |
-| each compressed alone | 5,966 | 124.3 |
-| all compressed together, as one log | 642 | 13.4 |
+::: dataset fig-tiny-three-ways message-sizes view=total,chain metrics=day1raw,day1alone,logday,factor,chain
+**The same 48 messages, three ways.** *Running total, day one:* horizontal axis, messages sent so far on day one (28 October 14:30 to 29 October 14:00); vertical axis, total bytes over the radio so far. Dashed grey: raw messages. Blue: each message compressed alone. Teal: the messages compressed together as one log. The end of each line is labelled with the day's total. Hover or tap for the totals at any point. *Day two, three ways* (for lesson 3): per day-two message, compressed alone (pale bar), with the 24-message dictionary (solid bar) and with the previous message as the dictionary (purple stroke). DEFLATE, pako level 9, computed live, in bytes.
+:::
 
-The data is the same in every row. So is the compressor. The only thing that changes is how the data is cut up and read — and that alone is worth a factor of nine.
+Raw, the day costs 7,090 bytes; each compressed alone, 5,966; as one log, 642 — 13.4 bytes per message.
+The data is the same in all three lines. So is the compressor. The only thing that changes is how the data is cut up and read — and that alone is worth a factor of nine.
 
 :::: compare One stream, or many tiny pieces?
 ::: col One big stream
@@ -126,7 +125,7 @@ A delta is mostly a list of pointers into the dictionary: "copy 43 bytes from 60
 That is why a zstd message carries its dictionary's ID (see [[#tiny-files-trained-dictionary/zstd-train]]), and why any system built on dictionaries must answer one question at every single read: *is the right dictionary here?*
 
 ::: note question Why not use the previous message as the dictionary?
-It is free (both ends already have it) and it works: messages 2 to 96, each compressed against the one before, average 21.1 bytes — as good as the 24-message dictionary.
+It is free (both ends already have it) and it works: messages 2 to 96, each compressed against the one before, average 21.1 bytes — as good as the 24-message dictionary. The purple strokes in the view *Day two, three ways* of [[#fig-tiny-three-ways]] show it message by message.
 
 The catch is the chain: every message depends on the one before. Lose one radio message and the next cannot be decoded. Want the 15:30 reading from three weeks ago? Decode three weeks of messages first. A shared dictionary keeps every message independent: each needs only $\vD$.
 :::

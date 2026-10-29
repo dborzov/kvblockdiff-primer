@@ -55,38 +55,41 @@
   const skyColor = s => `color-mix(in srgb, var(--sky) ${[12, 30, 52, 78][SKIES.indexOf(s)]}%, var(--paper-3))`;
   const weatherView = {
     label: 'The weather',
+    legend: 'hl',
     draw(box, ctx) {
       const rows = ctx.rows, n = rows.length;
       const M = { l: 62, r: 18, t: 10, b: 8 };
+      const narrow = box.clientWidth > 0 && box.clientWidth < 520, tall = narrow ? 1.7 : 1;   // phones: taller panels, fewer labels
       const panels = [
         { key: 'pressure_hpa', name: 'pressure', unit: 'hPa', y: [975, 1016], yticks: [980, 990, 1000, 1010], col: series(0), dp: 1 },
         { key: 'wind_kn', name: 'wind', unit: 'kn', y: [0, 56], yticks: [0, 20, 40], col: series(2), dp: 0 },
-        { key: 'temp_c', name: 'temperature', unit: '°C', y: [5.5, 13], yticks: [6, 8, 10, 12], col: series(1), dp: 1 },
+        { key: 'temp_c', name: 'temperature', unit: '°C', y: [5.5, 13], yticks: [6, 8, 10, 12], col: series(4), dp: 1 },
       ];
       const plots = [];
       // sky band: one coloured cell per message, the sky named where it changes
-      const sky = Plot(appendBox(box), { x: [-0.5, n - 0.5], y: [0, 1], h: 46, m: { ...M, t: 4, b: 4 }, xticks: [], yticks: [], grid: false, ylabel: 'sky', label: 'Sky reported in each message' });
+      const sky = Plot(appendBox(box), { x: [-0.5, n - 0.5], y: [0, 1], h: 46 * tall, m: { ...M, t: 4, b: 4 }, xticks: [], yticks: [], grid: false, ylabel: 'sky', label: 'Sky reported in each message' });
       rows.forEach(r => el('rect', { x: sky.x(r.i - 0.5), width: sky.x(r.i + 0.5) - sky.x(r.i - 0.5) + 0.4, y: sky.y(1), height: sky.y(0) - sky.y(1), style: `fill:${skyColor(r.sky)}` }, sky.g.data));
       rows.forEach((r, k) => {
         if (k && r.sky === rows[k - 1].sky) return;
         const end = rows.findIndex((q, j) => j > k && q.sky !== r.sky);
         const mid = (r.i + (end < 0 ? n : end) - 1) / 2;
-        if ((end < 0 ? n : end) - k < 6) return;
+        if (sky.x((end < 0 ? n : end) - 0.5) - sky.x(r.i - 0.5) < (r.sky.length * 6.6 + 8) * sky.fs) return;   // no room for the name
         el('text', { x: sky.x(mid), y: sky.y(0.5) + 4 * sky.fs, 'text-anchor': 'middle', class: 'lbl', text: r.sky }, sky.g.top);
       });
       plots.push(sky);
       panels.forEach((p, k) => {
         const last = k === panels.length - 1;
         const P = Plot(appendBox(box), {
-          x: [-0.5, n - 0.5], y: p.y, h: last ? 128 : 100, m: { ...M, b: last ? 30 : 8 }, xticks: TICKS, xfmt: v => (last ? TICKNAME[v] : ''),
-          yticks: p.yticks, ylabel: `${p.name} (${p.unit})`, grid: true, label: `${p.name} in each message, ${p.unit}`,
+          x: [-0.5, n - 0.5], y: p.y, h: (last ? 128 : 100) * tall, m: { ...M, b: last ? 30 : 8 }, xticks: TICKS, xfmt: v => (!last || (narrow && TICKNAME[v].length !== 6) ? '' : TICKNAME[v]),
+          yticks: p.yticks, ylabel: narrow ? p.unit : `${p.name} (${p.unit})`, grid: true, label: `${p.name} in each message, ${p.unit}`,
         });
         if (ctx.sel) rows.forEach(r => { if (ctx.sel.test(r)) el('rect', { x: P.x(r.i - 0.5), width: P.x(r.i + 0.5) - P.x(r.i - 0.5), y: P.m.t, height: P.ph, style: 'fill:color-mix(in srgb, var(--c) 16%, transparent)' }, P.g.bg); });
         line(P, rows.map(r => [r.i, r[p.key]]), { color: p.col, width: 1.8, curve: p.key === 'wind_kn' ? 'step' : 'linear' });
         if (ctx.hl) rows.forEach(r => { if (ctx.hl.test(r)) dot(P.g.data, P.x(r.i), P.y(r[p.key]), 3 * P.fs, series(1)); });
-        if (p.key === 'wind_kn') rows.forEach((r, j) => {
-          if (j && r.wind_dir === rows[j - 1].wind_dir) return;
-          el('text', { x: P.x(r.i), y: P.y(r.wind_kn) - 9 * P.fs, 'text-anchor': j ? 'middle' : 'start', class: 'lbl', text: `from ${r.wind_dir}` }, P.g.top);
+        if (p.key === 'wind_kn') rows.filter((r, j) => !j || r.wind_dir !== rows[j - 1].wind_dir).forEach((r, k) => {
+          if (narrow && !k) return;   // phones: only the changes
+          const below = k % 2 === 0 && k > 0;   // alternate above / below the line so neighbouring labels do not collide
+          el('text', { x: P.x(r.i), y: P.y(r.wind_kn) + (below ? 17 : -9) * P.fs, 'text-anchor': k ? 'middle' : 'start', class: 'lbl', text: `from ${r.wind_dir}` }, P.g.top);
         });
         ctx.marks.filter(m => m.key === p.key).forEach(m => rule(P, { y: m.value, label: `${m.label}: ${fmt(m.value)}`, color: 'var(--ink-2)' }));
         plots.push(P);
@@ -152,6 +155,7 @@
   const lineBg = (hl, sel) => (sel ? 'background:color-mix(in srgb, var(--c) 34%, var(--code-bg));' : 'background:var(--code-bg);') + (hl ? 'border-left-color:var(--vermilion);' : '');
   const logView = {
     label: 'The messages',
+    legend: 'hl',
     draw(box, ctx) {
       const log = h('div', { style: ST.log, role: 'list', 'aria-label': 'The messages, one per line', tabindex: 0 });
       let firstSel = null;
@@ -206,12 +210,12 @@
     helpers: { when, fields, compact, scrub, TICKS, TICKNAME },   // shared with the datasets derived from this one
     metrics: [
       { id: 'n', label: 'messages', value: rows => rows.length, fmt: (v, rows) => `${v} · ${rows[0].when} to ${rows[rows.length - 1].when}`,
-        note: 'One every 30 minutes for two days. Day one is the first 48 (to 29 Oct 14:00), day two the next 48. Later pages compress the first against the second.' },
+        note: 'One every 30 minutes for two days. Day one is the first 48 (to 29 Oct 14:00), day two the next 48. Later pages build a dictionary from day one and use it on day two.' },
       { id: 'bytes', label: 'bytes per message', value: rows => mean(rows.map(r => r.bytes)), fmt: (v, rows) => `${fmt(v, 1)} B · ${Math.min(...rows.map(r => r.bytes))} to ${Math.max(...rows.map(r => r.bytes))}`,
         note: 'Every message is about the same length: the same eight fields in the same order. Only the sky’s words (“rain”, “heavy rain”) make some a few bytes longer.' },
       { id: 'skeleton', label: 'keys and punctuation', value: rows => rows[0].bytes - fields(rows[0].sent).reduce((a, f) => a + f.value.length, 0),
         fmt: (v, rows) => `${v} B · ${fmtPct(v / mean(rows.map(r => r.bytes)), 0)} of each message`,
-        note: 'The braces, the eight keys with their quotes, the colons and commas: identical in all 96 messages. Add the station’s name, `"gull-rock"`, and 99 bytes of every message never change at all.' },
+        note: 'The braces, the eight keys with their quotes, the colons and commas: identical in all 96 messages. Add the station’s name, “gull-rock”, and 99 bytes of every message never change at all.' },
       { id: 'new', label: 'new characters per message', value: rows => mean(rows.slice(1).map(r => r.new_chars)),
         fmt: (v, rows) => `${fmt(v, 1)} · ${fmtPct(v / mean(rows.slice(1).map(r => r.bytes)), 1)} of the bytes`,
         note: (v, rows) => { const c = rows.slice(1).map(r => r.new_chars); return `Characters that differ from the message just before, averaged over the 95 later messages: about one byte in ${Math.round(mean(rows.slice(1).map(r => r.bytes)) / v)}. The fewest is ${Math.min(...c)}; the most, ${Math.max(...c)}, when the sky turns to “light rain”. Everything else the mainland could have guessed.`; } },
@@ -222,7 +226,7 @@
         note: (v, rows) => `A fall of ${fmt(v - rows[rows.length - 1].pressure_hpa, 1)} hPa in two days, never more than a few tenths per message: a deep storm, arriving slowly. Slow drift is what makes each message so predictable from the one before.` },
       { id: 'windmax', label: 'strongest wind', mark: 'wind_kn', short: 'max', value: rows => Math.max(...rows.map(r => r.wind_kn)),
         fmt: (v, rows) => `${v} kn · ${rows.find(r => r.wind_kn === v).when}`,
-        note: (v, rows) => `Up from ${rows[0].wind_kn} kn at the start: storm force by the second afternoon. Yet the message that reports it is the same 147 bytes, with the same skeleton, as the calm one.` },
+        note: (v, rows) => `Up from ${rows[0].wind_kn} kn at the start: storm force by the end of the two days. Yet the message that reports it is the same 147 bytes, with the same skeleton, as the calm one.` },
     ],
     code: `
 import re

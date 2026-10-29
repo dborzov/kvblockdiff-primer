@@ -1,52 +1,17 @@
-/* Part I — the tiny-file problem. Figures and the shared Gull Rock message generator.
-   window.GULL.records(n) returns the first n messages the Gull Rock weather station sends
-   (one every 30 minutes from 2026-10-28 14:30Z), as compact JSON strings, deterministic. */
+/* Part I — the tiny-file problem. Figures.
+   The data comes from the datasets 'station-messages', 'message-sizes' and 'fine-readings'
+   (figures/datasets/). window.GULL.records(n) returns the first n messages' field values (strings, as sent). */
 window.FIG = window.FIG || {};
 
 (function () {
   'use strict';
 
-  // ------------------------------------------------------------ the toy data
-  function rng(seed) {
-    let s = seed | 0;
-    return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-  }
-  function gaussian(r) { let u = 0; while (!u) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
-
-  const KEYS = ['station', 'time', 'temp_c', 'humidity', 'pressure_hpa', 'wind_kn', 'wind_dir', 'sky'];
-  let cache = null;
-  function generate(n) {
-    const r = rng(7), N = () => gaussian(r);
-    let T = 11.4, Hm = 0.82, P = 1012.6, W = 14, di = 0, sky = 'overcast';
-    const dirs = ['SW', 'SW', 'WSW', 'W'];
-    const out = [];
-    for (let i = 0; i < n; i++) {
-      const mins = 14 * 60 + 30 + 30 * i;
-      const day = 28 + Math.floor(mins / 1440), hh = Math.floor(mins / 60) % 24, mm = mins % 60;
-      out.push({
-        station: 'gull-rock',
-        time: `2026-10-${day}T${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}Z`,
-        temp_c: T.toFixed(1), humidity: Hm.toFixed(2), pressure_hpa: P.toFixed(1),
-        wind_kn: String(W), wind_dir: dirs[di], sky,
-      });
-      T += -0.05 + 0.18 * N();
-      Hm = Math.min(0.99, Math.max(0.6, Hm + 0.006 + 0.012 * N()));
-      P += -0.35 + 0.15 * N();
-      W = Math.max(3, Math.round(W + 0.3 + 1.1 * N()));
-      if (r() < 0.12 && di < 3) di++;
-      if (i === 9) sky = 'light rain'; else if (i === 21) sky = 'rain'; else if (i === 33) sky = 'heavy rain';
-    }
-    return out;
-  }
-  const STRING_KEYS = new Set(['station', 'time', 'wind_dir', 'sky']);
-  // compact JSON exactly as sent: numbers keep their fixed decimals (12.0 stays 12.0)
-  function fields(rec) { return KEYS.map(k => ({ key: k, head: `${k === 'station' ? '{' : ','}"${k}":`, value: STRING_KEYS.has(k) ? `"${rec[k]}"` : rec[k] })); }
-  function compact(rec) { return fields(rec).map(f => f.head + f.value).join('') + '}'; }
-  function records(n) {
-    if (!cache || cache.length < n) cache = generate(Math.max(n, 96));
-    return cache.slice(0, n);
-  }
-  window.GULL = { records, compact, fields, rng, gaussian };
+  // ------------------------------------------------------------ the toy data: dataset 'station-messages' (figures/datasets/)
+  const H = () => DS.spec('station-messages').helpers;
+  const fields = rec => H().fields(rec);
+  const compact = rec => H().compact(rec);
+  function records(n) { return DS.rows('station-messages').slice(0, n).map(r => r.sent); }
+  window.GULL = { records, compact, fields };
 
   // ------------------------------------------------------------ tiny DOM helper (plotkit's h() is used when present)
   function mk(tag, attrs, ...kids) {
@@ -195,44 +160,21 @@ window.FIG = window.FIG || {};
     return out;
   }
 
-  // finer readings behind the rounded values of the messages: each stays inside its message's rounding interval
+  // finer readings behind the rounded values of the messages: dataset 'fine-readings'
+  const FR = () => DS.spec('fine-readings').helpers;
   const COLS = [
     { key: 'temp', name: 'temperature', short: 'temp.', unit: '°C', step: 0.01, dp: 2 },
     { key: 'hum', name: 'humidity', short: 'humidity', unit: '%', step: 0.1, dp: 1 },
     { key: 'pres', name: 'pressure', short: 'pressure', unit: 'hPa', step: 0.01, dp: 2 },
     { key: 'wind', name: 'wind', short: 'wind', unit: 'kn', step: 0.1, dp: 1 },
   ];
-  function readings(n) {   // rows of integers, counted in each sensor's smallest step
-    const r = G.rng(29);
-    return G.records(n).map(rec => {
-      const j = s => (r() - 0.5) * 0.88 * s;
-      return {
-        time: rec.time.slice(11, 16),
-        v: [Math.round((+rec.temp_c + j(0.1)) * 100), Math.round((+rec.humidity * 100 + j(1)) * 10),
-          Math.round((+rec.pressure_hpa + j(0.1)) * 100), Math.round((+rec.wind_kn + j(1)) * 10)],
-      };
-    });
-  }
-  const bitsUnsigned = v => Math.ceil(Math.log2(v + 1));
-  const bitsSigned = m => 1 + Math.ceil(Math.log2(m + 1));          // a sign bit + the magnitude
-  function rowsAsBytes(rows) {   // 2 + 2 + 3 + 2 bytes per row, big-endian
-    const b = [];
-    rows.forEach(({ v: [t, hu, p, w] }) => b.push(t >> 8, t & 255, hu >> 8, hu & 255, p >> 16, (p >> 8) & 255, p & 255, w >> 8, w & 255));
-    return Uint8Array.from(b);
-  }
+  const readings = n => DS.rows('fine-readings').slice(0, n);
+  const rowsAsBytes = rows => FR().asBytes(rows);
   function leftovers(rows, mode) {   // mode 'mean': minus each column's typical value; 'prev': minus the row above
-    const cols = COLS.map((_, c) => rows.map(r => r.v[c]));
-    if (mode === 'mean') {
-      const typ = cols.map(col => Math.round(avg(col)));
-      return { typ, L: rows.map(r => r.v.map((x, c) => x - typ[c])), from: 0 };
-    }
+    if (mode === 'mean') { const typ = FR().typical(rows); return { typ, L: rows.map(r => r.v.map((x, c) => x - typ[c])), from: 0 }; }
     return { typ: null, L: rows.map((r, i) => (i ? r.v.map((x, c) => x - rows[i - 1].v[c]) : null)), from: 1 };
   }
-  function bitsPerColumn(rows, mode) {
-    if (mode === 'raw') return COLS.map((_, c) => bitsUnsigned(Math.max(...rows.map(r => r.v[c]))));
-    const { L, from } = leftovers(rows, mode);
-    return COLS.map((_, c) => bitsSigned(Math.max(...L.slice(from).map(l => Math.abs(l[c])))));
-  }
+  const bitsPerColumn = (rows, mode) => (mode === 'raw' ? FR().bitsRaw(rows) : mode === 'mean' ? FR().bitsMean(rows) : FR().bitsPrev(rows));
   if (window.__TINY_TEST__) window.__TINY_TEST__ = { all, day1, day2, dictOf, logOf, zsize, deflate, day2Sizes, lzParse, readings, rowsAsBytes, leftovers, bitsPerColumn, COLS };
 
   const fmtLeft = (x, c) => (x > 0 ? '+' : x < 0 ? '−' : '±') + (Math.abs(x) * COLS[c].step).toFixed(COLS[c].dp);
