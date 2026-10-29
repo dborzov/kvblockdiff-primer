@@ -20,9 +20,11 @@ window.FIG = window.FIG || {};
     Wlink: 50e9,         // practical PCIe Gen5 x16 bandwidth, bytes/s (64 nominal)
     WlinkNominal: 64e9,
     Mhbm: 30e9,          // GPU memory for KV per GPU, bytes
-    miss: { 2048: 0.30, 4096: 0.134, 8192: 0.067 },   // HiSparse's LRU points
-    belady4096: 0.082, fifo4096: 0.172, random4096: 0.161,
   };
+  // HiSparse's measured miss rates: one source of truth, the dataset landscape-misses (III.8).
+  const MR = DS.rows('landscape-misses'), mrGet = DS.spec('landscape-misses').helpers.get;
+  REF.miss = Object.fromEntries(MR.filter(DS.spec('landscape-misses').helpers.isLRU).map(r => [r.B, r.miss]));   // LRU points
+  REF.belady4096 = mrGet(MR, 'belady', 4096); REF.fifo4096 = mrGet(MR, 'fifo', 4096); REF.random4096 = mrGet(MR, 'random', 4096);
   const GB = 1e9, MB = 1e6;
   const fmtGB = (b, d = 1) => `${fmt(b / GB, d)} GB`;
   const fmtMB = (b, d = 0) => `${fmt(b / MB, d)} MB`;
@@ -361,28 +363,16 @@ window.FIG = window.FIG || {};
   // =====================================================================
   // III.7 — the toy trace, step by step (data shared with IV.5)
   // =====================================================================
-  // HiSparse's resolve rule on one layer (cache: array of positions, oldest first).
-  function resolveStep(cache, S, B) {
-    const before = cache.slice();
-    const hits = S.filter(p => before.includes(p)), misses = S.filter(p => !before.includes(p));
-    const c = before.slice(), evicted = [];
-    for (const p of misses) {
-      if (c.length >= B) {
-        const v = c.find(x => !S.includes(x));
-        c.splice(c.indexOf(v), 1);
-        evicted.push(v);
-      }
-      c.push(p);
-    }
-    for (const p of hits) { c.splice(c.indexOf(p), 1); c.push(p); }
-    return { hits, misses, evicted, cacheAfter: c };
-  }
+  // HiSparse's resolve rule on one layer: kept with the toy trace's dataset (landscape-trace).
+  const TT = DS.spec('landscape-trace').helpers, resolveStep = TT.resolve;
   const sameJSON = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   FIG.toyTrace = async (host) => {
     const res = await fetch(KV.prefix + 'assets/figs/data/toy-trace.json');
     if (!res.ok) throw new Error(`toy-trace.json: HTTP ${res.status}`);
     const T = await res.json();
+    // the JSON (shared with IV.5) and the dataset landscape-trace must describe the same trace
+    if (!sameJSON([T.n, T.B, T.k, T.initialCache, T.steps], [TT.N, TT.B, TT.K, TT.INITIAL, TT.STEPS])) throw new Error('toy trace: toy-trace.json and the dataset landscape-trace disagree');
     // run the resolve rule and check it against the expected trace in the data file
     let cache = T.initialCache.slice();
     const runs = T.steps.map((S, i) => {
@@ -519,15 +509,9 @@ window.FIG = window.FIG || {};
   // =====================================================================
   // III.9 — the reuse-distance curve: a power law through HiSparse's LRU points
   // =====================================================================
-  // least-squares fit of log m = log a + s log(B/2048) through the three LRU points
-  const LRU_PTS = [[2048, REF.miss[2048]], [4096, REF.miss[4096]], [8192, REF.miss[8192]]];
-  const FIT = (() => {
-    const xs = LRU_PTS.map(p => Math.log(p[0] / 2048)), ys = LRU_PTS.map(p => Math.log(p[1]));
-    const mx = mean(xs), my = mean(ys);
-    const s = sum(xs.map((x, i) => (x - mx) * (ys[i] - my))) / sum(xs.map(x => (x - mx) ** 2));
-    const a = Math.exp(my - s * mx);
-    return { s, a, m: B => a * Math.pow(B / 2048, s) };
-  })();
+  // the power law through the LRU points: least squares in log–log, from the dataset's helpers
+  const LRU_PTS = Object.entries(REF.miss).map(([b, m]) => [+b, m]);
+  const FIT = DS.spec('landscape-misses').helpers.fit(MR);
 
   FIG.reuseCurve = (host) => {
     let lb = 12;   // log2 of B

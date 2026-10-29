@@ -85,6 +85,20 @@ $$ {#eq-landscape-entry}
 A [[vector]] is an ordered list of $\vd$ numbers; a [[channel]] is one fixed position $\vc$ in it, looked at across many vectors — like one sensor's column in a table of weather readings. Here, each entry is one row of that table.
 :::
 
+You have held such a table in your hands: the Gull Rock afternoon of [[#school-vectors]], twelve readings of five sensors. Open it again and read it as a tiny KV cache.
+
+::: dataset fig-landscape-day gull-day view=channels tab=table metrics=shape,spreads
+**A table of vectors, met before: the Gull Rock afternoon of II.13.** *Table:* one row per half-hourly reading, one column per sensor. *Plot:* each column drawn as its own strip, on its own scale (hover or tap for the whole reading). *Numbers:* the shape of the table and how much each channel moves. Synthetic data from fixed seeds. Read as a model of one layer's KV cache, a row is an entry $\vE_{\vl,\vt}$ and a column is a channel $\vc$.
+:::
+
+The KV cache of one layer is the same kind of table, only bigger:
+
+- **one row per token position** $\vt$, where the afternoon had one per half hour, and 100,000 rows instead of 12;
+- **one column per number of the entry**, about 640 instead of 5;
+- **one such table per layer**, 78 of them in GLM-5.1.
+
+Every question Part II asked of the afternoon — what is typical of a channel, how much it moves, whether one row tells you about the next — can be asked of these tables too. Asking it is the work of Part IV.
+
 ::: figure fig-landscape-entry entryAnatomy
 **What one entry holds.** The strip is one entry, split into its parts and drawn to scale (blue: keys; red: values; brown: a compressed vector). Choose a model and a number format; the tiles count the numbers in one entry ($\vd$), its bytes $\ve$, the entries one token leaves (one per layer that keeps entries) and the bytes per token. Toy and Qwen3.5-2B sizes follow from their published shapes; the GLM-5.1-class size (≈ 640 numbers, 0.64 KB at 8 bits) is the one the reference setting uses.
 :::

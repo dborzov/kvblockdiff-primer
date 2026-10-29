@@ -1,0 +1,27 @@
+# Running example datasets of Part III (landscape). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+landscape-trace:
+  title: The toy trace
+  blurb: Three decode steps of one layer — 16 stored positions, a hot cache of 6 slots, 4 selections per step — small enough to follow every entry by hand.
+  emblem: loggrid
+  unit: 12 selections · 16 positions
+  source: hand-made toy
+  csv: toy-trace-selections.csv
+  story: >-
+    The hand-made example of the original proposal (also stored in figures/data/toy-trace.json, which IV.5 reads).
+    It is the storm morning of II.21 moved onto the GPU: a list of requests for stored items, a small desk managed by LRU,
+    and the reuse distance of every request. It teaches HiSparse's resolve rule and its two prices — a miss costs one raw
+    entry on the link, a slot costs one raw entry of GPU memory.
+landscape-misses:
+  title: HiSparse's miss rates
+  blurb: The six miss rates HiSparse measured on one long GLM-5.1 request — four eviction policies and three cache sizes.
+  emblem: target
+  unit: 6 measurements
+  source: HiSparse paper, as recorded
+  csv: hisparse-miss-rates.csv
+  story: >-
+    Averages over 78 sparse layers and 1,799 decode steps of one 100,384-token LongBench-V2 prompt, with k = 2048
+    selections per layer per step, as the first draft of this proposal recorded them from the HiSparse paper (not
+    re-checked for this version). Keeping only the current top-k is LRU with 2048 slots, so three of the rows are points
+    of one LRU miss-rate curve; the Part III figures fit their power law to them and use them for every derived number.

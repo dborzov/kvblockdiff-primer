@@ -33,6 +33,12 @@ cards:
 
 Back to the harbour office of [[#school-caches]]. The forecaster's desk has room for a handful of logbooks; the archive downstairs has them all. She does not fetch her whole archive every morning. She keeps on the desk the logbooks she used most recently. When she needs one that is not there, the lift brings it up, and the logbook she has not touched for longest goes back down.
 
+::: dataset fig-landscape-storm storm-morning view=raster hl=lru metrics=n,distinct,lru4,fifo4
+**The storm morning of II.21, once more.** *Plot:* one row per logbook, one column per request, in the order the forecaster asked; the highlighted requests are the misses of a 4-slot desk under LRU (switch the highlight to FIFO to compare, or to the first requests). *Table:* every request, with whether it hits under each policy. *Numbers:* the morning's size and the misses of each policy. Hand-made toy data.
+:::
+
+Ten trips of the lift for 24 requests, and eight of them were first fetches that no desk could avoid. Keep the picture in mind: on the next page HiSparse's toy trace is drawn the same way, with stored positions in place of logbooks.
+
 That was a [[cache]] managed by [[lru|LRU]]. The production system this project builds on is the same desk, built into a GPU.
 
 ## Two tiers {#two-tiers}

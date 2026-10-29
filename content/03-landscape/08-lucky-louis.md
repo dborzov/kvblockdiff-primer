@@ -62,19 +62,14 @@ The figure shows the property on a toy. Each row is one decode step of one layer
 
 HiSparse measured the property on a real trace: GLM-5.1 answering a 100,384-token prompt from the LongBench-V2 benchmark, 1,799 decode steps, 78 sparse layers, $\vk = 2048$ selections per layer per step. The miss rates, averaged over layers and steps:
 
-| policy | slots $\vB$ | miss rate $\vm$ | hit rate |
-|---|---|---|---|
-| keep only the current top-$\vk$ | 2048 | 30 % | 70 % |
-| LRU | 4096 | **13.4 %** | 86.6 % |
-| FIFO (oldest fetch goes first) | 4096 | 17.2 % | 82.8 % |
-| random eviction | 4096 | 16.1 % | 83.9 % |
-| Bélády (knows the future) | 4096 | 8.2 % | 91.8 % |
-| LRU | 8192 | 6.7 % | 93.3 % |
+::: dataset fig-landscape-misses landscape-misses view=policies,bysize metrics=overlap,lru4096,fifo,belady,gap,lru8192
+**HiSparse's six miss rates.** *Plot:* "Policies" has one bar per measurement: the miss rate $\vm$ (the share of selections fetched over the link) of each eviction policy, with the hot-cache size in slots per layer per request; blue bars are LRU (keeping only the current top-$\vk$ is LRU with $\vk$ slots), red bars FIFO and random eviction, the purple bar Bélády's clairvoyant policy. "LRU by cache size" puts the three LRU points against the number of slots. *Table:* the six measurements with their hit rates. *Numbers:* what each measurement tells us. Measured by HiSparse on one GLM-5.1 request, as recorded in the first draft of this proposal.
+:::
 
 Three readings.
 
-1. **The first row is the overlap itself.** Keeping only the current picks means a step hits exactly the picks it shares with the step before. So on average **70 % of a step's selections repeat** from the previous step.
-2. **Recency is the right bet.** LRU beats evicting the oldest fetch (FIFO) or a random entry. What was *used* recently, not what was *fetched* recently, predicts the next selection.
+1. **The top bar is the overlap itself.** Keeping only the current picks means a step hits exactly the picks it shares with the step before. So on average **70 % of a step's selections repeat** from the previous step. (The toy trace of [[#landscape-toy-trace]] repeated 3 of 4.)
+2. **Recency is the right bet.** LRU beats evicting the oldest fetch (FIFO) or a random entry. What was *used* recently, not what was *fetched* recently, predicts the next selection. The storm morning ([[#fig-landscape-storm]]) gave the same verdict on 24 requests: 10 misses for LRU, 14 for FIFO.
 3. **Little is left for cleverer eviction.** Even [[belady|Bélády's]] clairvoyant policy misses 8.2 % at 4096 slots. LRU is within about five points of the best any policy could do.
 
 ::: aside reminder Bélády (II.22)

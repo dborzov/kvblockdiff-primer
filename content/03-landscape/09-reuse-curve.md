@@ -26,12 +26,11 @@ cards:
     sec: reading
 ---
 
-Line up HiSparse's three LRU numbers from [[#landscape-lucky-louis/numbers]] by cache size:
+Line up HiSparse's three LRU numbers from [[#landscape-lucky-louis/numbers]] by cache size. (Keeping only the current top-$\vk$ is LRU with exactly $\vk = 2048$ slots, so the 30 % is the first point.)
 
-| hot-cache slots $\vB$ | 2048 | 4096 | 8192 |
-|---|---|---|---|
-| miss rate $\vm$ | 30 % | 13.4 % | 6.7 % |
-| ratio to the column before | | 0.45 | 0.50 |
+::: dataset fig-landscape-misses-size landscape-misses view=bysize metrics=ratios,slope,beladyEq
+**HiSparse's LRU miss rates against cache size.** *Plot:* horizontal axis, hot-cache slots $\vB$ per layer per request (log scale, base 2); vertical axis, miss rate $\vm$ (ordinary scale). Dots: the three measured LRU points, labelled with their miss rates; the label between two dots is the ratio of their miss rates; dashed line: the power law fitted below. *Table:* all six of HiSparse's measurements. *Numbers:* the ratios, the fitted power law and what it says about Bélády's point. Measured by HiSparse on one GLM-5.1 request, as recorded in the first draft of this proposal.
+:::
 
 Each doubling of the desk roughly halves the trips in the lift. Three numbers with one pattern usually mean one cause. Here the cause has a name, from [[#school-reuse-distance]].
 
@@ -40,6 +39,14 @@ Each doubling of the desk roughly halves the trips in the lift. Three numbers wi
 ::: aside reminder Reuse distance and the miss-rate curve (II.22)
 The [[reuse-distance]] of a request is the number of *distinct* other items requested since this item was last requested. An LRU cache with $\vB$ slots misses a request exactly when its reuse distance is at least $\vB$. So one histogram of reuse distances gives the [[miss-rate-curve]] $\vm(\vB)$ for every cache size at once: $\vm(\vB)$ is the share of requests whose reuse distance is $\vB$ or more.
 :::
+
+On the storm morning of [[#school-reuse-distance]] the whole curve could be read straight off the distances, because every request's distance was known:
+
+::: dataset fig-landscape-storm-curve storm-morning view=dists,reuse metrics=curve,lru4,belady4
+**The storm morning's reuse distances, from II.22.** *Plot:* "Reuse distances" counts the morning's 24 requests by reuse distance (∞ for a first request); "With reuse distances" shows the requests themselves, one row per logbook, with each distance written under its column. *Numbers:* the LRU miss-rate curve $\vm(\vB)$ for 1 to 6 slots, read off the distances, and LRU against the clairvoyant policy. Hand-made toy data.
+:::
+
+The curve there falls in a cliff and then a slow slide; the shape belongs to that list of requests. For HiSparse we do not have the distances, only three points of the curve. What shape do they suggest?
 
 For the hot cache, the "requests" are the indexer's selections, and the reuse distance of a selection counts the distinct positions selected since that position was last selected. (HiSparse resolves a whole selection at once rather than one request at a time, so the rule holds up to how ties inside one step are broken.)
 
@@ -77,7 +84,7 @@ $$ {#eq-landscape-power-law}
 
 **Double the cache, halve the misses.** $2^{-1.08} \approx 0.47$. That is the whole exchange rate of the hot cache, at least between 2048 and 8192 slots.
 
-**Smarter eviction has little left to give.** At 4096 slots, the clairvoyant Bélády policy misses 8.2 % against LRU's 13.4 %. On the curve, LRU reaches 8.2 % at about 6,700 slots. So a perfect oracle for eviction is worth what about 60 % more slots would buy, and no real policy is a perfect oracle. FIFO (17.2 %) and random eviction (16.1 %) sit on the curve where LRU would have only about 3,400 and 3,600 slots: recency is worth something, but not a lot.
+**Smarter eviction has little left to give.** At 4096 slots, the clairvoyant Bélády policy misses 8.2 % against LRU's 13.4 %. On the curve, LRU reaches 8.2 % at about 6,700 slots. So a perfect oracle for eviction is worth what about 60 % more slots would buy, and no real policy is a perfect oracle. The storm morning said the same in miniature: with 4 slots the clairvoyant policy made 9 misses, LRU 10 ([[#fig-landscape-storm-curve]]). FIFO (17.2 %) and random eviction (16.1 %) sit on the curve where LRU would have only about 3,400 and 3,600 slots: recency is worth something, but not a lot.
 
 **What remains is buying slots, and slots cost memory.** Every slot holds one raw entry. Moving along the curve trades one of the two prices of [[#landscape-toy-trace/two-prices]] against the other:
 

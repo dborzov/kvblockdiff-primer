@@ -1,6 +1,7 @@
 ---
 title: Watching the hot cache work
 nav: The toy trace
+vendor: [pako.min.js]
 group: HiSparse and its hot cache
 lede: Sixteen entries, six slots, four selections per step, three steps. Small enough to follow every entry by hand, and big enough to show the whole economy of HiSparse — what it saves, and the two prices it leaves alone.
 cards:
@@ -48,15 +49,15 @@ Before you press *Next*: which entry do you think goes at step 1?
 3. Watch the history row. From one step to the next, three of the four selected positions repeat.
 :::
 
-The whole trace in one table:
+Now step back and look at the whole trace at once, drawn the way [[#school-caches]] drew the storm morning: one row per stored position, one column per request.
 
-| step | selected $\vS_{\vt}$ | hits | miss | evicted | hot cache after (oldest → newest) |
-|---|---|---|---|---|---|
-| 1 | 2, 5, 9, 14 | 2, 5, 9 | 14 | 1 | 10, 13, 14, 2, 5, 9 |
-| 2 | 2, 5, 9, 11 | 2, 5, 9 | 11 | 10 | 13, 14, 11, 2, 5, 9 |
-| 3 | 2, 9, 11, 15 | 2, 9, 11 | 15 | 13 | 14, 5, 15, 2, 9, 11 |
+::: dataset fig-landscape-trace-data landscape-trace view=grid,dists metrics=n,hits,again,misses,maxhit,k4,link,hbm
+**The toy trace as a list of requests.** *Plot:* "The trace" has one row per stored position (0 to 15) and one column per selection; the six grey columns on the left are the last uses of the six entries the hot cache holds before step 1, oldest first. Green cells are hits, orange cells misses; an orange × marks the entry each miss evicted. A line joins each selection to the last use of the same position, and the number under a column is the selection's [[reuse-distance]] (∞ for a position never used before). "Reuse distances" counts them. The highlight marks the misses, or the picks repeated from the step before. *Table:* every selection, with what it evicted and the hot cache after it. *Numbers:* the counts this page uses. Hand-made toy data (the original proposal's example).
+:::
 
-Nine of the twelve selections are hits. The hits come from a regularity in the selections: each step re-selects most of what the step before selected. That regularity gets a name of its own on [[#landscape-lucky-louis]].
+Look along the rows. Positions 2 and 9 are selected at every step, 5 and 11 at two of the three. Seven rows stay empty: positions nobody asks for in this window. Then look under the columns: every hit has a reuse distance of 2 or 3, far below the 6 slots, and every miss has distance ∞. On this trace the hot cache misses only what nobody had asked for before, exactly like the first fetch of each logbook on the storm morning.
+
+Nine of the twelve selections are hits. They come from a regularity in the selections: each step re-selects most of what the step before selected. That regularity gets a name of its own on [[#landscape-lucky-louis]].
 
 ::: takeaway
 - Each miss evicts the least recently used entry that the current step does not need, and is fetched from host memory.
@@ -86,6 +87,14 @@ Read the keycard as the plan of attack for everything after this Part. There are
 ::: note connection Each miss is a tiny file
 A miss fetches one entry, alone, from somewhere in a long history: a few hundred bytes with nothing around it to compress against. That is the lonely Gull Rock message of [[#tiny-files-notice-anything]] all over again — and it is why a dictionary, kept at the receiving end, is the tool this site reaches for.
 :::
+
+Here is how badly a lonely message fared in Part I. Each of the station's 96 messages was compressed by itself:
+
+::: dataset fig-landscape-alone message-sizes view=alone marks=alone metrics=alone,saved
+**The lonely messages of Part I.** One column per Gull Rock station message, in the order sent: the pale bar is the raw message, the solid bar the same message compressed by itself with DEFLATE (pako, level 9, computed live in your browser), in bytes. The grey line is the average. Hover or tap a column for its sizes. *Numbers:* the average and the share saved. Synthetic, seeded messages.
+:::
+
+About a sixth of each message goes, although almost all of it repeats the message before. A missed entry is in the same position. If it has anything in common with the entries already on the GPU, a compressor that sees it alone cannot use it.
 
 ::: takeaway
 - A miss costs one raw entry, $\ve$ bytes, on the link; a slot costs one raw entry, $\ve$ bytes, of GPU memory.
