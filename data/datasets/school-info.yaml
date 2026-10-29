@@ -1,4 +1,4 @@
-# Running example datasets of Part II (Back to school). Fields: title, blurb (one sentence), emblem
+# Running example datasets of Part II, pages 1–12 (school-info). Fields: title, blurb (one sentence), emblem
 # (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
 # csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
 wind:
