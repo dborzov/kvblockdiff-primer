@@ -116,7 +116,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     const vSeg = seg([['float', 'rotate, then round'], ['l1', 'shear 1'], ['l2', 'shear 2'], ['l3', 'shear 3 = lifted rotation']], view, v => { view = v; draw(); }, 'What to show');
     host.append(controls(slider('angle θ', 0, 90, 1, deg, v => { deg = v; draw(); }, v => `${v}°`)), controls(vSeg),
-      legend([['input point', 'var(--ink-3)', 'dot'], ['output point', series(0), 'dot'], ['two inputs landed on one point', 'var(--bad)', 'dot'], ['exact (real-valued) rotation', series(3), 'dot']]), box, ro);
+      legend([['position before this step', 'var(--ink-3)', 'dot'], ['position after it', series(0), 'dot'], ['two inputs landed on one point', 'var(--bad)', 'dot'], ['exact (real-valued) rotation', series(3), 'dot']]), box, ro);
     const P = Plot(box, { x: [-7, 7], y: [-7, 7], equal: true, h: 420, xticks: [-6, -4, -2, 0, 2, 4, 6], yticks: [-6, -4, -2, 0, 2, 4, 6], label: 'Integer points before and after a rotation' });
     // the integer lattice as faint dots
     for (let y = -7; y <= 7; y++) for (let x = -9; x <= 9; x++) el('circle', { cx: P.x(x), cy: P.y(y), r: 1.3 * P.fs, style: 'fill:var(--ink-3);opacity:.35' }, P.g.bg);
@@ -257,7 +257,7 @@ window.FIG = window.FIG || {};
         // where subtraction in E4M3 index space stops being worse than no prediction at all
         let cross = null;
         for (let i = 1; i < data.length; i++) { const [g0, a] = data[i - 1], [g1, b] = data[i]; const d0 = a.e4sub - a.e4solo, d1 = b.e4sub - b.e4solo; if (d0 > 0 && d1 <= 0) cross = g0 + (g1 - g0) * d0 / (d0 - d1); }
-        if (cross != null) annotate(P, cross, data[0][1].e4solo, `subtraction breaks even\nat R² ≈ ${fmt(cross, 2)}`, { dx: -40, dy: 40 });
+        if (cross != null) annotate(P, cross, data[0][1].e4solo, `subtraction breaks even\nat R² ≈ ${fmt(cross, 2)}`, { dx: 46, dy: -62 });
       }
       ro.set([
         ['E4M3 solo', `${fmt(at.e4solo, 2)}`], ['E4M3 subtract', `${fmt(at.e4sub, 2)}`], ['E4M3 context', `<b>${fmt(at.e4ctx, 2)}</b>`],
@@ -298,9 +298,9 @@ window.FIG = window.FIG || {};
       const maxB = Math.max(2, A.distinct + 1);
       bSl.input.max = maxB; if (Bsel > maxB) { Bsel = maxB; bSl.set(Bsel); }
       // --- the stack diagram: one column per request, the stack after it, top = most recent
-      const cw = 30, top = 58, rh = 24, lw = 66, W = lw + n * cw + 12, Hh = top + rows * rh + 14;
+      const lw = 66, W = 640, cw = Math.min(44, (W - lw - 12) / n), top = 58, rh = 26, Hh = top + rows * rh + 14;
       diagBox.replaceChildren();
-      const D = Diagram(diagBox, { w: Math.max(W, 360), h: Hh, label: 'The LRU stack after each request' });
+      const D = Diagram(diagBox, { w: W, h: Hh, label: 'The LRU stack after each request' });
       const g = el('g', {}, D.svg);
       el('text', { x: 4, y: 20, class: 'lbl', text: 'request' }, g);
       el('text', { x: 4, y: 44, class: 'lbl', text: 'distance' }, g);
@@ -351,7 +351,7 @@ window.FIG = window.FIG || {};
       btn('flat', () => { s = 8; f = 8 / 64; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' })),
     h('div', { class: 'fig-row' }, box1, box2), ro);
     const P1 = Plot(box1, { x: [0.5, D + 0.5], y: [0.002, 64], ylog: 10, h: 280, xlabel: 'direction (largest first)', ylabel: 'variance λ', label: 'The spectrum: variance along each KLT direction' });
-    const P2 = Plot(box2, { x: [0, 1], y: [0, 4], h: 280, xlabel: 'share held by the strong directions', ylabel: 'gain, bits per element', yticks: [0, 0.3, 1, 2, 3, 4], label: 'KLT gain against the share of variance in the strong directions' });
+    const P2 = Plot(box2, { x: [0, 1], y: [0, 4], h: 280, xlabel: 'share held by the strong directions', ylabel: 'gain, bits per element', yticks: [0.3, 1, 2, 3, 4], label: 'KLT gain against the share of variance in the strong directions' });
     function draw() {
       const l = eig(s, f), gm = Math.pow(2, l.reduce((a, v) => a + Math.log2(v), 0) / D), g = gain(s, f);
       P1.clear();
@@ -381,7 +381,7 @@ window.FIG = window.FIG || {};
     host.append(controls(
       slider('block size b', 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtSI(pow2(v), 0)} tokens`),
       slider(texify('assumed $\\vrho$'), 0.5, 1, 0.01, rho, v => { rho = v; draw(); })), box, tbl, ro);
-    const P = Plot(box, { ycats: TYPES.map(t => t[0]), x: [0, 180], h: 270, xlabel: 'requests per GPU, N = min(link bound, HBM bound)', grid: 'x', label: 'Requests per GPU for each dictionary type kept resident for every block' });
+    const P = Plot(box, { ycats: TYPES.map(t => t[0]), x: [0, 240], xticks: [0, 50, 100, 150, 200], h: 270, xlabel: 'requests per GPU, N = min(link bound, HBM bound)', grid: 'x', label: 'Requests per GPU for each dictionary type kept resident for every block' });
     function calc(w, isNone) {
       const b = pow2(lb), extra = isNone ? 0 : REF.L / b * w, B = 4096, m = 0.134;
       const Nl = REF.W * REF.tpot / (m * REF.k * REF.NL * REF.e * (isNone ? 1 : rho));
@@ -395,11 +395,11 @@ window.FIG = window.FIG || {};
       bars(P, rows.map(r => r.N), {
         horizontal: true,
         colors: i => (i === 0 ? 'var(--slate)' : rows[i].N >= base ? series(5) : 'var(--bad)'),
-        labels: (v, i) => `${fmt(v, 0)}${i ? ` (${fmt(v / base, 2)}×)` : ''} · ${rows[i].Nl < rows[i].Nh ? 'link-bound' : 'HBM-bound'}`,
+        labels: (v, i) => `${fmt(v, 0)}${i ? ` (${fmt(v / base, 2)}×)` : ''}, ${rows[i].Nl < rows[i].Nh ? 'link' : 'memory'}`,
         tip: (v, i) => `<b>${rows[i].name}</b><br>link bound ${fmt(rows[i].Nl, 0)} · HBM bound ${fmt(rows[i].Nh, 0)}`,
       });
-      rule(P, { x: base, label: 'HiSparse' });
-      tbl.replaceChildren(table(['type', 'weight w', 'dictionaries per layer (entries’ worth)', 'extra GPU memory vs the hot cache', 'per request, all layers'],
+      rule(P, { x: base });
+      tbl.replaceChildren(table(['type', 'w', 'per layer', '÷ hot cache', 'per request'],
         rows.map((r, i) => ({ cells: [r.name, i ? r.w : '—', i ? fmt(r.extra, 0) : '0', i ? fmtPct(r.extra / 4096, 1) : '0 %', i ? `${fmt(r.mb, 1)} MB` : '—'], cls: i === 1 ? 'hl' : null })), { left: [0] }));
       ro.set([['block size', `${fmtSI(pow2(lb), 0)} tokens → ${fmt(REF.L / pow2(lb), 1)} blocks per layer`], ['hot cache', '4096 slots, miss rate 13.4 %'], ['every miss a δ-miss', `${tex('\\vfD = 1')}, no dictionary loads`]]);
     }

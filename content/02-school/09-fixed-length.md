@@ -75,10 +75,10 @@ Five bits cannot hold a 47-knot gale. One answer is to widen every slot to 6 bit
 - **Easy to confuse with:** an error or a dropped value. Nothing is lost; escaped values are stored exactly, just elsewhere.
 :::
 
-The bill per reading is the slot plus each reading's share of the escape stream:
+The bill per reading is the slot plus each reading's share of the escape stream (10 bits say *where* the escaped reading sits, 8 bits hold its raw *value*):
 
 $$
-\text{bits per reading} = \underbrace{\vn}_{\text{slot}} + \underbrace{\veps}_{\text{share escaped}} \cdot (\underbrace{10}_{\text{position}} + \underbrace{8}_{\text{raw value}})
+\text{bits} = \underbrace{\vn}_{\text{slot}} + \underbrace{\veps}_{\text{escaped}} \cdot (\underbrace{10}_{\text{where}} + \underbrace{8}_{\text{value}})
 $$ {#eq-escape-cost}
 
 At $\vn = 5$: $5 + 0.030 × 18 \approx 5.54$ bits per reading. Try the other widths in the figure.

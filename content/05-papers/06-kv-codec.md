@@ -27,7 +27,7 @@ cards:
 
 Film a harbour with a camera on a tripod. Frame after frame, almost every pixel is what it was a moment ago. A video coder sends the first frame, then for every later frame only *how it differs* from the one before — [[predictive-coding]] with the previous frame as the prediction. That is why an hour of a quiet harbour fits in a small file.
 
-Now replace the harbour with a KV cache, and the frames with tokens. That is the whole idea of KV-Codec. Its appeal for us is obvious: if consecutive tokens' entries look alike, the video coder will find it, and its compression ratio becomes a reading of [[fallen-apple]] similarity. This page asks how good a reading it is.
+Now replace the harbour with a KV cache, and the frames with tokens. That is the whole idea of KV-Codec. Its appeal for us is obvious: if consecutive tokens' entries look alike, the video coder will find it, and its compression ratio becomes a reading of [[fallen-apple]]. This page asks how good a reading it is.
 
 ::: note literature The paper
 Liang Mi, Weijun Wang, Jinghan Chen, Ting Cao, Haipeng Dai and Yunxin Liu, *Efficient Remote KV Cache Reuse with GPU-native Video Codec*, arXiv:2602.09725, SIGCOMM 2026. An earlier version was titled *Efficient Remote Prefix Fetching with GPU-native Media ASICs* and called the system KVFetcher. Re-checked against the abstracts and public summaries; we could not read the full text.

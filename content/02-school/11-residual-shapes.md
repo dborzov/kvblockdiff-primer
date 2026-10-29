@@ -134,7 +134,7 @@ $$ {#eq-gauss-bits}
 with $\vsigma$ in integer steps. For a Laplace of the same $\vsigma$ the constant is $\log_2(\sqrt2\, e) \approx 1.94$. **Halve $\vsigma$, save one bit.**
 :::
 
-Check it on the temperatures of [[#school-prediction]]. The previous-value residual has $\vsigma = 3.05$ tenths: $\log_2 3.05 + 2.05 \approx 3.66$ bits, and the measured cost was 3.63. Without prediction, $\vsigma = 24.2$ tenths and the formula says 6.64 bits; the measured 6.53 is a little lower. Part of the gap is the shape: the raw temperatures are not bell-shaped (the daily swing piles them up near its highs and lows), and any shape other than the Gaussian costs less. Part is the counting: 1,344 readings spread over 119 different values make the histogram's estimate a few hundredths of a bit low, as on [[#school-entropy]].
+Check it on the temperatures of [[#school-prediction]]. The previous-value residual has $\vsigma = 3.05$ tenths: $\log_2 3.05 + 2.05 \approx 3.66$ bits, and the measured cost was 3.63. Without prediction, $\vsigma = 24.2$ tenths and the formula says 6.64 bits; the measured 6.53 is a little lower. Part of the gap is the shape: the raw temperatures are not bell-shaped (the daily swing piles them up near its highs and lows), and any shape other than the Gaussian costs less. Part is the counting: 1,344 readings spread over 112 different values make the histogram's estimate a few hundredths of a bit low, as on [[#school-entropy]].
 
 Two warnings come with the formula.
 

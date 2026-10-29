@@ -424,5 +424,40 @@ window.FIG = window.FIG || {};
     crosshair(P, { xname: 'b =', xfmt: v => String(v), yfmt: v => fmtS(v, 3) });
   };
 
+  // ================================================================== VI.9  the four side by side
+  FIG.hwaPortrait = async (host) => {
+    const d = await data('homework-a-portrait.json');
+    let shared = false;
+    const worlds = [['drift', 'drift'], ['lowrank', 'low rank'], ['clusters', 'clusters'], ['twins', 'twins'], ['noise', 'noise']];
+    const types = ['loc', 'klt', 'vq', 'sib'];
+    const wrap = h('div', { class: 'hwa-heat-wrap' });
+    host.append(controls(seg([[false, 'KLT basis charged to the block'], [true, 'KLT basis shared (free here)']], shared, v => { shared = v; draw(); }, 'KLT basis')), wrap,
+      legend([['net saving (pays for itself)', 'var(--good)', 'box'], ['net loss', 'var(--bad)', 'box']]));
+    function draw() {
+      wrap.replaceChildren();
+      const t = h('table', { class: 'hwa-heat' });
+      t.append(h('thead', {}, h('tr', {}, h('th', { text: 'world' }), types.map(k => h('th', { html: castLabel(k) })))));
+      const tb = h('tbody');
+      worlds.forEach(([w, name]) => {
+        const row = d.worlds[w];
+        const nets = types.map(k => (k === 'klt' && shared ? row.klt.net_basis_free : row[k].net));
+        const best = Math.max(...nets);
+        const tr = h('tr', {}, h('th', { html: `${name}<span class="hwa-heat-sub">solo ${fmt(row.solo, 2)} bits</span>` }));
+        types.forEach((k, i) => {
+          const v = nets[i], a = Math.min(1, Math.abs(v) / 1.4);
+          const col = v >= 0 ? 'var(--good)' : 'var(--bad)';
+          const td = h('td', { class: v === best ? 'is-best' : null, tabindex: '0', style: `background:color-mix(in srgb, ${col} ${Math.round(8 + 52 * a)}%, var(--paper-3))`, html: `<b>${fmtS(v, 2)}</b>` });
+          const r = row[k], dic = k === 'klt' && shared ? 8 / d.b : r.dict;
+          hover(td, () => `<b>${NAME[k]} on “${name}”</b><br>gain over solo ${fmtS(r.gain, 3)}<br>− tax ${fmt(r.tax, 3)}<br>− dictionary ${fmt(dic, 3)}<br>= net <b>${fmtS(v, 3)}</b> bits per element`);
+          tr.append(td);
+        });
+        tb.append(tr);
+      });
+      t.append(tb);
+      wrap.append(t);
+    }
+    draw();
+  };
+
   window.HWA = hwa;
 })();

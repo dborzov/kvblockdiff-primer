@@ -335,7 +335,7 @@ window.FIG = window.FIG || {};
         ['variance explained', pct(st.R2)],
         ['saved', `${fmt(st.saved, 2)} bits per number`],
         ['tax', `${fmt(st.tax, 2)} bits per number`],
-        ['net', `${fmtS(Math.abs(st.net) < 0.005 ? 0 : st.net, 2)} bits per number`],
+        ['net', `${Math.abs(st.net) < 0.005 ? '0.00' : fmtS(st.net, 2)} bits per number`],
       ]);
     }
     draw();
@@ -373,12 +373,12 @@ window.FIG = window.FIG || {};
     );
     const P1 = Plot(box1, { x: [0, N - 1], y: [-2, 6], h: 220, xlabel: 'token', ylabel: 'value', label: 'One channel of a toy KV cache over 60 tokens' });
     const cats = ['vs typical value', 'vs previous token', 'vs group anchor'];
-    const P2 = Plot(box2, { ycats: cats, x: [0, 2.2], h: 170, xlabel: "variance, as a share of the channel's own variance", grid: 'x', label: 'Variance of three kinds of residual' });
+    const P2 = Plot(box2, { ycats: cats, x: [0, 2.2], h: 170, xlabel: "variance ÷ the channel's own variance", grid: 'x', label: 'Variance of three kinds of residual' });
     function draw() {
       const xs = series1(), v = vars();
       P1.clear();
       range(1, N / G).forEach(k => el('line', { x1: P1.x(k * G - 0.5), x2: P1.x(k * G - 0.5), y1: P1.m.t, y2: P1.H - P1.m.b, class: 'pb-sep' }, P1.g.data));
-      rule(P1, { y: MU, label: 'typical value' });
+      rule(P1, { y: MU });
       line(P1, xs.map((x, t) => [t, x]), { color: series(0), markers: 2.2 });
       range(N / G).forEach(k => dot(P1.g.data, P1.x(k * G), P1.y(xs[k * G]), 5 * P1.fs, series(1)));
       P2.clear();
@@ -429,14 +429,14 @@ window.FIG = window.FIG || {};
     const common = { x: [0.25, 64], xlog: 2, xfmt: v => (v < 1 ? `1/${1 / v}` : String(v)), xlabel: 'spread of the channel σ, in grid steps' };
     const P1 = Plot(box1, Object.assign({ y: [0, 8.5], h: 260, ylabel: 'bits per number', label: 'Bits per number with and without a predictor, against grid fineness' }, common));
     const P2 = Plot(box2, Object.assign({ y: [0, 60], h: 200, ylabel: 'share saved', yfmt: v => `${v} %`, label: 'Share of the bits a predictor saves, against grid fineness' }, common));
-    function band(P) {
+    function band(P, label) {
       area(P, [[2 / 3, P.y0, P.y1], [8 / 3, P.y0, P.y1]], { color: 'var(--ink-3)', opacity: 0.1 });
-      rule(P, { x: 32, label: '8-bit grid, σ = 32 steps' });
+      rule(P, label ? { x: 32, label: '8-bit grid, σ = 32 steps' } : { x: 32 });
     }
     function draw() {
       const HR = xs.map(x => hres(x, R2)), gain = H0.map((v, i) => v - HR[i]);
       [P1, P2].forEach(P => P.clear());
-      band(P1); band(P2);
+      band(P1, false); band(P2, true);
       svgText(P1.g.top, P1.x(1.33), P1.y(7.7), 'coarse lossy grids', { class: 'annot', 'text-anchor': 'middle' });
       line(P1, xs.map((x, i) => [x, H0[i]]), { color: series(0), name: 'order-0' });
       line(P1, xs.map((x, i) => [x, HR[i]]), { color: series(1), name: 'with predictor' });
@@ -448,7 +448,7 @@ window.FIG = window.FIG || {};
       ro.set([
         ['σ = 1 step', `${fmt(a0, 2)} → ${fmt(a1, 2)} bits (saves ${fmt(ag, 2)}, ${pct(ag / a0)})`],
         ['σ = 32 steps', `${fmt(b0, 2)} → ${fmt(b1, 2)} bits (saves ${fmt(bg, 2)}, ${pct(bg / b0)})`],
-        ['limit, ½ log₂ 1/(1−R²)', `${fmt(0.5 * lg2(1 / (1 - R2)), 2)} bits`],
+        ['limit, ½ log₂ 1/(1−R²)', `${(0.5 * lg2(1 / (1 - R2))).toFixed(2)} bits`],
       ]);
     }
     draw();

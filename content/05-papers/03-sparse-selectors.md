@@ -85,12 +85,12 @@ The half that does not:
 :::
 ::: col Group picks (NSA, Quest)
 - Picks come in runs of consecutive positions, so misses pile into few blocks *by construction* — at some cost in precision (the toy above).
-- A run arrives together, so the neighbour of an entry arrives with it — a natural place to use [[fallen-apple]] similarity.
+- A run arrives together, so the neighbour of an entry arrives with it — a natural place to use [[fallen-apple]].
 - A whole run could be one small stream: coder state within a run becomes allowed.
 :::
 ::::
 
-And for merged entries (CSA): an entry that blends 4 tokens has different statistics from a raw one, and its neighbours are 4 tokens apart. Every measurement of [[neighbour]] similarity would have to be repeated on them.
+And for merged entries (CSA): an entry that blends 4 tokens has different statistics from a raw one, and its neighbours are 4 tokens apart. Every measurement of [[neighbour]] would have to be repeated on them.
 
 ::: theme access-pattern
 The selector's granularity is an access pattern. Token-level picks force a codec where every entry decodes alone; group-level picks allow a codec that decodes a short run at once. Same model family, same cache, different codec shape.

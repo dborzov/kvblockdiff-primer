@@ -69,7 +69,7 @@ Take one entry from the Maine Coon part of a long `cat_thread`. Judged against e
 The scopes are nested: global ⊃ request ⊃ block. Every entry sits in exactly one block, inside one request, inside the world. So every entry has three dictionaries that could predict it — slide the token in the figure and watch which ones change.
 
 ::: figure fig-hwb-scopes hwbScopes
-**Three nested scopes.** The outer frame is the global scope: one dictionary (dark blue pill) for every request. Inside are two requests (plum frames), the second one shorter, each with its own request dictionary. Each request is cut into blocks of $\vb$ tokens (orange cells), each with its own block dictionary. The black mark is one token of request 1; its block is filled in. Sliders: request length $\vL$, block size $\vb$ (powers of two) and the token's position. Click a block of request 1 to move the token there. Lengths are illustrative; request 2 is drawn at 55 % of request 1.
+**Three nested scopes.** The outer frame is the global scope: one dictionary (blue pill) for every request. Inside are two requests (plum frames), the second one shorter, each with its own request dictionary. Each request is cut into blocks of $\vb$ tokens (orange cells), each with its own block dictionary. The vertical mark is one token of request 1; its block is filled in. Sliders: request length $\vL$, block size $\vb$ (powers of two) and the token's position. Click a block of request 1 to move the token there. Lengths are illustrative; request 2 is drawn at 55 % of request 1.
 :::
 
 ::: try

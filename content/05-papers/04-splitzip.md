@@ -118,7 +118,7 @@ With $\vn = 4$, the 99.8 % coverage the paper reports for Qwen3-32B ($\veps = 0.
 - One table generalises across layers and datasets; finer tables buy almost nothing for the context-free part.
 :::
 ::: col It does not tell us
-- Anything conditional. No number is predicted from a neighbour, so SplitZip is silent on [[fallen-apple]] and [[upstairs]] similarity.
+- Anything conditional. No number is predicted from a neighbour, so SplitZip is silent on [[fallen-apple]] and [[upstairs]].
 - Anything about E4M3, the more common 8-bit KV format: there its trick fails.
 - How single entries decode: it was built and measured for one bulk transfer per request.
 :::

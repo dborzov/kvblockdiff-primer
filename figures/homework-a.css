@@ -1,3 +1,11 @@
 /* homework-a figures (Part VI, VI.1–VI.12). Tokens only. */
 .hwa-emb { width: 1.15em; height: 1.15em; vertical-align: -0.2em; margin-right: .25em; }
 .hwa-nick { font-family: var(--f-sc); font-size: .85em; color: var(--ink-3); }
+.hwa-heat-wrap { overflow-x: auto; }
+.hwa-heat { border-collapse: separate; border-spacing: 4px; width: 100%; font-size: .92rem; }
+.hwa-heat th { font-family: var(--f-sc); font-weight: 500; color: var(--ink-2); text-align: left; padding: .3rem .4rem; white-space: nowrap; }
+.hwa-heat thead th { text-align: center; }
+.hwa-heat-sub { display: block; font-family: var(--f-mono); font-size: .72rem; color: var(--ink-3); letter-spacing: 0; }
+.hwa-heat td { text-align: center; font-family: var(--f-mono); color: var(--ink); padding: .55rem .3rem; border-radius: 8px; min-width: 3.6rem; }
+.hwa-heat td.is-best { outline: 2px solid var(--ink-2); outline-offset: -2px; }
+.hwa-heat thead .hwa-nick { display: block; font-size: .78rem; }

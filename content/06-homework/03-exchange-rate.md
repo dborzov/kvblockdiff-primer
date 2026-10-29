@@ -48,7 +48,7 @@ The rule of [[#school-exchange-rate]], written for one element:
 
 $$
 \begin{aligned}
-\text{saved per element} &= \tfrac12 \log_2 \frac{\vsigma^2}{\underbrace{(1-\vRsq)\,\vsigma^2}_{\text{left in the residual}}} \\
+\text{saved per element} &= \tfrac12 \log_2 \frac{\vsigma^2}{\underbrace{(1-\vRsq)\,\vsigma^2}_{\text{residual}}} \\
 &= \tfrac12 \log_2 \frac{1}{1-\vRsq}
 \end{aligned}
 $$ {#eq-hwa-exchange}

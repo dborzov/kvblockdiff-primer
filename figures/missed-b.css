@@ -16,3 +16,5 @@
     body[data-page-id="missed-stack-distance"], body[data-page-id="missed-rate-distortion-bounds"], body[data-page-id="missed-light-dictionaries-first"],
     body[data-page-id="missed-keys-before-rope"], body[data-page-id="missed-victim-tier"], body[data-page-id="missed-a-measurement-is-a-result"])
   article.prose > .tbl-wrap table.data :is(th, td)[style*="right"] { text-align: right; font-variant-numeric: tabular-nums; }
+/* keep slider read-outs on one line in missed-b's figures */
+:is(#fig-missed-flac, #fig-missed-lifting, #fig-missed-context, #fig-missed-stack, #fig-missed-spectrum, #fig-missed-residency, #fig-missed-rope, #fig-missed-victim) .slider output { white-space: nowrap; min-width: max-content; }

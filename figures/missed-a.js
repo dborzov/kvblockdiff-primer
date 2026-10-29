@@ -481,7 +481,7 @@ window.FIG = window.FIG || {};
     const sl = slider('variance the prediction explains, R²', 0, 0.999, 0.001, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 1));
     const box = h('div'), ro = readout();
     host.append(controls(sl), legend([['sign', series(7), 'box'], ['exponent', series(0), 'box'], ['mantissa', series(1), 'box']]), box, ro);
-    const D = Diagram(box, { w: 640, h: 210, label: 'Probability that each bit of the value differs from the same bit of its prediction', grow: 0.5 });
+    const D = Diagram(box, { w: 640, h: 210, label: 'Probability that each bit of the value differs from the same bit of its prediction', grow: 1 });
     const f = D.fs, g = el('g', {}, D.svg);
     function flips(R2) {
       const a = Math.sqrt(R2), b = Math.sqrt(1 - R2);
@@ -559,7 +559,7 @@ window.FIG = window.FIG || {};
       P = Plot(box, { x: [-R, R], y: [0.2, 3.85], h: 300, yticks: [], grid: false, xlabel: 'value of one channel (its standard deviation = 1)', label: 'Grid points of E4M3 and INT8 on one number line' });
       const gE = el('g', {}, P.g.bg), gI = el('g', {}, P.g.bg);
       svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(3.62), 'E4M3 grid points', { class: 'lbl' });
-      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(1.62), 'INT8 grid points (scale 4/127)', { class: 'lbl' });
+      svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(1.62), 'INT8 grid points', { class: 'lbl' });
       GRID.forEach(gv => [gv, -gv].forEach(x => {
         if (Math.abs(x) <= R) el('line', { x1: P.x(x), x2: P.x(x), y1: P.y(3.4), y2: P.y(2.95), style: `stroke:${series(0)};stroke-width:1;stroke-opacity:.7` }, gE);
       }));

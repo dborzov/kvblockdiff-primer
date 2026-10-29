@@ -185,8 +185,15 @@ window.FIG = window.FIG || {};
   };
 
   // k-means on 2-D points [[x, y], …], deterministic (seeded k-means++, best of `tries`).
+  // A deliberately naive start: C centroids on a small ring around the middle of the cloud.
+  SV.ringStart = function (pts, C) {
+    const mx = mean(pts.map(p => p[0])), my = mean(pts.map(p => p[1]));
+    const sx = Math.sqrt(mean(pts.map(p => (p[0] - mx) ** 2))), sy = Math.sqrt(mean(pts.map(p => (p[1] - my) ** 2)));
+    return Array.from({ length: C }, (_, k) => { const a = 2 * Math.PI * k / C + 0.3; return [mx + 0.35 * sx * Math.cos(a), my + 0.35 * sy * Math.sin(a)]; });
+  };
+  // k-means: best of the ring start and `tries` seeded k-means++ starts.
   SV.kmeans = function (pts, C, seed = 1, tries = 4, maxIter = 60) {
-    let best = null;
+    let best = SV.lloyd(pts, SV.ringStart(pts, C), maxIter);
     for (let t = 0; t < tries; t++) {
       const r = PKr().rng(`sv-km-${seed}-${C}-${t}`);
       const cents = [pts[r.int(pts.length)].slice()];
@@ -650,6 +657,7 @@ window.FIG = window.FIG || {};
     const gPts = el('g', {}, P.g.data), gC = el('g', {}, P.g.top);
     const toRaw = c => [c[0] * st.sd[0] + st.mu[0], c[1] * st.sd[1] + st.mu[1]];
     function init() {
+      if (seed === 0) { const cents = SV.ringStart(Z, C); state = { cents, lab: SV.assign(Z, cents), it: 0, done: false }; return; }
       const r = PK.rng(`sv-km-${seed}-${C}-0`);
       const cents = [Z[r.int(Z.length)].slice()];
       while (cents.length < C) {
@@ -658,7 +666,7 @@ window.FIG = window.FIG || {};
         while (i < Z.length - 1 && (u -= d2[i]) > 0) i++;
         cents.push(Z[i].slice());
       }
-      state = { cents, lab: SV.assign(Z, cents), it: 0, done: C === 1 ? false : false };
+      state = { cents, lab: SV.assign(Z, cents), it: 0, done: false };
     }
     function step() {
       const res = SV.lloyd(Z, state.cents, 1);
@@ -721,7 +729,8 @@ window.FIG = window.FIG || {};
         tip: (v, i, j) => `<b>C = ${CS[i]}</b><br>${['saved', 'tax', 'net'][j]}: ${fmt(v, 2)} bits / element`,
         width: 18,
       });
-      rule(P, { y: s.klt, label: `KLT: ${fmt(s.klt, 2)}`, color: series(4) });
+      rule(P, { y: s.klt, color: series(4) });
+      el('text', { x: P.m.l + 8 * P.fs, y: P.y(s.klt) - 7 * P.fs, class: 'lbl', text: `KLT: ${fmt(s.klt, 2)}` }, P.g.top);
       const best = s.res.reduce((a, b, i) => (b.net > a.net ? { net: b.net, i } : a), { net: -Infinity, i: 0 });
       ro.set([['KLT gain', `${fmt(s.klt, 2)} bits / element, no tax`], ['best VQ net', `${fmt(best.net, 2)} at C = ${CS[best.i]}`], ['winner', best.net > s.klt ? '<b>the codebook</b>' : '<b>the rotation</b>']]);
     }

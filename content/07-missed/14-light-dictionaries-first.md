@@ -78,7 +78,7 @@ A GPU serves $\vN = \min(\vNlink, \vNhbm)$ requests: the link bound shrinks as e
 :::
 
 ::: figure fig-missed-residency mbResidency
-**What it costs to keep a dictionary for every block.** Bars: requests per GPU, $\vN = \min(\vNlink, \vNhbm)$, in the [[reference-setting]] (hot cache of 4,096 slots, 13.4 % misses, 50 GB/s link, 30 ms per token, 30 GB of GPU memory for KV, 100,000-token requests). For each type, every block's dictionary is resident and every miss moves a delta of $\vrho\,\ve$ bytes; the delta ratio $\vrho$ is **assumed**, the same for all types, so that only the memory cost differs. Grey: HiSparse; green: better than HiSparse; red: worse. The table gives each type's resident memory. Slide the block size and the assumed $\vrho$.
+**What it costs to keep a dictionary for every block.** Bars: requests per GPU, $\vN = \min(\vNlink, \vNhbm)$, in the [[reference-setting]] (hot cache of 4,096 slots, 13.4 % misses, 50 GB/s link, 30 ms per token, 30 GB of GPU memory for KV, 100,000-token requests). For each type, every block's dictionary is resident and every miss moves a delta of $\vrho\,\ve$ bytes; the delta ratio $\vrho$ is **assumed**, the same for all types, so that only the memory cost differs. Grey: HiSparse (dashed line); green: better than HiSparse; red: worse. Each label says which bound binds, the link or GPU memory. The table gives each type's resident dictionaries per layer (entries' worth), as a share of the hot cache, and per request across all layers. Slide the block size and the assumed $\vrho$.
 :::
 
 ::: try

@@ -97,7 +97,7 @@ Variance explained buys bits at a logarithmic rate: 75 % buys one bit, 94 % buys
 3. Watch the “next bit needs” tile as you go: 75 % → 93.8 % → 98.4 % → 99.6 %.
 :::
 
-Check it against the measurement of [[#school-prediction]]. The formula says the previous-value predictor, at 98.4 %, saves 2.99 bits per reading; the histograms measured 6.53 − 3.63 = 2.91. Close, and the small gap has a known cause: the raw temperatures are not quite bell-shaped, so their own cost was already a little below the formula's.
+Check it against the measurement of [[#school-prediction]]. The formula says the previous-value predictor, at 98.4 %, saves 2.99 bits per reading; the histograms measured 6.53 − 3.63 = 2.91. Close, and the small gap has known causes ([[#school-residual-shapes/halve]]): the raw temperatures are not quite bell-shaped, so their own cost was already a little below the formula's, and counting 1,344 readings estimates it slightly low.
 
 ::: note connection The same number as mutual information
 For bell-shaped values and a straight-line predictor, $\tfrac12\log_2\frac{1}{1-\vRsq}$ is exactly the [[mutual-information]] between a value and its prediction. The exchange rate is not a new idea; it is [[#school-mutual-information]] written in the language of variances.

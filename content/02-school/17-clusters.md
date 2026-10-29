@@ -76,14 +76,14 @@ The letter $\vC$ counts the centroids. Nobody told us there were three moods, th
 Distances only make sense when both channels are on the same scale, so the figure [[standardize|standardizes]] wind and humidity first (II.13) and plots them back in their own units.
 
 ::: figure fig-sv-kmeans svKmeans
-**k-means on 300 Gull Rock readings in the wind–humidity plane (synthetic: three weather regimes, 140 calm, 60 fog, 100 storm, from a fixed seed).** Each dot is a reading, coloured by the centroid it is currently assigned to; diamonds are the centroids. *One k-means step* does one assign-and-update round; *Run to the end* repeats until nothing moves; *New start* tries another set of starting centroids. The slider sets the codebook size $\vC$ from 1 to 8. The tiles estimate, per element (two elements per reading), the bits saved by sending the residual from the centroid instead of the reading — the Gaussian rule of II.11 applied to each standardized channel, $\tfrac12\log_2(1/\text{residual variance})$ — the index tax $\log_2 \vC / 2$, and the net.
+**k-means on 300 Gull Rock readings in the wind–humidity plane (synthetic: three weather regimes, 140 calm, 60 fog, 100 storm, from a fixed seed).** Each dot is a reading, coloured by the centroid it is currently assigned to; diamonds are the centroids. The centroids start on a small ring around the middle of the cloud. *One k-means step* does one assign-and-update round; *Run to the end* repeats until nothing moves; *New start* tries another set of starting centroids, picked among the readings. The slider sets the codebook size $\vC$ from 1 to 8. The tiles estimate, per element (two elements per reading), the bits saved by sending the residual from the centroid instead of the reading — the Gaussian rule of II.11 applied to each standardized channel, $\tfrac12\log_2(1/\text{residual variance})$ — the index tax $\log_2 \vC / 2$, and the net.
 :::
 
 ::: try
-1. With $\vC = 3$, press *One k-means step* a few times and watch the diamonds walk to the middle of the three islands. The net settles at 1.46 bits per element.
-2. Set $\vC = 2$. One centroid has to cover two islands; the net drops to 0.50.
-3. Set $\vC = 4$ or more. The extra centroids split islands that did not need splitting. The bits saved creep up, the tax rises as fast, and the net stays near 1.45.
-4. Press *New start* a few times at $\vC = 5$ or 6. Sometimes k-means settles in a different arrangement — its known weakness.
+1. With $\vC = 3$ the diamonds start on a small ring in the middle of the plot. Press *One k-means step* twice and watch them jump to the middle of the three islands. The net settles at 1.46 bits per element.
+2. Set $\vC = 2$ and run to the end. One centroid has to cover two islands; the net drops to 0.65.
+3. Set $\vC = 4$ or more and run to the end. The extra centroids split islands that did not need splitting. The bits saved creep up, the tax rises as fast or faster, and the net never beats $\vC = 3$: 1.45 at $\vC = 4$, between 1.23 and 1.34 from 5 to 8.
+4. Press *New start* a few times at $\vC = 5$ or 6: k-means starts from spread-out random readings instead, and often settles in a different arrangement with a different net — its known weakness.
 :::
 
 ::: takeaway

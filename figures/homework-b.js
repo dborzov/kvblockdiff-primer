@@ -147,10 +147,10 @@ window.FIG = window.FIG || {};
   // ============================================================ VI.14 — the amortization rule 8w/b
   FIG.hwbAmortization = function (host) {
     const TYPES = [
-      { name: 'loc: location + scale', w: 2, color: 'var(--t-loc)' },
-      { name: 'KLT, rank-16 basis', w: 32, color: 'var(--t-klt)' },
-      { name: 'VQ, 256 centroids', w: 256, color: 'var(--t-vq)' },
-      { name: 'KLT, full basis (d = 2048)', w: 4096, color: 'var(--t-klt)', dash: '7 5' },
+      { name: 'loc: location + scale', short: 'loc', w: 2, color: 'var(--t-loc)' },
+      { name: 'KLT, rank-16 basis', short: 'KLT, rank 16', w: 32, color: 'var(--t-klt)' },
+      { name: 'VQ, 256 centroids', short: 'VQ-256', w: 256, color: 'var(--t-vq)' },
+      { name: 'KLT, full basis (d = 2048)', short: 'KLT, full', w: 4096, color: 'var(--t-klt)', dash: '7 5' },
     ];
     let b = 4096, tau = 0.25;
     const L = 100000;
@@ -193,12 +193,12 @@ window.FIG = window.FIG || {};
       P.g.top.append(knob);
       knob.setAttribute('cx', P.x(b)); knob.setAttribute('cy', P.y(P.y0));
       TYPES.forEach(t => { const y = 8 * t.w / b; if (y > 0.001 && y < 100) { const d = dot(P.g.top, P.x(b), P.y(y), 4.5 * P.fs, t.color); d.classList.add('hwb-tmp'); } });
-      tbl.replaceChildren(table(['dictionary', T('\\vw'), `cost at b = ${tok(b)}`, `smallest affordable b`],
+      tbl.replaceChildren(table(['dictionary', T('\\vw'), `cost at ${tok(b)}`, 'smallest b'],
         TYPES.map(t => {
           const c = 8 * t.w / b, bmin = 8 * t.w / tau;
-          return [t.name, String(t.w),
+          return [t.short, String(t.w),
             { html: `${fmt(c, c < 0.1 ? 3 : 2)} bit`, cls: c <= tau ? 'pos' : 'neg' },
-            bmin > L ? `${tok(Math.round(bmin))}: more than a request` : `${fmt(Math.ceil(bmin), 0)} tokens`];
+            bmin > L ? `${tok(Math.round(bmin))} (> request)` : `${fmt(Math.ceil(bmin), 0)}`];
         }), { left: [0] }));
     }
     draw();
@@ -245,8 +245,11 @@ window.FIG = window.FIG || {};
   FIG.hwbCalculator = function (host) {
     const p = Object.assign({}, REF, DICT0, { scope: 'block-cache', w: 256, rho: 0.55, nD: 4, fD: 0.85, nload: 0.05 });
     const inputs = {};
+    const ARIA = { L: 'context length L', k: 'selections k', NL: 'layers', e: 'entry size e', tpot: 'step time in ms', link: 'link GB/s',
+      hbm: 'GPU memory GB', m2: 'miss rate at 2048', m4: 'miss rate at 4096', m8: 'miss rate at 8192', rho: 'delta ratio', w: 'dictionary weight',
+      b: 'block size', nD: 'resident dictionaries', fD: 'delta-miss fraction', nload: 'loads per step per layer', dec: 'decoder speed GB/s' };
     function num(key, label, step, unit, assumed) {
-      const inp = h('input', { type: 'number', step: String(step), value: String(p[key]), 'aria-label': label.replace(/<[^>]+>/g, '') });
+      const inp = h('input', { type: 'number', step: String(step), value: String(p[key]), 'aria-label': ARIA[key] || key });
       inp.addEventListener('input', () => { const v = parseFloat(inp.value); if (Number.isFinite(v) && v >= 0) { p[key] = v; run(); } });
       inputs[key] = inp;
       return h('label', { class: 'hwb-in' + (assumed ? ' is-assumed' : '') }, h('span', { class: 'hwb-in-name', html: label }),
@@ -386,7 +389,7 @@ window.FIG = window.FIG || {};
       tbl.replaceChildren(table(['dictionary', T('\\vw'), `traffic at ${fmt(nl, nl < 0.01 ? 4 : 3)}`, `break-even ${T('\\vnload')}`, 'min. lifetime, steps'],
         WS.map(t => {
           const y = floor + nl * t.w / mk, nstar = fD * (1 - rho) * mk / t.w;
-          return [t.name, String(t.w), { html: `${fmt(y, 2)}×`, cls: y < 1 ? 'pos' : 'neg' }, fmt(nstar, nstar < 0.1 ? 3 : 2), `≥ ${fmt(Math.max(1, nD / nstar), 0)}`];
+          return [t.short, String(t.w), { html: `${fmt(y, 2)}×`, cls: y < 1 ? 'pos' : 'neg' }, fmt(nstar, nstar < 0.1 ? 3 : 2), `≥ ${fmt(Math.max(1, nD / nstar), 0)}`];
         }), { left: [0] }));
     }
     draw();

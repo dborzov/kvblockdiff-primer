@@ -86,7 +86,7 @@ The figure shows the evidence for why such a small desk works.
 
 :::: compare What HiSparse tells us — and what it does not
 ::: col It tells us
-- Selections repeat from step to step: at twice $\vk$, 87 % of picks are hits. That is the [[lucky-louis]] property, measured.
+- Selections repeat from step to step: at twice $\vk$, 87 % of picks are hits. That is the [[lucky-louis]], measured.
 - LRU is near the best any online policy could do: Bélády is only 5.2 points better at 4096. The eviction lever is nearly used up.
 - The design works in production, at BF16, inside a real serving stack.
 :::
@@ -98,7 +98,7 @@ The figure shows the evidence for why such a small desk works.
 ::::
 
 ::: theme which-vs-what
-Every number HiSparse reports is about *which* entries the indexer wants. None is about *what* is inside them. Its 87 % hit rate is strong evidence for the Lucky Louis property and no evidence at all for [[fallen-apple]] similarity.
+Every number HiSparse reports is about *which* entries the indexer wants. None is about *what* is inside them. Its 87 % hit rate is strong evidence for the Lucky Louis property and no evidence at all for [[fallen-apple]].
 :::
 
 ::: takeaway

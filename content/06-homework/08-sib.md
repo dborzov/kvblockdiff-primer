@@ -77,7 +77,10 @@ Write each element of an entry as three parts: what the whole block shares, what
 Independent variances add, so a random sibling doubles the residual's variance — half a bit per element *worse* than the Anchor, by the exchange rate of [[#homework-exchange-rate]]:
 
 $$
-\text{random sibling:}\quad \tfrac12 \log_2 \frac{2(\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}})}{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}} = \tfrac12 \text{ bit lost}
+\begin{aligned}
+\text{random sibling:}\ & \tfrac12 \log_2 \frac{2(\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}})}{\vsigma^2_{\text{own}}+\vsigma^2_{\text{noise}}} \\
+&= \tfrac12 \text{ bit lost}
+\end{aligned}
 $$ {#eq-hwa-sib}
 
 $$

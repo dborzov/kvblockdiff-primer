@@ -520,9 +520,9 @@ window.FIG = window.FIG || {};
       controls(seg([['graded', 'graded with depth'], ['uniform', 'all layers alike'], ['few', 'a few layers']], pat, v => { pat = v; draw(); }, 'which pattern')),
       h('div', { class: 'q-heatkey' }, h('span', { text: 'bits saved: 0' }), h('span', { class: 'q-ramp' }), h('span', { text: '1.1 or more' })),
       box, ro);
-    const D = Diagram(box, { w: 640, h: 300, label: 'Heat map of bits saved by layer and token distance (invented)' });
+    const D = Diagram(box, { w: 640, h: 300, grow: 0.5, label: 'Heat map of bits saved by layer and token distance (invented)' });
     const g = el('g', {}, D.svg);
-    const lx = 70, rx = 620, ty = 12, by = 252;
+    const lx = 70, rx = 620, ty = 12, by = D.H - 46 * D.fs;
     const cw = (rx - lx) / DS.length, chh = (by - ty) / NLY;
     function draw() {
       g.replaceChildren();
@@ -533,7 +533,7 @@ window.FIG = window.FIG || {};
       });
       [0, 4, 8, 12, 15].forEach(i => svgText(g, lx + (i + 0.5) * cw, by + 16 * D.fs, DS[i] >= 1024 ? `${DS[i] / 1024}K` : String(DS[i]), { class: 'lbl', 'text-anchor': 'middle' }));
       [0, 5, 11].forEach(l => svgText(g, lx - 8, by - (l + 0.5) * chh + 4, `layer ${l}`, { class: 'lbl', 'text-anchor': 'end' }));
-      svgText(g, (lx + rx) / 2, D.H - 4, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
+      svgText(g, (lx + rx) / 2, by + 38 * D.fs, 'token distance Δ (log scale) →', { class: 'lbl', 'text-anchor': 'middle' });
       ro.set([['what we would read', PAT[pat].read]]);
     }
     draw();

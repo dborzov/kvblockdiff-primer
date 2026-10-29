@@ -51,7 +51,7 @@ Record a steady musical note at 16 bits per sample. Neighbouring samples are nea
 The residual is then written with a Rice code: a few fixed bits plus a short unary tail, a close cousin of a [[fixed-length-code]] with an [[escape]]. Try all four on a synthetic recording.
 
 ::: figure fig-missed-flac mbFlacOrders
-**FLAC's four fixed predictors on a synthetic note.** *Left:* the first 240 of 1,024 integer samples, $3000\sin(2\pi \vi/100) + 800\sin(2\pi \vi/37 + 1)$ plus Gaussian noise of standard deviation σ (seeded, so the figure is the same every time). *Right:* the residual of the selected predictor, in sample counts (the axis rescales). *Bottom:* bits per sample when each residual is written with the best single Rice parameter, as FLAC does (without its per-partition refinements); the line marks raw 16-bit storage. Slide the noise; pick the predictor whose residual is drawn.
+**FLAC's four fixed predictors on a synthetic note.** *Left:* the first 240 of 1,024 integer samples, $3000\sin(2\pi \vi/100) + 800\sin(2\pi \vi/37 + 1)$ plus Gaussian noise of standard deviation σ (seeded, so the figure is the same every time). *Right:* the residual of the selected predictor, in sample counts (the axis rescales). *Bottom:* bits per sample when each residual is written with the best single Rice parameter, as FLAC does (without its per-partition refinements); the line marks raw 16-bit storage. The accent bar is the predictor drawn above; the darker blue bar is the best one. Slide the noise; pick the predictor whose residual is drawn.
 :::
 
 ::: try

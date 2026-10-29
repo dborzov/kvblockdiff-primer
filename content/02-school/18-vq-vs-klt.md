@@ -55,7 +55,7 @@ So a codebook can do a rotation's job. Can it do it *better*? This page says whe
 The figure runs the contest on both clouds of this Part, for codebooks from 2 to 64 centroids.
 
 ::: figure fig-sv-vq-vs-klt svVqVsKlt
-**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both channels standardized).** For each codebook size $\vC$ (k-means, best of four starts): green, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each channel; red, the index tax $\log_2 \vC / 2$; dark green (or red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings) and the clustered weather regimes (300 readings). *Hover* a bar for its value.
+**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both channels standardized).** For each codebook size $\vC$ (k-means, the best of five starts by total squared distance): teal, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each channel; red, the index tax $\log_2 \vC / 2$; green (or dark red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings) and the clustered weather regimes (300 readings). *Hover* a bar for its value.
 :::
 
 What the bars say:

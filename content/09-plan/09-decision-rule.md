@@ -11,7 +11,7 @@ cards:
     sec: rows
   - q: 'Which outcome sends wave 2 to block scope?'
     a: '$\vgainreq + \vgainblk \ge 0.75$ bit and $\vgainblk \ge 0.4$ bit'
-    wrong: ["Any total above 0.25 bit", "$\vgainblk < 0.15$", "$\vgainreq \ge 0.75$ alone"]
+    wrong: ['Any total above 0.25 bit', '$\vgainblk < 0.15$', '$\vgainreq \ge 0.75$ alone']
     why: A large total, a good part of it local: fallen-apple similarity that is real and block-scale.
     sec: rows
   - q: 'What does the source''s rule say for $\vgainreq = 0.5$, $\vgainblk = 0.3$?'
