@@ -93,7 +93,7 @@ $$ {#eq-missed-side-info}
 
 For us, $\vX$ is an [[entry]] and $\vY$ its block's dictionary $\vD_{\vj}$. A [[delta-miss]] is this equation in hardware. The link carries about $\vH(\vX \mid \vY)$ bits per element because the GPU already holds $\vY$.
 
-Information theory has a second, stranger version of the story, and it is worth knowing the difference.
+Information theory also has a second, stranger version of the story.
 
 :::: compare Who holds the side information?
 ::: col At both ends
@@ -123,13 +123,13 @@ Here the theme is at its most literal. The δ-miss costs $\vH(\vX \mid \vY)$ onl
 
 Knowing the family's name turns open questions into look-ups.
 
-1. **Residual codes.** Rice and Golomb codes are the audio and image world's fixed-length-with-escapes. Their parameters are chosen per partition or per context, which is the same move as a per-block width ([[#homework-two-rates]]).
+1. **Residual codes.** Rice and Golomb codes are the audio and image world's fixed-length-with-escapes, with parameters chosen per partition or context, like our per-block widths ([[#homework-two-rates]]).
 2. **Using a prediction without subtracting it.** JPEG-LS chooses its code by context. On a logarithmic grid that is the safe way to use a prediction ([[#missed-context-modeling]]).
 3. **Lossless rotations.** Lossless JPEG 2000 rotates integers exactly with lifting ([[#missed-lifting]]).
 4. **Bounds.** Transform coding gain and rate–distortion bounds say what a predictor can win before anyone writes it ([[#missed-rate-distortion-bounds]]).
 5. **A warning.** Any predictor built from noisy neighbours pays for their noise.
 
-The measuring harness of Part IX ([[#plan-harness-interface]]) is, in this light, a predictive-coding test bench. And the literature to mine is lossless audio and image coding, not only KV papers. What the family cannot supply is the one thing the project must measure: how much the KV statistics actually let a dictionary predict.
+The measuring harness of Part IX ([[#plan-harness-interface]]) is, in this light, a predictive-coding test bench, and the literature to mine includes lossless audio and image coding. What the family cannot supply is how much the KV statistics actually let a dictionary predict.
 
 ```graph
 id: missed-home-map

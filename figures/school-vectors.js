@@ -609,10 +609,10 @@ window.FIG = window.FIG || {};
     const box = h('div');
     const tiles = { am: kpi('AM of the λ’s', '', 'ordinary average', series(0)), gm: kpi('GM of the λ’s', '', 'geometric average', series(1)), gain: kpi('coding gain', '', 'bits per element'), vec: kpi('per vector', '', 'bits saved') };
     const sR = slider('strong directions', 1, 63, 1, r, v => { r = v; pre = 'custom'; sg.set('custom'); draw(); });
-    const sQ = slider('strong ÷ quiet variance', 0, 4, 0.05, Math.log10(ratio), v => { ratio = 10 ** v; pre = 'custom'; sg.set('custom'); draw(); }, v => `${fmt(10 ** v, 10 ** v < 10 ? 1 : 0)}×`);
+    const sQ = slider('strong ÷ quiet variance', 0, 4, 0.05, Math.log10(ratio), v => { ratio = 10 ** v; pre = 'custom'; sg.set('custom'); draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 1 : 0));
     const sg = seg(Object.entries(PRE).map(([k, p]) => [k, p.label]), pre, v => { pre = v; draw(); }, 'Spectrum');
     host.append(controls(sg), controls(sR, sQ), legend([['eigenvalue λ (variance along one KLT axis)', series(4), 'box'], ['AM', series(0), 'dash'], ['GM', series(1), 'dash']]), box, h('div', { class: 'kpis' }, tiles.am, tiles.gm, tiles.gain, tiles.vec));
-    const P = Plot(box, { x: [0.5, 5.5], y: [1e-3, 100], ylog: true, h: 330, xlabel: 'KLT axis, sorted by variance', ylabel: 'eigenvalue λ (standardized)', yfmt: v => (v >= 1 ? String(v) : v >= 0.01 ? String(v) : v.toExponential(0)), label: 'Eigenvalue spectrum with its arithmetic and geometric means' });
+    const P = Plot(box, { x: [0.5, 5.5], y: [1e-3, 100], ylog: true, h: 330, xlabel: 'KLT axis, sorted by variance', ylabel: 'eigenvalue λ (standardized)', yfmt: v => String(v), label: 'Eigenvalue spectrum with its arithmetic and geometric means' });
     function vals() {
       let v = pre === 'custom' ? [...rep(ratio, r), ...rep(1, 64 - r)] : PRE[pre].vals.slice();
       const m = mean(v);
@@ -620,6 +620,7 @@ window.FIG = window.FIG || {};
     }
     function draw() {
       const v = vals(), d = v.length, g = SV.amgm(v);
+      P.opts.xticks = d <= 10 ? range(1, d + 1) : [1, 8, 16, 24, 32, 40, 48, 56, 64];
       P.domain({ x: [0.5, d + 0.5] });
       P.clear();
       const bw = Math.max(1.5, P.pw / d * 0.8);
@@ -810,7 +811,7 @@ window.FIG = window.FIG || {};
     const labels = ['s', 'e7', 'e6', 'e5', 'e4', 'e3', 'e2', 'e1', 'e0', 'm6', 'm5', 'm4', 'm3', 'm2', 'm1', 'm0'];
     const Hb = labels.map((_, i) => { const k = 15 - i; const ones = month.filter(v => (SV.bf16(v).bits >> k) & 1).length / month.length; return PK.entropy([ones, 1 - ones]); });
     const P = Plot(box, { xcats: labels, y: [0, 1.1], h: 260, grid: 'y', xlabel: 'bit position (sign, exponent e7…e0, mantissa m6…m0)', ylabel: 'bits of information', label: 'Entropy of each bit of a BF16 temperature' });
-    bars(P, Hb, { colors: i => (i === 0 ? series(6) : i < 9 ? series(0) : series(1)), labels: v => fmt(v, 2), tip: (v, i) => `<b>bit ${labels[i]}</b><br>${fmt(v, 3)} bits: ${v < 0.05 ? 'always the same — free to predict' : v > 0.9 ? 'a coin flip — looks like noise' : 'partly predictable'}`, width: 22 });
+    bars(P, Hb, { colors: i => (i === 0 ? series(6) : i < 9 ? series(0) : series(1)), labels: v => (v < 0.005 ? '' : fmt(v, 2)), tip: (v, i) => `<b>bit ${labels[i]}</b><br>${fmt(v, 3)} bits: ${v < 0.05 ? 'always the same — free to predict' : v > 0.9 ? 'a coin flip — looks like noise' : 'partly predictable'}`, width: 22 });
     const joint = f => { const c = {}; month.forEach(v => { const k = f(SV.bf16(v).bits); c[k] = (c[k] || 0) + 1; }); return PK.entropy(Object.values(c)); };
     ro.set([['sign + exponent (9 bits), together', `${fmt(joint(b => b >> 7), 2)} bits`], ['mantissa (7 bits), together', `${fmt(joint(b => b & 127), 2)} bits`], ['the whole 16-bit pattern', `${fmt(joint(b => b), 2)} bits`], ['readings', `${month.length} (ten days, foot thermometer)`]]);
   };
@@ -885,7 +886,7 @@ window.FIG = window.FIG || {};
       at = st ? st.index : 0;
       holder.replaceChildren();
       const sim = SV.simulate(seq, slots, policy);
-      const D = Diagram(holder, { w: 640, h: 330, grow: 0.5, label: 'The request list, the desk and the archive at one step' });
+      const D = Diagram(holder, { w: 640, h: 285, grow: 0.6, label: 'The request list, the desk and the archive at one step' });
       const g = el('g', {}, D.svg);
       st = stepper(holder, {
         steps: sim.steps, start: Math.min(at, seq.length - 1),
@@ -984,14 +985,14 @@ window.FIG = window.FIG || {};
       { name: 'HBM (H200)', bw: 4.8e12, lat: 0.5e-6, color: series(5) },
       { name: 'PCIe Gen5 ×16, in practice', bw: 50e9, lat: 1e-6, color: series(1) },
     ];
-    let infl = 64, size = 1024;
+    let infl = 4096, size = 1024;
     const box = h('div'), ro = readout();
     const lbl = b => (b >= 1 << 20 ? `${b / (1 << 20)} MiB` : b >= 1024 ? `${b / 1024} KiB` : `${b} B`);
     host.append(controls(
-      slider('reads in flight', 0, 12, 1, Math.log2(infl), v => { infl = 2 ** v; draw(); }, v => String(2 ** v)),
+      slider('reads in flight', 0, 14, 1, Math.log2(infl), v => { infl = 2 ** v; draw(); }, v => String(2 ** v)),
       slider('size of each read', 6, 24, 1, Math.log2(size), v => { size = 2 ** v; draw(); }, v => lbl(2 ** v)),
     ), legend(LINKS.map(l => [l.name, l.color])), box, ro);
-    const P = Plot(box, { x: [64, 2 ** 24], xlog: 2, y: [1e5, 1e13], ylog: 10, h: 360, xlabel: 'size of each read (bytes)', ylabel: 'bytes per second delivered', xticks: [64, 1024, 16384, 262144, 4194304], xfmt: lbl, yfmt: v => (v >= 1e12 ? `${v / 1e12} TB/s` : v >= 1e9 ? `${v / 1e9} GB/s` : v >= 1e6 ? `${v / 1e6} MB/s` : `${v / 1e3} KB/s`), yticks: [1e6, 1e8, 1e10, 1e12], label: 'Delivered bandwidth against read size' });
+    const P = Plot(box, { x: [64, 2 ** 24], xlog: 2, y: [1e8, 2e13], ylog: 10, h: 360, m: { l: 96, r: 18, t: 16, b: 48 }, xlabel: 'size of each read (bytes)', ylabel: 'bytes per second delivered', xticks: [64, 1024, 16384, 262144, 4194304], xfmt: lbl, yfmt: v => (v >= 1e12 ? `${v / 1e12} TB/s` : v >= 1e9 ? `${v / 1e9} GB/s` : v >= 1e6 ? `${v / 1e6} MB/s` : `${v / 1e3} KB/s`), yticks: [1e8, 1e9, 1e10, 1e11, 1e12, 1e13], label: 'Delivered bandwidth against read size' });
     const thr = (l, s) => Math.min(l.bw, infl * s / (l.lat + s / l.bw));
     function draw() {
       P.clear();
@@ -1014,14 +1015,14 @@ window.FIG = window.FIG || {};
      ================================================================== */
   FIG.svAmortize = (host) => {
     const PRE = {
-      ferry: { label: 'ferry season ticket', fixed: 300, save: 12, unit: 'crowns', item: 'trips', what: 'price per trip' },
+      ferry: { label: 'ferry season ticket', fixed: 300, save: 12, unit: 'crowns', item: 'trips', what: 'crowns per trip' },
       means: { label: 'channel means (II.13)', fixed: 45, save: 24, unit: 'bits', item: 'readings', what: 'bits per reading' },
       codebook: { label: 'regime codebook (II.17)', fixed: 96, save: 2.92, unit: 'bits', item: 'readings', what: 'bits per reading' },
     };
     let pre = 'ferry', o = { ...PRE.ferry };
     const box = h('div'), ro = readout();
-    const sF = slider('fixed cost', 0, 4, 0.01, Math.log10(o.fixed), v => { o.fixed = +(10 ** v).toPrecision(3); draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 1 : 0));
-    const sS = slider('saving per item', -1, 2, 0.01, Math.log10(o.save), v => { o.save = +(10 ** v).toPrecision(3); draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 2 : 0));
+    const sF = slider('fixed cost', 0, 4, 0.001, Math.log10(o.fixed), v => { o.fixed = +(10 ** v).toPrecision(3); draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 1 : 0));
+    const sS = slider('saving per item', -1, 2, 0.001, Math.log10(o.save), v => { o.save = +(10 ** v).toPrecision(3); draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 2 : 0));
     host.append(controls(seg(Object.entries(PRE).map(([k, p]) => [k, p.label]), pre, v => { pre = v; o = { ...PRE[v] }; sF.set(Math.log10(o.fixed)); sS.set(Math.log10(o.save)); draw(); }, 'Example')), controls(sF, sS),
       legend([['fixed cost per item = fixed ÷ items', series(1)], ['saving per item', series(5), 'dash'], ['profit region', series(5), 'band']]), box, ro);
     const P = Plot(box, { x: [1, 1e4], xlog: 10, y: [1e-2, 1e4], ylog: 10, h: 340, xlabel: 'number of items sharing the fixed cost', ylabel: 'cost per item', label: 'Fixed cost per item against the number of items, with the saving per item' });
@@ -1033,7 +1034,7 @@ window.FIG = window.FIG || {};
       line(P, ns.map(n => [n, o.fixed / n]), { color: series(1), width: 2.6 });
       line(P, [[1, o.save], [1e4, o.save]], { color: series(5), dash: true });
       if (be >= 1 && be <= 1e4) { rule(P, { x: be, label: `break-even ≈ ${fmt(be, be < 10 ? 1 : 0)} ${o.item}`, color: 'var(--c)' }); dot(P.g.top, P.x(be), P.y(o.save), 6 * P.fs, 'var(--c)'); }
-      P.opts.ylabel = `${o.what.split(' per ')[0]} per ${o.item.replace(/s$/, '')} (${o.unit})`;
+      P.opts.ylabel = o.what;
       P.drawAxes();
       const at = n => o.fixed / n - o.save;
       ro.set([['fixed cost', `${fmt(o.fixed, 0)} ${o.unit}`], ['saving per item', `${fmt(o.save, 2)} ${o.unit}`], ['break-even', `${fmt(be, 1)} ${o.item}`], [`net after 10 ${o.item}`, `${fmt(-at(10) * 10, 0)} ${o.unit}`], [`net after 1000`, `${fmt(-at(1000) * 1000, 0)} ${o.unit}`]]);

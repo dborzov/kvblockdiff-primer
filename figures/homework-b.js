@@ -190,7 +190,7 @@ window.FIG = window.FIG || {};
       rl.classList.add('hwb-tmp');
       const rb = rule(P, { x: b, label: `b = ${tok(b)}`, color: 'var(--c)', dash: false });
       rb.classList.add('hwb-tmp');
-      P.g.top.append(knob);
+      P.g.top.querySelectorAll('.hwb-tmp').forEach(n => P.g.top.insertBefore(n, knob));   // keep the knob on top without moving it (moving it would drop keyboard focus)
       knob.setAttribute('cx', P.x(b)); knob.setAttribute('cy', P.y(P.y0));
       TYPES.forEach(t => { const y = 8 * t.w / b; if (y > 0.001 && y < 100) { const d = dot(P.g.top, P.x(b), P.y(y), 4.5 * P.fs, t.color); d.classList.add('hwb-tmp'); } });
       tbl.replaceChildren(table(['dictionary', T('\\vw'), `cost at ${tok(b)}`, 'smallest b'],
@@ -383,7 +383,7 @@ window.FIG = window.FIG || {};
       [rule(P, { y: 1, color: 'var(--bad)' }),
         rule(P, { y: floor, color: 'var(--good)' }),
         rule(P, { x: nl, color: 'var(--c)', dash: false })].forEach(g => g.classList.add('hwb-tmp'));
-      P.g.top.append(knob);
+      P.g.top.querySelectorAll('.hwb-tmp').forEach(n => P.g.top.insertBefore(n, knob));   // keep the knob on top without moving it (moving it would drop keyboard focus)
       knob.setAttribute('cx', P.x(nl)); knob.setAttribute('cy', P.y(P.y0));
       WS.forEach(t => { const y = floor + nl * t.w / mk; if (y < 2) dot(P.g.top, P.x(nl), P.y(y), 4.5 * P.fs, t.color).classList.add('hwb-tmp'); });
       tbl.replaceChildren(table(['dictionary', T('\\vw'), `traffic at ${fmt(nl, nl < 0.01 ? 4 : 3)}`, `break-even ${T('\\vnload')}`, 'min. lifetime, steps'],
@@ -459,7 +459,8 @@ window.FIG = window.FIG || {};
     function draw() {
       P.clear();
       const R = D[run];
-      rule(P, { x: D.meta.true_block, label: 'true block length' });
+      rule(P, { x: D.meta.true_block });
+      svgText(P.g.top, P.x(D.meta.true_block) + 6 * P.fs, P.y(Y0) - 8 * P.fs, 'planted block length', { class: 'lbl' });
       const labels = [];
       TY.forEach(t => {
         if (!on[t.id] || R.global[t.id] == null) return;

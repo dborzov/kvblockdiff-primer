@@ -257,7 +257,7 @@ window.FIG = window.FIG || {};
         // where subtraction in E4M3 index space stops being worse than no prediction at all
         let cross = null;
         for (let i = 1; i < data.length; i++) { const [g0, a] = data[i - 1], [g1, b] = data[i]; const d0 = a.e4sub - a.e4solo, d1 = b.e4sub - b.e4solo; if (d0 > 0 && d1 <= 0) cross = g0 + (g1 - g0) * d0 / (d0 - d1); }
-        if (cross != null) annotate(P, cross, data[0][1].e4solo, `subtraction breaks even\nat R² ≈ ${fmt(cross, 2)}`, { dx: 46, dy: -62 });
+        if (cross != null) annotate(P, cross, data[0][1].e4solo, `subtraction breaks even\nat R² ≈ ${fmt(cross, 2)}`, { dx: -80, dy: 80 });
       }
       ro.set([
         ['E4M3 solo', `${fmt(at.e4solo, 2)}`], ['E4M3 subtract', `${fmt(at.e4sub, 2)}`], ['E4M3 context', `<b>${fmt(at.e4ctx, 2)}</b>`],
@@ -299,8 +299,9 @@ window.FIG = window.FIG || {};
       bSl.input.max = maxB; if (Bsel > maxB) { Bsel = maxB; bSl.set(Bsel); }
       // --- the stack diagram: one column per request, the stack after it, top = most recent
       const lw = 66, W = 640, cw = Math.min(44, (W - lw - 12) / n), top = 58, rh = 26, Hh = top + rows * rh + 14;
-      diagBox.replaceChildren();
-      const D = Diagram(diagBox, { w: W, h: Hh, label: 'The LRU stack after each request' });
+      const inner = h('div', { class: 'mb-stack-inner' });
+      diagBox.replaceChildren(inner);              // inner keeps a minimum width, so phones scroll sideways instead of squeezing
+      const D = Diagram(inner, { w: W, h: Hh, label: 'The LRU stack after each request' });
       const g = el('g', {}, D.svg);
       el('text', { x: 4, y: 20, class: 'lbl', text: 'request' }, g);
       el('text', { x: 4, y: 44, class: 'lbl', text: 'distance' }, g);

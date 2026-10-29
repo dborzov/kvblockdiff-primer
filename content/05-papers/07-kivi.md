@@ -71,7 +71,7 @@ The whole design question is: **which numbers share one ruler?**
 KIVI's answer: keys share rulers **per channel** (columns, in runs of 32 tokens), values share rulers **per token** (rows). Try both answers on both tables.
 
 ::: figure fig-pb-kivi-axis pbKiviAxis
-**The toy table of 12 tokens × 8 channels, rounded with min–max rulers.** Left: the numbers (vermilion positive, lapis negative, darker = larger in size). Right: the rounding error of each number after the round trip (darker = larger error). Outlines on the left show which numbers share one ruler. The read-out gives the typical (root-mean-square) error of the quiet part and of the loud part, each as a share of the typical size of the numbers in it, and the range of ruler steps. Hover or tap a cell for its number, rounded value and error. Toy numbers, made up to have the shape KIVI reports.
+**The toy table of 12 tokens × 8 channels, rounded with min–max rulers.** Left: the numbers (vermilion positive, lapis negative, stronger colour = larger in size). Right: the rounding error of each number after the round trip (stronger colour = larger error). Outlines on the left show which numbers share one ruler. The read-out gives the typical (root-mean-square) error of the quiet part and of the loud part, each as a share of the typical size of the numbers in it, and the range of ruler steps. Hover or tap a cell for its number, rounded value and error. Toy numbers, made up to have the shape KIVI reports.
 :::
 
 ::: try

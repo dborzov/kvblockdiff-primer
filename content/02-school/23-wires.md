@@ -110,8 +110,8 @@ The lift's lesson carries over directly. A read of a few hundred bytes from host
 :::
 
 ::: try
-1. One read in flight, 1 KiB each: HBM delivers about 2 GB/s and PCIe about 1 GB/s — a sliver of either peak. Latency rules.
-2. Raise the reads in flight to 4096: PCIe is at its 50 GB/s ceiling even for small reads, and HBM reaches its 4.8 TB/s. The ratio is about 100×.
+1. The figure starts with 4096 reads of 1 KiB in flight: PCIe is at its 50 GB/s ceiling, HBM at its 4.8 TB/s. The ratio is about 100×.
+2. Drop the reads in flight to 1: HBM now delivers about 2 GB/s and PCIe about 1 GB/s — a sliver of either peak. Latency rules.
 3. Shrink the read size at a fixed number in flight: the curves bend down. Small reads need more of them in flight to fill the same link.
 :::
 

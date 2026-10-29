@@ -91,7 +91,7 @@ Now add a request-scope dictionary with $\vw = 256$ and an **assumed** $\vrho = 
 
 - $\vTstep = 13.7 \times 0.75 \approx 10.3$ MB, so the link now allows 146.
 - $\vMreq = 78 \times 640\text{ B} \times (4096 + 256) \approx 217$ MB, so memory allows 138.
-- **138 requests per GPU, 1.27× HiSparse — and now memory binds.**
+- **138 requests per GPU, 1.26× HiSparse — and now memory binds.**
 
 That flip is the general pattern. Cheaper misses ([[lever]] 1) raise the link bound until GPU memory becomes the wall; past that point, only lighter or fewer resident dictionaries, or cheaper slots (lever 2), help. The figure lets you take the formula apart for five designs.
 
