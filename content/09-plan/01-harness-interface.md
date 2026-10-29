@@ -24,6 +24,11 @@ cards:
     wrong: ["Because Python cannot keep state between calls", "Because it makes the deltas smaller", "Because the dictionary changes after every entry"]
     why: The access pattern of the miss path is random access. A stream coder that needs the previous entries would have to fetch them too.
     sec: interface
+  - q: Read the Gull Rock afternoon as a block of entries. Which channel plays the part of an outlier channel of keys?
+    a: The pressure — about 1011 hPa in every reading, a big constant that one dictionary entry absorbs
+    wrong: ["The wind, because it changes most", "The humidity, because it is a fraction", "The top thermometer, because it disagrees with the foot one"]
+    why: 'Written raw, a pressure needs 15 bits; minus its channel''s location, 6. That is what loc does for a channel that sits far from zero.'
+    sec: interface
   - q: Why does a fixed interface make an automated search over coders possible?
     a: A proposer can write a new coder, and the harness scores it with the same rule and controls, with no human judging each claim
     wrong: ["Because a fixed interface makes every coder equally fast", "Because the controls choose the best coder by themselves", "Because the interface forbids heavy dictionaries"]

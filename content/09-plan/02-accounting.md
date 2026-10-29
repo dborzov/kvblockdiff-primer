@@ -24,6 +24,11 @@ cards:
     wrong: ["By a separate list of positions in the block", "By setting the field to zero", "It is not marked; escapes are dropped"]
     why: The width rule allows residuals with magnitude below $2^{\vn-1}$, so the most negative field value is free to mean "escaped". An escape then costs its 8 raw bits and no position.
     sec: two-rates
+  - q: 'Priced the harness''s two ways, the Gull Rock wind''s changes cost 3.46 bits (entropy rate) and 5.02 bits (fixed-length rate). What is the 1.56-bit gap?'
+    a: The price of random access — a fixed-width field that lets any one delta be read without the others
+    wrong: ["A bug in the Laplace model", "The dictionary share", "The cost of the three escapes alone"]
+    why: 'The field spends 5 bits on every change, also on the many small ones an entropy coder would price at 2–3 bits. The three escapes add only 0.02 bit.'
+    sec: two-rates
   - q: Which scope gets its dictionary for free?
     a: Global scope — it is fit once on separate calibration data and shared by every request
     wrong: ["Block scope, because blocks are small", "Request scope, because it is loaded once", "None — every scope pays the same"]

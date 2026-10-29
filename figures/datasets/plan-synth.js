@@ -155,7 +155,7 @@
   const frame = (key) => (P, ctx) => {
     for (let s = 1; s < NE; s++) rule(P, { x: s * T, dash: false, color: 'var(--ink-3)' });
     for (let k = TB; k < NE * T; k += TB) if (k % T) el('line', { x1: P.x(k), x2: P.x(k), y1: P.m.t, y2: P.H - P.m.b, style: 'stroke:var(--ink-3);stroke-dasharray:1 3;stroke-width:1' }, P.g.bg);
-    for (let s = 0; s < NE; s++) el('text', { x: P.x(s * T + T / 2), y: P.m.t + 12 * P.fs, 'text-anchor': 'middle', class: 'lbl', text: `sequence ${s + 1}` }, P.g.top);
+    for (let s = 0; s < NE; s++) el('text', { x: P.x(s * T + T / 2), y: P.m.t + 12 * P.fs, 'text-anchor': 'middle', class: 'lbl', text: `${P.fs < 1.3 ? 'sequence' : 'seq.'} ${s + 1}` }, P.g.top);
     const pts = ctx.rows.map(r => [r.k, r[key]]);
     line(P, pts, { color: series(1), width: 2.2, curve: key === 'lvl' ? 'step' : undefined });
   };
@@ -221,13 +221,13 @@
       { id: 'l4', label: 'E4M3 codes: one Laplace bump in index space', value: () => CODES().l4, fmt: v => `${fmt(v, 2)} bits`,
         note: 'The source\'s model, fit here on the codes themselves. More than 8 bits — worse than storing the raw byte — because a zero-centred channel\'s codes form two humps, and one bump between them puts its peak in the hollow (the harness, fit on calibration data: 8.375).' },
       { id: 'g4', label: 'E4M3 codes: the grid-aware model', value: () => CODES().g4, fmt: v => `${fmt(v, 2)} bits`,
-        note: 'One Laplace bump over the values, priced over each code\'s grid cell. A quarter of a bit above the histogram, and sane again (the harness: 6.367).' },
+        note: v => `One Laplace bump over the values, priced over each code's grid cell: ${fmt(v - CODES().h4, 2)} bit above the histogram, and sane again (the harness, fit on calibration data: 6.367).` },
       { id: 'h8', label: 'INT8 codes: their own histogram', value: () => CODES().h8, fmt: v => `${fmt(v, 2)} bits`,
         note: 'On the uniform grid each channel\'s codes form one bell (the harness: 6.836).' },
       { id: 'l8', label: 'INT8 codes: one Laplace bump in index space', value: () => CODES().l8, fmt: v => `${fmt(v, 2)} bits`,
         note: 'Here the source\'s model is fine: one bell, one bump (the harness: 7.074).' },
     ],
-    numbersNote: 'Computed in your browser from this draw of the recipe (all 64 channels, a second or so). The harness draws the same recipe with numpy; its numbers, quoted on the pages, differ in the second decimal.',
+    numbersNote: 'Computed in your browser from this draw of the recipe (all 64 channels, a second or so). The harness draws the same recipe with numpy and fits some models on the calibration set; its numbers, quoted on the pages, differ a little.',
     code: `
 import numpy as np, pandas as pd
 

@@ -106,7 +106,7 @@
       const [x, y] = P.toData(e), s = clamp(Math.floor(x), 0, TR.steps - 1), j = clamp(Math.floor(y), 0, NB - 1), r = rows[s];
       return `<b>step ${s}, block ${j}</b><br>${r.counts[j]} of ${TR.k} selections<br>heaviest block this step: ${r.top} (${r.counts[r.top]})<br>${r.miss} misses, ${r.dmiss} found their dictionary`;
     });
-    box.append(legend([['selections in the block (darker = more)', series(0), 'box'], [`a dictionary resident (${ND}, heaviest-blocks policy)`, mix('var(--ink)', 55), 'line'], ...(ctx.hl ? [[esc(ctx.hl.label), series(1), 'box']] : [])]));
+    box.append(legend([['selections in the block (stronger = more)', series(0), 'box'], [`a dictionary resident (${ND}, heaviest-blocks policy)`, mix('var(--ink)', 55), 'line'], ...(ctx.hl ? [[esc(ctx.hl.label), series(1), 'box']] : [])]));
   }
 
   DS.define('plan-trace', {
@@ -139,7 +139,7 @@
     },
     views: {
       heat: { label: 'Blocks by step', legend: false, highlights: ['switch'], draw: heat,
-        note: `Each column is one decode step, each row one block of ${TR.b} positions; the shade counts how many of the step's ${TR.k} selections fall in that block. A thin dark bar marks a block whose dictionary is resident after the step. Hover for the counts.` },
+        note: `Each column is one decode step, each row one block of ${TR.b} positions; the shade counts how many of the step's ${TR.k} selections fall in that block. A thin grey bar marks a block whose dictionary is resident after the step. Hover for the counts.` },
       misses: Object.assign(DS.views.timeline({
         x: 's', y: 'miss', xlabel: 'decode step', ylabel: 'entries per step', xname: 'step', ydomain: [0, 40], width: 1.3,
         label: 'Misses per step', xfmt: v => fmt(v, 0), yfmt: v => fmt(v, 0),

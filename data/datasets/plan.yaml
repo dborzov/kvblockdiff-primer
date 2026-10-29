@@ -13,8 +13,7 @@ plan-synth:
     (request offset + block offset + noise), all three of variance 1; four channels in 64 have a large constant mean, like
     the outlier channels of keys before RoPE. Eight more sequences form the calibration set. It is the data every control
     of IX.3 runs on, the codes of IX.5 (two humps in E4M3, one bell in INT8) and the location gains of experiment 1a (IX.6).
-    Drawn with the site's seeded generator, so its numbers are the recipe's and differ from the numpy run in the second
-    decimal.
+    Drawn with the site's seeded generator, so its numbers are the recipe's and differ a little from the numpy run's.
 plan-ladder:
   title: The rehearsal ladder
   blurb: What the harness printed for the loc dictionary on the rehearsal set — every format, scope and block size, original and shuffled, with both rates.
