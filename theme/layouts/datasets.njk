@@ -1,0 +1,12 @@
+---
+layout: page.njk
+---
+{{ content | safe }}
+{%- for did, ds in datasets %}
+<section class="ds-card" id="ds-{{ did }}">
+  <h2>{{ ds.emblem | emblem | safe }}{{ ds.title | mdInline | safe }}</h2>
+  <p>{{ ds.blurb | mdInline | safe }}</p>
+  {%- if ds.story %}<p class="small">{{ ds.story | mdInline | safe }}</p>{% endif %}
+  <div class="ds-occurrences" data-ds="{{ did }}"></div>
+</section>
+{%- endfor %}

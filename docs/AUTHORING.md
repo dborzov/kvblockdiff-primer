@@ -60,7 +60,9 @@ This site exists because the first draft was a wall of terse, undefined jargon. 
    new angle, with a link back.
 3. **Example first, then the general rule.** Open with a hook: a concrete situation, a toy, a surprising
    number, a question. *Show* the thing (a JSON snippet, a table of numbers, a plot) before naming it.
-   Then give the rule, then come back to the example with the rule in hand.
+   Then give the rule, then come back to the example with the rule in hand. When the example is a dataset
+   (readings, messages, vectors), *show the data itself* with a `::: dataset` card — a plot, the raw table,
+   the numbers with what they mean — and bring the same dataset back on later pages rather than inventing a new one.
 4. **Pop-science voice, plain sentences.** Write like a good science blog: curious, warm, concrete.
    Short sentences, active voice, one fact per sentence. Metaphors are welcome when they carry the
    logic (the desk and the archive, the apple and the tree). No mannered tics ("not X, but Y",
@@ -190,6 +192,7 @@ outer one more colons.
 | `::: aside <kind> Title` | a collapsible margin sidebar (collapsed by default; `::: aside reminder open Title` starts open). Kinds: `reminder` (re-explains something defined earlier, placed next to where it is needed), `detail` (a derivation), `aside`, `source`, `why`. Place it right before the paragraph, equation or figure it supports. |
 | `::: define <term-id> [display name]` | a definition box for an important term (contains the term's one `[[=id]]`). Put a short list inside: what it is, an example, what it is easy to confuse with. |
 | `::: figure fig-<id> <builder> [wide]` | an interactive figure; the block's content is the caption. `<builder>` is `FIG.<builder>` in your Part's figures file. `img=/assets/img/x.svg` instead of a builder for a static image. `wide` lets it break out of the column. |
+| `::: dataset fig-<id> <dataset> [view=…] [hl=…] [marks=…] [metrics=…] [tab=…]` | a running example dataset as a tabbed card: plot, table, numbers with interpretation, code + CSV. Use it whenever the prose leans on a concrete toy dataset. Datasets live in `data/datasets/*.yaml` + `figures/datasets/<id>.js`; see `docs/figures.md` §7. |
 | `::: keycard Eyebrow text` | a framed key result: one big formula + one sentence of meaning. |
 | `::: try` | "things to try" after an interactive figure: a numbered list of actions and what to notice. |
 | `::: pull` | a pull quote — the one sentence to remember from the page (at most one per page). |

@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import katex from "katex";
 import { HtmlBasePlugin } from "@11ty/eleventy";
-import { loadParts, loadGlossary, loadSymbols, loadThemes, symbolMacros, CATEGORIES, FAMILIES } from "./lib/data.js";
+import { loadParts, loadGlossary, loadSymbols, loadThemes, loadDatasets, symbolMacros, CATEGORIES, FAMILIES } from "./lib/data.js";
 import { createMarkdown } from "./lib/markdown.js";
 import { runLinker } from "./lib/linker.js";
 import { slugify, esc, emblem, termChip } from "./lib/render.js";
@@ -28,13 +28,14 @@ export default function (cfg) {
   const glossary = loadGlossary();
   const symbols = loadSymbols();
   const themes = loadThemes();
+  const datasets = loadDatasets();
   const macros = symbolMacros(symbols);
   for (const id of Object.keys(symbols)) {
     let builtin = true;
     try { katex.renderToString("\\v" + id, { throwOnError: true }); } catch { builtin = false; }
     if (builtin) throw new Error(`symbol id "${id}" collides with the KaTeX command \\v${id}; rename it`);
   }
-  const md = createMarkdown({ glossary, symbols, macros, themes, prefix: PREFIX });
+  const md = createMarkdown({ glossary, symbols, macros, themes, datasets, prefix: PREFIX });
   cfg.setLibrary("md", md);
   cfg.addPlugin(HtmlBasePlugin);
 
@@ -50,6 +51,7 @@ export default function (cfg) {
   cfg.addGlobalData("glossary", glossary);
   cfg.addGlobalData("symbols", symbols);
   cfg.addGlobalData("themes", themes);
+  cfg.addGlobalData("datasets", datasets);
   cfg.addGlobalData("categories", CATEGORIES);
   cfg.addGlobalData("families", FAMILIES);
   cfg.addGlobalData("layout", "page.njk");
@@ -144,6 +146,9 @@ export default function (cfg) {
         unit: r(s.unit), fam: s.fam, home: s.home || "",
       }])),
       macros,
+      datasets: Object.fromEntries(Object.values(datasets).map(d => [d.id, {
+        title: r(d.title), plain: String(d.title).replace(/[*_`]/g, ""), blurb: r(d.blurb), unit: r(d.unit || ""), csv: d.csv || `${d.id}.csv`,
+      }])),
     };
     return `window.KV=Object.assign(window.KV||{},${scriptJson(kv)});\n`;
   });
@@ -160,6 +165,10 @@ export default function (cfg) {
     cfg.addTemplate(file, body, { outputPath: permalink, layout: null, eleventyExcludeFromCollections: true });
   virtual("gen/site-data.njk", "/assets/gen/site-data.js", "{{ collections.pages | siteDataJs | safe }}");
   virtual("gen/terms-css.njk", "/assets/gen/terms.css", "{{ '' | termsCss | safe }}");
+  // every dataset definition (figures/datasets/*.js) in one script, loaded on every page
+  cfg.addFilter("datasetsJs", () => fs.readdirSync("figures/datasets").filter(f => f.endsWith(".js")).sort()
+    .map(f => `/* ---- figures/datasets/${f} ---- */\n` + fs.readFileSync(path.join("figures/datasets", f), "utf8")).join("\n"));
+  virtual("gen/datasets-js.njk", "/assets/gen/datasets.js", "{{ '' | datasetsJs | safe }}");
   virtual("gen/cards-json.njk", "/cards.json", "{{ collections.pages | allCardsJson | safe }}");
 
   // ---------------------------------------------------------------- static files
@@ -183,7 +192,7 @@ export default function (cfg) {
   }
 
   cfg.on("eleventy.after", ({ directories }) => {
-    runLinker({ outDir: directories.output, prefix: PREFIX, order: READING_ORDER, strict: STRICT, partial: ONLY.length > 0, themes });
+    runLinker({ outDir: directories.output, prefix: PREFIX, order: READING_ORDER, strict: STRICT, partial: ONLY.length > 0, themes, datasets });
   });
 
   return {

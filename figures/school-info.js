@@ -47,15 +47,9 @@ window.FIG = window.FIG || {};
   const skyArchive = () => archiveCache || (archiveCache = (() => { const r = rng('si-archive'); return range(4096).map(() => drawSky(r)); })());
   const countsOf = (xs, k = 4) => { const c = new Array(k).fill(0); xs.forEach(v => c[v]++); return c; };
 
-  // Wind speeds in knots: mostly a breeze (Rayleigh, scale 8 kn), and 2.5 % gales of 40–60 kn.
+  // Wind speeds in knots: mostly a breeze (Rayleigh, scale 8 kn), and 2.5 % gales of 40–59 kn, in three storms.
   const WIND_N = 1024, POS_BITS = 10, RAW_BITS = 8;
-  let windCache = null;
-  function windSample() {
-    if (windCache) return windCache;
-    const r = rng('si-wind');
-    windCache = range(WIND_N).map(() => (r() < 0.025 ? r.int(40, 60) : Math.round(8 * Math.sqrt(-2 * Math.log(1 - r())))));
-    return windCache;
-  }
+  const windSample = () => DS.col('wind', 'kn');   // the shared dataset (figures/datasets/wind.js)
   function fixedCost(xs, n) {        // n-bit slots, top code = escape marker, escapes cost position + raw byte
     const maxFit = 2 ** n - 2;
     const escIdx = [];

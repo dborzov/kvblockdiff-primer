@@ -431,3 +431,120 @@ How it behaves:
 - [ ] Two or more series have a legend. Key numbers are visible without hovering.
 - [ ] Draggable things have `opts.get`, so they work from the keyboard.
 - [ ] The caption says what to do ("drag…", "step through…") and marks illustrative data.
+
+---
+
+## 7. Example datasets: the tabbed data card
+
+The site teaches with small, made-up, *specific* datasets: three weeks of Gull Rock wind, a month of
+temperatures, a sky archive, a few vectors. Whenever the prose leans on such a dataset, **show it** with a
+dataset card instead of describing it in a sentence. A card is a plate with four tabs:
+
+| tab | what it shows |
+|---|---|
+| **Plot** | one or more natural views of the data (a timeline for a time series, a histogram for a distribution, a scatter for pairs, counts for categories). Highlights colour notable rows; clicking a bar or dragging across a plot *selects* rows, and the selection carries over to the table. |
+| **Table** | every row, paged, with "jump to row #", "only highlighted rows", and the current selection. |
+| **Numbers** | the statistics the page leans on, each computed live from the rows, with a one- or two-sentence *interpretation*: what the number tells us, here. |
+| **Code** | a short numpy/pandas snippet that recomputes the Numbers tab from the CSV, plus a "download CSV" button. |
+
+Under the card, the build adds a strip "Met before on II.9 · comes back on II.12 …", linking every page that
+shows the same dataset, and the title links to the reference page **Example datasets**
+(`content/10-reference/09-datasets.md`), which lists every appearance. That is how a dataset becomes a
+running thread: introduce it once, then bring it back.
+
+### 7.1 Showing a dataset on a page
+
+```markdown
+::: dataset fig-wind-data wind view=timeline,histogram hl=gales marks=median,p95 tab=plot
+**The Gull Rock wind archive.** Caption as for any figure: what each view shows, what the colours mean,
+what the controls do, and that the data is synthetic and seeded.
+:::
+```
+
+| option | meaning |
+|---|---|
+| `fig-…` | the plate id (unique site-wide, as for figures; it is numbered like a plate and can be cross-referenced with `[[#fig-…]]`) |
+| `wind` | the dataset id |
+| `view=a,b` | which of the dataset's views to offer, the first is shown first (default: all, in definition order) |
+| `hl=name` | a highlight switched on at the start (default: none) |
+| `marks=a,b` | metrics drawn as reference lines on the plot (metrics with `mark: '<column>'`) |
+| `metrics=a,b` | which metrics the Numbers tab shows, in this order (default: all). Pick the ones this page talks about. |
+| `tab=plot\|table\|numbers\|code` | the tab open at the start |
+| `wide` | let the plate break out of the column |
+
+Every number quoted in the prose must be one the card shows. A page that discusses the data in a new way
+should usually show the card again — with the views, highlight and metrics that suit *this* page — rather
+than just linking back.
+
+### 7.2 Defining a dataset
+
+Two files, so that several writers can add datasets side by side:
+
+1. **`data/datasets/<part-slug>.yaml`** — the metadata (rendered at build time in the card head and on the
+   reference page):
+
+   ```yaml
+   wind:
+     title: Gull Rock wind
+     blurb: Three weeks of wind speed at the Gull Rock station, one reading every half hour, in whole knots.
+     emblem: flag                 # a name from theme/layouts/partials/emblems.njk
+     unit: 1,024 readings · knots # short chip
+     source: synthetic, seeded    # short chip
+     csv: gull-rock-wind.csv      # download name
+     story: >-                    # optional, reference page only
+       How it was made and what it teaches.
+   ```
+
+2. **`figures/datasets/<id>.js`** — the data, its columns, views, highlights and metrics. All these files are
+   bundled into `/assets/gen/datasets.js`, which every page loads (after `plotkit.js` and `datasets.js`,
+   before the Part figure files). Wrap the file in an IIFE; it may only call `DS.define`.
+
+   ```js
+   (function () {
+     DS.define('wind', {
+       rows() {                      // called once per page, then cached: a seeded generator, never Math.random
+         const r = rng('si-wind');
+         return range(1024).map(i => ({ day: Math.floor(i / 48) + 1, t: i / 48, kn: /* … */ 0 }));
+       },
+       columns: [{ key: 'day', label: 'day' }, { key: 'kn', label: 'knots' }, { key: 'force', label: 'Beaufort name', left: true }],
+       csvColumns: ['day', 'time', 'kn'],          // optional (default: the columns' keys)
+       highlights: { gales: { label: 'gales (≥ 40 kn)', test: r => r.kn >= 40 } },
+       views: {
+         timeline: DS.views.timeline({ x: 't', y: 'kn', xlabel: 'day', ylabel: 'wind (knots)', xtfmt: v => `day ${v + 1}` }),
+         histogram: DS.views.histogram({ key: 'kn', xlabel: 'wind speed (knots)', ylabel: 'readings', unit: 'kn', noun: 'readings' }),
+       },
+       metrics: [
+         { id: 'median', label: 'median', mark: 'kn', value: rows => quantile(rows.map(r => r.kn), 0.5), fmt: v => `${fmt(v)} kn`,
+           note: v => `Half of all readings are at or below ${fmt(v)} knots: a gentle breeze is the typical day.` },
+       ],
+       code: `import pandas as pd\nwind = pd.read_csv("{csv}")\nprint(wind["kn"].median())`,   // {csv} → the download name
+     });
+   })();
+   ```
+
+**Built-in views** (`DS.views.*`, each takes an options object and returns `{label, draw}`):
+
+| view | options |
+|---|---|
+| `timeline` | `x` (column; default the row position), `y`, `xlabel`, `ylabel`, `xtfmt` (tick labels), `xfmt`/`yfmt` (crosshair), `xticks`, `yticks`, `ydomain`, `xdomain`, `curve` (`'step'`), `width`, `h`, `label` (button text) |
+| `histogram` | `key`, `bin` (default 1), `domain` `[lo, hi]`, `xlabel`, `ylabel`, `unit`, `noun`, `xticks`, `h`, `label` |
+| `scatter` | `x`, `y`, `xlabel`, `ylabel`, `color` (a category column), `catLabel(c)`, `catSeries(c, i)`, `equal`, `xdomain`, `ydomain`, `r`, `tip(row, i)`, `h`, `label` |
+| `categories` | `key`, `order` (category order), `catLabel(c)`, `catSeries(c, i)`, `xlabel`, `ylabel`, `noun`, `h`, `label` |
+
+Every built-in view takes `after(P, ctx)` to draw extra marks on top (fits, reference curves, annotations).
+A **custom view** is any `{ label, draw(box, ctx) }`: put a `Plot`/`Diagram` in `box` and use
+`ctx.rows`, `ctx.hl` (`{label, test}` or null), `ctx.sel`, `ctx.select({label, test})`, `ctx.marks`, `ctx.idx`.
+Use custom views when the natural picture of the data is not a standard chart: a grid of JSON messages, a
+heat map of a matrix, arrows for vectors, a cache diagram.
+
+**Metrics**: `{ id, label, tex?, short?, value(rows), fmt?(v, rows), note?(v, rows) | note, mark? }`.
+`note` is the point of the tab: one or two sentences, in the page's voice, on what the number *means* for
+this data (compare it with another metric, connect it to the coding question). `label` and `note` may
+contain `$…$` maths with the site's macros (they go through `texify`).
+
+**Reusing a dataset in a figure.** A figure that computes on the same data must read it from the dataset, so
+there is one generator and the numbers always agree: `DS.rows('wind')`, `DS.col('wind', 'kn')`,
+`DS.metric('wind', 'median')`.
+
+**Datasets built from datasets.** A derived dataset (residuals of the temperatures, say) is its own
+`DS.define` whose `rows()` reads `DS.rows('temp')`.

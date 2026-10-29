@@ -37,7 +37,13 @@ If the month was coded with an [[entropy-coder]], the clerk must decode it from 
 
 ## Every value in n bits {#fixed}
 
-Here are three weeks of wind speeds from Gull Rock: 1,024 half-hourly readings, in whole knots. Most of the time a breeze blows — the median is 9 knots, and 95 % of the readings are 22 knots or less. But 31 of them are gales between 40 and 59 knots.
+Here are three weeks of wind speeds from Gull Rock: 1,024 half-hourly readings, in whole knots. Look at the timeline first. Most of the time a breeze blows — the median is 9 knots, and 95 % of the readings are 22 knots or less. But three storms blow through, and 31 readings are gales between 40 and 59 knots.
+
+::: dataset fig-wind-data wind view=timeline,histogram hl=gales marks=median,p95
+**The Gull Rock wind archive.** *Plot:* the timeline (wind in knots against the day; drag across it to select a stretch) and the histogram (how many readings have each speed; click a bar to select it). Red marks the gales; the grey lines mark the median and the 95th percentile. *Table:* every reading, with its Beaufort name. *Numbers:* the statistics this page leans on, with what each one says. *Code:* the same numbers from the CSV in a few lines of numpy. Synthetic, seeded data.
+:::
+
+Two things stand out. The ordinary readings huddle low: the histogram is a tall hump below 20 knots with a long, thin tail. And the gales are not spread evenly: they come in bursts, far above everything else. That second shape — almost everything small, a few giants — is what this page is about.
 
 The station's 8-bit chip stores each reading in one byte, which holds 0 to 255. That is generous. Five bits hold 0 to 31, and nearly every reading fits.
 

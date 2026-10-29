@@ -1,0 +1,13 @@
+# Running example datasets of Part II (Back to school). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+wind:
+  title: Gull Rock wind
+  blurb: Three weeks of wind speed at the Gull Rock station, one reading every half hour, in whole knots. Mostly a breeze, with three short storms.
+  emblem: flag
+  unit: 1,024 readings · knots
+  source: synthetic, seeded
+  csv: gull-rock-wind.csv
+  story: >-
+    A breeze shaped like a Rayleigh distribution (scale 8 knots), plus 2.5 % gales of 40–59 knots that arrive in three storms.
+    It teaches fixed-length codes and escapes: almost every reading fits in 5 bits, a few giants do not.
