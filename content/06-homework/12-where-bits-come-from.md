@@ -72,7 +72,7 @@ $$ {#eq-hwa-entry-split}
 With a fixed-length solo rate of 7.24 bits and keys saving 1 bit, that is $\tfrac12(6.24 + 7.24) = 6.74$ bits, $\vrho \approx 0.84$ — the "$\vrho$ capped near 0.85" of the source draft, which reads best as this case. Play with the inputs:
 
 ::: figure fig-hwa-where hwaWhereBits
-**A what-if sum for one entry.** Inputs: the solo rate (ideal entropy, 6.47 bits, or fixed-length, 7.24 bits — our E4M3 Gaussian numbers), the bits per element a dictionary saves on the key half and on the value half (net, after its tax and dictionary), and, on top, a number of "outlier" key channels with an extra saving each. Bars: bits per element of the key half, the value half and the whole entry; raw 8 bits for reference. Tiles: the entry's $\vbpe$, its delta ratio $\vrho \approx \vbpe/8$ and its compression against raw. Equal key and value halves of a 640-element entry are assumed. Every input is an assumption, not a measurement.
+**A what-if sum for one entry.** Inputs: the solo rate (ideal entropy, 6.47 bits, or fixed-length, 7.24 bits — our E4M3 Gaussian numbers), the bits per element a dictionary saves on the key half and on the value half (net, after its tax and dictionary), and, on top, a number of "outlier" key channels with an extra saving each. Bars: bits per element of the key half, the value half and the whole entry; the dashed line is the solo rate. Tiles: the entry's $\vbpe$, its delta ratio $\vrho \approx \vbpe/8$ and its compression against raw. Equal key and value halves of a 640-element entry are assumed. Every input is an assumption, not a measurement.
 :::
 
 ::: try

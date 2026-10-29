@@ -140,10 +140,9 @@ window.FIG = window.FIG || {};
     const P = Plot(box, { ycats: rows.map(x => x.cat), x: [0, 10], xticks: [0, 2, 4, 6, 8], h: 250, xlabel: 'bits per element (bpe)', grid: 'x', label: 'Bits per element for raw storage and context-free codes' });
     bars(P, rows.map(x => x.v), {
       horizontal: true, colors: (i) => rows[i].c, width: 30,
-      labels: v => `${fmt(v, 2)} · ${fmt(8 / v, 2)}×`,
+      labels: v => fmt(v, 2),
       tip: (v, i) => `<b>${rows[i].cat}</b><br>${fmt(v, 2)} bits per element = ${fmt(8 / v, 2)}× smaller than raw<br><i>${rows[i].note}</i>`,
     });
-    rule(P, { x: 8 });
   };
 
   // ================================================================== VI.2  solo coding
@@ -154,7 +153,7 @@ window.FIG = window.FIG || {};
     const kNow = kpi('extra cost on this block', '', 'bits per element', BRAND.solo);
     const kAvg = kpi('average over all blocks', '', texify('$\\tfrac12\\log_2\\frac{1}{1-\\vRsq}$'), BRAND.loc);
     const slMu = slider('this block\'s offset (σ)', -2, 2, 0.05, mu, v => { mu = v; draw(); }, v => fmtS(v, 1));
-    const slR = slider(texify('block means explain $\\vRsq$'), 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmt(v, 2));
+    const slR = slider(texify('block means explain $\\vRsq$'), 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0));
     host.append(controls(slMu, slR), legend([['the whole corpus (the Hermit\'s code is fit to this)', 'var(--ink-3)', 'band'], ['this block\'s values', BRAND.loc, 'band']]), box, h('div', { class: 'kpis' }, kNow, kAvg));
     const P = Plot(box, { x: [-4, 4], y: [0, 1], h: 260, xlabel: 'value, in units of the corpus spread', ylabel: 'density', grid: 'x', label: 'Global distribution and one block distribution' });
     const pdf = (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
@@ -253,21 +252,21 @@ window.FIG = window.FIG || {};
         });
         // the bill
         const bx = 560, by0 = 262, sc = 27;           // 27 px per bit
-        [0, 2, 4, 6, 8].forEach(t => { el('text', { x: bx - 26, y: by0 - t * sc + 4, 'text-anchor': 'end', class: 'val', text: t }, g); el('line', { x1: bx - 22, x2: bx + 64, y1: by0 - t * sc, y2: by0 - t * sc, style: `stroke:${t ? 'var(--rule)' : 'var(--ink-3)'};stroke-dasharray:${t ? '2 4' : 'none'}` }, g); });
+        [0, 2, 4, 6, 8].forEach(t => { el('line', { x1: bx - 30, x2: bx + 70, y1: by0 - t * sc, y2: by0 - t * sc, style: `stroke:${t ? 'var(--rule)' : 'var(--ink-3)'};stroke-dasharray:${t ? '2 4' : 'none'}` }, g); });
         el('text', { x: bx + 21, y: 12, 'text-anchor': 'middle', class: 'lbl', text: 'bits / element' }, g);
         const seg_ = (x, from, to, fill, title) => { const rr = el('rect', { x, y: by0 - to * sc, width: 34, height: Math.max(1.5, (to - from) * sc), style: `fill:${fill}` }, g); hover(rr, () => title); };
-        seg_(bx - 16, 0, solo, 'var(--slate)', `<b>solo</b>: ${fmt(solo, 2)} bits per element`);
-        el('text', { x: bx + 1, y: by0 + 16 * fs, 'text-anchor': 'middle', class: 'lbl', text: 'solo' }, g);
+        seg_(bx - 26, 0, solo, 'var(--slate)', `<b>solo</b>: ${fmt(solo, 2)} bits per element`);
+        el('text', { x: bx - 9, y: by0 + 16 * fs, 'text-anchor': 'middle', class: 'lbl', text: 'solo' }, g);
         let acc = 0;
-        if (s.bar >= 1) { seg_(bx + 24, 0, resid, series(2), `<b>residual</b>: ${fmt(resid, 2)} bits`); acc = resid; }
-        if (s.bar >= 2) { seg_(bx + 24, acc, acc + tax, BRAND.vq, `<b>tax</b>: ${fmt(tax, 3)} bit`); acc += tax; }
-        if (s.bar >= 3) { seg_(bx + 24, acc, acc + dict, 'var(--gold)', `<b>dictionary</b>: ${fmt(dict, 3)} bit`); acc += dict; }
-        el('text', { x: bx + 41, y: by0 + 16 * fs, 'text-anchor': 'middle', class: 'lbl', text: 'dict.' }, g);
-        if (s.bar >= 1) el('text', { x: bx + 41, y: by0 - acc * sc - 6, 'text-anchor': 'middle', class: 'val', text: fmt(acc, 2) }, g);
-        el('text', { x: bx + 1, y: by0 - solo * sc - 6, 'text-anchor': 'middle', class: 'val', text: fmt(solo, 2) }, g);
+        if (s.bar >= 1) { seg_(bx + 32, 0, resid, series(2), `<b>residual</b>: ${fmt(resid, 2)} bits`); acc = resid; }
+        if (s.bar >= 2) { seg_(bx + 32, acc, acc + tax, BRAND.vq, `<b>tax</b>: ${fmt(tax, 3)} bit`); acc += tax; }
+        if (s.bar >= 3) { seg_(bx + 32, acc, acc + dict, series(4), `<b>dictionary</b>: ${fmt(dict, 3)} bit`); acc += dict; }
+        el('text', { x: bx + 49, y: by0 + 16 * fs, 'text-anchor': 'middle', class: 'lbl', text: 'dict.' }, g);
+        if (s.bar >= 1) el('text', { x: bx + 49, y: by0 - acc * sc - 6, 'text-anchor': 'middle', class: 'val', text: fmt(acc, 2) }, g);
+        el('text', { x: bx - 9, y: by0 - solo * sc - 6, 'text-anchor': 'middle', class: 'val', text: fmt(solo, 2) }, g);
       },
     });
-    host.append(legend([['solo', 'var(--slate)', 'box'], ['residual bits', series(2), 'box'], ['per-entry tax', BRAND.vq, 'box'], ['dictionary, amortized', 'var(--gold)', 'box']]));
+    host.append(legend([['solo', 'var(--slate)', 'box'], ['residual bits', series(2), 'box'], ['per-entry tax', BRAND.vq, 'box'], ['dictionary, amortized', series(4), 'box']]));
   };
 
   // ================================================================== VI.5  loc: the Anchor
@@ -321,7 +320,7 @@ window.FIG = window.FIG || {};
     const kB = kpi('full basis pays off when', '', '', 'var(--gold)');
     const kB2 = kpi('same shape at d = 640', '', '', 'var(--gold)');
     host.append(controls(
-      slider('strong directions', 1, 32, 1, ns, v => { ns = v; draw(); }, v => `${v} of ${D}`),
+      slider(`strong directions (of ${D})`, 1, 32, 1, ns, v => { ns = v; draw(); }, v => String(v)),
       slider('their variance', -0, 2, 0.05, lgS, v => { lgS = v; draw(); }, v => fmt(10 ** v, 10 ** v < 10 ? 1 : 0)),
       slider('variance of the rest', -2, 0, 0.05, lgW, v => { lgW = v; draw(); }, v => fmt(10 ** v, 10 ** v < 0.1 ? 3 : 2)),
     ), legend([['eigenvalues (spread along each KLT axis)', BRAND.klt, 'box'], ['AM: arithmetic average', series(3), 'dash'], ['GM: geometric average', series(1), 'dash']]), box, h('div', { class: 'kpis' }, kG, kB, kB2));
@@ -517,7 +516,7 @@ window.FIG = window.FIG || {};
     const kE = kpi('E4M3: alone → predicted', '', '', series(0));
     const kI = kpi('INT8: alone → predicted', '', '', series(1));
     host.append(controls(
-      slider(texify('block means explain $\\vRsq$'), 0, 0.99, 0.01, R2, v => { R2 = v; draw(); }, v => fmt(v, 2)),
+      slider(texify('block means explain $\\vRsq$'), 0, 0.99, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0)),
       slider(texify('spread $\\vsigma$ (E4M3 units)'), 3, Math.log2(100), 0.05, lgS, v => { lgS = v; draw(); }, v => fmt(2 ** v, 0)),
     ), boxA, boxB, h('div', { class: 'kpis' }, kE, kI));
     const PA = Plot(boxA, { x: [-260, 260], y: [0, 1], h: 180, xlabel: 'E4M3 residual (grid steps)', ylabel: 'share', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Histogram of E4M3 residuals in index steps' });
@@ -610,8 +609,7 @@ window.FIG = window.FIG || {};
       P.clear();
       bars(P, [k, v, e], { horizontal: true, colors: i => [series(0), series(1), series(2)][i], labels: x => fmt(x, 2), width: 30,
         tip: (x, i) => `<b>${cats[i]}</b><br>${fmt(x, 2)} bits per element · ρ ≈ ${fmt(x / 8, 3)}` });
-      rule(P, { x: 8, label: 'raw' });
-      rule(P, { x: solo, label: 'solo', color: BRAND.solo });
+      rule(P, { x: solo, color: BRAND.solo });
       kB.set(fmt(e, 2), `bits per element; outliers add ${fmt(nOut * bOut / (2 * HALF), 3)}`);
       kR.set(fmt(e / 8, 3), 'delta size / entry size');
       kX.set(fmt(8 / e, 2) + '×', `solo alone: ${fmt(8 / solo, 2)}×`);

@@ -9,3 +9,9 @@
 .hwa-heat td { text-align: center; font-family: var(--f-mono); color: var(--ink); padding: .55rem .3rem; border-radius: 8px; min-width: 3.6rem; }
 .hwa-heat td.is-best { outline: 2px solid var(--ink-2); outline-offset: -2px; }
 .hwa-heat thead .hwa-nick { display: block; font-size: .78rem; }
+@media (max-width: 520px) {
+  .hwa-heat { border-spacing: 2px; font-size: .8rem; }
+  .hwa-heat td { min-width: 2.6rem; padding: .45rem .1rem; }
+  .hwa-heat th { padding: .25rem .15rem; }
+  .hwa-heat thead .hwa-nick, .hwa-heat-sub { display: none; }
+}

@@ -44,7 +44,7 @@ For bell-shaped data, a predictor that explains a fraction $\vRsq$ of a value's 
 :::
 
 $$
-\text{bits saved by a rung} \;=\; \underbrace{\tfrac12 \log_2 \frac{1}{1 - \vRsq_{\text{after}}}}_{\text{all rungs up to this one}} \;-\; \underbrace{\tfrac12 \log_2 \frac{1}{1 - \vRsq_{\text{before}}}}_{\text{the rungs above it}} \;=\; \tfrac12 \log_2 \frac{1 - \vRsq_{\text{before}}}{1 - \vRsq_{\text{after}}} .
+\text{bits saved by a rung} \;=\; \tfrac12 \log_2 \frac{\overbrace{1 - \vRsq_{\text{before}}}^{\text{residual share before it}}}{\underbrace{1 - \vRsq_{\text{after}}}_{\text{residual share after it}}}
 $$ {#eq-idea-rung-bits}
 
 ::: figure fig-idea-budget varianceBudget

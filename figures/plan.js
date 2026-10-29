@@ -590,7 +590,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     host.append(controls(
       slider('topic strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2)),
-      slider('query drift', 0.02, 0.5, 0.02, drift, v => { drift = v; redraw(); }, v => fmt(v, 2)),
+      slider('query drift', 0.01, 0.5, 0.01, drift, v => { drift = v; redraw(); }, v => fmt(v, 2)),
     ), box, ro);
     const nb = TR.n / TR.b, XB = 64, YB = 60;
     const P = Plot(box, { x: [0, TR.n], y: [TR.steps, 0], h: 340, xlabel: 'position (16 blocks of 256)', ylabel: 'decode step', xticks: range(0, TR.n + 1, 512), grid: false, label: 'selected positions by decode step' });
@@ -636,8 +636,8 @@ window.FIG = window.FIG || {};
     const b1 = h('div'), b2 = h('div'), ro = readout();
     host.append(controls(slider('topic strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2))),
       legend([['heaviest blocks resident', series(0), 'line'], ['LRU of blocks hit by a miss', series(1), 'dash']]), h('div', { class: 'fig-row' }, b1, b2), ro);
-    const P1 = Plot(b1, { x: [1, 16], xlog: 2, y: [0, 1], w: 320, h: 280, xlabel: 'resident dictionaries n_D', ylabel: 'δ-miss fraction f_D', xticks: nDs, yfmt: v => fmtPct(v, 0), label: 'delta-miss fraction against resident dictionaries' });
-    const P2 = Plot(b2, { x: [1, 16], xlog: 2, y: [0, 4], w: 320, h: 280, xlabel: 'resident dictionaries n_D', ylabel: 'loads per step n_load', xticks: nDs, label: 'dictionary loads per step against resident dictionaries' });
+    const P1 = Plot(b1, { x: [1, 16], xlog: 2, y: [0, 1], w: 420, h: 330, xlabel: 'resident dictionaries n_D', ylabel: 'δ-miss fraction f_D', xticks: nDs, yfmt: v => fmtPct(v, 0), label: 'delta-miss fraction against resident dictionaries' });
+    const P2 = Plot(b2, { x: [1, 16], xlog: 2, y: [0, 4], w: 420, h: 330, xlabel: 'resident dictionaries n_D', ylabel: 'loads per step n_load', xticks: nDs, label: 'dictionary loads per step against resident dictionaries' });
     const redraw = throttleRAF(draw);
     function draw() {
       const sel = makeTrace(strength, 0.15);
@@ -646,7 +646,7 @@ window.FIG = window.FIG || {};
       const top = Math.max(0.5, ...res.flat().map(r => r.nload));
       P2.domain({ y: [0, Math.ceil(top * 1.15 * 2) / 2] });
       P1.clear(); P2.clear();
-      rule(P1, { y: 0.8, label: 'f_D = 0.8', dash: '2 4' });
+      rule(P1, { y: 0.8, label: '0.8', dash: '2 4' });
       rule(P1, { y: 0.5, label: '0.5', dash: '2 4', color: 'var(--ink-3)' });
       rule(P2, { y: 0.1, label: '0.1 (heavy w break-even)', dash: '2 4' });
       res.forEach((rs, i) => {

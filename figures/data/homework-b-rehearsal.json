@@ -29,7 +29,7 @@
   },
   "klt": "rotated by the block's covariance eigenbasis and re-rounded; basis cost excluded",
   "clipped_fraction": 7.2e-05,
-  "runtime_s": 24.3
+  "runtime_s": 231.3
  },
  "b": [
   128,

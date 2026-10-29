@@ -1050,7 +1050,7 @@ window.FIG = window.FIG || {};
       if (over > 0) for (const o of ['b', 's', 'g']) if (o !== id && over > 0) { const cut = Math.min(v[o], over); v[o] -= cut; sliders[o].set(v[o]); if (v.g + v.s + v.b <= 99) break; }
       draw();
     }, x => String(x)));
-    const sp = slider('near-deterministic channels, %', 0, 30, 1, phi, x => { phi = x; draw(); }, x => String(x));
+    const sp = slider('near-deterministic, %', 0, 30, 1, phi, x => { phi = x; draw(); }, x => String(x));
     const sn = slider('their noise, %', 0.5, 20, 0.5, nu, x => { nu = x; draw(); }, x => String(x));
     host.append(controls(mk('g'), mk('s'), mk('b')), stack, tbl, plotBox,
       h('div', { class: 'iv-sub', text: 'The escape hatch: a few channels that are almost fully predictable' }), controls(sp, sn), hatch);

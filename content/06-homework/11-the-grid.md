@@ -75,7 +75,7 @@ Take one bell-shaped channel. Give each block of 256 values its own mean, drawn 
 :::
 
 ::: try
-1. At $\vRsq = 0.3$, INT8 saves a quarter of a bit; E4M3 *loses* about 0.8. Look at the E4M3 histogram: two far-off humps of values that sit on the other side of zero.
+1. At $\vRsq = 0.3$, INT8 saves about 0.3 bit; E4M3 *loses* about 0.7 (the 400,000-value run below gives +0.25 and −0.81). Look at the E4M3 histogram: two far-off humps of values that sit on the other side of zero.
 2. Find where E4M3's saving crosses zero: near $\vRsq = 0.7$.
 3. Change the spread from 8 to 100: the E4M3 numbers stay put. The log grid has no favourite scale, for better and for worse.
 :::
