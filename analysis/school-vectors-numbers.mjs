@@ -1,5 +1,5 @@
 // Prints every number quoted in the prose of pages II.13–II.25 (school-vectors).
-// It loads the toolkit (plotkit.js) and figures/school-vectors.js in Node with a tiny DOM stub,
+// It loads the toolkit (plotkit.js, datasets.js, figures/datasets/*.js) and figures/school-vectors.js in Node with a tiny DOM stub,
 // then runs the same seeded generators and numerics the figures use.
 //   node analysis/school-vectors-numbers.mjs [section]
 import fs from "node:fs";
@@ -9,7 +9,9 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const ctx = { console, Math, Float32Array, Uint32Array, Set, Array, Object, Number, String, JSON, Infinity, NaN };
 ctx.window = ctx; ctx.addEventListener = () => {}; ctx.document = { addEventListener() {} };
 vm.createContext(ctx);
-for (const f of ["theme/assets/js/plotkit.js", "figures/school-vectors.js"]) vm.runInContext(fs.readFileSync(path.join(ROOT, f), "utf8"), ctx, { filename: f });
+ctx.KV = { datasets: {} };
+const dsFiles = fs.readdirSync(path.join(ROOT, "figures/datasets")).filter(f => f.endsWith(".js")).sort().map(f => "figures/datasets/" + f);
+for (const f of ["theme/assets/js/plotkit.js", "theme/assets/js/datasets.js", ...dsFiles, "figures/school-vectors.js"]) vm.runInContext(fs.readFileSync(path.join(ROOT, f), "utf8"), ctx, { filename: f });
 export const SV = ctx.FIG._sv;
 export const PK = ctx.PK;
 const only = process.argv[2];
@@ -57,7 +59,7 @@ export function run() {
         console.log("  C", C, "gross", f(b.gross, 3), "tax", f(b.tax, 3), "net", f(b.net, 3), "resVar", b.resVar.map(x => f(x, 4)).join(" "), name === "regimes" && C === 3 ? "cents(raw units) " + b.km.cents.map(c => `(${f(c[0] * st.sd[0] + st.mu[0], 1)}, ${f(c[1] * st.sd[1] + st.mu[1], 1)})`).join(" ") : "");
       }
     }
-    const reg = SV.regimes(); console.log("regime counts", SV.REGIMES.map((g, k) => reg.filter(p => p.k === k).length));
+    const reg = SV.regimes(); console.log("regime counts", [0, 1, 2].map(k => reg.filter(p => p.k === k).length));
   });
   sec("cache", () => {
     for (const [name, seq] of Object.entries(SV.TRACES)) {

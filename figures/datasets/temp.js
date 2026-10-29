@@ -25,8 +25,8 @@
         if (ctx.hl && ctx.hl.test(r)) hlc.set(k, (hlc.get(k) || 0) + 1);
       });
       const top = Math.max(...cnt.values());
-      const P = Plot(box, { x: [5, 18], y: [5, 18], h: 340, xlabel: 'previous reading (°C)', ylabel: 'this reading (°C)', label: 'Each temperature reading against the one half an hour before' });
-      el('line', { x1: P.x(5), y1: P.y(5), x2: P.x(18), y2: P.y(18), style: 'stroke:var(--ink-3);stroke-dasharray:5 4' }, P.g.bg);
+      const P = Plot(box, { x: [4.5, 18], y: [4.5, 18], h: 340, xlabel: 'previous reading (°C)', ylabel: 'this reading (°C)', label: 'Each temperature reading against the one half an hour before' });
+      el('line', { x1: P.x(4.5), y1: P.y(4.5), x2: P.x(18), y2: P.y(18), style: 'stroke:var(--ink-3);stroke-dasharray:5 4' }, P.g.bg);
       cnt.forEach((c, key) => {
         const a = Math.floor(key / 1000) / 10, b = (key % 1000) / 10, hot = hlc.get(key);
         const rc = el('rect', { x: P.x(a - 0.05), y: P.y(b + 0.05), width: P.x(a + 0.05) - P.x(a - 0.05), height: P.y(b - 0.05) - P.y(b + 0.05),

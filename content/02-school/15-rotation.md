@@ -90,8 +90,8 @@ There is one angle where something special happens: the two new coordinates stop
 
 Here are the ten days of the two thermometers, written down in the new coordinates instead of the old ones.
 
-::: dataset fig-sv-thermo-axes thermo-axes view=timeline,arrows,cloud hl=disagree metrics=angle,lambdas,total,corr,bits
-**The thermometers, turned.** Each reading of the ten days (II.14), centred and measured along the cloud's own axes: *along* the cigar (axis 1, purple) and *across* it (axis 2, teal), in °C. *Plot:* "Along and across" draws both coordinates over the ten days on one scale (hover for values); "The original cloud, with its axes" draws the two eigenvectors as arrows two standard deviations long; "The cloud, turned" plots across against along, with equal units. Red marks the few readings where the thermometers disagree by more than 0.35 °C from their usual gap. *Numbers:* the angle, the eigenvalues, and the bits. Derived from synthetic, seeded data.
+::: dataset fig-sv-thermo-axes thermo-axes view=timeline,cloud hl=disagree metrics=angle,lambdas,total,corr,bits
+**The thermometers, turned.** Each reading of the ten days (II.14), centred and measured along the cloud's own axes: *along* the cigar (axis 1, purple) and *across* it (axis 2, teal), in °C. *Plot:* "Along and across" draws both coordinates over the ten days on one scale (hover for values); "The cloud, turned" plots across against along, with equal units. Red marks the few readings where the thermometers disagree by more than 0.35 °C from their usual gap. *Numbers:* the angle, the eigenvalues, and the bits. Derived from synthetic, seeded data.
 :::
 
 The purple line carries all the weather of the ten days. The teal line, the same readings measured across the cigar, is a thin thread that never strays far from zero: that is what an eigenvalue of 0.025 °C² looks like. Turned, the cloud lies flat.

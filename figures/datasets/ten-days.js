@@ -78,6 +78,7 @@
       const ma = mean(col(ctx.rows, a.key)), mb = mean(col(ctx.rows, b.key));
       rule(P, { x: ma, color: 'var(--ink-3)' }); rule(P, { y: mb, label: 'means', color: 'var(--ink-3)' });
       if (extra) extra(P, ctx, ma, mb);
+      if (ctx.hl) ctx.rows.filter(ctx.hl.test).forEach(r => dot(P.g.top, P.x(r[a.key]), P.y(r[b.key]), 4.4 * P.fs, HL));
     },
   });
 
@@ -109,7 +110,7 @@
     },
     views: {
       days: {
-        label: 'Ten days',
+        label: 'Ten days', legend: 'hl',
         draw(box, ctx) {
           box.append(legend([['foot of mast', series(0)], ['top of mast', series(3)], ['humidity', series(2)], ['pressure', series(4)], ['wind', series(5)]]));
           const b = h('div'); box.append(b);

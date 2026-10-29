@@ -54,11 +54,11 @@
     });
     let y = top + ORDER.length * rh + 4;
     if (withReuse) {
-      el('text', { x: L - 6, y: y + 14 * fs, 'text-anchor': 'end', class: 'lbl', text: wide ? 'reuse distance' : 'dist.' }, g);
+      if (wide) el('text', { x: L - 6, y: y + 14 * fs, 'text-anchor': 'end', class: 'lbl', text: 'reuse distance' }, g);
       rows.forEach((r, k) => el('text', { x: L + (k + 0.5) * cw, y: y + 14 * fs, 'text-anchor': 'middle', class: 'val', style: r.reuse === Infinity ? 'fill:var(--ink-3)' : '', text: r.dist }, g));
       y += 18 * fs;
     }
-    el('text', { x: L, y: y + 16 * fs, class: 'lbl', text: 'request 1 → 24' }, g);
+    el('text', { x: L, y: y + 16 * fs, class: 'lbl', text: wide || !withReuse ? 'request 1 → 24' : 'request 1 → 24, reuse distance under each' }, g);
     D.svg.setAttribute('viewBox', `0 0 640 ${y + 24 * fs}`);
   }
 

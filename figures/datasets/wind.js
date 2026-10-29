@@ -49,7 +49,7 @@
           style: `fill:${tint(hot ? series(1) : series(0), (sel ? 1 : 0.35) * (28 + 72 * Math.sqrt(c / top)))}` }, P.g.data);
         hover(rc, () => `previous <b>${a} kn</b> → this <b>${b} kn</b><br>${c} time${c > 1 ? 's' : ''}${hot ? ` (${hot} ${ctx.hl.label})` : ''}`);
       });
-      annotate(P, 46, 46, 'guess = previous', { dx: -60, dy: -34 });
+      annotate(P, 36, 36, 'guess = previous', { dx: -50, dy: -40 });
     },
   };
 

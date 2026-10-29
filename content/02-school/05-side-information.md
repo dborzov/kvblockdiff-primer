@@ -45,8 +45,8 @@ Notice the bottom row: 32, 16, 8 and 8 out of 64 are exactly the sky distributio
 
 Where does such a table come from? From the same archive as before. Every one of its 4,096 noon reports carries a date, so the reports can be sorted by season and counted again.
 
-::: dataset fig-side-sky-seasons sky view=seasons,mosaic hl=winter metrics=seasonH,condH
-**The sky archive, split by season.** *Sky by season:* for each season, the share of its reports that are sunny, cloudy, rain or fog (bars, in the sky colours); the dashed ticks are the almanac's shares from the table above. Click a season to select its reports. *All 4,096 reports:* the archive's mosaic again, with the winter reports highlighted. *Numbers:* each season's entropy and the average over the seasons, counted from the archive. Synthetic, seeded data, first met on [[#school-surprise]].
+::: dataset fig-side-sky-seasons sky view=seasons,mosaic metrics=seasonH,condH
+**The sky archive, split by season.** *Sky by season:* for each season, the share of its reports that are sunny, cloudy, rain or fog (bars, in the sky colours); the dashed ticks are the almanac's shares from the table above. Click a season to select its reports. *All 4,096 reports:* the archive's mosaic again; switch on a season's highlight to see its reports scattered through it. *Numbers:* each season's entropy and the average over the seasons, counted from the archive. Synthetic, seeded data, first met on [[#school-surprise]].
 :::
 
 Summer's saffron bar towers over the others; winter's four bars are nearly level, with fog as common as sunshine. Every bar sits on or next to its dashed tick: the almanac is the archive, counted by season and scaled down to 64 reports.

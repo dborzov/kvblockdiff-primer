@@ -55,8 +55,11 @@
           const fade = (ctx.hl && !ctx.hl.test(r)) || (ctx.sel && !ctx.sel.test(r));
           el('rect', { x: left + (i % cols) * cell + gap / 2, y: top + Math.floor(i / cols) * cell + gap / 2, width: cell - gap, height: cell - gap, rx: cell > 8 ? 2 : 0,
             style: `fill:${fade ? tint(o.color(r[o.key]), 18) : o.color(r[o.key])}` }, g);
+          if (cell > 8 && ctx.hl && ctx.hl.test(r)) {               // highlighted tiles also carry a dot in the highlight colour, as in the legend
+            el('circle', { cx: left + (i % cols + 0.5) * cell, cy: top + (Math.floor(i / cols) + 0.5) * cell, r: cell * 0.2, style: `fill:${series(1)};stroke:var(--paper-3);stroke-width:1` }, g);
+          }
         });
-        if (o.rowLabel) for (let k = 0; k < nr; k += o.rowEvery || 1) {
+        if (o.rowLabel) for (let k = 0, step = Math.max(o.rowEvery || 1, Math.ceil(12 * D.fs / cell)); k < nr; k += step) {   // thin out the labels on phones
           el('text', { x: left - 6, y: top + (k + 0.5) * cell + 3.5 * D.fs, 'text-anchor': 'end', class: 'val', style: 'fill:var(--ink-3)', text: o.rowLabel(k) }, g);
         }
         if (o.colTicks) o.colTicks.forEach(([c, t]) => el('text', { x: left + (c + 0.5) * cell, y: top - 6, 'text-anchor': 'middle', class: 'val', style: 'fill:var(--ink-3)', text: t }, g));

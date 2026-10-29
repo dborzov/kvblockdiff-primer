@@ -492,12 +492,13 @@ window.FIG = window.FIG || {};
     area(P, ps.map((p, i) => [p, H[i][1], L[i][1]]), { color: series(1), opacity: 0.14 });
     line(P, H, { color: series(4), name: 'entropy' });
     line(P, L, { color: series(1), name: 'Huffman', curve: 'linear' });
-    rule(P, { y: 1, label: 'no codeword is shorter than 1 bit' });
-    [[0.5, 'Gull Rock year'], [0.75, 'summer']].forEach(([p, lab]) => {
+    rule(P, { y: 1 });
+    el('text', { x: P.x(0.27), y: P.y(1) - 8 * P.fs, class: 'annot', text: 'no codeword under 1 bit' }, P.g.top);
+    [[0.5, 'Gull Rock year', { dx: 22, dy: -42 }], [0.75, 'summer', { dx: -16, dy: 54, anchor: 'end' }]].forEach(([p, lab, pos]) => {
       const e = entropy(sky(p)), l = huffAvg(sky(p));
       dot(P.g.top, P.x(p), P.y(l), 4.5 * P.fs, series(1));
       dot(P.g.top, P.x(p), P.y(e), 4.5 * P.fs, series(4));
-      annotate(P, p, l, `${lab}\n${fmt(l, 3)} vs ${fmt(e, 2)} bits`, { dx: 26, dy: -40 });
+      annotate(P, p, l, `${lab}: Huffman ${String(+l.toFixed(3))},\nentropy ${fmt(e, 2)} bits`, pos);
     });
     crosshair(P, { xname: 'sunny', xfmt: v => fmtPct(v, 0), yfmt: v => `${fmt(v, 2)} bits` });
   };

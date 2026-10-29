@@ -52,21 +52,6 @@
         tip: r => `<b>day ${r.day}, ${r.time}</b><br>along ${fmt(r.along, 2)} °C<br>across ${fmt(r.across, 3)} °C`,
         after(P) { rule(P, { y: 0, color: 'var(--ink-3)' }); rule(P, { x: 0, color: 'var(--ink-3)' }); },
       }),
-      arrows: {
-        label: 'The original cloud, with its axes',
-        draw(box, ctx) {
-          const K = klt(DS.rows('ten-days')), c = Math.cos(K.th), s = Math.sin(K.th);
-          const b = h('div'); box.append(b);
-          const P = Plot(b, { x: [-6.5, 6.5], y: [-6.5, 6.5], equal: true, h: 380, xlabel: 'foot thermometer minus its mean (°C)', ylabel: 'top thermometer minus its mean (°C)', label: 'The centred thermometer cloud with its two KLT axes drawn as arrows' });
-          ctx.rows.forEach(r => el('circle', { cx: P.x(r.foot), cy: P.y(r.top), r: 2 * P.fs, style: `fill:${ctx.hl && ctx.hl.test(r) ? series(1) : 'var(--ink-3)'};opacity:.55` }, P.g.data));
-          const s1 = 2 * Math.sqrt(K.l1), s2 = 2 * Math.sqrt(K.l2);
-          arrow(P.g.top, P.x(0), P.y(0), P.x(s1 * c), P.y(s1 * s), series(4), 3);
-          arrow(P.g.top, P.x(0), P.y(0), P.x(-s2 * s * 6), P.y(s2 * c * 6), series(2), 3);
-          annotate(P, s1 * c, s1 * s, `axis 1: λ₁ = ${fmt(K.l1, 2)} °C²\n(arrow = 2σ)`, { dx: -150, dy: 18 });
-          annotate(P, -s2 * s * 6, s2 * c * 6, `axis 2: λ₂ = ${fmt(K.l2, 3)} °C²\n(arrow = 2σ, drawn 6× longer)`, { dx: -40, dy: -44 });
-          box.append(h('p', { class: 'fig-note', text: `The two arrows are the eigenvectors of the covariance matrix, at ${fmt(K.th * 180 / Math.PI, 1)}° and ${fmt(K.th * 180 / Math.PI + 90, 1)}°, each as long as two standard deviations of the cloud along it. The short one is stretched six times so you can see it.` }));
-        },
-      },
     },
     metrics: [
       { id: 'angle', label: 'angle of axis 1', value: rows => klt(DS.rows('ten-days')).th * 180 / Math.PI, fmt: v => `${fmt(v, 1)}°`,

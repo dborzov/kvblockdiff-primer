@@ -60,7 +60,7 @@ $\vH(\vX \mid \vY)$ is the average number of bits still needed for $\vX$ when $\
 
 Now run it the other way. The season, one of four equally likely, has $\vH(\vY) = 2$ bits. After seeing one sky report, the season is still uncertain. The archive shows by how much: turn the almanac's question around and ask, for each kind of sky, which seasons its reports came from.
 
-::: dataset fig-mi-sky-backwards sky view=bysky,seasons hl=fog metrics=seasonGivenSky,mi,condH
+::: dataset fig-mi-sky-backwards sky view=bysky,seasons metrics=seasonGivenSky,mi,condH
 **The sky archive, read backwards.** *Season by sky:* for each sky report, the share of its reports that fell in spring, summer, autumn and winter (bars); the dashed ticks are what the almanac implies. Click a sky to select its reports. *Sky by season:* the forward view of [[#school-side-information]]. *Numbers:* how much of the season is left uncertain after one report, and the bits saved in each direction. Synthetic, seeded data.
 :::
 
@@ -106,8 +106,8 @@ The entropy computed from symbol frequencies alone, ignoring which symbols came 
 
 The figure's second example makes the point sharper. With an assumed stickiness of 0.8, the **previous report** saves 1.01 bits per sky report — six times what the season saves. The sticky sky of [[#school-entropy]] is four weeks of exactly this model; here it is again, with a table of what follows what.
 
-::: dataset fig-mi-sticky sticky view=transitions,mosaic hl=changes metrics=order0,condH,saved,repeats
-**The sticky sky, neighbour by neighbour.** *What follows what:* each row is the sky of one report, each column the sky of the next; a cell gives the share of the row, shaded in the next report's colour, and the outlined diagonal is “the sky carries on”. *Four weeks, in order:* the reports one row per day, with every change of sky highlighted. *Numbers:* the order-0 entropy, the entropy left when the previous report is known, and the difference. An illustrative model (stickiness 0.8), seeded.
+::: dataset fig-mi-sticky sticky view=transitions,mosaic metrics=order0,condH,saved,repeats
+**The sticky sky, neighbour by neighbour.** *What follows what:* each row is the sky of one report, each column the sky of the next; a cell gives the share of the row, shaded in the next report's colour, and the outlined diagonal is “the sky carries on”. *Four weeks, in order:* the reports one row per day; highlight “the sky changes” to put a dot on every report that differs from the one before. *Numbers:* the order-0 entropy, the entropy left when the previous report is known, and the difference. An illustrative model (stickiness 0.8), seeded.
 :::
 
 Every row of the table is dominated by its diagonal cell: whatever the sky did half an hour ago, it most likely does again. Each row is therefore a sharp distribution, far sharper than any season's. Averaged over the rows, the next report costs 0.74 bits instead of 1.75, and the 1.01 bits between them are the mutual information. Half an hour ago is a much closer neighbour than “it is summer”. The [[order-0-entropy]] of [[#school-entropy]] ignores order, so it leaves this whole bit on the table.

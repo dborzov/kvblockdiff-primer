@@ -159,10 +159,10 @@
           line(P1, rows.map((q, i) => [i, q.foot]), { color: series(0), markers: 2.6, tip: p => `foot ${p[1]}` });
           line(P1, rows.map((q, i) => [i, q.top]), { color: series(3), markers: 2.6, tip: p => `top ${p[1]}` });
           line(P1, rows.map((q, i) => [i, q.s]), { color: series(6), dash: true, width: 1.6 });
-          const P2 = Plot(b2, { ...xo, y: [-9, 1], h: 170, xlabel: 'time of the reading', ylabel: 'd (tenths)', yticks: [-8, -6, -4, -2, 0], label: 'The difference d, on the same scale' });
+          const P2 = Plot(b2, { ...xo, y: [-10, 1], h: 180, xlabel: 'time of the reading', ylabel: 'd (tenths)', yticks: [-8, -6, -4, -2, 0], label: 'The difference d, on the same scale' });
           rule(P2, { y: 0, dash: false, color: 'var(--ink-3)' });
           rows.forEach((q, i) => {
-            const rr = el('rect', { x: P2.x(i) - 9 * P2.fs, width: 18 * P2.fs, y: P2.y(0), height: P2.y(q.d) - P2.y(0), rx: 3, style: `fill:${mix(series(1), 70)}` }, P2.g.data);
+            const bw = Math.min(18 * P2.fs, (P2.x(1) - P2.x(0)) * 0.7), rr = el('rect', { x: P2.x(i) - bw / 2, width: bw, y: P2.y(0), height: P2.y(q.d) - P2.y(0), rx: 3, style: `fill:${mix(series(1), 70)}` }, P2.g.data);
             hover(rr, () => `<b>${q.r.time}</b><br>foot ${q.foot}, top ${q.top}<br>d = ${q.top} − ${q.foot} = ${q.d}<br>s = ${q.foot} + ⌊${q.d}/2⌋ = ${q.s}`);
             el('text', { x: P2.x(i), y: P2.y(q.d) + 14 * P2.fs, 'text-anchor': 'middle', class: 'val', text: fmt(q.d) }, P2.g.data);
           });
