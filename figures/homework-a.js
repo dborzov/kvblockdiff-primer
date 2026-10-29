@@ -583,5 +583,41 @@ window.FIG = window.FIG || {};
     draw();
   };
 
+  // ================================================================== VI.12  where the bits would come from
+  FIG.hwaWhereBits = async (host) => {
+    const d = await data('homework-a-budget.json');
+    const IDEAL = d.ref.H_e4m3, FIXED = d.ref.fixed_length.top8.bits, HALF = 320;
+    let solo = FIXED, sK = 1, sV = 0, nOut = 0, bOut = 3;
+    const box = h('div');
+    const kB = kpi('entry', '', 'bits per element (bpe)');
+    const kR = kpi('delta ratio ρ', '', '≈ bpe / 8', series(2));
+    const kX = kpi('vs raw 8 bits', '', '', series(3));
+    host.append(
+      controls(seg([[IDEAL, `solo ideal: ${fmt(IDEAL, 2)}`], [FIXED, `solo fixed-length: ${fmt(FIXED, 2)}`]], solo, v => { solo = v; draw(); }, 'solo rate')),
+      controls(
+        slider('keys: bits saved', 0, 3.5, 0.05, sK, v => { sK = v; draw(); }, v => fmt(v, 2)),
+        slider('values: bits saved', 0, 3.5, 0.05, sV, v => { sV = v; draw(); }, v => fmt(v, 2)),
+      ),
+      controls(
+        slider('outlier key channels', 0, 64, 1, nOut, v => { nOut = v; draw(); }, v => String(v)),
+        slider('extra bits each', 0, 5, 0.1, bOut, v => { bOut = v; draw(); }, v => fmt(v, 1)),
+      ),
+      box, h('div', { class: 'kpis' }, kB, kR, kX));
+    const cats = ['keys (320 el.)', 'values (320 el.)', 'whole entry'];
+    const P = Plot(box, { ycats: cats, x: [0, 9], xticks: [0, 2, 4, 6, 8], h: 210, xlabel: 'bits per element', grid: 'x', label: 'Bits per element of the key half, the value half and the entry' });
+    function draw() {
+      const k = Math.max(0, solo - sK - nOut * bOut / HALF), v = Math.max(0, solo - sV), e = (k + v) / 2;
+      P.clear();
+      bars(P, [k, v, e], { horizontal: true, colors: i => [series(0), series(1), series(2)][i], labels: x => fmt(x, 2), width: 30,
+        tip: (x, i) => `<b>${cats[i]}</b><br>${fmt(x, 2)} bits per element · ρ ≈ ${fmt(x / 8, 3)}` });
+      rule(P, { x: 8, label: 'raw' });
+      rule(P, { x: solo, label: 'solo', color: BRAND.solo });
+      kB.set(fmt(e, 2), `bits per element; outliers add ${fmt(nOut * bOut / (2 * HALF), 3)}`);
+      kR.set(fmt(e / 8, 3), 'delta size / entry size');
+      kX.set(fmt(8 / e, 2) + '×', `solo alone: ${fmt(8 / solo, 2)}×`);
+    }
+    draw();
+  };
+
   window.HWA = hwa;
 })();

@@ -849,8 +849,9 @@ window.FIG = window.FIG || {};
       });
       if (k === 3) {
         const x = Lb.x + 2 * (bw + 14) + bw / 2, y = Lb.y + Lb.h - 22 - (Lb.h - 30) * H[2] - 12;
-        rect(g, x - 80, y - 52, 160, 30, { fill: tint('var(--vermilion)', 18), stroke: 'var(--vermilion)', rx: 8 });
-        txt(g, x, y - 32, 'HiSparse: 87 % hits', { cls: 'lbl ink' });
+        const bx = Math.min(x, W - 92);
+        rect(g, bx - 80, y - 52, 160, 30, { fill: tint('var(--vermilion)', 18), stroke: 'var(--vermilion)', rx: 8 });
+        txt(g, bx, y - 32, 'HiSparse: 87 % hits', { cls: 'lbl ink' });
         arrowPath(g, `M ${x} ${y - 20} L ${x} ${y - 2}`, 'var(--vermilion)', { w: 2, dash: '4 3' });
         txt(g, x + 26, y + 2, '?', { cls: 'lbl ink', style: 'font-size:calc(22px * var(--fs,1))' });
       }
@@ -1041,16 +1042,16 @@ window.FIG = window.FIG || {};
     const v = { g: 30, s: 20, b: 20 };                    // % of a typical element's variance explained per rung
     let phi = 0, nu = 2;                                  // escape hatch: % of channels that are near-deterministic, their noise %
     const stack = h('div', { class: 'ivv-stack' }), tbl = h('div'), plotBox = h('div'), hatch = h('div', { class: 'kpis' });
-    const names = { g: 'global (all texts)', s: 'the thread', b: 'the block' };
+    const names = { g: 'global rung', s: '+ thread rung', b: '+ block rung' };
     const sliders = {};
-    const mk = id => (sliders[id] = slider(`+ explained by ${names[id]}, %`, 0, 90, 1, v[id], x => {
+    const mk = id => (sliders[id] = slider(`${names[id]}, %`, 0, 90, 1, v[id], x => {
       v[id] = x;
       const over = v.g + v.s + v.b - 99;               // keep at least 1 % noise: trim the other rungs
       if (over > 0) for (const o of ['b', 's', 'g']) if (o !== id && over > 0) { const cut = Math.min(v[o], over); v[o] -= cut; sliders[o].set(v[o]); if (v.g + v.s + v.b <= 99) break; }
       draw();
     }, x => String(x)));
-    const sp = slider('near-deterministic channels, % of all', 0, 30, 1, phi, x => { phi = x; draw(); }, x => String(x));
-    const sn = slider('their noise share, %', 0.5, 20, 0.5, nu, x => { nu = x; draw(); }, x => String(x));
+    const sp = slider('near-deterministic channels, %', 0, 30, 1, phi, x => { phi = x; draw(); }, x => String(x));
+    const sn = slider('their noise, %', 0.5, 20, 0.5, nu, x => { nu = x; draw(); }, x => String(x));
     host.append(controls(mk('g'), mk('s'), mk('b')), stack, tbl, plotBox,
       h('div', { class: 'iv-sub', text: 'The escape hatch: a few channels that are almost fully predictable' }), controls(sp, sn), hatch);
     const P = Plot(plotBox, { x: [0, 1], y: [0, 3.4], h: 300, xlabel: 'variance explained so far, R²', ylabel: 'bits saved per element', xfmt: v => fmtPct(v, 0), label: 'The exchange rate from variance explained to bits, with the three rungs marked' });

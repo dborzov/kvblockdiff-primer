@@ -225,7 +225,7 @@ window.FIG = window.FIG || {};
     host.append(
       controls(
         slider(texify('block size $\\vb$'), 8, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtB(pow2(v))} entries`),
-        slider('residual bits (assumed, same for all)', 3, 8, 0.1, res, v => { res = v; draw(); }, v => `${fmt(v, 1)} bits`),
+        slider('residual (assumed)', 3, 8, 0.1, res, v => { res = v; draw(); }, v => `${fmt(v, 1)} bits`),
       ),
       legend([['residual', series(0), 'box'], ['side channel (per entry)', series(1), 'box'], [texify('dictionary share $8\\vw/\\vb$'), series(3), 'box'], ['raw = 8 bits', 'var(--ink-2)', 'dash']]),
       rows, ro,
@@ -334,7 +334,7 @@ window.FIG = window.FIG || {};
     let lx = Math.log10(5.3), neg = false;
     const box = h('div'), ro = readout(), bits = h('div', { class: 'pl-bits' });
     host.append(controls(
-      slider(texify('scaled value $|\\vx|$ (log scale)'), -3, Math.log10(460), 0.005, lx, v => { lx = v; draw(); }, v => fmt(10 ** v, 4)),
+      slider(texify('$|\\vx|$ (log scale)'), -3, Math.log10(460), 0.005, lx, v => { lx = v; draw(); }, v => fmt(10 ** v, 4)),
       seg([[false, '+'], [true, '−']], neg, v => { neg = v; draw(); }, 'sign'),
     ), box, bits, ro);
     const D = Diagram(box, { w: 640, h: 150, label: 'E4M3 grid points around the value' });
@@ -388,7 +388,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     host.append(controls(
       seg([['e4m3', 'E4M3'], ['int8', 'INT8']], fmtSel, v => { fmtSel = v; draw(); }, 'format'),
-      slider(texify('channel mean $\\vmu$ (in standard deviations)'), 0, 6, 0.25, mu, v => { mu = v; draw(); }, v => fmt(v, 2)),
+      slider(texify('mean $\\vmu$ (in σ)'), 0, 6, 0.25, mu, v => { mu = v; draw(); }, v => fmt(v, 2)),
     ), legend([['histogram of codes', series(0), 'box'], ['best Laplace in index space', series(1), 'line']]), box, ro);
     const P = Plot(box, { x: [-128, 128], y: [0, 0.05], h: 300, xlabel: 'code (index space)', ylabel: 'share of values', yfmt: v => fmtPct(v, 0), label: 'histogram of codes of one channel' });
     function draw() {
@@ -432,7 +432,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     host.append(controls(
       slider('true block length', 8, 13, 1, lb, v => { lb = v; draw(); }, v => `${fmtB(pow2(v))} tokens`),
-      slider('variance share of the block offsets', 0, 0.9, 0.05, share, v => { share = v; draw(); }, v => fmtPct(v, 0)),
+      slider('block share', 0, 0.9, 0.05, share, v => { share = v; draw(); }, v => fmtPct(v, 0)),
     ), legend([['original sequence', series(0), 'line'], ['shuffled tokens', series(1), 'dash'], ['theory (one channel, Gaussian)', series(2), 'dot']]), box, ro);
     const deltas = range(0, 14).map(pow2);
     const P = Plot(box, { x: [1, 8192], xlog: 2, y: [0, 1.4], h: 320, xlabel: 'token distance Δ', ylabel: 'bits saved per element', xticks: [1, 4, 16, 64, 256, 1024, 4096], label: 'bits saved against token distance' });
@@ -589,8 +589,8 @@ window.FIG = window.FIG || {};
     let strength = 1.5, drift = 0.15;
     const box = h('div'), ro = readout();
     host.append(controls(
-      slider('block "topic" strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2)),
-      slider('query drift per step', 0.02, 0.5, 0.02, drift, v => { drift = v; redraw(); }, v => fmt(v, 2)),
+      slider('topic strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2)),
+      slider('query drift', 0.02, 0.5, 0.02, drift, v => { drift = v; redraw(); }, v => fmt(v, 2)),
     ), box, ro);
     const nb = TR.n / TR.b, XB = 64, YB = 60;
     const P = Plot(box, { x: [0, TR.n], y: [TR.steps, 0], h: 340, xlabel: 'position (16 blocks of 256)', ylabel: 'decode step', xticks: range(0, TR.n + 1, 512), grid: false, label: 'selected positions by decode step' });
@@ -634,7 +634,7 @@ window.FIG = window.FIG || {};
     let strength = 1.5;
     const nDs = [1, 2, 4, 8, 16];
     const b1 = h('div'), b2 = h('div'), ro = readout();
-    host.append(controls(slider('block "topic" strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2))),
+    host.append(controls(slider('topic strength', 0, 3, 0.25, strength, v => { strength = v; redraw(); }, v => fmt(v, 2))),
       legend([['heaviest blocks resident', series(0), 'line'], ['LRU of blocks hit by a miss', series(1), 'dash']]), h('div', { class: 'fig-row' }, b1, b2), ro);
     const P1 = Plot(b1, { x: [1, 16], xlog: 2, y: [0, 1], w: 320, h: 280, xlabel: 'resident dictionaries n_D', ylabel: 'δ-miss fraction f_D', xticks: nDs, yfmt: v => fmtPct(v, 0), label: 'delta-miss fraction against resident dictionaries' });
     const P2 = Plot(b2, { x: [1, 16], xlog: 2, y: [0, 4], w: 320, h: 280, xlabel: 'resident dictionaries n_D', ylabel: 'loads per step n_load', xticks: nDs, label: 'dictionary loads per step against resident dictionaries' });
@@ -670,7 +670,7 @@ window.FIG = window.FIG || {};
     host.append(controls(
       seg([[2048, 'B = 2K'], [4096, 'B = 4K'], [8192, 'B = 8K']], B, v => { B = v; draw(); }, 'hot cache'),
       slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
-      slider(texify('resident weight $\\vwres$ (entries per layer)'), 0, 1024, 16, w, v => { w = v; draw(); }),
+      slider(texify('$\\vwres$ (entries)'), 0, 1024, 16, w, v => { w = v; draw(); }),
     ), legend([['HiSparse', series(1), 'line'], ['kv-blockdiff, request scope', series(0), 'line']]), box, ro);
     const P = Plot(box, { x: [16, 1000], xlog: true, y: [0, 400], h: 330, xlabel: 'link bandwidth W_link (GB/s)', ylabel: 'requests per GPU N', label: 'requests per GPU against link bandwidth' });
     crosshair(P, { xname: 'W_link =', xfmt: v => `${fmt(v, 0)} GB/s`, yfmt: v => fmt(v, 0) });

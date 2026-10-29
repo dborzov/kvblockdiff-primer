@@ -120,7 +120,7 @@ edges:
   - [klt, vqklt]
   - [vq, vqklt]
   - [side, amort]
-  - [amort, vq, "codebook sent once"]
+  - [amort, vq]
   - [ints, fp8]
   - [fp8, pred, "grid matters"]
   - [caches, reuse]
