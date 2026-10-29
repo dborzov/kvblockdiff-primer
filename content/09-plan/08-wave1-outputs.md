@@ -17,7 +17,7 @@ cards:
   - q: Which wave-1 number feeds the cost model of wave 2?
     a: 'The delta ratio $\vrho$ (and delta size) of the fixed-length coder at the best affordable block size and dictionary weight'
     wrong: ["The entropy rate of solo coding", "The KLT bound", "The order-0 entropy of BF16"]
-    why: The fixed-length rate is the size of a real delta, so $\vrho = \vbpe/8$ of that coder is what a miss would move.
+    why: The fixed-length rate is the size of a real delta, so $\vrho \approx \vbpe/8$ of that coder is what a miss would move.
     sec: outputs
   - q: How long is "one weekend" really, in the source's own schedule?
     a: Three days of work, plus an evening of dumping before

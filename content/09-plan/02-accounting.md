@@ -5,7 +5,7 @@ group: The harness
 lede: A restaurant bill has the dish, a service charge and a share of the table everyone sat at. Every dictionary coder's rate has the same three lines, and the harness charges all three, always.
 cards:
   - q: 'What are the three parts of a coder''s rate in bits per element?'
-    a: Residual bits, the per-entry side channel, and the dictionary's bytes amortized over its block
+    a: Residual bits, the per-entry tax, and the dictionary's bytes amortized over its block
     wrong: ["Keys, values and queries", "Exponent, mantissa and sign", "Fit time, encode time and decode time"]
     why: 'The dish, the service charge and the shared table: what the residual costs, what each entry pays for its own pointer or index, and $8\vw/\vb$ for the dictionary.'
     sec: bill
@@ -45,18 +45,18 @@ A dictionary's size in entries' worth is its [[weight|weight]] $\vw$, so $\vDsz 
 
 $$
 \vbpe = \underbrace{\text{residual bits}}_{\text{the dish: entropy or fixed-length}}
-+ \underbrace{\text{side channel}}_{\text{per entry: } \log_2 \vC \text{ for VQ},\ \log_2 \vb \text{ for sib}}
++ \underbrace{\vtax}_{\text{per-entry tax: } \log_2 \vC \text{ for VQ},\ \log_2 \vb \text{ for sib}}
 + \underbrace{\frac{8\,\vDsz}{\vb\,\vd}}_{\text{the room: } = 8\vw/\vb}
 $$ {#eq-plan-bill}
 
 - **Residual bits.** What the exact integer [[residual|residuals]] cost, coded one of two ways (next section).
-- **Side channel.** Whatever each entry must carry besides its residual, spread over its $\vd$ elements: a [[vq|VQ]] index of $\log_2 \vC$ bits, a [[sib]] pointer of $\log_2 \vb$ bits, the coefficients of a partial transform.
+- **The [[entry-tax|per-entry tax]] $\vtax$.** Whatever each entry must carry besides its residual, spread over its $\vd$ elements: a [[vq|VQ]] index of $\log_2 \vC$ bits, a [[sib]] pointer of $\log_2 \vb$ bits, the coefficients of a partial transform.
 - **Dictionary share.** The dictionary's bytes divided among the $\vb\,\vd$ elements that share it. With $\vDsz = \vw\,\ve$ and $\ve = \vd$ bytes, this is the [[amortization]] rule $8\vw/\vb$ of [[#homework-amortization-rule]].
 
 The figure puts four bills side by side, for an entry of $\vd = 1024$ elements — the entry size of the model we will measure ([[#plan-data]]).
 
 ::: figure fig-plan-bill planBill
-**Four bills at one block size.** Each bar is the rate of one dictionary type in bits per element: residual (lapis), side channel (vermilion), dictionary share $8\vw/\vb$ (saffron). The dashed line marks raw storage, 8 bits. Weights include 3 bytes per channel of coder settings that the harness also charges (centre, scale and width): loc $\vw = 4$; KLT rank 16 $\vw = 35$ (16 basis vectors in BF16); VQ $\vw = 259$ (16 sub-codebooks of 256 centroids on 64-element pieces); sib $\vw = 3$. Side channels: KLT 16 coefficients per entry at an **assumed** 8 bits each; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. The residual is **one assumed value for all four**, so that only the taxes differ — the real residuals are what wave 1 measures. Slide the block size and the residual; hover a bar for its lines.
+**Four bills at one block size.** Each bar is the rate of one dictionary type in bits per element: residual (lapis), per-entry tax (vermilion), dictionary share $8\vw/\vb$ (saffron). The dashed line marks raw storage, 8 bits. Weights include 3 bytes per channel of coder settings that the harness also charges (centre, scale and width): loc $\vw = 4$; KLT rank 16 $\vw = 35$ (16 basis vectors in BF16); VQ $\vw = 259$ (16 sub-codebooks of 256 centroids on 64-element pieces); sib $\vw = 3$. Per-entry taxes: KLT 16 coefficients per entry at an **assumed** 8 bits each; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. The residual is **one assumed value for all four**, so that only the taxes differ — the real residuals are what wave 1 measures. Slide the block size and the residual; hover a bar for its lines.
 :::
 
 ::: try
@@ -66,7 +66,7 @@ The figure puts four bills side by side, for an entry of $\vd = 1024$ elements �
 :::
 
 ::: takeaway
-- Rate = residual bits + side channel + dictionary share $8\vw/\vb$.
+- Rate = residual bits + per-entry tax + dictionary share $8\vw/\vb$.
 - Heavy dictionaries are not wrong, only expensive: their room must be shared by thousands of entries.
 :::
 

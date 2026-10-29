@@ -41,12 +41,12 @@ The ladder has five rungs, from the lightest dictionary to the heaviest ([[#home
 Each rung runs at [[scope-global|global]] scope, [[scope-request|request]] scope and [[scope-block|block]] scope with $\vb \in \{512, 2\text{K}, 8\text{K}\}$; in [[fp8|E4M3]] and [[integer-grid|INT8]]; with both rates; for keys and values of all six layers; and once more on shuffled data. Before running anything, it pays to see what each cell will cost in taxes alone.
 
 ::: figure fig-plan-ladder-grid planLadderGrid wide
-**What each rung pays at each scope, before it saves anything.** Rows: the five rungs; columns: the scopes (request = a 32K-token sequence). Cells: bits per element for an entry of $\vd = 1024$ elements — the dictionary share $8\vw/\vb$, the per-entry side channel, or their sum. Weights include 3 bytes per channel of coder settings: loc $\vw = 4$, KLT rank 16 $\vw = 35$, VQ $\vw = 259$, sib $\vw = 3$. Side channels: KLT 16 coefficients at an **assumed** 8 bits; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. Global scope is charged nothing; sib has no global form. Green: under 0.1 bit; saffron: 0.1–0.5; red: over 0.5, which likely eats the whole gain. Switch what is shown.
+**What each rung pays at each scope, before it saves anything.** Rows: the five rungs; columns: the scopes (request = a 32K-token sequence). Cells: bits per element for an entry of $\vd = 1024$ elements — the dictionary share $8\vw/\vb$, the [[entry-tax|per-entry tax]] $\vtax$, or their sum. Weights include 3 bytes per channel of coder settings: loc $\vw = 4$, KLT rank 16 $\vw = 35$, VQ $\vw = 259$, sib $\vw = 3$. Per-entry taxes: KLT 16 coefficients at an **assumed** 8 bits; VQ one byte per 64 elements; sib $\log_2 \vb$ bits per entry. Global scope is charged nothing; sib has no global form. Green: under 0.1 bit; saffron: 0.1–0.5; red: over 0.5, which likely eats the whole gain. Switch what is shown.
 :::
 
 ::: try
 1. Switch to "dictionary share" and read the VQ row from right to left: 4.05, 1.01, 0.25, 0.06 bits. VQ at $\vb = 512$ is not worth running.
-2. Switch to "side channel". KLT and VQ pay 0.125 bit per element at *every* scope — a tax that no block size amortizes.
+2. Switch to "per-entry tax". KLT and VQ pay 0.125 bit per element at *every* scope — a tax that no block size amortizes.
 3. Find the loc row. Green everywhere: this is why loc goes first.
 :::
 

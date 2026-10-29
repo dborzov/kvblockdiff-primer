@@ -208,7 +208,7 @@ window.FIG = window.FIG || {};
   };
 
   /* =================================================================
-     IX.2 — planBill: residual + side channel + dictionary share, per type
+     IX.2 — planBill: residual + per-entry tax + dictionary share, per type
      ================================================================= */
   FIG.planBill = (host) => {
     const d = 1024;                          // elements per entry in the proxy model
@@ -227,7 +227,7 @@ window.FIG = window.FIG || {};
         slider(texify('block size $\\vb$'), 8, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtB(pow2(v))} entries`),
         slider('residual (assumed)', 3, 8, 0.1, res, v => { res = v; draw(); }, v => `${fmt(v, 1)} bits`),
       ),
-      legend([['residual', series(0), 'box'], ['side channel (per entry)', series(1), 'box'], [texify('dictionary share $8\\vw/\\vb$'), series(3), 'box'], ['raw = 8 bits', 'var(--ink-2)', 'dash']]),
+      legend([['residual', series(0), 'box'], ['per-entry tax', series(1), 'box'], [texify('dictionary share $8\\vw/\\vb$'), series(3), 'box'], ['raw = 8 bits', 'var(--ink-2)', 'dash']]),
       rows, ro,
     );
     const MAX = 12;
@@ -239,11 +239,11 @@ window.FIG = window.FIG || {};
         const side = t.side(b), share = 8 * t.w / b, tot = res + side + share;
         out.push([t.name, tot]);
         const seg = (v, c, label) => h('span', { class: 'pl-bill-seg', style: `width:${Math.min(100, 100 * v / MAX)}%;background:${c}`, title: `${label}: ${fmt(v, 3)} bits` });
-        const track = h('span', { class: 'pl-bill-track' }, seg(res, series(0), 'residual'), seg(side, series(1), 'side channel'), seg(share, series(3), 'dictionary share'),
+        const track = h('span', { class: 'pl-bill-track' }, seg(res, series(0), 'residual'), seg(side, series(1), 'per-entry tax'), seg(share, series(3), 'dictionary share'),
           h('span', { class: 'pl-bill-raw', style: `left:${100 * 8 / MAX}%` }));
         const row = h('div', { class: 'pl-bill-row' }, h('span', { class: 'pl-bill-name', text: t.name }), track,
           h('span', { class: 'pl-bill-tot' + (tot >= 8 ? ' bad' : ''), text: tot > MAX ? `${fmt(tot, 1)} ▸` : fmt(tot, 2) }));
-        hover(row, () => `<b>${t.name}</b> at b = ${fmtB(b)}<br>residual ${fmt(res, 2)} bits<br>side channel ${fmt(side, 3)} bits <i>(${t.sideTxt})</i><br>dictionary ${fmt(t.w, 0)} entries' worth → ${fmt(share, 3)} bits<br><b>total ${fmt(tot, 2)} bpe</b>`);
+        hover(row, () => `<b>${t.name}</b> at b = ${fmtB(b)}<br>residual ${fmt(res, 2)} bits<br>per-entry tax ${fmt(side, 3)} bits <i>(${t.sideTxt})</i><br>dictionary ${fmt(t.w, 0)} entries' worth → ${fmt(share, 3)} bits<br><b>total ${fmt(tot, 2)} bpe</b>`);
         rows.append(row);
       });
       const best = out.reduce((a, c) => (c[1] < a[1] ? c : a));
@@ -481,7 +481,7 @@ window.FIG = window.FIG || {};
     const scopes = [['global', 0], ['request', L], ['block 8K', 8192], ['block 2K', 2048], ['block 512', 512]];
     let what = 'total';
     const wrap = h('div');
-    host.append(controls(seg([['share', 'dictionary share'], ['side', 'side channel'], ['total', 'total tax']], what, v => { what = v; draw(); }, 'show')),
+    host.append(controls(seg([['share', 'dictionary share'], ['side', 'per-entry tax'], ['total', 'both']], what, v => { what = v; draw(); }, 'show')),
       legend([['< 0.1 bit: free', 'var(--good)', 'box'], ['0.1–0.5 bit: costly', 'var(--saffron)', 'box'], ['> 0.5 bit: eats the likely gain', 'var(--bad)', 'box']]), wrap);
     function draw() {
       const rows = rungs.map(R => ({
