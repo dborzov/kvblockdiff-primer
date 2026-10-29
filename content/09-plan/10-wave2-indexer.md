@@ -58,9 +58,9 @@ What a trace looks like depends on the keys. The figure plays the same game on s
 :::
 
 ::: try
-1. Set the topic strength to 0. Selections scatter evenly: no block is heavy, the top block holds a few per cent.
-2. Raise it to 2. Dark columns appear: a few [[heavy-block|heavy blocks]] hold most selections.
-3. Raise the drift. The dark columns break into shorter streaks: heavy blocks stay heavy for fewer steps.
+1. Set the topic strength to 0. No block is special, yet the top block still holds about 11 % of the selections (an even spread would give 6 %): random keys line up with the queries by chance.
+2. Raise it to 2. Dark columns appear: the four heaviest blocks hold almost 90 % of the selections — [[heavy-block|heavy blocks]].
+3. Change the drift. At 0.05 the heaviest block stays heaviest for about 75 steps; at 0.4, for under 6. Concentration and lifetime are different things.
 :::
 
 ::: takeaway

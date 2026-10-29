@@ -166,7 +166,7 @@ The returned `P` has:
 * `P.x(v)`, `P.y(v)`: data → px (each with `.invert`). `P.x0, P.x1, P.y0, P.y1` are the current domain.
 * `P.g.bg`, `P.g.grid`, `P.g.axes`, `P.g.data`, `P.g.top`: layers, from bottom to top. `bg` and `data` are clipped to the plot area (with 5px of slack). `P.g.cross` exists after `crosshair()`.
 * `P.svg`, `P.defs`, `P.W`, `P.H`, `P.m`, `P.pw`, `P.ph` (plot width and height), `P.fs` (phone text factor) and `P.opts`.
-* `P.domain({x?, y?})`: re-domains the plot and redraws the axes only. Marks already drawn keep their old positions, so call `P.clear()` and redraw them. To change an axis title, set `P.opts.ylabel = '…'` before calling it.
+* `P.domain({x?, y?})`: re-domains the plot and redraws the axes only. Marks already drawn keep their old positions, so call `P.clear()` and redraw them. `P.clear()` also empties `P.g.top`, so re-append any drag handles you keep there (and restore their keyboard focus). To change an axis title, set `P.opts.ylabel = '…'` before calling it.
 * `P.clear(...layers)`: empties layers (default `'data', 'top'`) before a redraw.
 * `P.toData(pointerEvent) → [x, y]` in data units.
 * `P.series`: the series registered by `line(…, {name})`, used by `crosshair`.

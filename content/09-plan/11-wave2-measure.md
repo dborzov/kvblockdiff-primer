@@ -65,13 +65,14 @@ And one shortcut: if wave 1 finds that **light** dictionaries (a few entries' wo
 What the curves of measurement 4 look like can be seen on the synthetic trace of the previous page.
 
 ::: figure fig-plan-replay-sweep planReplaySweep wide
-**δ-miss fraction and dictionary loads against the number of resident dictionaries**, from replaying the synthetic trace of [[#fig-plan-selections]] (300 steps, $\vk = 128$ of 4096 positions, blocks of 256, query drift 0.15) through a hot cache of $\vB = 256$ entries and a dictionary cache of $\vnD$ dictionaries (log scale). Lapis: keep the heaviest blocks of the hot cache resident; vermilion dashed: keep an LRU of blocks hit by a miss. Left: $\vfD$, with the 0.8 and 0.5 readings of framework C. Right: $\vnload$, loads per step, with the 0.1 break-even for a heavy dictionary. The readout gives the token miss rates for $\vB = \vk, 2\vk, 4\vk$. Seeded, synthetic: the shape of the measurement, not its result.
+**δ-miss fraction and dictionary loads against the number of resident dictionaries**, from replaying the synthetic trace of [[#fig-plan-selections]] (300 steps, $\vk = 128$ of 4096 positions, blocks of 256, query drift 0.15) through a hot cache of $\vB = 256$ entries and a dictionary cache of $\vnD$ dictionaries (log scale). Lapis: keep the heaviest blocks of the hot cache resident; vermilion dashed: keep an LRU of blocks hit by a miss. Left: $\vfD$, with the 0.8 and 0.5 readings of framework C. Right: $\vnload$, loads per step, with the 0.1 break-even for a heavy dictionary. The readout gives the token miss rates for $\vB = \vk, 2\vk, 4\vk$ — about 9, 3 and 2 %, far more local than HiSparse's real trace. Seeded, synthetic: the shape of the measurement, not its result.
 :::
 
 ::: try
-1. Set the topic strength to 0. Selections scatter; even sixteen dictionaries catch few misses.
-2. Set it to 2.5. The heaviest-block policy reaches $\vfD = 0.8$ with only a few dictionaries.
-3. Compare the two policies on the right. Keeping the heaviest blocks loads differently from chasing every miss: residency policy is a design choice wave 2 must make with data.
+1. Set the topic strength to 0. With four dictionaries resident, only about a quarter of the misses find theirs, and the heaviest-block policy loads 0.27 dictionaries per step.
+2. Back to 1.5: about half the misses are δ-misses with four dictionaries, at 0.04 loads per step — well under the 0.1 break-even.
+3. Look at the right end. With 16 dictionaries every block of this toy is resident, so $\vfD$ nears 1 whatever the keys. A 32K context in 2K blocks also has only 16 blocks per layer: the real question is whether far fewer suffice.
+4. Compare the policies on the right: chasing every miss loads more than one dictionary per step when few fit; keeping the heaviest blocks loads rarely.
 :::
 
 ::: theme which-vs-what

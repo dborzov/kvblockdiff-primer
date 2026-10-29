@@ -133,7 +133,8 @@
   font-family: var(--f-sc);
   color: var(--ink-2);
 }
-.slider .sl-name { white-space: nowrap; letter-spacing: .03em; }
+.slider { flex-wrap: wrap; row-gap: .15rem; }
+.slider .sl-name { letter-spacing: .03em; flex: 0 1 auto; min-width: 0; }
 .slider input[type="range"] {
   flex: 1 1 6rem;
   min-width: 4.5rem;
@@ -561,6 +562,7 @@ div.cg-node { background: color-mix(in srgb, var(--paper-3) 60%, var(--paper)); 
    --------------------------------------------------------------------- */
 @container fighost (max-width: 30rem) {
   .slider { flex-basis: 100%; max-width: none; }
+  .slider .sl-name { flex-basis: 100%; }
   .controls { gap: .55rem 1rem; }
   .st-label { flex-basis: 100%; }
 }
