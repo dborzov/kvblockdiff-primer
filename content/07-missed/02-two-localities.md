@@ -84,7 +84,7 @@ The two knobs move two different numbers. So all four combinations exist:
 | **fast query** | few hits, but each miss compresses well | neither |
 
 ::: aside reminder Where have I seen the leak toy?
-[[#idea-the-leak]] draws its keys independently, so no neighbour helps at all, and lets a query drift slowly over them. In the earlier proposal's run of that toy (16,384 keys), the cache still hit 73–93 % of the time. This page adds the second axis: the bytes can be made alike, or shuffled, without touching the selections.
+[[#idea-the-leak]] draws its keys independently, so no neighbour helps at all, and lets a query drift slowly over them. In that page's live run (4,096 keys, top-64) the cache still hits about 86 % of the time at a gentle drift; the earlier proposal's larger run (16,384 keys) gave 73–93 %. This page adds the second axis: the bytes can be made alike, or shuffled, without touching the selections.
 :::
 
 One honest caveat. In a real model, the indexer's vectors and the stored entries are made from the same hidden states, so the two properties may well travel together. The toy shows only that one does not *imply* the other. That is enough to break the draft's argument, and not enough to predict the answer.

@@ -136,11 +136,11 @@ class Loc(DeltaCoder):
 ```
 
 ::: figure fig-plan-decode-alone planDecodeAlone
-**One block, its loc dictionary, and one entry decoded alone.** Left: a toy block of six entries with five channels each (8-bit codes, seeded random numbers around five channel centres, one of them an outlier channel near +97). Middle: the dictionary $\vD$, the median of each channel. Right: the deltas, each entry's codes minus $\vD$. Click an entry: it is rebuilt from $\vD$ and its own delta only (highlighted); the other deltas are not read. The readout compares the delta's size under a [[fixed-length-code|fixed-length code]] (each channel's width just covers its largest residual) with the 40 bits of the raw entry. Illustrative numbers.
+**One block, its loc dictionary, and one entry decoded alone.** First table: a toy block of six entries with five channels each (8-bit codes, seeded random numbers around five channel centres, one of them an outlier channel near +97). Second: the dictionary $\vD$, the median of each channel. Third: the deltas, each entry's codes minus $\vD$. Click an entry: it is rebuilt from $\vD$ and its own delta only (highlighted); the other deltas are not read. The readout compares the delta's size under a [[fixed-length-code|fixed-length code]] (each channel's width just covers its largest residual) with the 40 bits of the raw entry. Illustrative numbers.
 :::
 
 ::: try
-1. Click entry 0, then entry 5. The middle table lights up every time; only one delta row does.
+1. Click entry 0, then entry 5. The dictionary lights up every time; only one delta row does.
 2. Look at channel c3, the outlier near +97. Its residuals are as small as the others: the location absorbed the big constant.
 3. Compare the delta's bits with the raw 40 bits. That ratio is the [[delta-ratio|delta ratio]] of this toy block.
 :::

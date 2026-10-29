@@ -14,13 +14,13 @@ cards:
 | work | lossy or lossless | dictionary scope | data path it targets | what we take |
 |---|---|---|---|---|
 | [[#papers-hisparse\|HiSparse]] (2026) | exact (no compression) | — | sparse-decode miss path, GPU-memory residency | the system we sit under; trace numbers; per-layer caches |
-| [[#papers-splitzip\|SplitZip]] (2026) | lossless | global (exponent histogram) | prefill→decode bulk transfer | solo coding; the fixed-length-with-escapes decoder shape; the 8-bit numbers |
+| [[#papers-splitzip\|SplitZip]] (2026) | lossless | global (exponent histogram) | prefill→decode bulk transfer | solo coding; the fixed-length-with-escapes decoder shape (only its escape list stands in the way of decoding one entry alone); the 8-bit numbers |
 | [[#papers-float-coders\|ZipNN, DFloat11, Huff-LLM]] | lossless | global | weights, storage | exponent redundancy; the mantissa is noise |
 | [[#papers-kvcomp\|KVComp]] (2025) | lossy | global per layer | GPU-resident KV | GPU entropy decoding is feasible |
 | [[#papers-kvtc\|KVTC]] (2026) | lossy | global (calibrated PCA) | KV storage and reuse | transform coding works on KV; our KLT bound is its lossless shadow |
 | [[#papers-lexico\|Lexico]] (2024) | lossy | global (universal dictionary) | GPU-memory footprint | much KV structure is global |
-| [[#papers-cachegen\|CacheGen]] (2024) | lossy | token-adjacent deltas | network transfer | token-adjacent similarity exists at quantized precision |
-| [[#papers-kv-codec\|KV-Codec]] (2026) | lossless (video codec) | roughly per request | remote KV reuse | slicing along the token axis gives the most similarity between "frames" |
+| [[#papers-cachegen\|CacheGen]] (2024) | lossy | deltas against a group anchor (groups of 10 tokens) | network transfer | nearby tokens' values are close at quantized precision |
+| [[#papers-kv-codec\|KV-Codec]] (2026) | lossless video coding after rounding KV to integers | roughly per request | remote KV reuse | a hint that slicing along the token axis helps — without the controls that would make it evidence |
 | [[#papers-kivi\|KIVI]] / [[#papers-kvquant\|KVQuant]] (2024) | lossy | — | GPU memory | per-channel key structure; keys before RoPE; outlier channels |
 | **kv-blockdiff** | **lossless at 8 bits** | **global / request / block, measured as a ladder with controls** | **random-access miss path; dictionary residency; victim tier** | — |
 

@@ -370,7 +370,7 @@ window.FIG = window.FIG || {};
         `<span class="pl-bit-key">sign · exponent (4) · mantissa (3) — read as a sign-magnitude integer, the byte is the index ${i}</span>`;
       const int8 = Math.max(-127, Math.min(127, rint(x / (448 / 127))));
       ro.set([
-        ['x', fmt(x, 5)], ['binade', ax < 2 ** -6 ? 'subnormal' : `[2^${e}, 2^${e + 1})`], ['grid step', fmt(step, 6)],
+        ['x', fmt(x, 5)], ['binade', ax < 2 ** -6 ? 'subnormal' : `[2<sup>${e}</sup>, 2<sup>${e + 1}</sup>)`], ['grid step', fmt(step, 6)],
         ['E4M3 value', fmt(q, 6)], ['index', String(i)], ['relative error', ax ? fmtPct(Math.abs(q - x) / ax, 2) : '0'],
         ['INT8 (same range, one step = 3.53)', `code ${int8} → ${fmt(int8 * 448 / 127, 3)}`],
       ]);
@@ -433,9 +433,9 @@ window.FIG = window.FIG || {};
     host.append(controls(
       slider('true block length', 8, 13, 1, lb, v => { lb = v; draw(); }, v => `${fmtB(pow2(v))} tokens`),
       slider('block share', 0, 0.9, 0.05, share, v => { share = v; draw(); }, v => fmtPct(v, 0)),
-    ), legend([['original sequence', series(0), 'line'], ['shuffled tokens', series(1), 'dash'], ['theory (one channel, Gaussian)', series(2), 'dot']]), box, ro);
+    ), legend([['original sequence', series(0), 'line'], ['shuffled tokens', series(1), 'dash'], ['theory (one channel, Gaussian)', series(2), 'dash']]), box, ro);
     const deltas = range(0, 14).map(pow2);
-    const P = Plot(box, { x: [1, 8192], xlog: 2, y: [0, 1.4], h: 320, xlabel: 'token distance Δ', ylabel: 'bits saved per element', xticks: [1, 4, 16, 64, 256, 1024, 4096], label: 'bits saved against token distance' });
+    const P = Plot(box, { x: [1, 8192], xlog: 2, y: [0, 0.5], h: 320, xlabel: 'token distance Δ', ylabel: 'bits saved per element', xticks: [1, 4, 16, 64, 256, 1024, 4096], label: 'bits saved against token distance' });
     crosshair(P, { xname: 'Δ =', yfmt: v => `${fmt(v, 3)} bits` });
     function series_(x) {
       return deltas.map(D => {
@@ -453,6 +453,8 @@ window.FIG = window.FIG || {};
       const xs = Float64Array.from(perm, i => x[i]);
       const a = series_(x), s = series_(xs);
       const th = deltas.map(D => { const c = share * Math.max(0, 1 - D / Lb); return [D, 0.5 * Math.log2(1 / (1 - c * c))]; });
+      const top = Math.max(0.25, ...a.map(p => p[1]), ...th.map(p => p[1]));
+      P.domain({ y: [0, Math.ceil(top * 1.25 * 10) / 10] });
       P.clear();
       rule(P, { x: Lb, label: 'true block length', dash: '2 4' });
       line(P, th, { color: series(2), dash: '2 3', width: 1.6, name: 'theory' });
@@ -672,7 +674,7 @@ window.FIG = window.FIG || {};
       slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
       slider(texify('$\\vwres$ (entries)'), 0, 1024, 16, w, v => { w = v; draw(); }),
     ), legend([['HiSparse', series(1), 'line'], ['kv-blockdiff, request scope', series(0), 'line']]), box, ro);
-    const P = Plot(box, { x: [16, 1000], xlog: true, y: [0, 400], h: 330, xlabel: 'link bandwidth W_link (GB/s)', ylabel: 'requests per GPU N', label: 'requests per GPU against link bandwidth' });
+    const P = Plot(box, { x: [16, 1000], xlog: true, y: [0, 400], h: 330, xticks: [16, 50, 100, 200, 450, 1000], xfmt: v => String(v), xlabel: 'link bandwidth W_link (GB/s)', ylabel: 'requests per GPU N', label: 'requests per GPU against link bandwidth' });
     crosshair(P, { xname: 'W_link =', xfmt: v => `${fmt(v, 0)} GB/s`, yfmt: v => fmt(v, 0) });
     const Wpts = linspace(Math.log10(16), 3, 120).map(v => 10 ** v);
     function N(W, rh, wr) {
@@ -685,8 +687,8 @@ window.FIG = window.FIG || {};
       const hs = Wpts.map(W => [W, Math.min(...N(W, 1, 0))]), kb = Wpts.map(W => [W, Math.min(...N(W, rho, w))]);
       const top = Math.max(...hs.map(p => p[1]), ...kb.map(p => p[1]));
       P.domain({ y: [0, Math.ceil(top * 1.15 / 50) * 50] });
-      rule(P, { x: 50, label: 'PCIe Gen5 ×16 (reference)', dash: '2 4' });
-      rule(P, { x: 450, label: '≈ 450 (NVLink-C2C, one way)', dash: '2 4', color: 'var(--ink-3)' });
+      rule(P, { x: 50, label: 'PCIe 5', dash: '2 4' });
+      rule(P, { x: 450, label: 'C2C', dash: '2 4', color: 'var(--ink-3)' });
       line(P, hs, { color: series(1), name: 'HiSparse' });
       line(P, kb, { color: series(0), name: 'kv-blockdiff' });
       const [hl, hm] = N(50, 1, 0), [kl, km] = N(50, rho, w);

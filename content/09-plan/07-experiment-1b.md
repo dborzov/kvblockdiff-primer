@@ -45,7 +45,7 @@ Each rung runs at [[scope-global|global]] scope, [[scope-request|request]] scope
 :::
 
 ::: try
-1. Read the VQ row from right to left: 4.05, 1.01, 0.25, 0.06 bits of dictionary share. VQ at $\vb = 512$ is not worth running.
+1. Switch to "dictionary share" and read the VQ row from right to left: 4.05, 1.01, 0.25, 0.06 bits. VQ at $\vb = 512$ is not worth running.
 2. Switch to "side channel". KLT and VQ pay 0.125 bit per element at *every* scope — a tax that no block size amortizes.
 3. Find the loc row. Green everywhere: this is why loc goes first.
 :::
