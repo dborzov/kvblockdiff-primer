@@ -507,5 +507,81 @@ window.FIG = window.FIG || {};
     crosshair(P, { xname: 'β =', xfmt: v => fmt(v, 2), yfmt: v => `${fmt(v, 2)} bits` });
   };
 
+  // ================================================================== VI.11  the grid
+  FIG.hwaGridLive = (host) => {
+    const NB = 200, BL = 256, N = NB * BL, r = rng('hwa-grid-11');
+    const zb = Float64Array.from({ length: NB }, () => r.normal());
+    const ze = Float64Array.from({ length: N }, () => r.normal());
+    let R2 = 0.3, lgS = Math.log2(40);
+    const boxA = h('div'), boxB = h('div');
+    const kE = kpi('E4M3: alone → predicted', '', '', series(0));
+    const kI = kpi('INT8: alone → predicted', '', '', series(1));
+    host.append(controls(
+      slider(texify('block means explain $\\vRsq$'), 0, 0.99, 0.01, R2, v => { R2 = v; draw(); }, v => fmt(v, 2)),
+      slider(texify('spread $\\vsigma$ (E4M3 units)'), 3, Math.log2(100), 0.05, lgS, v => { lgS = v; draw(); }, v => fmt(2 ** v, 0)),
+    ), boxA, boxB, h('div', { class: 'kpis' }, kE, kI));
+    const PA = Plot(boxA, { x: [-260, 260], y: [0, 1], h: 180, xlabel: 'E4M3 residual (grid steps)', ylabel: 'share', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Histogram of E4M3 residuals in index steps' });
+    const PB = Plot(boxB, { x: [-130, 130], y: [0, 1], h: 180, xlabel: 'INT8 residual (codes)', ylabel: 'share', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Histogram of INT8 residuals in codes' });
+    function hist(P, arr, lo, hi, w, color) {
+      const nb = Math.ceil((hi - lo) / w), c = new Float64Array(nb);
+      for (const v of arr) { const k = Math.floor((v - lo) / w); if (k >= 0 && k < nb) c[k]++; }
+      const top = Math.max(...c) / arr.length;
+      P.clear(); P.domain({ y: [0, top * 1.15] });
+      const g = el('g', {}, P.g.data);
+      c.forEach((n, k) => { if (n) el('rect', { x: P.x(lo + k * w), y: P.y(n / arr.length), width: Math.max(0.5, P.x(lo + (k + 1) * w) - P.x(lo + k * w) - 0.5), height: P.y(0) - P.y(n / arr.length), style: `fill:${color}` }, g); });
+    }
+    function draw() {
+      const s = 2 ** lgS, a = Math.sqrt(R2), b = Math.sqrt(1 - R2);
+      const eRaw = new Int16Array(N), eRes = new Int16Array(N), iRaw = new Int16Array(N), iRes = new Int16Array(N);
+      for (let j = 0; j < NB; j++) {
+        let m = 0;
+        const base = j * BL;
+        for (let t = 0; t < BL; t++) m += a * zb[j] + b * ze[base + t];
+        m /= BL;                                    // block mean of the real values (units of σ)
+        const pe = e4m3Index(m * s), pi = Math.max(-127, Math.min(127, Math.round(m * 32)));
+        for (let t = 0; t < BL; t++) {
+          const z = a * zb[j] + b * ze[base + t], i = base + t;
+          eRaw[i] = e4m3Index(z * s); eRes[i] = eRaw[i] - pe;
+          iRaw[i] = Math.max(-127, Math.min(127, Math.round(z * 32))); iRes[i] = iRaw[i] - pi;
+        }
+      }
+      hist(PA, eRes, -260, 260, 4, series(0));
+      hist(PB, iRes, -130, 130, 2, series(1));
+      const H = [histH(eRaw), histH(eRes), histH(iRaw), histH(iRes)];
+      kE.set(`${fmt(H[0], 2)} → ${fmt(H[1], 2)}`, `saves ${fmtS(H[0] - H[1], 2)} bits per element`);
+      kI.set(`${fmt(H[2], 2)} → ${fmt(H[3], 2)}`, `saves ${fmtS(H[2] - H[3], 2)} bits per element`);
+    }
+    draw();
+  };
+
+  FIG.hwaGridCurves = async (host) => {
+    const d = await data('homework-a-grid.json');
+    let panel = 'A';
+    const box = h('div'), leg = h('div');
+    host.append(controls(seg([['A', 'A · bits saved by the predictor'], ['B', 'B · total bits, solo included']], panel, v => { panel = v; draw(); }, 'panel')), leg, box);
+    const P = Plot(box, { x: [0, 1], y: [-1.8, 3.6], h: 320, xlabel: 'variance the block means explain (R²)', ylabel: 'bits saved per element', label: 'Bits saved by block-mean prediction on INT8 and E4M3' });
+    const rows = d.rows, sig = d.e4m3_sigmas.map(v => String(Math.round(v)));
+    crosshair(P, { xname: 'R² =', xfmt: v => fmt(v, 2), yfmt: v => fmt(v, 2) });
+    function draw() {
+      P.clear(); P.series.length = 0;
+      if (panel === 'A') {
+        P.opts.ylabel = 'bits saved per element'; P.domain({ y: [-1.8, 3.6] });
+        leg.replaceChildren(legend([['formula ½ log₂ 1/(1−R²)', 'var(--ink-3)'], ['INT8, per-channel scale', series(1)], ...sig.map((s, i) => [`E4M3 index space, spread ${s}`, series(0), ['line', 'dash', 'dot'][i]])]));
+        line(P, linspace(0, 0.99, 100).map(r => [r, -0.5 * Math.log2(1 - r)]), { color: 'var(--ink-3)', width: 1.8, name: 'formula' });
+        line(P, rows.map(r => [r.R2, r.int8.saved]), { color: series(1), markers: true, name: 'INT8' });
+        sig.forEach((s, i) => line(P, rows.map(r => [r.R2, r.e4m3[s].float.saved]), { color: series(0), dash: i === 1 ? '7 4' : i === 2 ? '2 4' : false, markers: i === 0, name: `E4M3 (${s})` }));
+        line(P, [[0, 0], [1, 0]], { color: 'var(--ink-2)', width: 1 });
+        annotate(P, 0.3, rows.find(r => r.R2 === 0.3).e4m3['40'].float.saved, 'net negative\nbelow R² ≈ 0.7', { dx: 40, dy: 30 });
+      } else {
+        P.opts.ylabel = 'bits per element, total'; P.domain({ y: [3.4, 8.2] });
+        leg.replaceChildren(legend([['INT8: residuals (7.05 − saved)', series(1)], ['E4M3: min(raw, residuals) — the flag', series(0)]]));
+        line(P, rows.map(r => [r.R2, r.int8.H_resid]), { color: series(1), markers: true, name: 'INT8' });
+        line(P, rows.map(r => [r.R2, Math.min(r.e4m3['40'].H_raw, r.e4m3['40'].float.H_resid)]), { color: series(0), markers: true, name: 'E4M3 (flag)' });
+        rule(P, { y: 8, label: 'raw: 8 bits' });
+      }
+    }
+    draw();
+  };
+
   window.HWA = hwa;
 })();
