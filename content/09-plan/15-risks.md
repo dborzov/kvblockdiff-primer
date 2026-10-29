@@ -12,7 +12,7 @@ cards:
   - q: 'How would we know that gains exist only at request scope (R3)?'
     a: 'From Table 1: $\vgainblk$ is small while $\vgainreq$ is not'
     wrong: ["From the token miss rate", "From the round-trip control", "From the GPU memory bar"]
-    why: The pivot is "requestdiff": one dictionary per request per layer, no dictionary cache. Simpler, still new.
+    why: 'The pivot is "requestdiff": one dictionary per request per layer, no dictionary cache. Simpler, still new.'
     sec: risks
   - q: Which risk can only be checked in phase 2, not in wave 1 or 2?
     a: R8 — that the decoder cannot run at gather speed

@@ -477,14 +477,14 @@ window.FIG = window.FIG || {};
       const c = cfg(B, BV, rho, l1);
       P1.clear();
       const curve = linspace(10, 15, 80).map(e => [pow2(e), missPow(pow2(e))]);
-      area(P1, [[1024, 0.01, 0.6], [B, 0.01, 0.6]], { color: series(0), opacity: 0.10 });
+      area(P1, [[1024, 0.01, 0.6], [B, 0.01, 0.6]], { color: series(0), opacity: 0.2 });
       if (BV > 0) area(P1, [[B, 0.01, 0.6], [Math.min(32768, B + BV), 0.01, 0.6]], { color: 'var(--t-victim-tier)', opacity: 0.18 });
       line(P1, curve, { color: 'var(--ink-2)', width: 2 });
       MEAS.forEach(([x, y]) => hover(dot(P1.g.top, P1.x(x), P1.y(y), 5 * P1.fs, series(1)), () => `<b>HiSparse, LRU</b><br>B = ${x}: ${fmtPct(y, 1)} misses`));
       hover(dot(P1.g.top, P1.x(4096), P1.y(0.082), 5 * P1.fs, series(2)), () => '<b>Bélády (clairvoyant)</b><br>B = 4096: 8.2 % misses');
       dot(P1.g.top, P1.x(Math.min(32768, c.C)), P1.y(c.m), 6.5 * P1.fs, accent);
       annotate(P1, Math.min(32768, c.C), c.m, `B + B_V: ${fmtPct(c.m, 1)}`, { dx: 26, dy: -34 });
-      if (BV > 0) { dot(P1.g.top, P1.x(c.H), P1.y(c.mRaw), 4.5 * P1.fs, 'var(--ink-3)'); annotate(P1, c.H, c.mRaw, `raw cache, same memory:\n${fmtPct(c.mRaw, 1)}`, { dx: -30, dy: 46 }); }
+      if (BV > 0) { dot(P1.g.top, P1.x(c.H), P1.y(c.mRaw), 4.5 * P1.fs, 'var(--ink-3)'); annotate(P1, c.H, c.mRaw, `raw cache, same memory:\n${fmtPct(c.mRaw, 1)}`, { dx: -40, dy: 70 }); }
       P2.clear();
       const xs = range(0, 16385, 256);
       line(P2, xs.map(x => [x, cfg(B, x, rho, l1).N]), { color: 'var(--t-victim-tier)', name: 'victim tier' });
@@ -512,7 +512,7 @@ window.FIG = window.FIG || {};
     const classify = (x, y) => { const s = x + y; if (s < 0.25) return ROWS[0]; if (s < 0.75) return ROWS[1]; if (y < 0.15) return ROWS[2]; if (y < 0.4) return ROWS[3]; return ROWS[4]; };
     const box = h('div'), ro = readout();
     host.append(legend(ROWS.map(r => [r.name, r.color, 'box'])), box, ro);
-    const P = Plot(box, { x: [0, 1.5], y: [0, 1.5], equal: true, h: 440, xlabel: 'request-scope gain g_req (bits per element)', ylabel: 'block-scope gain g_blk', label: 'The decision table of wave 1 as regions of the plane of the two scope gains' });
+    const P = Plot(box, { x: [0, 1.5], y: [0, 1.5], h: 420, xlabel: 'request-scope gain g_req (bits per element)', ylabel: 'block-scope gain g_blk', label: 'The decision table of wave 1 as regions of the plane of the two scope gains' });
     ROWS.forEach(r => {
       const d = 'M' + r.poly.map(([x, y]) => `${P.x(x)} ${P.y(y)}`).join('L') + 'Z';
       el('path', { d, style: `fill:${faint(r.color, r.id === 'hole' ? 18 : 30)};stroke:${r.color};stroke-width:1` }, P.g.bg);
