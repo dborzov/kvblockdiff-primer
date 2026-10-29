@@ -50,7 +50,7 @@ So measure it *along the cigar* and *across the cigar*. Along: roughly the avera
 Turn the axes yourself.
 
 ::: figure fig-sv-rotation svRotation
-**The two-thermometer cloud: 480 readings, each thermometer minus its mean (°C), with a pair of perpendicular axes you can turn.** Axis 1 is purple, axis 2 is green; the thick pale bar on each axis spans ±2 standard deviations of the dots measured along that axis. *Drag* the handle at the end of axis 1, or use the slider (0–180°). *Snap to KLT* turns the axes to the cloud’s own directions. The tiles give the variance along each axis, their sum, and the bits per reading for a code that rounds each coordinate to 0.1 °C and is matched to its spread (the Gaussian rule of II.11: about $\tfrac12\log_2(2\pi e\,\text{variance}/0.1^2)$ bits per coordinate).
+**The two-thermometer cloud: 480 readings, each thermometer minus its mean (°C), with a pair of perpendicular axes you can turn.** Axis 1 is purple, axis 2 is teal; the thick pale bar on each axis spans ±2 standard deviations of the dots measured along that axis. *Drag* the handle at the end of axis 1, or use the slider (0–180°). *Snap to KLT* turns the axes to the cloud’s own directions. The tiles give the variance along each axis, their sum, and the bits per reading for a code that rounds each coordinate to 0.1 °C and is matched to its spread (the Gaussian rule of II.11: about $\tfrac12\log_2(2\pi e\,\text{variance}/0.1^2)$ bits per coordinate).
 :::
 
 ::: try

@@ -29,5 +29,5 @@
 .sv-b-e { background: color-mix(in srgb, var(--lapis) 20%, transparent); }
 .sv-b-m { background: color-mix(in srgb, var(--vermilion) 18%, transparent); }
 
-/* the prediction handle (II.20) takes the peacock series colour instead of the accent */
-svg.plot .handle.sv-pred { fill: var(--peacock); }
+/* the prediction handle (II.20) takes the amethyst series colour instead of the accent */
+svg.plot .handle.sv-pred { fill: var(--amethyst); }

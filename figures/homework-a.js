@@ -459,5 +459,53 @@ window.FIG = window.FIG || {};
     draw();
   };
 
+  // ================================================================== VI.10  two rates
+  FIG.hwaTwoRates = (host) => {
+    let lb = 3, eps = 0.005;                     // β = 2^lb
+    const ESC = 8 + 12;
+    function rates(beta, e) {
+      const pa = new Float64Array(256);          // P(|r| = k), discretized Laplace on −255…255
+      let Z = 0;
+      for (let k = -255; k <= 255; k++) Z += Math.exp(-Math.abs(k) / beta);
+      let H = 0;
+      for (let k = -255; k <= 255; k++) { const p = Math.exp(-Math.abs(k) / beta) / Z; pa[Math.abs(k)] += p; if (p > 0) H -= p * Math.log2(p); }
+      const tail = n => { let s = 0; for (let k = 2 ** (n - 1); k < 256; k++) s += pa[k]; return s; };
+      let c = 0, q = 0; while (q < 255 && c + pa[q] < 1 - e) { c += pa[q]; q++; }
+      const nCov = Math.ceil(Math.log2(2 * q + 1)) || 1;
+      const cov = nCov + tail(nCov) * ESC;
+      let best = Infinity, nBest = 1;
+      for (let n = 1; n <= 9; n++) { const v = n + tail(n) * ESC; if (v < best) { best = v; nBest = n; } }
+      return { H, cov, nCov, best, nBest };
+    }
+    const box = h('div');
+    const kH = kpi('entropy rate', '', 'bits per element', series(0));
+    const kC = kpi('fixed-length, coverage rule', '', '', series(1));
+    const kB = kpi('fixed-length, best width', '', '', series(3));
+    const slB = slider(texify('Laplace scale $\\vbeta$'), -1, 5, 0.05, lb, v => { lb = v; draw(); }, v => fmt(2 ** v, 2 ** v < 4 ? 2 : 1));
+    const slE = slider(texify('escape share $\\veps$'), 0.001, 0.05, 0.001, eps, v => { eps = v; redrawCurves(); draw(); }, v => fmtPct(v, 1));
+    host.append(controls(slB, slE), legend([['entropy (ideal coder)', series(0)], ['fixed-length: cover all but ε', series(1)], ['fixed-length: best width', series(3), 'dash']]), box, h('div', { class: 'kpis' }, kH, kC, kB));
+    const P = Plot(box, { x: [0.5, 32], xlog: 2, y: [0, 10], h: 300, xlabel: 'Laplace scale β of the residual (grid steps)', ylabel: 'bits per element', label: 'Entropy rate and fixed-length rates against the residual scale' });
+    const curveG = el('g', {}, P.g.data), mark = el('g', {}, P.g.top);
+    const betas = linspace(-1, 5, 121).map(v => 2 ** v);
+    function redrawCurves() {
+      curveG.replaceChildren();
+      const rs = betas.map(b => [b, rates(b, eps)]);
+      line(P, rs.map(([b, r]) => [b, r.H]), { color: series(0), parent: curveG, name: 'entropy' });
+      line(P, rs.map(([b, r]) => [b, r.cov]), { color: series(1), parent: curveG, curve: 'linear', name: 'cover all but ε' });
+      line(P, rs.map(([b, r]) => [b, r.best]), { color: series(3), parent: curveG, dash: '6 4', name: 'best width' });
+    }
+    function draw() {
+      const b = 2 ** lb, r = rates(b, eps);
+      mark.replaceChildren();
+      el('line', { x1: P.x(b), x2: P.x(b), y1: P.m.t, y2: P.H - P.m.b, style: 'stroke:var(--c);stroke-dasharray:4 4' }, mark);
+      [[r.H, series(0)], [r.cov, series(1)], [r.best, series(3)]].forEach(([v, c]) => dot(mark, P.x(b), P.y(v), 5 * P.fs, c));
+      kH.set(fmt(r.H, 2), 'bits per element');
+      kC.set(fmt(r.cov, 2), `width ${r.nCov} · gap ${fmtS(r.cov - r.H, 2)} bits (${fmt(100 * (r.cov / r.H - 1), 0)} %)`);
+      kB.set(fmt(r.best, 2), `width ${r.nBest} · gap ${fmtS(r.best - r.H, 2)} bits (${fmt(100 * (r.best / r.H - 1), 0)} %)`);
+    }
+    redrawCurves(); draw();
+    crosshair(P, { xname: 'β =', xfmt: v => fmt(v, 2), yfmt: v => `${fmt(v, 2)} bits` });
+  };
+
   window.HWA = hwa;
 })();

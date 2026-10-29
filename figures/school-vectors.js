@@ -823,11 +823,11 @@ window.FIG = window.FIG || {};
     const ZOOM = { s: 0.5, m: 16, l: 448 };
     let zoom = 's', x = 0.1, xh = -0.1;
     const box = h('div');
-    const tiles = { x: kpi('value', '', '', 'var(--c)'), xh: kpi('prediction', '', '', series(2)), r: kpi('residual in E4M3 steps', '', ''), ri: kpi('same on an INT8 grid', '', '', series(0)) };
+    const tiles = { x: kpi('value', '', '', 'var(--c)'), xh: kpi('prediction', '', '', series(4)), r: kpi('residual in E4M3 steps', '', ''), ri: kpi('same on an INT8 grid', '', '', series(0)) };
     const sz = seg([['s', 'zoom −0.5 … 0.5'], ['m', '−16 … 16'], ['l', 'all: −448 … 448']], zoom, v => { zoom = v; build(); }, 'Zoom');
     const preset = (a, b, z) => btn(`${a} vs ${b}`, () => { x = a; xh = b; zoom = z; sz.set(z); build(); }, { cls: 'sm' });
     host.append(controls(sz), controls(h('span', { class: 'fig-note', text: 'Try:' }), preset(12, 11, 'm'), preset(0.1, -0.1, 's'), preset(0.25, 0.2, 's'), preset(200, 100, 'l')),
-      legend([['E4M3 grid points', series(1), 'dot'], ['INT8 grid with the same range', series(0), 'dot'], ['value (drag)', 'var(--c)', 'dot'], ['prediction (drag)', series(2), 'dot']]),
+      legend([['E4M3 grid points', series(1), 'dot'], ['INT8 grid with the same range', series(0), 'dot'], ['value (drag)', 'var(--c)', 'dot'], ['prediction (drag)', series(4), 'dot']]),
       box, h('div', { class: 'kpis' }, tiles.x, tiles.xh, tiles.r, tiles.ri));
     let P, kx, kh, gDyn;
     function build() {
@@ -857,8 +857,8 @@ window.FIG = window.FIG || {};
       gDyn.replaceChildren();
       const lo = Math.min(qx, qh), hi = Math.max(qx, qh);
       el('rect', { x: P.x(lo), y: P.y(2.2) - 13 * P.fs, width: Math.max(1, P.x(hi) - P.x(lo)), height: 26 * P.fs, style: `fill:${mix('var(--c)', 18)}` }, gDyn);
-      dot(gDyn, P.x(qx), P.y(2.2), 5 * P.fs, 'var(--c)'); dot(gDyn, P.x(qh), P.y(2.2), 5 * P.fs, series(2));
-      dot(gDyn, P.x(kix * sc), P.y(0.8), 5 * P.fs, 'var(--c)'); dot(gDyn, P.x(kih * sc), P.y(0.8), 5 * P.fs, series(2));
+      dot(gDyn, P.x(qx), P.y(2.2), 5 * P.fs, 'var(--c)'); dot(gDyn, P.x(qh), P.y(2.2), 5 * P.fs, series(4));
+      dot(gDyn, P.x(kix * sc), P.y(0.8), 5 * P.fs, 'var(--c)'); dot(gDyn, P.x(kih * sc), P.y(0.8), 5 * P.fs, series(4));
       kx.setAttribute('cx', P.x(x)); kx.setAttribute('cy', P.y(1.5));
       kh.setAttribute('cx', P.x(xh)); kh.setAttribute('cy', P.y(1.5));
       const d = v => (Math.abs(v) < 0.1 && v !== 0 ? 5 : Math.abs(v) < 1 ? 4 : 3);

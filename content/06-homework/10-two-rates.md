@@ -20,7 +20,7 @@ cards:
     why: Random access and GPU throughput. A stream coder must decode front to back; the miss path reads scattered single entries.
     sec: two
   - q: For Laplace-shaped residuals at 5–7 bits per element, how far apart are the two rates?
-    a: About one bit per element (15–20 % with the best width; more with a 99.5 % coverage rule)
+    a: About one bit per element (15–22 % with the best width; more with a 99.5 % coverage rule)
     wrong: ["About 0.01 bit", "About 4 bits", "Exactly the same"]
     why: 'A fixed width rounds up to whole bits and must cover the tail, which costs about a bit over the entropy. SplitZip''s BF16 numbers show a gap of the same size in bits (0.9–1.5).'
     sec: gap
@@ -103,7 +103,7 @@ The gap has two causes, and both are structural:
 1. **Whole bits.** A width is an integer; the entropy is not. On average that rounding costs about half a bit.
 2. **The tail.** A Laplace residual has a long tail, and the width must cover almost all of it; escaping more is expensive at 20 bits per escape.
 
-So the honest summary is **about one bit per element** with a well-chosen width — 15–22 % at the 5–7-bit rates that matter — and 1.5 bits with the plain coverage rule. SplitZip's BF16 numbers say the same thing in other units: 1.32× fixed-length against 1.42–1.5× for entropy coders is 12.1 against 10.7–11.3 bits per element, a gap of 0.9–1.5 bits. It looks like 10–15 % only because a BF16 element has 16 bits to divide by. For 8-bit elements, plan on 15–20 %.
+So the honest summary is **about one bit per element** with a well-chosen width — 15–22 % at the 5–7-bit rates that matter — and 1.5 bits with the plain coverage rule. SplitZip's BF16 numbers say the same thing in other units: 1.32× fixed-length against 1.42–1.5× for entropy coders is 12.1 against 10.7–11.3 bits per element, a gap of 0.9–1.5 bits. It looks like 10–15 % only because a BF16 element has 16 bits to divide by. For 8-bit elements, plan on 15–22 %.
 
 ::: note practice What the gap buys
 The fixed-length rate is not a failure of engineering; it is the price of the access pattern ([[#idea-data-layout]]). Each miss reads one entry, alone, from an arbitrary place, and must decode it in a fraction of the 0.38 ms a layer's step lasts. A fixed width makes decoding a gather, an add and an escape fix-up. A smarter middle ground — a few widths per channel, or a small shared code table per block — could recover part of the bit; it is noted as an option, not assumed.
@@ -111,6 +111,6 @@ The fixed-length rate is not a failure of engineering; it is the price of the ac
 
 ::: takeaway
 - The fixed-length rate sits about one bit per element above the entropy rate for Laplace residuals: whole bits plus the tail.
-- That is 15–20 % at 8-bit rates, more than the draft's 10–15 % (which came from 16-bit elements).
+- That is 15–22 % at 8-bit rates, more than the draft's 10–15 % (which came from 16-bit elements).
 - Report both; the store's deltas are billed at the fixed-length rate.
 :::

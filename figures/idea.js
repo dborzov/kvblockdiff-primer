@@ -108,7 +108,7 @@ window.FIG = window.FIG || {};
     const ro = readout();
     host.append(controls(seg([['hisparse', 'HiSparse today'], ['blockdiff', 'kv-blockdiff']], mode, v => { mode = v; draw(); }, 'Which system')), box, ro);
     const narrow = isNarrow(host);
-    const D = narrow ? Diagram(box, { w: 380, h: 600, label: 'Host memory, the link and GPU memory, stacked' })
+    const D = narrow ? Diagram(box, { w: 380, h: 626, label: 'Host memory, the link and GPU memory, stacked' })
       : Diagram(box, { w: 680, h: 330, label: 'Host memory on the left, the link in the middle, GPU memory on the right' });
     const g = el('g', {}, D.svg);
 
@@ -116,7 +116,7 @@ window.FIG = window.FIG || {};
       g.replaceChildren();
       const bd = mode === 'blockdiff';
       // geometry: host box, gpu box, link band
-      const L = narrow ? { hx: 10, hy: 10, hw: 360, hh: 262, gx: 10, gy: 372, gw: 360, gh: 222 }
+      const L = narrow ? { hx: 10, hy: 10, hw: 360, hh: 262, gx: 10, gy: 372, gw: 360, gh: 246 }
         : { hx: 8, hy: 30, hw: 240, hh: 290, gx: 432, gy: 30, gw: 240, gh: 290 };
       rect(g, L.hx, L.hy, L.hw, L.hh, { fill: 'var(--paper-2)', rx: 10 });
       rect(g, L.gx, L.gy, L.gw, L.gh, { fill: 'var(--paper-2)', rx: 10 });
@@ -196,9 +196,9 @@ window.FIG = window.FIG || {};
     const tSl = slider(texify('token $\\vt$'), 0, L - 1, 1, t, v => { t = v; draw(); });
     host.append(controls(h('span', { class: 'iv-ctl-lab', html: texify('block size $\\vb$') }), bSeg, tSl), box, ro);
     const narrow = isNarrow(host);
-    const per = narrow ? 16 : 32, rows = L / per;
-    const W = narrow ? 380 : 680, tw = narrow ? 20 : 19, gap = 2.2, x0 = narrow ? 12 : 12;
-    const rowH = 92;
+    const per = 16, rows = L / per;
+    const W = narrow ? 380 : 680, tw = narrow ? 20 : 36, gap = narrow ? 2.2 : 4, x0 = 12;
+    const rowH = narrow ? 92 : 100;
     const D = Diagram(box, { w: W, h: rows * rowH + 10, label: 'A history of 32 tokens cut into blocks' });
     const g = el('g', {}, D.svg);
     function draw() {
@@ -212,16 +212,16 @@ window.FIG = window.FIG || {};
             const jj = Math.floor(s / b), end = Math.min((jj + 1) * b, (r + 1) * per);
             const xa = x0 + (s - r * per) * (tw + gap), xb = x0 + (end - r * per) * (tw + gap) - gap;
             const on = jj === j;
-            rect(g, xa - 1.5, y - 4, xb - xa + 3, 34, { fill: on ? tint(T('block'), 26) : 'none', stroke: on ? T('block') : tint('var(--ink-3)', 55), dash: on ? null : '3 3', rx: 4, sw: on ? 1.8 : 1 });
-            if (s % b === 0 && (b >= 2 || jj % 4 === 0 || on)) txt(g, xa + 1, y + 46, `j=${jj}`, { anchor: 'start', cls: 'val', style: on ? 'fill:var(--ink)' : 'fill:var(--ink-3)' });
+            rect(g, xa - 1.5, y - 4, xb - xa + 3, narrow ? 34 : 40, { fill: on ? tint(T('block'), 26) : 'none', stroke: on ? T('block') : tint('var(--ink-3)', 55), dash: on ? null : '3 3', rx: 4, sw: on ? 1.8 : 1 });
+            if (s % b === 0 && (b >= 2 || !narrow || jj % 4 === 0 || on)) txt(g, xa + 1, y + (narrow ? 46 : 54), `j=${jj}`, { anchor: 'start', cls: 'val', style: on ? 'fill:var(--ink)' : 'fill:var(--ink-3)' });
             s = end - 1;
           }
         }
         for (let c = 0; c < per; c++) {
           const s = r * per + c, x = x0 + c * (tw + gap), on = s === t;
-          rect(g, x, y, tw, 26, { fill: on ? 'var(--c)' : tint(T('entry'), 22), stroke: on ? 'var(--c)' : tint(T('entry'), 70), rx: 3 });
-          el('text', { x: x + tw / 2, y: y + 17, 'text-anchor': 'middle', class: 'val', style: on ? 'fill:var(--paper-3);stroke:none' : null, text: String(s) }, g);
-          const hit = rect(g, x, y, tw, 26, { fill: 'transparent', stroke: 'none', cls: 'hit' });
+          rect(g, x, y, tw, narrow ? 26 : 32, { fill: on ? 'var(--c)' : tint(T('entry'), 22), stroke: on ? 'var(--c)' : tint(T('entry'), 70), rx: 3 });
+          el('text', { x: x + tw / 2, y: y + (narrow ? 17 : 21), 'text-anchor': 'middle', class: 'val', style: on ? 'fill:var(--paper-3);stroke:none' : null, text: String(s) }, g);
+          const hit = rect(g, x, y, tw, narrow ? 26 : 32, { fill: 'transparent', stroke: 'none', cls: 'hit' });
           hit.style.cursor = 'pointer';
           hit.addEventListener('click', () => { t = s; tSl.set(t); draw(); });
         }
@@ -306,6 +306,7 @@ window.FIG = window.FIG || {};
     hover(knob, () => `<b>f_D = ${fmtPct(fD, 0)}</b><br>${f0(cost(fD))} bytes per miss`);
     function draw() {
       P.clear();
+      P.g.top.append(knob);
       line(P, [[0, e], [1, e]], { color: T('raw-miss'), dash: '7 5', width: 2 });
       txt(P.g.data, P.x(0.02), P.y(e) - 8 * P.fs, 'HiSparse: e = 640 B', { anchor: 'start' });
       area(P, [[0, cost(0)], [1, cost(1)]], { color: T('delta-miss'), opacity: 0.1 });
@@ -381,14 +382,19 @@ window.FIG = window.FIG || {};
       cur = i;
       const s = states[i];
       g.replaceChildren();
-      const yH = narrow ? 40 : 34, yC = narrow ? 150 : 128;
+      const yH = narrow ? 52 : 40, yC = narrow ? 150 : 128;
       // ---- history row
       txt(g, narrow ? 10 : 10, narrow ? 18 : yH + 20, narrow ? 'history of one layer (16 entries, 4 blocks of b = 4)' : 'history', { anchor: 'start' });
       const dictsShown = i === 0 ? s.dictsAfter : s.dictsBefore;
       for (let j = 0; j < n / b; j++) {
         const xa = px(j * b) - 3, xb = px(j * b + b - 1) + tw + 3, res = dictsShown.includes(j);
-        rect(g, xa, yH - 6, xb - xa, tw + 30, { fill: res ? tint(T('dictionary-cache'), 22) : 'none', stroke: res ? T('dictionary-cache') : 'var(--ink-3)', dash: '4 3', rx: 6 });
-        txt(g, xa + 4, yH + tw + 19, res ? `block ${j} · D resident` : `block ${j}`, { anchor: 'start', cls: 'val', style: res ? 'fill:var(--ink)' : 'fill:var(--ink-3)' });
+        rect(g, xa, yH - 5, xb - xa, tw + 10, { fill: res ? tint(T('dictionary-cache'), 22) : 'none', stroke: res ? T('dictionary-cache') : 'var(--ink-3)', dash: '4 3', rx: 6 });
+        txt(g, (xa + xb) / 2, yH + tw + 19, `block ${j}`, { cls: 'val', style: res ? 'fill:var(--ink)' : 'fill:var(--ink-3)' });
+        if (res) {
+          const pw = narrow ? 34 : 70;
+          rect(g, (xa + xb) / 2 - pw / 2, yH - 22, pw, 15, { fill: tint(T('dictionary-cache'), 40), stroke: T('dictionary-cache'), rx: 7 });
+          txt(g, (xa + xb) / 2, yH - 11, narrow ? 'D' : 'D on GPU', { cls: 'val', style: 'fill:var(--ink)' });
+        }
       }
       for (let p = 0; p < n; p++) {
         const sel = s.S.includes(p);
@@ -445,7 +451,7 @@ window.FIG = window.FIG || {};
         ['hits', '9', '9'],
         ['misses (raw / δ)', `${hs / E_BYTES} / 0`, `${nRaw} / ${nDel}`],
         ['miss bytes on the link', `${hs} B`, `${f0(kvMiss)} B`],
-        ['dictionary loads', '—', `${nLoad} × ${w}·e = ${f0(nLoad * w * E_BYTES)} B`],
+        ['dictionary loads', '—', `${f0(nLoad * w * E_BYTES)} B (${nLoad} load)`],
         { cells: ['total on the link', `${hs} B`, `${f0(kvAll)} B`], cls: 'sum' },
       ], { left: [0] }), h('p', { class: 'fig-note', html: texify(`One load of $\\vw = ${w}$ entries’ worth pays for itself after $\\vw/(1-\\vrho) = ${fmt(breakEven, 1)}$ δ-misses in that block. The toy has only ${nDel}.`) }));
     }
@@ -502,7 +508,7 @@ window.FIG = window.FIG || {};
       const yB = 8;
       const dw = narrow ? 64 : 84;
       rect(gB, x0, yB, dw, 62, { fill: resident ? tint(T('dictionary-cache'), 35) : tint(T('dictionary'), 25), stroke: resident ? T('dictionary-cache') : T('dictionary'), rx: 5 });
-      txt(gB, x0 + dw / 2, yB + 26, 'D_j', { cls: 'lbl ink' });
+      txt(gB, x0 + dw / 2, yB + 26, 'Dⱼ', { cls: 'lbl ink' });
       txt(gB, x0 + dw / 2, yB + 44, resident ? 'on the GPU' : 'in host', { cls: 'val' });
       const sx0 = x0 + dw + 12, sspan = x1 - sx0;
       const sizes = mode === 'fixed' ? range(N).map(() => fixed) : varSizes;
@@ -597,7 +603,7 @@ window.FIG = window.FIG || {};
     host.append(controls(seg([['token', 'token axis'], ['layer', 'layer axis'], ['head', 'head axis']], axis, v => { axis = v; draw(); }, 'which axis'),
       h('span', { class: 'fig-note', text: 'Click any entry to pick it.' })), box, ro);
     const narrow = isNarrow(host);
-    const W = narrow ? 380 : 680, cw = narrow ? 22 : 40, ch = 26, gx = narrow ? 3 : 5, gy = 10, x0 = narrow ? 64 : 92, y0 = 22;
+    const W = narrow ? 380 : 680, cw = narrow ? 19 : 36, ch = 26, gx = narrow ? 3 : 5, gy = 10, x0 = narrow ? 64 : 92, y0 = 22;
     const D = Diagram(box, { w: W, h: y0 + NLy * (ch + gy) + 64, label: 'Entries of one request: layers up, tokens across' });
     const g = el('g', {}, D.svg);
     function draw() {
@@ -642,9 +648,9 @@ window.FIG = window.FIG || {};
     const H0 = 6.5;                                       // bits per element with no help (illustrative)
     let near = 1.4, lhalf = 5, far = 0.3, thresh = false, lb = 10;
     const box = h('div'), ro = readout();
-    const s1 = slider('saving next door (Δ = 1)', 0, 3, 0.05, near, v => { near = v; draw(); }, v => `${fmt(v, 2)} bit`);
+    const s1 = slider('next-door saving, bits', 0, 3, 0.05, near, v => { near = v; draw(); }, v => fmt(v, 2));
     const s2 = slider('half-distance', 1, 14, 0.5, lhalf, v => { lhalf = v; draw(); }, v => `${fmtSI(2 ** v, 0)} tokens`);
-    const s3 = slider('saving that never fades', 0, 1, 0.05, far, v => { far = v; draw(); }, v => `${fmt(v, 2)} bit`);
+    const s3 = slider('never-fading saving, bits', 0, 1, 0.05, far, v => { far = v; draw(); }, v => fmt(v, 2));
     const tb = btn('overlay a threshold claim', (e, b) => { thresh = !thresh; b.setAttribute('aria-pressed', String(thresh)); draw(); }, { cls: 'sm', pressed: false });
     host.append(controls(s1, s2, s3), controls(tb), legend([['hypothetical curve (illustrative)', T('fallen-apple')], ['tokens shuffled across conversations', 'var(--ink-3)', 'dash'], ['a threshold claim: “alike within a block of b”', 'var(--vermilion)', 'dash']]), box, ro);
     const P = Plot(box, { x: [1, 65536], xlog: 2, y: [3.5, 7], h: 320, xlabel: 'token distance Δ to the known neighbour (log scale)', ylabel: 'bits per element', xfmt: v => fmtSI(v, 0), label: 'Bits to store an entry exactly given a neighbour Δ tokens away' });
@@ -662,7 +668,7 @@ window.FIG = window.FIG || {};
         line(P, [[1, H0 - far - near], [b, H0 - far - near], [b, H0], [65536, H0]], { color: 'var(--vermilion)', dash: '4 4', width: 2 });
         annotate(P, b, H0 - 0.6, `b = ${fmtSI(b, 0)}: a cliff that\nthe data has no reason to have`, { dx: 26, dy: 40 });
       }
-      annotate(P, 2 ** lhalf, curve(2 ** lhalf), 'half the local saving\nis gone here', { dx: -20, dy: 44, anchor: 'end' });
+      annotate(P, 2 ** lhalf, curve(2 ** lhalf), 'half the local saving\nis gone here', { dx: 26, dy: 48, anchor: 'start' });
       ro.set([['next door, Δ = 1', `${fmt(curve(1), 2)} bits`], [`Δ = ${fmtSI(2 ** lhalf, 0)}`, `${fmt(curve(2 ** lhalf), 2)} bits`], ['far away', `${fmt(H0 - far, 2)} bits`]]);
     }
     draw();
@@ -770,8 +776,8 @@ window.FIG = window.FIG || {};
     const sn = slider(texify('resident dictionaries $\\vnD$'), 1, 8, 1, nD, v => { nD = v; run(); });
     host.append(controls(sc, sl, sn), legend([key('var(--ink-3)', 'hit'), key(T('delta-miss'), 'δ-miss'), key(T('raw-miss'), 'raw miss')], { shape: 'dot' }), box,
       h('div', { class: 'kpis' }, tiles.fD, tiles.loads, tiles.top, tiles.miss), barBox);
-    const P = Plot(box, { x: [50, 170], y: [0, 4096], h: 330, xlabel: 'decode step', ylabel: 'token position (32 blocks)', yticks: [0, 1024, 2048, 3072, 4096], label: 'Which positions are selected at each step, coloured by what each miss cost' });
-    const B2 = Plot(barBox, { xcats: range(32).map(j => (j % 4 === 0 ? String(j) : '')), y: [0, 1], h: 200, ylabel: 'share of misses', xlabel: 'block j', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Share of all misses that landed in each block' });
+    const P = Plot(box, { x: [50, 170], y: [0, 4096], w: 900, h: 400, xlabel: 'decode step', ylabel: 'token position (32 blocks)', yticks: [0, 1024, 2048, 3072, 4096], label: 'Which positions are selected at each step, coloured by what each miss cost' });
+    const B2 = Plot(barBox, { xcats: range(32).map(j => (j % 4 === 0 ? String(j) : '')), y: [0, 1], w: 900, h: 240, ylabel: 'share of misses', xlabel: 'block j', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Share of all misses that landed in each block' });
     const run = throttleRAF(() => {
       const R = heavySim({ conc, life: 10 ** llife, nD });
       P.clear();
@@ -839,7 +845,7 @@ window.FIG = window.FIG || {};
       H.forEach((v, lvl) => {
         const x = Lb.x + lvl * (bw + 14), hh = (Lb.h - 30) * v, y = Lb.y + Lb.h - 22 - hh;
         rect(g, x, y, bw, hh, { fill: lvl <= Math.min(k, 2) ? tint(T('cat-ladder'), on(lvl) ? 75 : 35) : 'var(--paper-2)', stroke: T('cat-ladder'), rx: 4, op: lvl <= Math.min(k, 2) ? 1 : 0.35 });
-        txt(g, x + bw / 2, Lb.y + Lb.h - 4, ['everything', 'the thread', 'the block'][lvl], { cls: 'val' });
+        txt(g, x + bw / 2, Lb.y + Lb.h - 4, ['all', 'thread', 'block'][lvl], { cls: 'val' });
       });
       if (k === 3) {
         const x = Lb.x + 2 * (bw + 14) + bw / 2, y = Lb.y + Lb.h - 22 - (Lb.h - 30) * H[2] - 12;
@@ -866,9 +872,9 @@ window.FIG = window.FIG || {};
   FIG.ladderTheorem = function (host) {
     let sT = 2, sB = 0.6, sigma = 1.3;
     const box = h('div'), distBox = h('div'), ro = readout();
-    const s1 = slider('threads differ by', 0, 4, 0.1, sT, v => { sT = v; draw(); }, v => `${fmt(v, 1)} levels`);
-    const s2 = slider('blocks differ by', 0, 2, 0.1, sB, v => { sB = v; draw(); }, v => `${fmt(v, 1)} levels`);
-    const s3 = slider('noise inside a block', 0.6, 3, 0.1, sigma, v => { sigma = v; draw(); }, v => `σ = ${fmt(v, 1)}`);
+    const s1 = slider('threads differ by (levels)', 0, 4, 0.1, sT, v => { sT = v; draw(); }, v => fmt(v, 1));
+    const s2 = slider('blocks differ by (levels)', 0, 2, 0.1, sB, v => { sB = v; draw(); }, v => fmt(v, 1));
+    const s3 = slider('noise inside a block, σ', 0.6, 3, 0.1, sigma, v => { sigma = v; draw(); }, v => fmt(v, 1));
     host.append(controls(s1, s2, s3), h('div', { class: 'fig-row' }, box, distBox), ro);
     const P = Plot(box, { xcats: ['H(E)', 'H(E | thread)', 'H(E | block)'], y: [0, 4.2], h: 300, ylabel: 'bits per entry', grid: 'y', label: 'The three rungs of the ladder in bits' });
     const Q = Plot(distBox, { x: [-0.5, 15.5], y: [0, 0.5], h: 300, xlabel: 'value of the toy entry (16 levels)', ylabel: 'probability', label: 'The distributions behind the three rungs' });
@@ -972,37 +978,35 @@ window.FIG = window.FIG || {};
     host.append(controls(se, sm), status, h('div', { class: 'fig-row' }, rasterBox, curveBox), h('div', { class: 'kpis' }, tiles.ov, tiles.hit, tiles.r2, tiles.bits));
     const PR = Plot(rasterBox, { x: [0, 80], y: [0, LEAK.n], h: 300, xlabel: 'decode step', ylabel: 'key position', yticks: [0, 1024, 2048, 3072, 4096], label: 'Selected key positions over 80 steps; horizontal streaks are keys re-selected step after step' });
     const PC = Plot(curveBox, { x: [0.01, 1.5], xlog: true, y: [0, 1], h: 300, xlabel: 'query drift η per step (log)', ylabel: 'share of selections', yfmt: v => fmtPct(v, 0), label: 'Overlap and LRU hit rate against query drift' });
-    curveBox.prepend(legend([['LRU hit rate, B = 2k', T('hot-cache')], ['consecutive overlap', T('lucky-louis')], ['the other kind of keys', 'var(--ink-3)', 'dash']]));
+    curveBox.prepend(legend([['LRU hit rate, B = 2k', T('hot-cache')], ['consecutive overlap', T('lucky-louis')], ['the other kind of keys', 'var(--ink)', 'dash'], ['HiSparse: 87 % hits, 70 % overlap', 'var(--ink-3)', 'dash']]));
     const marker = el('g', {}, PC.g.top);
 
     function drawRaster(raster) {
       PR.clear();
       let d = '';
       const dx = PR.pw / 80;
-      // horizontal streaks: a key selected at consecutive steps is drawn as one segment
-      const last = new Map();
-      raster.forEach((S, s) => S.forEach(p => {
-        const y = PR.y(p).toFixed(1);
-        if (last.get(p) === s - 1) d += `L${(PR.x(s) + dx * 0.5).toFixed(1)},${y}`;
-        else d += `M${(PR.x(s) - dx * 0.4).toFixed(1)},${y}L${(PR.x(s) + dx * 0.5).toFixed(1)},${y}`;
-        last.set(p, s);
-      }));
+      // one short horizontal dash per selection; dashes of consecutive steps touch, so a re-selected key is a streak
+      raster.forEach((S, s) => {
+        const x0 = (PR.x(s) - dx * 0.5).toFixed(1), x1 = (PR.x(s) + dx * 0.5).toFixed(1);
+        S.forEach(p => { const y = PR.y(p).toFixed(1); d += `M${x0},${y}L${x1},${y}`; });
+      });
       el('path', { d, style: `fill:none;stroke:${T('lucky-louis')};stroke-width:${(1.6 * PR.fs).toFixed(2)};stroke-linecap:round` }, PR.g.data);
     }
     function drawCurves() {
       PC.clear();
+      PC.g.top.append(marker);
       marker.replaceChildren();
       const other = mode === 'iid' ? 'copy' : 'iid';
-      if (curves[other]) {
-        line(PC, curves[other].map(c => [c.eta, c.hit]), { color: 'var(--ink-3)', dash: '5 4', width: 1.6 });
-        line(PC, curves[other].map(c => [c.eta, c.overlap]), { color: 'var(--ink-3)', dash: '5 4', width: 1.6 });
-      }
+      rule(PC, { y: 0.866, color: T('hot-cache'), dash: '2 4' });
+      rule(PC, { y: 0.70, color: T('lucky-louis'), dash: '2 4' });
       if (curves[mode]) {
         line(PC, curves[mode].map(c => [c.eta, c.hit]), { color: T('hot-cache'), markers: true, tip: p => `η = ${fmt(p[0], 2)}<br>hit rate ${fmtPct(p[1], 0)}` });
         line(PC, curves[mode].map(c => [c.eta, c.overlap]), { color: T('lucky-louis'), markers: true, tip: p => `η = ${fmt(p[0], 2)}<br>overlap ${fmtPct(p[1], 0)}` });
       }
-      rule(PC, { y: 0.866, label: 'HiSparse hits: 86.6 %', color: 'var(--ink-2)' });
-      rule(PC, { y: 0.70, label: 'HiSparse overlap: 70 %', color: 'var(--ink-2)' });
+      if (curves[other]) {
+        line(PC, curves[other].map(c => [c.eta, c.hit]), { color: 'var(--ink)', dash: '4 4', width: 1.3 });
+        line(PC, curves[other].map(c => [c.eta, c.overlap]), { color: 'var(--ink)', dash: '4 4', width: 1.3 });
+      }
       el('line', { x1: PC.x(10 ** leta), x2: PC.x(10 ** leta), y1: PC.m.t, y2: PC.H - PC.m.b, style: 'stroke:var(--c);stroke-width:2' }, marker);
     }
     let cancelOne = null;
@@ -1039,14 +1043,14 @@ window.FIG = window.FIG || {};
     const stack = h('div', { class: 'ivv-stack' }), tbl = h('div'), plotBox = h('div'), hatch = h('div', { class: 'kpis' });
     const names = { g: 'global (all texts)', s: 'the thread', b: 'the block' };
     const sliders = {};
-    const mk = id => (sliders[id] = slider(`+ explained by ${names[id]}`, 0, 90, 1, v[id], x => {
+    const mk = id => (sliders[id] = slider(`+ explained by ${names[id]}, %`, 0, 90, 1, v[id], x => {
       v[id] = x;
       const over = v.g + v.s + v.b - 99;               // keep at least 1 % noise: trim the other rungs
       if (over > 0) for (const o of ['b', 's', 'g']) if (o !== id && over > 0) { const cut = Math.min(v[o], over); v[o] -= cut; sliders[o].set(v[o]); if (v.g + v.s + v.b <= 99) break; }
       draw();
-    }, x => `${x} %`));
-    const sp = slider('near-deterministic channels', 0, 30, 1, phi, x => { phi = x; draw(); }, x => `${x} % of channels`);
-    const sn = slider('their noise share', 0.5, 20, 0.5, nu, x => { nu = x; draw(); }, x => `${x} %`);
+    }, x => String(x)));
+    const sp = slider('near-deterministic channels, % of all', 0, 30, 1, phi, x => { phi = x; draw(); }, x => String(x));
+    const sn = slider('their noise share, %', 0.5, 20, 0.5, nu, x => { nu = x; draw(); }, x => String(x));
     host.append(controls(mk('g'), mk('s'), mk('b')), stack, tbl, plotBox,
       h('div', { class: 'iv-sub', text: 'The escape hatch: a few channels that are almost fully predictable' }), controls(sp, sn), hatch);
     const P = Plot(plotBox, { x: [0, 1], y: [0, 3.4], h: 300, xlabel: 'variance explained so far, R²', ylabel: 'bits saved per element', xfmt: v => fmtPct(v, 0), label: 'The exchange rate from variance explained to bits, with the three rungs marked' });
@@ -1128,7 +1132,7 @@ window.FIG = window.FIG || {};
       ro.set([
         ['HiSparse', `N = ${f0(Math.min(base.Nlink, base.Nhbm))} (${base.Nlink < base.Nhbm ? 'link' : 'memory'}-bound)`],
         ['both levers', `N = ${f0(Math.min(both.Nlink, both.Nhbm))}, ${fmt(Math.min(both.Nlink, both.Nhbm) / Math.min(base.Nlink, base.Nhbm), 2)}×`],
-        ['miss traffic, both levers', `${fmtPct(both.traffic / base.traffic, 0)} of HiSparse${spend === 'cache' && fD === 1 ? ` (ρ^${fmt(1 + EXP, 2)} = ${fmt(Math.pow(rho, 1 + EXP), 2)})` : ''}`],
+        ['miss traffic, both levers', `${fmtPct(both.traffic / base.traffic, 0)} of HiSparse${spend === 'cache' && fD === 1 ? ` (${tex(`\\vrho^{${fmt(1 + EXP, 2)}}`)} = ${fmt(Math.pow(rho, 1 + EXP), 2)})` : ''}`],
       ]);
     }
     draw();
