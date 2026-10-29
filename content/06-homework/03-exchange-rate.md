@@ -59,6 +59,14 @@ Three things about it matter for KV.
 - **It is per element.** Every one of an entry's elements pays its own bits, so the savings average over elements, not over variance.
 - **It starts from the solo rate.** The context-free code of [[#homework-solo-coding]] already brought the element to 6.2–6.5 bits. The predictor has to explain variance that the element's own histogram cannot.
 
+How good is a predictor that buys three bits? Part II met one: the Gull Rock thermometer, guessed by its own reading half an hour earlier ([[#school-exchange-rate]]). Here it is again.
+
+::: dataset fig-hwa-temp-lag temp view=lag metrics=r2,exch,saved
+**The Gull Rock temperatures, against the reading before (from II.12).** Each reading (vertical axis, °C) against the reading half an hour earlier (horizontal axis); each small square is one pair of values, darker where more readings share it. The dashed diagonal is the guess "the same as last time". The Numbers tab gives the share of variance that guess explains and the bits it saves, by formula and by counting. Synthetic, seeded data (four weeks, one reading every half hour).
+:::
+
+The cloud is a thin streak: the guess explains 98.4 % of the variance, and it saves about three bits. That is the bar for three bits on a KV element — a guess as good as "the same as half an hour ago" on a slowly changing thermometer, for every element of every entry.
+
 ::: figure fig-hwa-exchange hwaExchange
 **The exchange rate on 8-bit KV.** Curve: bits saved per element, $\tfrac12\log_2\frac{1}{1-\vRsq}$, against the share of the element's variance the dictionary predicts ($\vRsq$, after solo coding). Dots mark the rows of the table above. **Drag** the knob (or focus it and use the arrow keys); **switch** the starting rate between our Gaussian E4M3 channel (6.47 bits) and SplitZip's real E5M2 KV (6.19 bits). The tiles give the new rate, the extra compression on top of solo coding, and the total compression against raw 8-bit storage. Gaussian residuals assumed; no dictionary costs charged yet.
 :::
@@ -88,6 +96,18 @@ The [[cat-ladder]] of [[#idea-cat-thread-ladder]] said: entries of the same para
 | **all three** | **70 %** | | **0.87** |
 
 (Illustrative shares, the defaults of IV.14. Each rung's $\vRsq$ is its share of the variance left after the rungs above it.)
+
+::: figure fig-hwa-ladder hwaLadder
+**The variance ladder in bits.** Top bar: the entry's variance split into what each rung explains — global (any request), request (this thread), block — and the noise no rung explains, in per cent. Bottom bar: the bits per element each rung saves, by the exchange rate applied to its share of *what the rungs above it left*. **Slide** the three shares (the noise is the rest, at least 5 %). The tiles give the total, the block rung's own saving, and how much of all the variance the block rung would need to save one bit by itself. Illustrative shares; bell-shaped data assumed.
+:::
+
+::: try
+1. Move variance from the global rung to the block rung, keeping the noise at 30 %. The bars change places; the total stays at 0.87 bit.
+2. Lower the noise to 10 %. Only now does the total pass 1.6 bits.
+3. Read the last tile at the defaults: the block rung would need 37.5 % of all the variance for one bit — three quarters of the 50 % the upper rungs left.
+:::
+
+The second experiment is the important one. The total is $\tfrac12\log_2$ of one over the noise share, however the explained part is split among the rungs. Dictionaries decide *who* earns the bits; the noise decides how many there are.
 
 To get **one** bit from the block rung alone, the block would have to explain three quarters of what the global and thread rungs left. "About the same subject" is a much weaker statement than that.
 

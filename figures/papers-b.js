@@ -27,34 +27,8 @@ window.FIG = window.FIG || {};
   /* ================================================================== KIVI
      pbKiviAxis — which numbers share one quantization ruler: a column (per channel) or a row
      (per token)? A fixed toy table of 12 tokens × 8 channels for keys and for values. */
-  const KIVI_K = [
-    [0.0, 1.4, 10.4, -0.5, -0.3, -8.4, 0.6, -0.1],
-    [0.7, -1.8, 10.8, -0.1, 0.7, -8.8, -0.4, 0.5],
-    [0.8, -0.2, 10.8, 0.7, -0.9, -8.2, 0.4, -0.7],
-    [-1.9, -0.8, 10.9, -1.2, -1.5, -8.5, 0.9, -0.2],
-    [-0.7, 0.4, 10.9, -0.3, 0.5, -8.2, -0.2, -0.8],
-    [0.3, 0.2, 11.3, -1.3, -0.7, -8.7, -1.7, 0.1],
-    [0.5, -0.7, 11.4, 0.8, 0.6, -8.9, 1.0, -1.3],
-    [0.6, 0.6, 11.4, 0.3, -0.3, -9.3, -0.4, 0.0],
-    [0.3, -0.9, 11.5, -0.1, 0.5, -8.6, 1.1, 0.6],
-    [-0.2, 0.6, 11.4, 1.8, -1.6, -8.4, 0.5, -0.1],
-    [-1.0, 1.3, 11.7, 0.6, 1.3, -9.3, -0.3, -1.3],
-    [0.2, 1.5, 12.2, -1.8, -0.6, -9.3, 1.6, 0.4],
-  ];
-  const KIVI_V = [
-    [0.6, -0.8, -0.3, -0.3, 0.2, 1.1, 0.0, 0.9],
-    [-0.4, 0.3, -2.1, -1.4, 0.8, -0.6, 0.6, 0.5],
-    [1.3, 0.8, 1.0, -0.1, -0.7, -0.7, -0.5, -1.1],
-    [-2.2, -0.4, 1.0, -1.4, -7.7, -0.3, 0.9, 4.3],
-    [0.6, -0.6, -0.7, 2.0, 0.8, 1.8, 2.1, -0.8],
-    [0.4, 0.5, 0.6, 0.5, 0.2, 0.2, -1.5, -0.2],
-    [-0.3, 0.0, -0.2, 0.2, 0.3, 0.1, 0.1, 0.0],
-    [-0.4, -0.2, -0.5, 0.4, 0.0, 0.6, -1.3, 0.9],
-    [-2.7, -2.6, -0.7, -2.0, 1.0, -2.0, -3.7, -3.0],
-    [1.3, 0.0, -1.2, 0.0, -1.6, 1.8, -1.5, 0.5],
-    [0.5, -1.5, 0.3, 1.0, 0.5, 0.3, 0.9, 0.2],
-    [0.3, -0.1, 0.6, -0.9, 0.8, -0.5, -1.1, 0.4],
-  ];
+  // The toy tables live in the dataset papers-kivi (figures/datasets/papers-kivi.js), shown as a card on V.7.
+  const kiviTables = () => DS.spec('papers-kivi').helpers.tables();
   // min–max ("asymmetric") rounding of every group to 2^bits marks; groups are columns or rows
   function kiviRound(X, axis, bits) {
     const T = X.length, C = X[0].length, L = 2 ** bits - 1;
@@ -73,7 +47,7 @@ window.FIG = window.FIG || {};
 
   FIG.pbKiviAxis = (host) => {
     const T = 12, C = 8;
-    const DATA = { K: KIVI_K, V: KIVI_V };
+    const DATA = kiviTables();
     const LOUD = { K: (t, c) => c === 2 || c === 5, V: t => t === 3 || t === 8 };
     let which = 'K', axis = 'channel', bits = 2;
     const box = h('div'), ro = readout();

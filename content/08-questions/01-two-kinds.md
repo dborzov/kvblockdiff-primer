@@ -37,6 +37,15 @@ A prospector walks into a valley with a rumour: *there is gold in these hills*. 
 
 The rumour is the reason she came. The bucket-and-scale routine is what she actually does all day. Notice that each written-down outcome comes with an action.
 
+::: figure fig-questions-prospector qProspector
+**The prospector's plan, and her buckets** (an invented valley, not geology). Horizontal axis: distance of the bucket from the ridge, log scale; vertical axis: gold left in the pan, grams per tonne, log scale. Dashed: the three outcomes she wrote down before panning — falls with distance, the same everywhere, nothing anywhere. Choose one of three valleys, then press "pan the buckets": twelve streams, three buckets each, appear as dots (seeded, with scatter between streams). The readout fits the dots and names the outcome they match, with the action she wrote next to it. Press again for another set of buckets from the same valley.
+:::
+
+::: try
+1. Pan valley 1 a few times. The buckets scatter, but every set lands on the same written line, and the action follows without argument.
+2. Try valley 2 and valley 3. Nothing in the reading is decided after the dots appear: the lines, and what each means, were on the page first.
+:::
+
 This Part does the same with kv-blockdiff. The site so far has a rumour (the [[cat-ladder]] made it feel obvious), napkin maths that says how big the prize could be, and a list of things that might go wrong. Here the rumour becomes questions, and the questions become measurements.
 
 ## A big question and a protocol {#two-levels}

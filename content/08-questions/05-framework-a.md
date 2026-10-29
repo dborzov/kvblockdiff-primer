@@ -116,6 +116,14 @@ The three shapes, and what each would mean:
 - **Flat but positive** — structure that the whole request shares, or that all requests share. Informative for [[scope]]: per-request or global dictionaries.
 - **Flat at zero** — entries are not mutually predictable at 8 bits, for a cheap predictor. A negative Q1, and a publishable one.
 
+Real data can also draw a shape nobody wrote down. The Gull Rock temperatures of [[#questions-q1]] come back here with framework A's full kit: the formula, the measured column on exact whole-tenth residuals, and the shuffle control.
+
+::: dataset fig-questions-temp-a questions-temp-distance metrics=meas1,half,b48,shuf
+**Framework A at Gull Rock.** Horizontal axis: distance to the neighbouring reading, $\vgap$ in half-hours, log scale up to a week (dotted rules at whole days). Vertical axis: bits per reading saved by the best straight-line predictor from that neighbour. Blue: the exchange-rate formula; green: measured as the entropy of the readings minus that of the exact integer residuals; dashed grey: the formula after shuffling the readings. The highlight puts red dots on neighbours a whole number of days back. Hover for values. Derived from the synthetic, seeded temperatures of II.10.
+:::
+
+The near end is a fading curve, as for fallen-apple similarity, with a fading length of two hours. The far end is none of the three written shapes: a bump of 0.83 bit a day back, a smaller one two days back, and then a wobble of a few tenths of a bit as the slow weather lines up with itself or does not. On KV entries, a bump like that would point to a neighbour of a special kind — a passage that repeats, say. It would get a fourth row in the table, added openly after the fact and marked as such, not read quietly into one of the three.
+
 ::: theme controls
 The dotted line at zero is the shuffle control. After permuting tokens across all sequences, any gain that depends on neighbours being neighbours must vanish. A real curve must stand clearly above it; a gain that survives the shuffle is a bug.
 :::

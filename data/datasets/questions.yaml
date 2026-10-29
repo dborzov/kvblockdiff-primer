@@ -1,0 +1,24 @@
+# Running example datasets of Part VIII (questions). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+questions-temp-distance:
+  title: Bits against distance, at Gull Rock
+  blurb: Framework A run on the Gull Rock temperatures — how many bits per reading the reading Δ half-hours back saves, for Δ from half an hour to a week, with the shuffle control.
+  emblem: ruler
+  unit: 336 distances · bits per reading
+  source: derived from the temperatures
+  csv: gull-rock-bits-vs-distance.csv
+  story: >-
+    For each distance, the best straight-line predictor from the reading that far back, scored by the exchange rate and
+    by exact integer residuals, and again after shuffling the readings. Q1 asks this question of KV entries, where nobody
+    knows the answer; at Gull Rock it takes a second, and the curve fades, dips half a day back and climbs again a day back.
+questions-two-worlds:
+  title: Two worlds, 274 misses
+  blurb: One decode step's 274 misses in a 100K-token request of 25 blocks, in two invented worlds — spread evenly, or piled into the 4 blocks whose dictionaries are resident.
+  emblem: target
+  unit: 2 × 274 misses · 25 blocks
+  source: illustrative, seeded
+  csv: two-worlds-misses.csv
+  story: >-
+    The opening example of Q3. Same miss count, same coder, the same assumed delta ratio of 0.65; only where the misses
+    land differs, and with it the δ-miss fraction (16 % against an assumed 85 %) and the saving on miss traffic (6 % against 30 %).

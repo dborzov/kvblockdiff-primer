@@ -31,26 +31,19 @@ cards:
     sec: budget
 ---
 
-Here are ten numbers from one [[channel]] of a KV cache — or rather, from a stand-in: ten draws from a bell curve, scaled the way an 8-bit KV tensor is scaled, and rounded to [[fp8]] E4M3. The third column is the byte that is actually stored: one sign bit, four [[exponent]] bits, three mantissa bits.
+Here are ten numbers from one [[channel]] of a KV cache — or rather, from a stand-in: ten draws from a bell curve, scaled the way an 8-bit KV tensor is scaled, and rounded to [[fp8]] E4M3. The card shows each draw, the value actually stored, and the stored byte itself: one sign bit, four [[exponent]] bits, three mantissa bits.
 
-| drawn | stored | byte: sign · exponent · mantissa | grid position |
-|---:|---:|:---:|---:|
-| +130.62 | +128 | `0 1110 000` | +112 |
-| −163.56 | −160 | `1 1110 010` | −114 |
-| +26.76 | +26 | `0 1011 101` | +93 |
-| −36.34 | −36 | `1 1100 001` | −97 |
-| −28.97 | −28 | `1 1011 110` | −94 |
-| −13.80 | −14 | `1 1010 110` | −86 |
-| −129.28 | −128 | `1 1110 000` | −112 |
-| −14.84 | −15 | `1 1010 111` | −87 |
-| −55.37 | −56 | `1 1100 110` | −102 |
-| +212.67 | +208 | `0 1110 101` | +117 |
+::: dataset fig-hwa-ten-draws homework-ten-draws view=bytes,ladder metrics=patterns,expH,signs,mant
+**Ten draws, stored as E4M3 bytes.** *The ten bytes:* one row per draw — the drawn value, the E4M3 value it rounds to, its 8 bits (grey: sign, red: exponent, blue: mantissa; a filled box is a 1), and its grid position, the rung number counted from zero. *On the E4M3 ladder:* the 253 values E4M3 can hold (grey, value against rung number) with the ten stored values on top (hover a dot). The highlights mark the draws whose exponent is `1110`, or the negative ones. The drawn values are illustrative; the rounding, bytes and positions are computed exactly from the format.
+:::
 
 Notice anything?
 
 ## 253 codes, used unevenly {#codes}
 
-Look at the middle column. The sign is a coin toss. The mantissa takes all sorts of values. But the exponent keeps landing on the same few patterns: `1010`, `1011`, `1100`, `1110`. Out of sixteen possible exponents, five carry about 90 % of the values (we counted a million draws). The byte has 8 bits of room, but its contents are far from random.
+Look down the columns of bytes. The sign is a coin toss. The mantissa takes all sorts of values. But the exponent keeps landing on the same few patterns: `1010`, `1011`, `1100`, `1110`. Ten values use only four of the sixteen possible exponents (the Numbers tab).
+
+Ten draws are a small sample, so we counted a million: five exponents carry about 90 % of the values. The byte has 8 bits of room, but its contents are far from random.
 
 That is exactly what [[order-0-entropy]] measures: how many bits an element costs if each element is coded alone, with a code fit to how often each value occurs.
 

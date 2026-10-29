@@ -334,12 +334,8 @@ window.FIG = window.FIG || {};
     for (const p of hits) { c.splice(c.indexOf(p), 1); c.push(p); }
     return { hits, misses, evicted, cacheAfter: c };
   }
-  function residency(cache, b, nD, before) {             // keep the nD blocks with most entries in the hot cache
-    const cnt = new Map();
-    cache.forEach(p => cnt.set(Math.floor(p / b), (cnt.get(Math.floor(p / b)) || 0) + 1));
-    const order = [...cnt.keys()].sort((x, y) => (cnt.get(y) - cnt.get(x)) || ((before.includes(y) ? 1 : 0) - (before.includes(x) ? 1 : 0)) || (x - y));
-    return order.slice(0, nD).sort((x, y) => x - y);
-  }
+  // the toy residency rule lives with the heavy-blocks dataset (figures/datasets/idea-heavy.js): one source of truth
+  const residency = (...a) => DS.spec('idea-heavy').helpers.residency(...a);
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   FIG.toyTraceBlockdiff = async function (host) {
@@ -724,42 +720,9 @@ window.FIG = window.FIG || {};
   };
 
   // =================================================================== IV.10
-  // A toy indexer: 85 % of last step's picks are kept (Lucky Louis); new picks come from a few "topic" blocks
-  // with probability c (concentration), else from anywhere. Topic blocks are replaced now and then (lifetime).
-  function heavySim(o) {
-    const { L = 4096, b = 128, k = 64, B = 128, stay = 0.85, nhot = 3, steps = 320, warm = 50, conc, life, nD, seed = 'iv10' } = o;
-    const r = rng(seed), nb = L / b;
-    const hot = range(nhot).map(() => r.int(nb));
-    const draw = () => (r() < conc ? hot[r.int(nhot)] * b + r.int(b) : r.int(L));
-    let S = new Set();
-    while (S.size < k) S.add(draw());
-    const cache = [];                                   // oldest first
-    let dc = [], raw = 0, del = 0, loads = 0, resSteps = 0;
-    const perBlock = new Array(nb).fill(0), marks = [];
-    for (let s = 0; s < steps; s++) {
-      for (let i = 0; i < nhot; i++) if (r() < 1 / life) hot[i] = r.int(nb);
-      const S2 = new Set([...S].filter(() => r() < stay));
-      while (S2.size < k) S2.add(draw());
-      S = S2;
-      const Sl = [...S].sort((x, y) => x - y);
-      const inCache = new Set(cache);
-      const hits = Sl.filter(p => inCache.has(p)), misses = Sl.filter(p => !inCache.has(p));
-      for (const p of misses) {
-        if (cache.length >= B) { const v = cache.findIndex(x => !S.has(x)); cache.splice(v, 1); }
-        cache.push(p);
-        const j = Math.floor(p / b), isDelta = dc.includes(j);
-        if (s >= warm) { perBlock[j]++; if (isDelta) del++; else raw++; }
-        if (s >= warm && s < warm + 120) marks.push([s, p, isDelta ? 1 : 2]);
-      }
-      for (const p of hits) { cache.splice(cache.indexOf(p), 1); cache.push(p); if (s >= warm && s < warm + 120) marks.push([s, p, 0]); }
-      const after = residency(cache, b, nD, dc);
-      if (s >= warm) { loads += after.filter(j => !dc.includes(j)).length; resSteps++; }
-      dc = after;
-    }
-    const n = steps - warm, missTot = raw + del;
-    const sorted = perBlock.slice().sort((x, y) => y - x);
-    return { fD: del / missTot, loads: loads / n, missPerStep: missTot / n, top4: sum(sorted.slice(0, 4)) / missTot, perBlock, marks, nb, b, L, warm, k };
-  }
+  // The toy indexer and its simulator live with the dataset 'idea-heavy' (figures/datasets/idea-heavy.js), so the
+  // tiles of this figure and the card on the same page come from one generator.
+  const heavySim = o => DS.spec('idea-heavy').helpers.sim(o);
 
   FIG.heavyBlocks = function (host) {
     let conc = 0.8, llife = 2, nD = 4;                  // lifetime = 10^llife steps
@@ -901,69 +864,17 @@ window.FIG = window.FIG || {};
   // a close copy of the one before). A query does a random walk on the unit sphere with step η and selects
   // its top k keys at every step. We measure (a) the overlap of consecutive selections, (b) the hit rate of
   // a HiSparse-style LRU hot cache of B = 2k slots, and (c) how well a key predicts the next key (R²).
-  const LEAK = { d: 32, n: 4096, k: 64, B: 128, steps: 260, warm: 60 };
-  function leakKeys(corr, seed) {
-    const { d, n } = LEAK, r = rng(seed), K = new Float64Array(n * d), a = Math.sqrt(1 - corr * corr);
-    for (let c = 0; c < d; c++) K[c] = r.normal();
-    for (let t = 1; t < n; t++) for (let c = 0; c < d; c++) K[t * d + c] = corr * K[(t - 1) * d + c] + a * r.normal();
-    return K;
-  }
-  function neighbourR2(K) {                             // per-channel R² of key t from key t−1 (least squares with intercept)
-    const { d, n } = LEAK;
-    let acc = 0;
-    for (let c = 0; c < d; c++) {
-      let sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
-      for (let t = 1; t < n; t++) { const x = K[(t - 1) * d + c], y = K[t * d + c]; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y; }
-      const m = n - 1, cov = sxy / m - (sx / m) * (sy / m), vx = sxx / m - (sx / m) ** 2, vy = syy / m - (sy / m) ** 2;
-      acc += cov * cov / (vx * vy);
-    }
-    return acc / d;
-  }
-  function topk(scores, k) {                            // indices of the k largest scores
-    const n = scores.length, idx = new Int32Array(n);
-    for (let i = 0; i < n; i++) idx[i] = i;
-    // quickselect on idx by score, descending
-    let lo = 0, hi = n - 1;
-    while (lo < hi) {
-      const piv = scores[idx[(lo + hi) >> 1]];
-      let i = lo, j = hi;
-      while (i <= j) {
-        while (scores[idx[i]] > piv) i++;
-        while (scores[idx[j]] < piv) j--;
-        if (i <= j) { const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp; i++; j--; }
-      }
-      if (k - 1 <= j) hi = j; else if (k - 1 >= i) lo = i; else break;
-    }
-    return Array.from(idx.subarray(0, k));
-  }
-  function leakRun(K, eta, seed, keepRaster) {
-    const { d, n, k, B, steps, warm } = LEAK, r = rng(seed);
-    let q = range(d).map(() => r.normal());
-    const norm = v => { const s = Math.sqrt(v.reduce((a, x) => a + x * x, 0)); return v.map(x => x / s); };
-    q = norm(q);
-    const scores = new Float64Array(n), cache = [];
-    let prev = null, ovSum = 0, ovN = 0, hitSum = 0, hitN = 0;
-    const raster = [];
-    for (let s = 0; s < steps; s++) {
-      q = norm(q.map(x => x + eta * r.normal() / Math.sqrt(d)));
-      for (let t = 0; t < n; t++) { let a = 0; const o = t * d; for (let c = 0; c < d; c++) a += K[o + c] * q[c]; scores[t] = a; }
-      const S = topk(scores, k), Sset = new Set(S);
-      if (prev && s >= warm) { let o = 0; for (const p of S) if (prev.has(p)) o++; ovSum += o / k; ovN++; }
-      prev = Sset;
-      const inC = new Set(cache), hits = S.filter(p => inC.has(p)), misses = S.filter(p => !inC.has(p));
-      for (const p of misses) { if (cache.length >= B) cache.splice(cache.findIndex(x => !Sset.has(x)), 1); cache.push(p); }
-      for (const p of hits) { cache.splice(cache.indexOf(p), 1); cache.push(p); }
-      if (s >= warm) { hitSum += hits.length / k; hitN++; }
-      if (keepRaster && s >= warm && s < warm + 80) raster.push(S);
-    }
-    return { overlap: ovSum / ovN, hit: hitSum / hitN, raster };
-  }
+  // The keys, the query walk and the hot cache live with the dataset 'idea-leak' (figures/datasets/idea-leak.js),
+  // so the card on the same page and this figure share one generator.
+  const LK = () => DS.spec('idea-leak').helpers;
+  const LEAK = { n: 4096 };                              // for the raster's axis; the full parameters are LK().LEAK
+  const leakRun = (...a) => LK().leakRun(...a);
 
   FIG.leakSim = function (host) {
     const ETAS = [0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1, 1.5];
     let leta = -0.6, mode = 'iid';            // η = 10^−0.6 ≈ 0.25
-    const KEYS = { iid: leakKeys(0, 'iv13-keys'), copy: leakKeys(0.95, 'iv13-keys') };
-    const R2 = { iid: neighbourR2(KEYS.iid), copy: neighbourR2(KEYS.copy) };
+    const KEYS = { iid: LK().keys('iid'), copy: LK().keys('copy') };
+    const R2 = { iid: LK().r2('iid'), copy: LK().r2('copy') };
     const curves = { iid: null, copy: null };
     const status = h('span', { class: 'fig-note iv-status', text: '' });
     const rasterBox = h('div'), curveBox = h('div');

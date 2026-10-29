@@ -617,5 +617,101 @@ window.FIG = window.FIG || {};
     draw();
   };
 
+  // ================================================================== VI.2  the byte, field by field
+  /* Three ways to pay for one E4M3 element, split by field: stored, fixed-length code, ideal (entropy). */
+  FIG.hwaByteSplit = async (host) => {
+    const d = await data('homework-a-budget.json'), r = d.ref;
+    const F = [{ name: 'sign', col: 'var(--ink-3)' }, { name: 'exponent', col: series(1) }, { name: 'mantissa', col: series(0) }];
+    const rows = [
+      { cat: 'stored byte', v: [1, 4, 3], how: ['1 bit', '4 bits', '3 bits'] },
+      { cat: 'fixed-length code', v: [1, r.fixed_length.top8.bits - 4, 3], how: ['raw', `3-bit code, ${fmtPct(r.fixed_length.top8.escape_fraction, 1)} escaped`, 'raw'] },
+      { cat: 'ideal (entropy)', v: [r.H_sign, r.H_exponent, r.H_mantissa_given_sign_exponent], how: ['a fair coin', 'entropy of the exponent', 'entropy given sign and exponent'] },
+    ];
+    const box = h('div');
+    host.append(legend(F.map(f => [f.name, f.col, 'box'])), box);
+    const P = Plot(box, { ycats: rows.map(x => x.cat), x: [0, 9.2], xticks: [0, 1, 2, 3, 4, 5, 6, 7, 8], h: 230, xlabel: 'bits per element', grid: 'x', label: 'Bits per E4M3 element, split into sign, exponent and mantissa' });
+    const bh = Math.min(34, P.ph / 3 * 0.6);
+    rows.forEach((row, i) => {
+      let x = 0;
+      const yc = P.y(i);
+      row.v.forEach((v, j) => {
+        const g = el('g', {}, P.g.data);
+        el('rect', { x: P.x(x) + 1, y: yc - bh / 2, width: Math.max(1, P.x(x + v) - P.x(x) - 2), height: bh, rx: 4, style: `fill:${F[j].col};opacity:${j === 1 ? 1 : 0.8}` }, g);
+        if (P.x(x + v) - P.x(x) > 34 * P.fs) svgText(g, P.x(x + v / 2), yc + 4 * P.fs, fmt(v, 2), { class: 'val', 'text-anchor': 'middle' });
+        hover(g, () => `<b>${row.cat} · ${F[j].name}</b><br>${fmt(v, 2)} bits — ${row.how[j]}`);
+        x += v;
+      });
+      svgText(P.g.top, P.x(x) + 8 * P.fs, yc + 4 * P.fs, `${fmt(x, 2)}`, { class: 'val' });
+    });
+    const xe = 1 + r.H_exponent;
+    annotate(P, xe, 2, 'the exponent shrinks;\nsign and mantissa barely move', { dx: 60, dy: -78 });
+  };
+
+  // ================================================================== VI.3 (and VI.13)  the variance ladder in bits
+  /* A variance budget split into rungs (global, request, block, noise), each rung run through the exchange rate. */
+  FIG.hwaLadder = (host) => {
+    const sh = { g: 30, q: 20, b: 20 };
+    const RUNG = [
+      { k: 'g', name: 'global', col: series(6) },
+      { k: 'q', name: 'request', col: series(4) },
+      { k: 'b', name: 'block', col: series(2) },
+    ];
+    const NOISE = 'var(--slate)';
+    const kT = kpi('all three rungs', '', 'bits saved per element');
+    const kB = kpi('block rung alone', '', '', series(2));
+    const kC = kpi('block share for one bit', '', '', 'var(--slate)');
+    const sl = RUNG.map(r => slider(`${r.name} share`, 0, 60, 5, sh[r.k], v => { sh[r.k] = v; fix(r.k); draw(); }, v => `${v} %`));
+    function fix(k) {                                   // keep at least 5 % for the noise
+      const over = sh.g + sh.q + sh.b - 95;
+      if (over > 0) { sh[k] -= over; sl[RUNG.findIndex(r => r.k === k)].set(sh[k]); }
+    }
+    const box = h('div');
+    host.append(controls(...sl), box, h('div', { class: 'kpis' }, kT, kB, kC));
+    const D = Diagram(box, { w: 640, h: 230, label: 'Variance shares of the rungs and the bits each rung saves' });
+    const fs = D.fs, g = el('g', {}, D.svg), L = 90 * Math.min(fs, 1.35), R = 620;
+    function draw() {
+      g.replaceChildren();
+      const noise = 100 - sh.g - sh.q - sh.b;
+      let left = 100, acc = 0;
+      const gains = RUNG.map(r => { const of = left > 0 ? sh[r.k] / left : 0; const b = -0.5 * Math.log2(1 - Math.min(of, 0.999)); left -= sh[r.k]; return { ...r, of, b }; });
+      const total = gains.reduce((s, x) => s + x.b, 0);
+      // row 1: variance
+      const XV = v => L + v / 100 * (R - L), y1 = 34 * fs, hh = 34;
+      el('text', { x: 6, y: y1 + hh / 2 + 4, class: 'lbl', text: 'variance' }, g);
+      [...gains.map(x => ({ name: x.name, col: x.col, v: sh[x.k], sub: x.of })), { name: 'noise', col: NOISE, v: noise }].forEach(s => {
+        if (s.v <= 0) { acc += s.v; return; }
+        const x0 = XV(acc), w = XV(acc + s.v) - x0;
+        const seg = el('g', {}, g);
+        el('rect', { x: x0 + 1, y: y1, width: w - 2, height: hh, rx: 4, style: `fill:${s.col};opacity:.85` }, seg);
+        if (w > 58 * fs) svgText(seg, x0 + w / 2, y1 + hh / 2 + 4 * fs, `${s.name} ${s.v} %`, { class: 'val', 'text-anchor': 'middle' });
+        else if (w > 26 * fs) svgText(seg, x0 + w / 2, y1 + hh / 2 + 4 * fs, `${s.v}`, { class: 'val', 'text-anchor': 'middle' });
+        hover(seg, () => `<b>${s.name}</b>: ${s.v} % of all the variance${s.sub != null ? `<br>${fmtPct(s.sub, 0)} of what the rungs above it left` : ''}`);
+        acc += s.v;
+      });
+      // row 2: bits, on a scale up to 2 bits
+      const MAXB = 2, XB = v => L + Math.min(v, MAXB) / MAXB * (R - L), y2 = y1 + hh + 52 * fs;
+      el('text', { x: 6, y: y2 + hh / 2 + 4, class: 'lbl', text: 'bits saved' }, g);
+      [0, 0.5, 1, 1.5, 2].forEach(t => {
+        el('line', { x1: XB(t), x2: XB(t), y1: y2 - 6, y2: y2 + hh + 4, style: 'stroke:color-mix(in srgb, var(--rule) 60%, transparent)' }, g);
+        svgText(g, XB(t), y2 + hh + 18 * fs, `${t}`, { class: 'val', 'text-anchor': 'middle' });
+      });
+      let b0 = 0;
+      gains.forEach(x => {
+        if (x.b <= 0) return;
+        const x0 = XB(b0), w = XB(b0 + x.b) - x0, seg = el('g', {}, g);
+        el('rect', { x: x0 + 1, y: y2, width: Math.max(1, w - 2), height: hh, rx: 4, style: `fill:${x.col};opacity:.85` }, seg);
+        if (w > 40 * fs) svgText(seg, x0 + w / 2, y2 + hh / 2 + 4 * fs, fmt(x.b, 2), { class: 'val', 'text-anchor': 'middle' });
+        hover(seg, () => `<b>${x.name} rung</b><br>explains ${fmtPct(x.of, 0)} of what is left<br>saves ½ log₂ 1/(1 − ${fmt(x.of, 2)}) = ${fmt(x.b, 2)} bits per element`);
+        b0 += x.b;
+      });
+      svgText(g, Math.min(XB(total), R - 4), y2 - 10 * fs, total > MAXB ? `total ${fmt(total, 2)} (off the scale)` : `total = ½ log₂(1 / noise share) = ${fmt(total, 2)}`, { class: 'annot', 'text-anchor': XB(total) > R - 170 * fs ? 'end' : XB(total) < L + 170 * fs ? 'start' : 'middle' });
+      kT.set(fmt(total, 2), `bits per element, out of about 6.5`);
+      kB.set(fmt(gains[2].b, 2), `bits; it explains ${fmtPct(gains[2].of, 0)} of what is left`);
+      const need = 0.75 * (100 - sh.g - sh.q);
+      kC.set(`${fmt(need, 1)} %`, `of all variance, for the block rung to save 1 bit`);
+    }
+    draw();
+  };
+
   window.HWA = hwa;
 })();

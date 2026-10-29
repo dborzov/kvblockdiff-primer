@@ -31,27 +31,13 @@ cards:
     sec: connections
 ---
 
-Here are the first six tokens of a toy [[kv-cache]], as eight numbers per token. On the left the keys, on the right the values, both from one [[head]] of one [[layer]]. The numbers are made up, but they have the shape the KIVI paper reports for real models.
+Here are the first twelve tokens of a toy [[kv-cache]], eight numbers per token: the keys on top, the values below, both from one [[head]] of one [[layer]]. Each line follows one [[channel]] — one element position — from token to token. The numbers are made up, but they have the shape the KIVI paper reports for real models.
 
-| keys | c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 |
-|---|---|---|---|---|---|---|---|---|
-| t0 | 0.0 | 1.4 | **10.4** | −0.5 | −0.3 | **−8.4** | 0.6 | −0.1 |
-| t1 | 0.7 | −1.8 | **10.8** | −0.1 | 0.7 | **−8.8** | −0.4 | 0.5 |
-| t2 | 0.8 | −0.2 | **10.8** | 0.7 | −0.9 | **−8.2** | 0.4 | −0.7 |
-| t3 | −1.9 | −0.8 | **10.9** | −1.2 | −1.5 | **−8.5** | 0.9 | −0.2 |
-| t4 | −0.7 | 0.4 | **10.9** | −0.3 | 0.5 | **−8.2** | −0.2 | −0.8 |
-| t5 | 0.3 | 0.2 | **11.3** | −1.3 | −0.7 | **−8.7** | −1.7 | 0.1 |
+::: dataset fig-pb-kivi-data papers-kivi view=lines,rulers metrics=shape,kmeans,krulers,vrulers,kr2,vr2
+**KIVI's toy cache: 12 tokens × 8 channels of keys and of values.** *Channel by channel:* horizontal axis, the token (t0 to t11); vertical axis, the number; one line per channel, keys in the top panel and values in the bottom one. The highlight picks out the two big key channels or the two loud value tokens (shaded bands). *Ruler lengths:* each dot is the range (largest minus smallest number) of one column or one row — the length a shared rounding ruler would have to cover — and the vermilion tick is their average. Hover a dot for its number. Illustrative numbers, fixed by hand; the Table tab lists all 96 (token, channel) pairs.
+:::
 
-| values | c0 | c1 | c2 | c3 | c4 | c5 | c6 | c7 |
-|---|---|---|---|---|---|---|---|---|
-| t0 | 0.6 | −0.8 | −0.3 | −0.3 | 0.2 | 1.1 | 0.0 | 0.9 |
-| t1 | −0.4 | 0.3 | −2.1 | −1.4 | 0.8 | −0.6 | 0.6 | 0.5 |
-| t2 | 1.3 | 0.8 | 1.0 | −0.1 | −0.7 | −0.7 | −0.5 | −1.1 |
-| **t3** | **−2.2** | **−0.4** | **1.0** | **−1.4** | **−7.7** | **−0.3** | **0.9** | **4.3** |
-| t4 | 0.6 | −0.6 | −0.7 | 2.0 | 0.8 | 1.8 | 2.1 | −0.8 |
-| t5 | 0.4 | 0.5 | 0.6 | 0.5 | 0.2 | 0.2 | −1.5 | −0.2 |
-
-Notice anything? In the keys, two **columns** stand out: [[channel|channels]] c2 and c5 are big, token after token, and they creep slowly. In the values no column stands out, but one **row** does: token t3 is loud everywhere.
+Notice anything? In the keys, two **columns** stand out: channels c2 and c5 are big, token after token, and they creep slowly. In the values no column stands out, but two **rows** do: tokens t3 and t8 are loud everywhere. The Numbers tab puts a size on it. A ruler laid down a key column covers 2.6 units on average, one laid across a key row 19.9, because every row holds both a +11 and a −9.
 
 KIVI is built on exactly this observation. In the paper's words, a few fixed channels of the keys have very large magnitudes, and the values show no such pattern. In ours: the keys have structure *along columns*, the values *along rows*.
 
@@ -71,7 +57,7 @@ The whole design question is: **which numbers share one ruler?**
 KIVI's answer: keys share rulers **per channel** (columns, in runs of 32 tokens), values share rulers **per token** (rows). Try both answers on both tables.
 
 ::: figure fig-pb-kivi-axis pbKiviAxis
-**The toy table of 12 tokens × 8 channels, rounded with min–max rulers.** Left: the numbers (vermilion positive, lapis negative, stronger colour = larger in size). Right: the rounding error of each number after the round trip (stronger colour = larger error). Outlines on the left show which numbers share one ruler. The read-out gives the typical (root-mean-square) error of the quiet part and of the loud part, each as a share of the typical size of the numbers in it, and the range of ruler steps. Hover or tap a cell for its number, rounded value and error. Toy numbers, made up to have the shape KIVI reports.
+**The toy cache of [[#fig-pb-kivi-data]], rounded with min–max rulers.** Left: the numbers (vermilion positive, lapis negative, stronger colour = larger in size). Right: the rounding error of each number after the round trip (stronger colour = larger error). Outlines on the left show which numbers share one ruler. The read-out gives the typical (root-mean-square) error of the quiet part and of the loud part, each as a share of the typical size of the numbers in it, and the range of ruler steps. Hover or tap a cell for its number, rounded value and error. Toy numbers, made up to have the shape KIVI reports (the same 12 tokens × 8 channels as the card above).
 :::
 
 ::: try
@@ -126,6 +112,8 @@ $\tfrac12\log_2 \dfrac{1}{1-\vRsq}$ bits per number — and KIVI reports no $\vR
 :::
 
 The predictor KIVI points to is "each channel's typical value". Its gain is set by how much of a key's spread lies *between* channels rather than *within* one ([[#homework-loc]]). KIVI measures neither spread.
+
+On the toy cache the number takes one line to compute (the Numbers tab of [[#fig-pb-kivi-data]]): each channel's mean explains 97.7 % of the keys' variance, worth about 2.7 bits per number, and 2.8 % of the values', worth nothing. But the toy was *built* with two big key channels, so it can only show what the number means, not what it is for real keys.
 
 ::: note warning Where we are not convinced
 - **"Values have no per-channel structure" is an absence in a plot.** The paper sees no obvious pattern in values and picks per-token rulers by reasoning about how errors reach the attention output. That does not show value channels are unpredictable.

@@ -1,0 +1,57 @@
+# Running example datasets of Part IV (idea). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+idea-history:
+  title: A toy KV history
+  blurb: One layer of a made-up request — 128 entries of 8 elements, stored as 8-bit numbers and cut into blocks of 32 — built so that neighbouring entries are alike.
+  emblem: layers
+  unit: 128 entries × 8 elements
+  source: synthetic, seeded
+  csv: toy-kv-history.csv
+  story: >-
+    Each element is its channel's typical value, plus a slow wander shared by neighbouring tokens (an AR(1) walk,
+    φ = 0.95), plus token noise; channel c0 is large, steady and nearly noise-free, like the few large key channels the
+    KV-quantization papers report. The toy is built so that fallen-apple similarity holds, so it shows the mechanics of
+    kv-blockdiff (block dictionaries, fixed-length deltas, the dictionary tax, a neighbour curve) on numbers one can
+    read. It is not evidence about real KV caches: that is what the experiments of Part IX are for.
+idea-entry-sizes:
+  title: Toy entry sizes
+  blurb: What each entry of the toy KV history costs — raw, coded alone, and as a delta against its block's dictionary — the KV twin of the Gull Rock message sizes.
+  emblem: weight
+  unit: 128 entries · bytes
+  source: derived from A toy KV history
+  csv: toy-kv-entry-sizes.csv
+  story: >-
+    "Alone" is an ideal context-free code (each number costs −log₂ of its frequency in the history); "delta" is the
+    fixed-length difference from the block's typical values, with one width per element per block. Each block's
+    dictionary (8 typical values + 8 widths) is 16 bytes, w = 2.
+idea-heavy:
+  title: A toy indexer, two worlds
+  blurb: Two runs of the toy indexer of IV.10 — the same Lucky Louis habit, with and without heavy blocks — step by step, with what each miss cost.
+  emblem: target
+  unit: 2 × 270 steps · k = 64
+  source: synthetic, seeded
+  csv: toy-indexer-two-worlds.csv
+  story: >-
+    4,096 positions in 32 blocks of 128; each step keeps 85 % of the previous picks, and new picks come from three
+    "topic" blocks with probability 0.8 (heavy world) or 0 (scattered world). A HiSparse-style hot cache of 128 slots and
+    a dictionary cache of 4 shelves with the toy residency rule of IV.4 serve them. It teaches that the hit rate cannot
+    see heavy blocks, while the δ-miss fraction and the dictionary loads depend on nothing else.
+idea-leak:
+  title: Keys with nothing to compress
+  blurb: The 4,096 keys of the leak experiment (IV.13) — independent random numbers, or each a close copy of the last — that a drifting query selects from.
+  emblem: dice
+  unit: 2 × 4,096 keys × 32 elements
+  source: synthetic, seeded
+  csv: leak-keys.csv
+  story: >-
+    Every element of an independent key is a fresh standard Gaussian number; a copied key is 0.95 × the previous key
+    plus a little fresh noise. The card's table holds element 0 of the first 300 keys of each kind and of the key after
+    each. Both kinds give HiSparse-like hit rates under the same drifting query; only the copies could be compressed.
+idea-cosine-pair:
+  title: Two entries, four spikes
+  blurb: Two made-up 640-element entries that share four huge channels and nothing else — a cosine similarity near 1, and almost nothing to predict.
+  emblem: twins
+  unit: 640 elements × 2
+  source: synthetic, seeded
+  csv: cosine-pair.csv

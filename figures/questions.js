@@ -1,8 +1,8 @@
 /* Part VIII — The questions. Figures for the question and framework pages.
    Every figure here is SCHEMATIC: it shows the shapes an experiment could produce and how we
    would read them, from toy models with stated parameters. None of it is KV-cache data.
-   Builders: qDecision (VIII.2), qBar (VIII.3), qDistance (VIII.5), qCurve (VIII.6),
-   qReplay (VIII.7), qFrontier (VIII.8), qParkedMap (VIII.9), qAxes (VIII.10), qProbe (VIII.11). */
+   Builders: qProspector (VIII.1), qDecision (VIII.2), qBar (VIII.3), qDistance (VIII.5), qCurve (VIII.6),
+   qReplay (VIII.7), qFrontier + qVerdict (VIII.8), qParkedMap (VIII.9), qAxes (VIII.10), qProbe (VIII.11). */
 window.FIG = window.FIG || {};
 
 (function () {
@@ -13,6 +13,41 @@ window.FIG = window.FIG || {};
   const mark = host => { host.classList.add('q-host'); return host; };
   const SOLO_BITS = 6.24;          // solo coding, ideal coder: ≈ 0.78 × 8 bits (II/VI: order-0 entropy 6.2–6.5)
   const FIX = 1.13;                // fixed-length overhead over the ideal rate (assumed: middle of the 10–15 % gap)
+
+  // ================================================================ VIII.1 · the prospector writes her outcomes down first
+  FIG.qProspector = (host) => {
+    const DIST = [10, 100, 1000];
+    const OUT = [
+      { id: 'vein', name: 'falls with distance', act: 'there is a vein up there: dig at the ridge', g: d => 8 * Math.pow(d / 10, -0.5), color: series(3) },
+      { id: 'dust', name: 'the same everywhere', act: 'the river spread dust along the valley: pan, do not dig', g: () => 1.2, color: series(0) },
+      { id: 'none', name: 'nothing anywhere', act: 'go home, and tell the next prospector', g: () => 0.05, color: series(6) },
+    ];
+    let valley = 0, panned = false, seed = 1;
+    const box = h('div'), ro = readout();
+    const pick = seg([[0, 'valley 1'], [1, 'valley 2'], [2, 'valley 3']], valley, v => { valley = v; panned = false; draw(); }, 'Choose a valley');
+    const pan = btn('pan the buckets', () => { panned = true; seed++; draw(); });
+    mark(host).append(schem('An invented valley · the outcomes are written before the buckets'), controls(pick, pan),
+      legend(OUT.map(o => [`written down: ${o.name}`, o.color, 'dash'])), box, ro);
+    const P = Plot(box, { x: [6, 1700], xlog: true, y: [0.02, 30], ylog: true, h: 320, xticks: DIST, xfmt: v => (v < 1000 ? `${v} m` : '1 km'),
+      yticks: [0.03, 0.1, 0.3, 1, 3, 10, 30], yfmt: v => fmt(v, v < 0.1 ? 2 : v < 1 ? 1 : 0),
+      xlabel: 'distance of the bucket from the ridge', ylabel: 'gold (grams per tonne)', label: 'Gold grade against distance from the ridge, with three outcomes written down in advance' });
+    function draw() {
+      P.clear();
+      const world = OUT[[1, 0, 2][valley]];                       // valley 1 is dust, valley 2 a vein, valley 3 nothing
+      const r = rng(`questions-prospector-${valley}-${seed}`);
+      const pts = panned ? range(12).flatMap(st => DIST.map(d => [d * Math.exp(r.uniform(-0.12, 0.12)), Math.max(0.021, world.g(d) * Math.exp(r.normal(0, 0.45)))])) : [];
+      OUT.forEach(o => line(P, linspace(Math.log10(8), Math.log10(1400), 30).map(v => [Math.pow(10, v), o.g(Math.pow(10, v))]), { color: o.color, width: 2, dash: true }));
+      pts.forEach(([x, y]) => dot(P.g.data, P.x(x), P.y(y), 4 * P.fs, 'var(--c)'));
+      if (!panned) { ro.set([['buckets', 'none yet'], ['the plan', 'three outcomes written down, each with what to do']]); return; }
+      // read the buckets: the mean grade and the slope of log grade against log distance
+      const lx = pts.map(p => Math.log10(p[0])), ly = pts.map(p => Math.log10(p[1]));
+      const mx = mean(lx), my = mean(ly);
+      const slope = sum(lx.map((x, i) => (x - mx) * (ly[i] - my))) / sum(lx.map(x => (x - mx) ** 2));
+      const got = Math.pow(10, my) < 0.15 ? OUT[2] : slope < -0.25 ? OUT[0] : OUT[1];
+      ro.set([['36 buckets', `typical grade ${fmt(Math.pow(10, my), 2)} g/t, slope ${fmtS(slope, 2)} per tenfold distance`], ['matches', got.name], ['so', got.act]]);
+    }
+    draw();
+  };
 
   // ================================================================ VIII.2 · the wave-1 decision rule
   FIG.qDecision = (host) => {
@@ -351,16 +386,17 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.8 · requests per GPU
-  FIG.qFrontier = (host) => {
+  // ------------------------------------------------------------ the cost model of VIII.8 (qFrontier, qVerdict)
+  // Requests per GPU N = min(N_link, N_HBM) for HiSparse and the kv-blockdiff variants, reference setting otherwise.
+  // st = { W: link GB/s, M: GPU memory GB, rho, fD }. Returns the systems and best(f) = [B*, N(B*)] over the B grid.
+  const FR_BGRID = linspace(log2(2048), log2(16384), 121).map(v => Math.pow(2, v));
+  function frontierModel(st) {
     const k = 2048, NL = 78, e = 640, TPOT = 0.030;
-    let W = 50, M = 30, rho = 0.75, fD = 0.85, showVictim = true;
     const m = Bs => 0.134 * Math.pow(Bs / 4096, -1.08);          // HiSparse's three points, power-law fit (III.9)
-    const Bgrid = linspace(log2(2048), log2(16384), 121).map(v => Math.pow(2, v));
     // best victim-tier size for a given B: the link limit rises with B_V, the memory limit falls; take the crossing
     function limits(Bs, BV) {
-      const T = m(Bs + BV) * k * NL * e * rho;
-      return [W * 1e9 * TPOT / T, M * 1e9 / (NL * e * (Bs + rho * BV + 256))];
+      const T = m(Bs + BV) * k * NL * e * st.rho;
+      return [st.W * 1e9 * TPOT / T, st.M * 1e9 / (NL * e * (Bs + st.rho * BV + 256))];
     }
     function bestVictim(Bs) {
       let [l0, h0] = limits(Bs, 0);
@@ -372,25 +408,34 @@ window.FIG = window.FIG || {};
     }
     function N(Bs, o) {
       const T = m(Bs + (o.BV || 0)) * k * NL * e * (o.fD * o.rho + (1 - o.fD)) + (o.nload || 0) * NL * (o.w || 0) * e;
-      const Nl = W * 1e9 * TPOT / T;
+      const Nl = st.W * 1e9 * TPOT / T;
       const Mr = NL * e * ((o.slot || 1) * Bs + o.rho * (o.BV || 0) + (o.wres || 0));
-      return Math.min(Nl, M * 1e9 / Mr);
+      return Math.min(Nl, st.M * 1e9 / Mr);
     }
     const SYS = [
       { id: 'his', name: 'HiSparse', color: series(0), f: Bs => N(Bs, { rho: 1, fD: 1 }) },
-      { id: 'req', name: 'lever 1, per request', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
-      { id: 'blk', name: 'lever 1, per block', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
+      { id: 'req', name: 'lever 1, per request', color: series(2), f: Bs => N(Bs, { rho: st.rho, fD: 1, wres: 256 }) },
+      { id: 'blk', name: 'lever 1, per block', color: series(3), f: Bs => N(Bs, { rho: st.rho, fD: st.fD, nload: 0.1, w: 32, wres: 128 }) },
       { id: 'vic', name: 'lever 1 + victim tier', color: series(4), f: Bs => bestVictim(Bs) },
-      { id: 'lv2', name: 'levers 1 + 2', color: series(1), f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
+      { id: 'lv2', name: 'levers 1 + 2', color: series(1), f: Bs => N(Bs, { rho: st.rho, fD: 1, wres: 256, slot: st.rho }) },
     ];
+    const best = f => FR_BGRID.reduce((a, Bs) => { const v = f(Bs); return v > a[1] ? [Bs, v] : a; }, [0, -1]);
+    return { SYS, best, Bgrid: FR_BGRID };
+  }
+
+  // ================================================================ VIII.8 · requests per GPU
+  FIG.qFrontier = (host) => {
+    const st = { W: 50, M: 30, rho: 0.75, fD: 0.85 };
+    let showVictim = true;
+    const { SYS, Bgrid } = frontierModel(st);
     const box = h('div'), tbl = h('div');
     mark(host).append(
       schem('Schematic · assumed ρ and f<sub>D</sub>, reference setting otherwise'),
       controls(
-        slider('link', 25, 450, 5, W, v => { W = v; draw(); }, v => `${v} GB/s`),
-        slider('GPU memory', 10, 80, 1, M, v => { M = v; draw(); }, v => `${v} GB`),
-        slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
-        slider(texify('$\\vfD$ (block scope)'), 0, 1, 0.01, fD, v => { fD = v; draw(); }),
+        slider('link', 25, 450, 5, st.W, v => { st.W = v; draw(); }, v => `${v} GB/s`),
+        slider('GPU memory', 10, 80, 1, st.M, v => { st.M = v; draw(); }, v => `${v} GB`),
+        slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, st.rho, v => { st.rho = v; draw(); }),
+        slider(texify('$\\vfD$ (block scope)'), 0, 1, 0.01, st.fD, v => { st.fD = v; draw(); }),
         btn('victim tier', (ev, b) => { showVictim = !showVictim; b.setAttribute('aria-pressed', String(showVictim)); draw(); }, { pressed: showVictim })),
       legend(SYS.map(s => [s.name, s.color])),
       box, tbl,
@@ -420,6 +465,67 @@ window.FIG = window.FIG || {};
       });
       tbl.replaceChildren(table(['system, at its own best B', 'best B', 'N', 'gain'], rows, { left: [0] }));
     }
+    draw();
+  };
+
+  // ================================================================ VIII.8 · the verdict: gain against ρ, with the bars of the outcome table
+  FIG.qVerdict = (host) => {
+    const st = { W: 50, M: 30, rho: 0.75, fD: 1 };
+    let pick = 0.75;
+    const SHOW = ['req', 'vic', 'lv2'];
+    const RHOS = linspace(0.4, 1, 61);
+    const BANDS = [[0.8, 1.1, 'not worth a system', 'var(--bad)'], [1.1, 1.3, 'only if almost free', 'var(--saffron)'], [1.3, 2.4, 'a strong systems result', 'var(--good)']];
+    const gainAt = (W, rho) => {
+      const mdl = frontierModel({ W, M: st.M, rho, fD: 1 });
+      const best = f => {                    // the grid's best B, then refined between its neighbours (ternary search in log B)
+        const [B0] = mdl.best(f);
+        let lo = Math.max(2048, B0 / 1.018), hi = Math.min(16384, B0 * 1.018);
+        for (let it = 0; it < 40; it++) { const a = lo * Math.pow(hi / lo, 1 / 3), b = lo * Math.pow(hi / lo, 2 / 3); if (f(a) < f(b)) lo = a; else hi = b; }
+        return f(Math.sqrt(lo * hi));
+      };
+      const base = best(mdl.SYS[0].f);
+      return Object.fromEntries(mdl.SYS.filter(x => SHOW.includes(x.id)).map(x => [x.id, best(x.f) / base]));
+    };
+    const meta = frontierModel(st).SYS.filter(x => SHOW.includes(x.id));
+    const box = h('div'), ro = readout();
+    const sR = slider(texify('delta ratio $\\vrho$ (fixed-length)'), 0.4, 1, 0.01, pick, v => { pick = v; mark1(); });
+    mark(host).append(
+      schem('Schematic · the cost model of the figure above, each system at its own best B'),
+      controls(slider('link', 25, 450, 5, st.W, v => { st.W = v; draw(); }, v => `${v} GB/s`), sR),
+      legend(meta.map(x => [x.name, x.color])), box, ro);
+    const P = Plot(box, { x: [1, 0.4], y: [0.8, 2.4], h: 360, xticks: [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4], yticks: [0.8, 1, 1.1, 1.3, 1.5, 2],
+      xfmt: v => fmt(v, 1), yfmt: v => `${fmt(v, 1)}×`, xlabel: 'delta ratio ρ (smaller is better) →', ylabel: 'gain in requests per GPU over HiSparse',
+      label: 'Gain in requests per GPU over HiSparse against the delta ratio, with the thresholds of the outcome table' });
+    BANDS.forEach(([a, b, name, c]) => {
+      el('rect', { x: P.m.l, width: P.pw, y: P.y(b), height: P.y(a) - P.y(b), style: `fill:color-mix(in srgb, ${c} 9%, transparent)` }, P.g.bg);
+      if (b > 2) svgText(P.g.bg, P.x(0.995), P.y(2.35) + 14 * P.fs, name, { class: 'lbl' });
+      else svgText(P.g.bg, P.x(0.405), P.y(b) + 14 * P.fs, name, { class: 'lbl', 'text-anchor': 'end' });
+    });
+    [1.1, 1.3].forEach(y => rule(P, { y, color: 'var(--ink-3)' }));
+    const gData = el('g', {}, P.g.data);
+    const knob = el('line', { style: 'stroke:var(--c);stroke-width:2' }, P.g.top);
+    let curves = null;
+    function draw() {
+      const rows = RHOS.map(r => ({ r, g: gainAt(st.W, r) }));
+      curves = rows;
+      gData.replaceChildren();
+      P.series.length = 0;
+      meta.forEach(x => line(P, rows.map(o => [o.r, o.g[x.id]]), { color: x.color, width: 2.6, name: x.name, parent: gData }));
+      mark1();
+    }
+    function mark1() {
+      knob.setAttribute('x1', P.x(pick)); knob.setAttribute('x2', P.x(pick));
+      knob.setAttribute('y1', P.m.t); knob.setAttribute('y2', P.m.t + P.ph);
+      const g = gainAt(st.W, pick);
+      const below = SOLO_BITS - 8 * pick / FIX, r2 = 1 - Math.pow(2, -2 * Math.max(0, below));
+      const verdict = v => (v < 1.1 ? 'not worth it' : v < 1.3 ? 'only if free' : 'strong');
+      ro.set([
+        [texify('$\\vrho$'), `${fmt(pick, 2)} · ${fmt(8 * pick, 2)} bits per element`],
+        ['below solo (ideal rates)', below > 0 ? `${fmt(below, 2)} bits · ${fmtPct(r2, 0)} of the variance explained` : 'not below solo'],
+        ...meta.map(x => [x.name, `${fmt(g[x.id], 2)}× · ${verdict(g[x.id])}`]),
+      ]);
+    }
+    crosshair(P, { xname: 'ρ =', xfmt: v => fmt(v, 2), yfmt: v => `${fmt(v, 2)}×` });
     draw();
   };
 

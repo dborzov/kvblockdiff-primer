@@ -1,0 +1,52 @@
+# Running example datasets of Part IX (plan). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+plan-synth:
+  title: The rehearsal set
+  blurb: The synthetic "KV cache" the harness is tested on — four sequences of 8,192 entries, 64 channels, with a planted request offset, planted blocks of 2,048 entries and noise.
+  emblem: flask
+  unit: 4 × 8,192 entries × 64 channels
+  source: synthetic, seeded
+  csv: plan-rehearsal-set.csv
+  story: >-
+    A browser twin of synthetic_kv() in analysis/plan_harness.py: each value is a channel centre plus a scale times
+    (request offset + block offset + noise), all three of variance 1; four channels in 64 have a large constant mean, like
+    the outlier channels of keys before RoPE. Eight more sequences form the calibration set. It is the data every control
+    of IX.3 runs on, the codes of IX.5 (two humps in E4M3, one bell in INT8) and the location gains of experiment 1a (IX.6).
+    Drawn with the site's seeded generator, so its numbers are the recipe's and differ from the numpy run in the second
+    decimal.
+plan-ladder:
+  title: The rehearsal ladder
+  blurb: What the harness printed for the loc dictionary on the rehearsal set — every format, scope and block size, original and shuffled, with both rates.
+  emblem: ladder
+  unit: 58 rates · bits per element
+  source: analysis/plan_harness.py
+  csv: plan-rehearsal-ladder.csv
+  story: >-
+    A transcript of figures/data/plan-harness.json: loc and loc with its per-channel predict-or-not flag, in INT8 and
+    E4M3, at global, request and block scope (b from 256 to 4096), on the original and on the shuffled rehearsal set,
+    each with its entropy rate and fixed-length rate. It is Table 1 of wave 1 filled in on synthetic data (IX.8), the
+    source of the "four readings" of the same structure (IX.7), and the presets of the decision rule (IX.9).
+plan-resid:
+  title: The two rates on the temperature residuals
+  blurb: The Gull Rock temperature residuals priced the harness's two ways — by a fitted Laplace model and by a fixed-width field with escapes.
+  emblem: ruler
+  unit: 1,344 residuals · tenths of °C
+  source: derived from Temperature residuals
+  csv: gull-rock-residual-rates.csv
+  story: >-
+    The previous-value residuals of II.10–II.11, run through the rate functions of analysis/plan_harness.py: laplace_fit
+    and entropy_rate for the scientific number, fl_widths and fixed_length_rate for the engineering one. The field width is
+    chosen so that at most half a percent of residuals escape; each escape costs its 8 raw bits.
+plan-trace:
+  title: The rehearsal trace
+  blurb: Three hundred decode steps of an exact top-k indexer over 4,096 synthetic keys in 16 blocks — which positions each step selects, and how they pile into blocks.
+  emblem: target
+  unit: 300 steps × 128 selections
+  source: synthetic, seeded
+  csv: plan-rehearsal-trace.csv
+  story: >-
+    The JavaScript twin of test_wave2() in analysis/plan_harness.py: each key is its block's topic vector (strength 1.5)
+    plus noise, four query heads drift by 0.15 per step, and each step selects the 128 positions with the highest attention
+    probability summed over heads. Replayed through a token LRU and a dictionary LRU, it gives the miss rates, the δ-miss
+    fraction and the dictionary loads of wave 2 (IX.10–IX.11) — the shape of the measurement, not its result.

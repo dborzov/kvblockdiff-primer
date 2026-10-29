@@ -66,6 +66,14 @@ The figure shows the evidence for why such a small desk works.
 3. Compare the dots at 4096: random replacement (16.1 %) is only 2.7 points worse than LRU. Recency helps, but most of the work is done by the selections themselves repeating.
 :::
 
+Part II ran the same contest on a toy: the forecaster's storm morning, 24 requests for 8 harbour logbooks and a desk of 4 slots ([[#school-caches]], [[#school-reuse-distance]]). Look at how the three policies finish.
+
+::: dataset fig-papers-hisparse-storm storm-morning view=raster,dists hl=lru metrics=lru4,fifo4,belady4,curve
+**The storm morning of Part II, as a miniature of HiSparse's comparison.** *The morning:* one row per logbook, one column per request, in the order the forecaster asked; the highlight colours the requests that miss a 4-slot desk under LRU (or under FIFO, or the first requests, which miss under any policy). *Reuse distances:* how many requests had each reuse distance (the number of other logbooks asked for since the last request for the same one; ∞ for a first request). The Numbers tab counts misses with 4 slots under three policies and gives the LRU miss rate for every desk size. A hand-made toy trace.
+:::
+
+The finishing order is HiSparse's: the clairvoyant policy beats LRU by one miss (9 against 10 of 24), and FIFO trails by four. On the toy, most misses are not the policy's fault at all: 8 of the 10 are first requests, which no desk can catch. The toy differs in scale: one item per request instead of $\vk = 2048$ picks per step.
+
 ::: takeaway
 - HiSparse moves raw entries between host memory and a small LRU desk in GPU memory; it never changes their bytes.
 - A miss costs one raw entry on the link and a slot costs one raw entry of GPU memory. HiSparse makes misses rarer; it leaves both prices alone.

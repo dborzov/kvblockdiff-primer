@@ -61,6 +61,12 @@ Add the sign (1 bit, a coin toss) and the mantissa (3 bits stored raw — it is 
 - **ideal:** 6.47 bits per element, 1.24× smaller than raw;
 - **fixed-length:** 7.24 bits per element, 1.10× smaller.
 
+::: figure fig-hwa-byte-split hwaByteSplit
+**Where the Hermit saves, field by field.** Each bar is the cost of one E4M3 element in bits, split into its sign (grey), exponent (red) and mantissa (blue). *Stored byte:* 1 + 4 + 3 = 8. *Fixed-length code:* sign and mantissa raw, the exponent in the 3-bit code of the table above, with escapes. *Ideal:* the entropy of each field — the exponent's 2.54 bits, and the mantissa's information given the sign and exponent, 2.93 bits (VI.1's split). Hover a segment for its size. From the seeded Monte Carlo of a million Gaussian draws at spread 64 (`analysis/homework_a_budget.py`).
+:::
+
+Almost all of the saving is in the red segment. The sign never shrinks, and the mantissa gives up only 0.07 bit even to an ideal coder: it is noise, and noise cannot be squeezed.
+
 The published numbers on real KV agree in size. SplitZip reaches 1.14× on E5M2 KV (88 % of its 6.19-bit order-0 bound) and 1.32× on BF16, where the exponent is a bigger share of the bits. Its top-8 exponent code on E4M3 even *expanded* the data, to 0.93×: too many values escaped. We read all of this as one sentence.
 
 ::: pull

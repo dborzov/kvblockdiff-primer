@@ -102,6 +102,18 @@ This is the engineering claim of any paper, so its bar is written down now.
 | 1.1–1.3× | worth it only if it comes almost for free |
 | 1.3–2× | a strong systems result |
 
+The figure lays the model of [[#fig-questions-frontier]] against these bars: each system at its own best $\vB$, its gain over HiSparse, for every $\vrho$ from 1 down to 0.4.
+
+::: figure fig-questions-verdict qVerdict
+**The verdict, against $\vrho$** (schematic: the cost model above, with $\vfD = 1$ and 30 GB of GPU memory). Horizontal axis: the fixed-length delta ratio $\vrho$, from 1 (no compression, left) to 0.4 (right). Vertical axis: requests per GPU at the system's own best hot-cache size, divided by HiSparse's at its own best. Lines: lever 1 with one dictionary per request, lever 1 plus a victim tier, and levers 1 + 2. Bands: the three rows of the table above, under 1.1×, 1.1–1.3× and 1.3–2×. The accent line is the $\vrho$ set by the slider; the readout gives its bits per element, how far that is below solo coding at ideal rates and the share of variance a predictor would have to explain for it ($\tfrac12\log_2\frac{1}{1-\vRsq}$), and each line's gain. The link slider redraws all three lines.
+:::
+
+::: try
+1. At $\vrho = 0.75$, lever 1 alone sits on the 1.1× line, while levers 1 + 2 are near 1.3×.
+2. Slide $\vrho$ to the right until lever 1 enters the green band. Read the price in the readout: the share of variance that must be explained.
+3. Raise the link to 450 GB/s. Lever 1 drops below 1× at every $\vrho$; only levers 1 + 2 still climb.
+:::
+
 Our read, from the model above, is sobering. A fixed-length $\vrho = 0.75$ is already about one bit per element below solo coding; by the exchange rate that means explaining about three quarters of the variance solo coding leaves. Even so, lever 1 alone lands right at the 1.1× line. To reach 1.3× on its own it needs $\vrho$ near 0.5: some two and a half bits below solo, well over 90 % of the variance explained. Levers 1 + 2 together reach about 1.28× at $\vrho = 0.75$ and 1.47× at $\vrho = 0.65$. The useful corollary: lever 2 can be projected from the same measured numbers before any decoding kernel exists.
 
 ::: note warning What this frontier is and is not

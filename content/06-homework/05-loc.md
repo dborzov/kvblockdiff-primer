@@ -31,13 +31,11 @@ cards:
     sec: gain
 ---
 
-Here are the first four entries of two blocks of the same request, three channels each, as [[integer-grid|INT8]] codes. (Illustrative numbers.)
+Here are the first four entries of two blocks of the same request, three channels each, as [[integer-grid|INT8]] codes: block A holds tokens 0–3, block B tokens 4096–4099. (Illustrative numbers; the Table tab has them all.)
 
-| | block A, tokens 0–3 | block B, tokens 4096–4099 |
-|:---|:---:|:---:|
-| channel "big" | 97 · 97 · 96 · 98 | 88 · 89 · 87 · 88 |
-| channel "drifter" | 12 · 15 · 10 · 13 | −20 · −17 · −22 · −19 |
-| channel "noisy" | −31 · 22 · 5 · −14 | 18 · −40 · 3 · 27 |
+::: dataset fig-hwa-two-blocks homework-two-blocks view=values,resid metrics=anchors,r2,gain,avg
+**Two blocks, three channels.** *Values and anchors:* each channel's codes (dots joined by lines) for the four entries of block A (left) and block B (right), with the grey gap between the blocks; the dashed segments are each block's anchor for that channel, its median rounded down, with its value. *Residuals:* each code minus its block's anchor, on one shared scale. Hover a token for its three values and residuals. Hand-made toy numbers.
+:::
 
 Notice anything?
 
@@ -54,7 +52,7 @@ The Hermit of [[#homework-solo-coding]] codes each channel with one global code,
 - **Not to confuse with** the Hermit's code tables: those are global and fixed; the Anchor's locations belong to one block (or one request) and follow its drift.
 :::
 
-Run the toy through it. Block A's anchors are (97, 12, −5), block B's are (88, −20, 10), and the residuals are:
+Run the toy through it, with each block's median (rounded down) as its anchor. Block A's anchors are (97, 12, −5), block B's are (88, −20, 10), and the residuals are:
 
 | | block A residuals | block B residuals |
 |:---|:---:|:---:|
@@ -67,6 +65,8 @@ Two channels collapse to a few small integers. The noisy one stays noisy: an anc
 ::: aside reminder Mean, variance, and the channel (II.11, II.13)
 A [[channel]] is one position $\vc$ across many vectors — one sensor's column ([[#school-vectors]]). Its [[variance]] $\vsigma^2$ is the average squared distance from its [[mean]] ([[#school-residual-shapes]]). The variance *inside* a block, around the block's own mean, is never larger than the variance around the global mean.
 :::
+
+Switch the card above to *Residuals* to see it: two flat lines hugging zero and one zigzag. Its Numbers tab puts a size on it. Block means explain about 98 % of the variance of "big" and "drifter", and 2 % of "noisy". By the exchange rate of [[#homework-exchange-rate]] that is about three bits per element for the first two and nothing for the third — and the entry's saving is the plain average over its channels, about two bits.
 
 ::: takeaway
 - loc stores one location and one scale per channel per block: $\vw \approx 2$, no per-entry tax.

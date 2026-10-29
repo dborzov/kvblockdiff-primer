@@ -1,0 +1,75 @@
+# Running example datasets of Part VI (homework). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+homework-ten-draws:
+  title: Ten draws in E4M3
+  blurb: Ten values drawn from a bell curve and stored as 8-bit E4M3 floats — each with its byte and its rung on the ladder.
+  emblem: chip
+  unit: 10 values · 8 bits
+  source: hand-picked draws, exact rounding
+  csv: ten-draws-e4m3.csv
+  story: >-
+    The stand-in for one KV channel that opens Part VI. The drawn values are fixed; the stored value, the byte and the
+    grid position are computed from the E4M3 ladder of II.20. Four exponent patterns cover all ten: the exponent is
+    where an 8-bit element's easy redundancy lives, the mantissa looks like noise.
+homework-two-blocks:
+  title: Two blocks, three channels
+  blurb: The first four entries of two blocks of one request, three channels each — one big and steady, one drifting, one noisy.
+  emblem: anchor
+  unit: 8 entries × 3 channels
+  source: hand-made
+  csv: two-blocks-three-channels.csv
+  story: >-
+    The toy of VI.5 (loc, the Anchor). Each block's anchors are its per-channel medians, and the residuals are the exact
+    differences. Channels that sit still inside a block collapse to a few small integers; the noisy one does not.
+homework-twins:
+  title: Two near-duplicate entries
+  blurb: Two entries of one block that look alike, first eight elements of each, and their difference.
+  emblem: twins
+  unit: 8 elements × 2 entries
+  source: hand-made
+  csv: two-twin-entries.csv
+  story: >-
+    The toy of VI.8 (sib, the Twin). Sending one entry as its difference from the other shrinks its spread about twelve
+    times — the best case for a sibling, which most entries will not have.
+homework-sixteen:
+  title: Sixteen residuals, two bills
+  blurb: Sixteen residuals of one channel and what two coders pay for them — a code fit to their counts, or 3-bit slots with an escape.
+  emblem: ruler
+  unit: 16 residuals
+  source: hand-made
+  csv: sixteen-residuals.csv
+  story: >-
+    The hook of VI.10. The entropy bill is 41 bits, the fixed-length bill 60: whole-bit slots and one outlier make the
+    difference. It is the gap between the entropy rate and the fixed-length rate in miniature.
+homework-grid-pairs:
+  title: Five guesses on two grids
+  blurb: Five values and their predictions, with the residual counted in steps on an INT8 grid and in rungs of E4M3.
+  emblem: loggrid
+  unit: 5 pairs
+  source: hand-made, exact grids
+  csv: five-guesses-two-grids.csv
+  story: >-
+    The table of VI.11. Far from zero E4M3's coarse rungs make residuals small; near zero, and especially across it,
+    a small miss walks past dozens or hundreds of rungs. The E4M3 positions come from the ladder of II.20.
+homework-notebooks:
+  title: The forecaster's three notebooks
+  blurb: The pressure of the Gull Rock storm, reading by reading, with the guesses of an almanac, a storm log and an hour sheet.
+  emblem: book
+  unit: 96 readings × 3 guesses
+  source: derived from the station messages
+  csv: forecaster-notebooks.csv
+  story: >-
+    The three scopes of VI.13 on the storm of Part I's station messages. The almanac (1013 hPa, for everybody) is global
+    scope; the average of this storm so far is request scope; the reading just before is the most local notebook. Each
+    narrower notebook misses by less.
+homework-planted:
+  title: A channel with planted blocks
+  blurb: One channel of the dress rehearsal's toy — 32 blocks, each with a planted offset, plus noise — in order and shuffled across blocks.
+  emblem: dice
+  unit: 2,048 values
+  source: synthetic, seeded
+  csv: planted-blocks.csv
+  story: >-
+    A small slice of the recipe of VI.18. In order, block means step from block to block and a block dictionary saves
+    about 0.3 bit; shuffled, the steps vanish and so does the gain. It is the shuffle control in one picture.

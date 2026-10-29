@@ -73,7 +73,13 @@ The codec, step by step:
 A [[fixed-length-code]] spends exactly $\vn$ bits on every value; values that do not fit are escaped, a fraction $\veps$ of them. See [[#school-fixed-length]].
 :::
 
-The cost per number is easy to write down:
+We have built this exact shape before, for the Gull Rock wind archive of [[#school-fixed-length]]: 5-bit slots for the common breezes, and the rare gales escaped with their position. Here is that archive again, with the gales picked out.
+
+::: dataset fig-papers-splitzip-wind wind view=histogram,timeline hl=gales metrics=fit5,gales,entropy
+**The Gull Rock wind archive of Part II, read as an escape code.** *How often each speed:* horizontal axis, wind speed in whole knots; vertical axis, the number of half-hourly readings (1,024 in all). Vermilion: the gales of 40 knots and more, which a 5-bit slot (0–30 knots, code 31 reserved as the marker) cannot hold and which go to the escape stream. *Three weeks:* the same readings in time order. Synthetic, seeded data, the same as on [[#school-fixed-length]].
+:::
+
+Swap knots for exponent values and the picture is SplitZip's. A few values cover almost everything: 97.0 % of the wind fits the slots, and the top 16 exponents cover 99.8 % of Qwen3-32B's KV. The rest is a thin, far tail that costs a lot each time — 18 bits per gale, about 40 per exponent by our count below — but is too rare to matter much. For the wind the bill was $5 + 3.0\,\% \times 18 = 5.54$ bits per reading, a bit above the 4.54 bits an entropy coder would need. SplitZip's bill has the same two parts, a code and its escapes, plus one more: the byte it does not code at all.
 
 $$
 \text{bits per number} = \underbrace{8}_{\text{raw byte}} + \underbrace{\vn}_{\text{code}} + \underbrace{\veps \times \text{escape cost}}_{\text{escapes}}

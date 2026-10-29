@@ -28,6 +28,12 @@ cards:
 
 Two thermometers on the Gull Rock mast read almost the same thing. In [[#school-rotation]] we turned their axes: one new axis along "both go up together" (their average), one along "they disagree" (their difference). Nearly all the spread lived on the first axis; the second carried a little noise. Coding the two new numbers cost less than coding the two old ones.
 
+::: dataset fig-hwa-thermo thermo-axes view=cloud,timeline metrics=lambdas,bits
+**The two thermometers, turned (from II.15).** *The cloud, turned:* each of the 480 readings of the ten days, centred and measured along the cloud's own axes: "how warm" (along, horizontal) against "how much they disagree" (across, vertical), in °C, with equal units. *Along and across:* the same two coordinates over the ten days. The Numbers tab gives the spread along each axis — the two eigenvalues — and the bits per reading before and after turning. Synthetic, seeded data.
+:::
+
+The cloud lies flat: one eigenvalue is about 240 times the other. Those two numbers are all the Compass needs to know. Their arithmetic average is 2.97 and their geometric average 0.38, and the formula of the next section turns that ratio into about 1.5 bits per element — the three bits per reading the card counts, shared by two thermometers.
+
 A key vector of a language model has hundreds of channels instead of two. If some of them move together, the same trick applies — with a 640-by-640 rotation instead of a 2-by-2 one.
 
 ## The Compass as a dictionary {#dictionary}

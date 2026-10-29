@@ -27,6 +27,14 @@ cards:
 
 A piano roll records which keys are struck and when. It says nothing about how the piano sounds; you can feed the same roll to any piano. A selection trace is the piano roll of sparse attention. It records which positions the [[indexer]] picks at every step and layer, and nothing about what is stored there. Feed it to any cache design — HiSparse's, ours with 2 dictionaries, ours with 16 — and count what happens.
 
+Part II already had a piano roll: the forecaster's storm morning of [[#school-caches]], 24 requests for 8 station logbooks, in order. Nothing in it says what a logbook contains, and yet [[#school-reuse-distance]] read a whole miss-rate curve off it, for every desk size at once.
+
+::: dataset fig-questions-storm-roll storm-morning view=reuse,raster hl=lru metrics=curve,lru4,belady4
+**The storm morning as a piano roll.** One row per logbook, one column per request, in order; each repeat is joined to the same logbook's previous request, and its reuse distance is written under the column. Red cells (the highlight) are the misses of an LRU desk of 4 slots; switch the highlight to compare FIFO, or to see first requests. *Numbers:* the miss-rate curve read off the reuse distances. Synthetic data from II.21.
+:::
+
+Framework C runs the same replay twice over, and bigger. For the hot cache, entries play the logbooks. For the [[dictionary-cache]], blocks play them: a block's reuse distance — how many other blocks are touched before it comes back — gives the dictionary cache's miss rate for every number of resident dictionaries in one curve.
+
 ## The set-up {#setup}
 
 ::::: cols

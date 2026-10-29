@@ -1,0 +1,25 @@
+# Running example datasets of Part V (papers). Fields: title, blurb (one sentence), emblem
+# (theme/layouts/partials/emblems.njk), unit and source (short chips), story (optional, longer, reference page only),
+# csv (download file name). The data, views and metrics: figures/datasets/<id>.js.
+papers-kivi:
+  title: KIVI's toy cache
+  blurb: Keys and values of one head, 12 tokens × 8 channels, made up to have the shape the KIVI paper reports — two big key channels, and loud value tokens.
+  emblem: gauge
+  unit: 12 tokens × 8 channels × 2
+  source: illustrative, fixed numbers
+  csv: kivi-toy-cache.csv
+  story: >-
+    Two hand-made tables of the kind KIVI shows for real models: in the keys, channels c2 and c5 sit near +11 and −9 token
+    after token; in the values no channel stands out, but tokens t3 and t8 are loud everywhere. They teach which numbers
+    should share one rounding ruler (V.7), and what a lossless coder would want to know that KIVI does not report.
+papers-temp-recipes:
+  title: Temperatures, the papers' way
+  blurb: The four weeks of Gull Rock temperatures coded with two recipes from Part V — CacheGen's anchors and differences, and KVComp's coarse grid.
+  emblem: telegraph
+  unit: 1,344 readings
+  source: derived from Gull Rock temperatures
+  csv: gull-rock-temperatures-recipes.csv
+  story: >-
+    The readings and previous-value residuals of II.10–II.12, regrouped. Cut into groups of ten with the first as anchor,
+    they show what CacheGen's "differences are smaller than values" is worth on one channel with a slow daily drift (V.11).
+    Rounded to whole degrees, they show that a predictor saves fewer bits but a larger share on a coarse grid (V.12).
