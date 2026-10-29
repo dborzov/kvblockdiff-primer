@@ -1,0 +1,76 @@
+---
+layout: base.njk
+bodyClass: home
+---
+{%- set tree = collections.pages | navTree -%}
+<header class="hero">
+  <div class="banner-orn" aria-hidden="true">{% include "partials/banner-ornament.njk" %}</div>
+  <div class="hero-eyebrow">a primer &amp; a research proposal</div>
+  <h1>{{ title }}</h1>
+  <p class="hero-sub">{{ lede | mdInline(page.inputPath) | safe }}</p>
+  <div class="hero-actions">
+    <a class="btn-big" href="{{ tree[0].first.url if tree[0].first else '/' }}">{{ 'braces' | emblem | safe }} Begin with a story</a>
+    <a class="btn-big ghost" href="{{ tree[1].first.url if tree[1].first else '/' }}">{{ 'quill' | emblem | safe }} Back to school first</a>
+  </div>
+</header>
+
+<div class="page-body home-body">
+  <article class="prose">
+{{ content | safe }}
+  </article>
+</div>
+
+<section class="home-section" id="map">
+  <h2>The map</h2>
+  <p class="sec-lede">Ten parts, each made of short pages — one idea per page. Read them in order, or jump to whatever you need; every term links back to where it was defined.</p>
+  <div class="parts-grid">
+    {%- for p in tree %}
+    {%- if p.first %}<a class="part-card" href="{{ p.first.url }}" style="--pc:var(--part-{{ p.id }})">{% else %}<div class="part-card" style="--pc:var(--part-{{ p.id }})">{% endif %}
+      <span class="pc-top"><span class="pc-roman">{{ p.id }}</span><span class="pc-emb">{{ p.emblem | emblem | safe }}</span></span>
+      <span class="pc-title">{{ p.title }}</span>
+      <span class="pc-lede">{{ p.lede | mdInline | safe }}</span>
+      <span class="pc-meta">{{ p.count }} page{% if p.count != 1 %}s{% endif %} →</span>
+    {% if p.first %}</a>{% else %}</div>{% endif %}
+    {%- endfor %}
+  </div>
+</section>
+
+<section class="home-section" id="cast">
+  <h2>The cast</h2>
+  <p class="sec-lede">The signature ideas of this project each have a name, an emblem and a colour. When you meet one in the text it looks like this, and hovering it brings back its reminder.</p>
+  <div class="brand-gallery">
+    {%- for t in glossary | brandTerms %}
+    <a class="brand-card" href="/reference/glossary/#g-{{ t.id }}" style="--tc:var(--t-{{ t.id }})">
+      <span class="bc-emb">{{ t.emblem | emblem | safe }}</span>
+      <span class="bc-name">{{ t.label }}</span>
+      <span class="bc-nick">“{{ t.nick }}”</span>
+      <span class="bc-short">{{ t.short | mdInline | safe }}</span>
+    </a>
+    {%- endfor %}
+  </div>
+</section>
+
+<section class="home-section" id="colours">
+  <h2>The colours of the mathematics</h2>
+  <p class="sec-lede">Every symbol in every formula is coloured by what kind of quantity it is, the same way on every page. Hover a symbol for its meaning; under each equation a “what’s in this equation” panel lists them all.</p>
+  <div class="legend-grid">
+    {%- for fid, f in families %}
+    <div class="fam-chip" style="--fc:{{ f.color }}"><span class="fam-swatch"></span><span>{{ f.label }}</span><span class="fam-ex">{{ fid | familyExamples | safe }}</span></div>
+    {%- endfor %}
+  </div>
+  <p class="sec-lede" style="margin-top:1rem"><a href="/reference/notation/">The full notation table →</a></p>
+</section>
+
+<section class="home-section" id="themes">
+  <h2>Running themes</h2>
+  <p class="sec-lede">A handful of ideas come back again and again. Each time one does, a dashed card marks it and lists every other place it appears.</p>
+  <div class="brand-gallery">
+    {%- for tid, th in themes %}
+    <a class="brand-card" href="/reference/themes/#theme-{{ tid }}" style="--tc:{{ th.color }}">
+      <span class="bc-emb">{{ th.emblem | emblem | safe }}</span>
+      <span class="bc-name">{{ th.title }}</span>
+      <span class="bc-short">{{ th.short }}</span>
+    </a>
+    {%- endfor %}
+  </div>
+</section>

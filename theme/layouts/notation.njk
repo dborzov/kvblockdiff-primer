@@ -1,0 +1,20 @@
+---
+layout: page.njk
+---
+{{ content | safe }}
+{%- for fid, fam in families %}
+{%- set list = symbols | symbolsInFam(fid) %}
+{%- if list.length %}
+<section class="gl-cat" style="--tc:{{ fam.color }}">
+  <h2 id="fam-{{ fid }}"><span class="swatch"></span>{{ fam.label }}</h2>
+  <div class="tbl-wrap"><table class="data nt-table">
+    <thead><tr><th>symbol</th><th>meaning</th><th>unit</th><th>introduced in</th></tr></thead>
+    <tbody>
+    {%- for s in list %}
+    <tr id="sym-{{ s.id }}"><td>{{ ('\\v' + s.id) | tex | safe }}</td><td><b>{{ s.name | mdInline | safe }}</b> — {{ s.short | mdInline | safe }}<br><code class="small">\v{{ s.id }}</code></td><td>{{ s.unit | mdInline | safe }}</td><td>{% if s.home %}<a class="xref" data-ref="{{ s.home }}" data-ref-style="num" href="#"></a>{% endif %}</td></tr>
+    {%- endfor %}
+    </tbody>
+  </table></div>
+</section>
+{%- endif %}
+{%- endfor %}

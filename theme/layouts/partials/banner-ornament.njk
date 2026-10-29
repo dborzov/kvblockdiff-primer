@@ -1,0 +1,14 @@
+<svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMin slice" fill="none" stroke="currentColor" stroke-linecap="round">
+  <g opacity=".55" stroke-width=".8">
+    {%- for a in range(0, 19) %}<path d="M400 -40 L{{ 400 + 900 * ((a - 9) / 9) }} 340"/>{% endfor %}
+  </g>
+  <circle cx="400" cy="-40" r="120" stroke-width="1.2" opacity=".7"/>
+  <circle cx="400" cy="-40" r="150" stroke-width=".6" opacity=".6"/>
+  <path d="M10 290 C 60 200, 20 140, 90 90 S 160 40, 130 10" stroke-width="2"/>
+  <path d="M40 300 C 90 230, 60 170, 120 130 S 200 90, 180 40" stroke-width="1.1" opacity=".8"/>
+  <path d="M90 90 c 14 -4 26 6 22 20 c -10 -2 -18 -10 -22 -20z M120 130 c 14 -2 24 8 18 22 c -10 -4 -16 -12 -18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"/>
+  <path d="M790 290 C 740 200, 780 140, 710 90 S 640 40, 670 10" stroke-width="2"/>
+  <path d="M760 300 C 710 230, 740 170, 680 130 S 600 90, 620 40" stroke-width="1.1" opacity=".8"/>
+  <path d="M710 90 c -14 -4 -26 6 -22 20 c 10 -2 18 -10 22 -20z M680 130 c -14 -2 -24 8 -18 22 c 10 -4 16 -12 18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"/>
+  <circle cx="130" cy="10" r="5" fill="currentColor" fill-opacity=".5"/><circle cx="670" cy="10" r="5" fill="currentColor" fill-opacity=".5"/>
+</svg>

@@ -1,0 +1,11 @@
+---
+layout: page.njk
+---
+{{ content | safe }}
+{%- for tid, th in themes %}
+<section class="theme-card" id="theme-{{ tid }}" style="--thc:{{ th.color }}">
+  <h2>{{ th.emblem | emblem | safe }}{{ th.title }}</h2>
+  <p>{{ th.short }}</p>
+  <div class="theme-occurrences" data-theme="{{ tid }}"></div>
+</section>
+{%- endfor %}

@@ -1,0 +1,578 @@
+/* =====================================================================
+   figures.css — plates, plots, controls, readouts, tooltips, concept graphs.
+   Colours come only from tokens.css (var(--…)); --c is the Part accent.
+   Companion scripts: plotkit.js, figs-loader.js, cgraph.js.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   Plates
+   --------------------------------------------------------------------- */
+.plate {
+  --c-ink: color-mix(in srgb, var(--c) 80%, var(--ink));
+  /* Art Nouveau corner flourish, painted in the accent through a mask */
+  --orn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='black' stroke-linecap='round'%3E%3Cpath d='M3 46V18C3 9.7 9.7 3 18 3H46' stroke-width='1.7'/%3E%3Cpath d='M9 37V21C9 14.4 14.4 9 21 9H37' stroke-width='1'/%3E%3Cpath d='M15 25.5C14 18.5 18 14 23 14.5C27.5 15 27.6 21 24 21.6C21.5 22 20.6 19.3 22.2 18.3' stroke-width='1.4'/%3E%3Cpath d='M25.5 15C30 13.8 33 14.6 35 16.5M15 25.5C13.8 30 14.6 33 16.5 35' stroke-width='1'/%3E%3Ccircle cx='46' cy='3' r='1.9' fill='black' stroke='none'/%3E%3Ccircle cx='3' cy='46' r='1.9' fill='black' stroke='none'/%3E%3Ccircle cx='37' cy='9' r='1.3' fill='black' stroke='none'/%3E%3Ccircle cx='9' cy='37' r='1.3' fill='black' stroke='none'/%3E%3Cpath d='M6.6 6.6l2.2-2.2 2.2 2.2-2.2 2.2z' fill='black' stroke='none'/%3E%3C/svg%3E");
+  --orn-size: clamp(28px, 4.5vw, 38px);
+  position: relative;
+  margin: 2rem 0;
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  background: var(--paper-3);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  /* a second, inner gilt hairline */
+  box-shadow: inset 0 0 0 4px var(--paper-3), inset 0 0 0 5px color-mix(in srgb, var(--rule) 55%, transparent), var(--shadow);
+  color: var(--ink);
+}
+.plate::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  background: var(--c);
+  opacity: .9;
+  -webkit-mask: var(--orn) top left / var(--orn-size) var(--orn-size) no-repeat;
+  mask: var(--orn) top left / var(--orn-size) var(--orn-size) no-repeat;
+}
+.plate::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  background: var(--c);
+  opacity: .9;
+  -webkit-mask: var(--orn) top left / var(--orn-size) var(--orn-size) no-repeat;
+  mask: var(--orn) top left / var(--orn-size) var(--orn-size) no-repeat;
+  transform: rotate(180deg);
+}
+.plate > figcaption {
+  margin-top: .9rem;
+  padding: .65rem .35rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--rule) 65%, transparent);
+  font-family: var(--f-body);
+  font-size: .95rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.plate-no {
+  font-family: var(--f-sc);
+  font-weight: 500;
+  letter-spacing: .06em;
+  color: var(--c-ink, var(--c));
+  margin-right: .5em;
+  white-space: nowrap;
+}
+.plate-no::after { content: " ❧"; font-family: var(--f-body); color: var(--c); opacity: .8; }
+
+/* ---------------------------------------------------------------------
+   Figure host, loading, errors
+   --------------------------------------------------------------------- */
+.fig-host {
+  --c-ink: color-mix(in srgb, var(--c) 80%, var(--ink));
+  container: fighost / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  min-width: 0;
+}
+.fig-host > img, .fig-host > picture img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 3px;
+}
+.plate[data-fig]:not([data-built]) .fig-host {
+  min-height: 14rem;
+  border-radius: 4px;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--c) 7%, transparent), transparent 70%);
+}
+.fig-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.fig-row > * { min-width: 0; }
+.fig-note { font-size: .86rem; color: var(--ink-3); font-style: italic; }
+
+.fig-error {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  padding: .8rem 1rem;
+  border: 2px solid var(--bad);
+  border-left-width: 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bad) 9%, var(--paper-3));
+  color: var(--ink);
+  font-family: var(--f-sc);
+}
+.fig-error b { color: var(--bad); font-weight: 600; letter-spacing: .03em; }
+.fig-error code { font-family: var(--f-mono); font-size: .82rem; color: var(--ink-2); white-space: pre-wrap; word-break: break-word; }
+
+/* ---------------------------------------------------------------------
+   Controls: sliders, segmented buttons, pill buttons, stepper
+   --------------------------------------------------------------------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .6rem 1.4rem;
+  font-family: var(--f-sc);
+  font-size: .92rem;
+  color: var(--ink-2);
+}
+.controls > * { min-width: 0; }
+
+.slider {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  flex: 1 1 15rem;
+  max-width: 26rem;
+  min-width: 0;
+  font-family: var(--f-sc);
+  color: var(--ink-2);
+}
+.slider .sl-name { white-space: nowrap; letter-spacing: .03em; }
+.slider input[type="range"] {
+  flex: 1 1 6rem;
+  min-width: 4.5rem;
+  margin: 0;
+  height: 1.75rem;
+  accent-color: var(--c);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.slider .num {
+  font-family: var(--f-mono);
+  font-size: .84rem;
+  color: var(--ink);
+  min-width: 4.5ch;
+  text-align: right;
+  padding: .1rem .4rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--c) 11%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 2px;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 1.05rem;
+  background: var(--paper);
+  vertical-align: middle;
+}
+.seg button {
+  font: inherit;
+  font-family: var(--f-sc);
+  font-size: .88rem;
+  letter-spacing: .02em;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  border-radius: .9rem;
+  padding: .2rem .8rem;
+  min-height: 1.85rem;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.seg button:hover { background: color-mix(in srgb, var(--c) 13%, transparent); color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--c); color: var(--paper-3); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 25%, transparent); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  font-family: var(--f-sc);
+  font-size: .9rem;
+  letter-spacing: .03em;
+  line-height: 1.2;
+  color: var(--c-ink, var(--c));
+  background: var(--paper-3);
+  border: 1px solid color-mix(in srgb, var(--c) 70%, var(--rule));
+  border-radius: 999px;
+  padding: .28rem .95rem;
+  min-height: 2rem;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.btn:hover:not(:disabled), .btn[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: var(--paper-3); }
+.btn:disabled { opacity: .35; cursor: default; }
+.btn.sm { font-size: .84rem; padding: .2rem .75rem; min-height: 1.85rem; }
+.btn .ico { width: .8em; height: .8em; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.st-play .ico { fill: currentColor; stroke: none; }
+
+.seg button:focus-visible, .btn:focus-visible, .st-pip:focus-visible, .slider input:focus-visible {
+  outline: 2px solid var(--c);
+  outline-offset: 2px;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .9rem;
+  padding: .4rem .5rem;
+  border: 1px solid color-mix(in srgb, var(--rule) 75%, transparent);
+  border-radius: 1.4rem;
+  background: var(--paper);
+  font-family: var(--f-sc);
+  font-size: .9rem;
+  color: var(--ink-2);
+}
+.st-btns { display: inline-flex; gap: .35rem; }
+.st-pips { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.st-pip {
+  position: relative;
+  width: .62rem;
+  height: .62rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--c);
+  background: transparent;
+  cursor: pointer;
+  transition: transform .15s, background-color .15s;
+}
+.st-pip::after { content: ""; position: absolute; inset: -7px; }
+.st-pip.done { background: color-mix(in srgb, var(--c) 40%, transparent); }
+.st-pip[aria-current="step"] { background: var(--c); transform: scale(1.3); }
+.st-count { white-space: nowrap; font-variant-numeric: lining-nums; }
+.st-count b { color: var(--ink); font-weight: 500; }
+.st-label { flex: 1 1 14rem; min-width: 0; font-family: var(--f-body); font-style: italic; color: var(--ink); line-height: 1.35; }
+
+/* ---------------------------------------------------------------------
+   Readouts, KPI tiles, legends, tables
+   --------------------------------------------------------------------- */
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem 1.4rem;
+  padding: .5rem .85rem;
+  font-family: var(--f-mono);
+  font-size: .84rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--c) 8%, var(--paper-3));
+  border: 1px solid color-mix(in srgb, var(--c) 26%, transparent);
+  border-left: 3px solid var(--c);
+  border-radius: 3px 12px 3px 12px;
+  font-variant-numeric: tabular-nums;
+}
+.readout > span { min-width: 0; overflow-wrap: anywhere; }
+.readout b { font-family: var(--f-sc); font-weight: 500; color: var(--ink-2); letter-spacing: .03em; margin-right: .4rem; white-space: nowrap; }
+.readout .katex { font-size: 1.05em; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: .65rem; }
+.kpi {
+  --kc: var(--c);
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  min-width: 0;
+  padding: .55rem .85rem .6rem;
+  border: 1px solid color-mix(in srgb, var(--kc) 30%, var(--rule));
+  border-radius: var(--r-lozenge);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--kc) 11%, var(--paper-3)), var(--paper-3) 72%);
+}
+.kpi .k { font-family: var(--f-sc); font-size: .8rem; line-height: 1.3; letter-spacing: .05em; color: var(--ink-2); }
+.kpi .v { font-family: var(--f-mono); font-size: 1.3rem; line-height: 1.25; color: color-mix(in srgb, var(--kc) 82%, var(--ink)); overflow-wrap: anywhere; }
+.kpi .s { font-size: .8rem; color: var(--ink-3); }
+
+.legend { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; font-family: var(--f-sc); font-size: .88rem; color: var(--ink-2); }
+.lg-item { display: inline-flex; align-items: center; gap: .45rem; }
+.lg-key { display: inline-block; flex: none; }
+.lg-line { position: relative; width: 1.5rem; height: 2.5px; border-radius: 2px; background: var(--kc); }
+.lg-line::after { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: var(--kc); transform: translate(-50%, -50%); box-shadow: 0 0 0 1.5px var(--paper-3); }
+.lg-dash { width: 1.5rem; height: 0; border-top: 2.5px dashed var(--kc); }
+.lg-dot { width: .7rem; height: .7rem; border-radius: 50%; background: var(--kc); }
+.lg-box { width: .8rem; height: .8rem; border-radius: 2px 4px 2px 4px; background: var(--kc); }
+.lg-band { width: 1.3rem; height: .75rem; border-radius: 2px; border-top: 2px solid var(--kc); background: color-mix(in srgb, var(--kc) 22%, transparent); }
+
+.tbl-wrap { width: 100%; overflow-x: auto; }
+.tbl-wrap table.data { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.tbl-wrap table.data th { font-family: var(--f-sc); font-weight: 500; letter-spacing: .03em; color: var(--ink-2); text-align: right; padding: .3rem .55rem; border-bottom: 1.5px solid var(--rule); white-space: nowrap; }
+.tbl-wrap table.data td { font-family: var(--f-mono); font-size: .84rem; text-align: right; padding: .25rem .55rem; border-bottom: 1px solid color-mix(in srgb, var(--rule) 45%, transparent); white-space: nowrap; }
+.tbl-wrap table.data .l { text-align: left; }
+.tbl-wrap table.data tr.sum td { border-top: 1.5px solid var(--rule); font-weight: 600; }
+.tbl-wrap table.data tr.hl td { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.tbl-wrap table.data td.pos { color: var(--good); }
+.tbl-wrap table.data td.neg { color: var(--bad); }
+
+/* math in figures */
+.tex.d { display: block; text-align: center; overflow-x: auto; overflow-y: hidden; padding: .2rem 0; }
+.tex-raw { font-family: var(--f-mono); font-size: .9em; }
+
+/* ---------------------------------------------------------------------
+   Tooltip (one shared, fixed element)
+   --------------------------------------------------------------------- */
+.tip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  max-width: min(20rem, calc(100vw - 16px));
+  padding: .45rem .7rem .5rem;
+  background: var(--paper-3);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-top: 2.5px solid var(--c, var(--gold));
+  border-radius: 6px;
+  box-shadow: var(--shadow-pop);
+  font-family: var(--f-body);
+  font-size: .86rem;
+  line-height: 1.42;
+}
+.tip[hidden] { display: none; }
+.tip b { font-family: var(--f-sc); font-weight: 600; letter-spacing: .02em; color: var(--ink); }
+.tip .tip-h { font-family: var(--f-sc); letter-spacing: .04em; color: var(--ink-2); margin-bottom: .2rem; }
+.tip .tip-row { display: grid; grid-template-columns: .9rem 1fr auto; align-items: center; gap: .5rem; }
+.tip .tip-row i { width: .9rem; height: 3px; border-radius: 2px; background: var(--kc); }
+.tip .tip-row b { font-family: var(--f-mono); font-weight: 500; font-size: .82rem; }
+.tip code, .tip .num { font-family: var(--f-mono); font-size: .82rem; }
+
+/* ---------------------------------------------------------------------
+   SVG plots and diagrams (sizes scale with --fs on narrow hosts)
+   --------------------------------------------------------------------- */
+svg.plot { display: block; width: 100%; height: auto; max-width: 100%; overflow: visible; }
+svg.plot text { font-family: var(--f-sc); font-size: calc(12.5px * var(--fs, 1)); fill: var(--ink-2); }
+svg.plot .tick text { font-size: calc(12px * var(--fs, 1)); fill: var(--ink-3); font-variant-numeric: lining-nums tabular-nums; }
+svg.plot .tick line, svg.plot .axis-line { stroke: var(--ink-3); stroke-width: 1; vector-effect: non-scaling-stroke; }
+svg.plot .axis-label { font-size: calc(13px * var(--fs, 1)); letter-spacing: .05em; fill: var(--ink-2); }
+svg.plot .grid line { stroke: var(--ink-3); stroke-opacity: .2; stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+svg.plot .line { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+svg.plot .area { stroke: none; }
+svg.plot .dot { stroke: var(--paper-3); stroke-width: 2; vector-effect: non-scaling-stroke; }
+svg.plot .bar { transition: opacity .15s; }
+svg.plot .pk-bars:has(.is-hot) .bar:not(.is-hot) { opacity: .5; }
+svg.plot .hit { fill: transparent; pointer-events: all; outline: none; -webkit-tap-highlight-color: transparent; }
+svg.plot .cross-hit { cursor: crosshair; touch-action: pan-y; }
+svg.plot .cross-line { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+svg.plot .rule-line { stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+svg.plot .leader { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; }
+svg.plot .arrow line { stroke-linecap: round; }
+
+/* text set on data: a vellum halo keeps it legible over marks */
+svg.plot .lbl, svg.plot .val, svg.plot .annot {
+  paint-order: stroke;
+  stroke: var(--paper-3);
+  stroke-width: calc(3.5px * var(--fs, 1));
+  stroke-linejoin: round;
+}
+svg.plot .lbl, svg.plot .val, svg.plot .annot, svg.plot .pk-rule, svg.plot .pk-annot, svg.plot .pk-cross, svg.plot .tex-fo { pointer-events: none; }
+svg.plot .lbl { font-size: calc(12.5px * var(--fs, 1)); fill: var(--ink-2); letter-spacing: .03em; }
+svg.plot .val { font-family: var(--f-mono); font-size: calc(11px * var(--fs, 1)); fill: var(--ink); }
+svg.plot .annot { font-family: var(--f-body); font-style: italic; font-size: calc(13.5px * var(--fs, 1)); fill: var(--ink); }
+svg.plot .ink { fill: var(--ink); }
+svg.plot .ink-2 { fill: var(--ink-2); }
+svg.plot .mono { font-family: var(--f-mono); }
+
+/* draggable handles */
+svg.plot .draggable { cursor: grab; touch-action: none; }
+svg.plot .dragging { cursor: grabbing; }
+svg.plot .handle { fill: var(--c); stroke: var(--paper-3); stroke-width: 2.5; transition: stroke-width .12s, stroke .12s; }
+svg.plot .handle:hover, svg.plot .dragging.handle, svg.plot .dragging .handle, svg.plot .handle:focus-visible {
+  stroke: color-mix(in srgb, var(--c) 32%, transparent);
+  stroke-width: 11;
+}
+svg.plot [tabindex]:focus { outline: none; }
+svg.plot [tabindex]:focus-visible:not(.handle) { outline: 2px solid var(--c); outline-offset: 3px; }
+
+/* KaTeX inside SVG */
+svg.plot .tex-fo { overflow: visible; }
+svg.plot .tex-fo-in { display: flex; align-items: center; height: 100%; font-size: calc(14px * var(--fs, 1)); color: var(--ink); white-space: nowrap; }
+
+/* ---------------------------------------------------------------------
+   Concept graph
+   --------------------------------------------------------------------- */
+.cgraph {
+  --cg-gap-x: clamp(1.8rem, 5.5cqi, 4rem);
+  --cg-gap-y: 2.2rem;
+  --cg-bg: var(--paper);          /* ground behind edge labels */
+  container: cgraph / inline-size;
+  margin: 2rem 0;
+  color: var(--ink);
+}
+.cg-heads, .cg-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  column-gap: var(--cg-gap-x);
+}
+.cg-heads { margin-bottom: 1rem; }
+.cg-head {
+  grid-column: var(--col);
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--f-sc);
+  font-weight: 500;
+  font-size: .9rem;
+  letter-spacing: .09em;
+  color: var(--ink-2);
+  text-align: center;
+  justify-content: center;
+}
+.cg-head::before, .cg-head::after {
+  content: "";
+  flex: 1 1 0;
+  height: 1px;
+  max-width: 2.6rem;
+  background: linear-gradient(90deg, transparent, var(--rule));
+}
+.cg-head::after { background: linear-gradient(270deg, transparent, var(--rule)); }
+.cg-grid { position: relative; row-gap: var(--cg-gap-y); }
+
+.cg-node {
+  --nc: var(--c);
+  position: relative;
+  z-index: 1;
+  grid-column: var(--col);
+  grid-row: var(--row);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "emb title" "text text" "leads leads";
+  align-content: start;
+  gap: .4rem .55rem;
+  min-width: 0;
+  padding: .95rem .85rem .8rem;
+  border: 1px solid color-mix(in srgb, var(--nc) 30%, var(--rule));
+  border-radius: var(--r-card);
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--nc) 10%, transparent), transparent 70%),
+    var(--paper-3);
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity .18s, filter .18s, transform .18s, box-shadow .18s;
+}
+/* coloured top band with a central arch */
+.cg-node::before {
+  content: "";
+  position: absolute;
+  left: -1px; right: -1px; top: -1px;
+  height: 6px;
+  border-radius: var(--r-card) var(--r-card) 0 0;
+  background: linear-gradient(90deg, var(--nc), color-mix(in srgb, var(--nc) 70%, var(--paper-3)) 50%, var(--nc));
+}
+.cg-emb {
+  grid-area: emb;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: var(--nc);
+  background: color-mix(in srgb, var(--nc) 13%, var(--paper-3));
+  border: 1px solid color-mix(in srgb, var(--nc) 45%, transparent);
+}
+.cg-emb .emb { width: 1.15rem; height: 1.15rem; }
+.cg-title {
+  grid-area: title;
+  align-self: center;
+  font-family: var(--f-display);
+  font-size: 1.04rem;
+  line-height: 1.15;
+  color: var(--ink);
+  hyphens: auto;
+}
+.cg-text { grid-area: text; font-family: var(--f-body); font-size: .86rem; line-height: 1.38; color: var(--ink-2); }
+.cg-leads { grid-area: leads; display: none; font-family: var(--f-sc); font-size: .82rem; letter-spacing: .02em; color: var(--ink-2); }
+.cg-leads-k { color: color-mix(in srgb, var(--nc) 80%, var(--ink)); }
+.cg-leads-n { color: var(--ink); }
+
+/* links are lifted tiles with an arrow; plain nodes sit flat */
+a.cg-node { box-shadow: var(--shadow); cursor: pointer; }
+a.cg-node .cg-title::after {
+  content: "\00a0→";            /* no-break space: the arrow never wraps alone */
+  position: relative;
+  left: 0;
+  font-family: var(--f-body);
+  color: var(--nc);
+  transition: left .18s;
+}
+a.cg-node:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); border-color: color-mix(in srgb, var(--nc) 65%, var(--rule)); }
+a.cg-node:hover .cg-title { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--nc) 60%, transparent); text-underline-offset: 3px; }
+a.cg-node:hover .cg-title::after { left: 3px; }
+div.cg-node { background: color-mix(in srgb, var(--paper-3) 60%, var(--paper)); }
+.cg-node:focus-visible { outline: 2px solid var(--nc); outline-offset: 3px; }
+
+/* wires: SVG under the cards, labels above them */
+.cg-wires { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.cg-edge { --ec: var(--c); transition: opacity .18s; }
+.cg-wire { fill: none; stroke: color-mix(in srgb, var(--ec) 55%, var(--ink-3)); stroke-width: 1.6; stroke-linecap: round; }
+.cg-head-mark { fill: color-mix(in srgb, var(--ec) 55%, var(--ink-3)); }
+.cg-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.cg-elabel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: .02rem .4rem .08rem;
+  border-radius: 999px;
+  background: var(--cg-bg);
+  font-family: var(--f-sc);
+  font-size: .74rem;
+  line-height: 1.1;
+  letter-spacing: .03em;
+  color: var(--ink-2);
+  text-align: center;
+  width: max-content;
+  max-width: 6.5rem;
+  transition: opacity .18s;
+}
+.cg-sechead { display: none; }
+
+/* neighbourhood highlight */
+.cgraph.cg-focus .cg-node:not(.is-active):not(.is-near) { opacity: .34; filter: saturate(.35); }
+.cgraph.cg-focus .cg-edge:not(.is-on) { opacity: .12; }
+.cgraph.cg-focus .cg-elabel:not(.is-on) { opacity: .12; }
+.cg-node.is-active { box-shadow: 0 0 0 2px var(--nc), var(--shadow-pop); }
+.cg-node.is-near { box-shadow: 0 0 0 1px color-mix(in srgb, var(--nc) 60%, transparent), var(--shadow); }
+.cg-edge.is-on .cg-wire { stroke: var(--ec); stroke-width: 2.6; }
+.cg-edge.is-on .cg-head-mark { fill: var(--ec); }
+.cg-elabel.is-on { color: var(--ink); box-shadow: 0 0 0 1px color-mix(in srgb, var(--rule) 70%, transparent); }
+
+/* stacked phone layout (same threshold as cgraph.js) */
+@container cgraph (max-width: 639.98px) {
+  .cg-heads, .cg-wires, .cg-labels { display: none; }
+  .cg-grid { grid-template-columns: minmax(0, 1fr); row-gap: .7rem; }
+  .cg-node { grid-column: 1; grid-row: auto; order: calc(var(--col) * 100 + var(--row)); }
+  .cg-sechead {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    order: calc(var(--col) * 100);
+    margin-top: .6rem;
+    font-family: var(--f-sc);
+    font-weight: 500;
+    letter-spacing: .09em;
+    color: var(--ink-2);
+  }
+  .cg-sechead::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--rule), transparent); }
+  .cg-leads { display: block; }
+  .cg-node.is-near { box-shadow: none; }
+  .cgraph.cg-focus .cg-node:not(.is-active):not(.is-near) { opacity: 1; filter: none; }
+}
+
+/* ---------------------------------------------------------------------
+   Responsive, touch, motion, print
+   --------------------------------------------------------------------- */
+@container fighost (max-width: 30rem) {
+  .slider { flex-basis: 100%; max-width: none; }
+  .controls { gap: .55rem 1rem; }
+  .st-label { flex-basis: 100%; }
+}
+@media (pointer: coarse) {
+  .seg button, .btn { min-height: 2.5rem; }
+  .btn.sm { min-height: 2.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cg-node, .cg-edge, .cg-elabel, .btn, .seg button, .st-pip, svg.plot .bar, svg.plot .handle { transition: none; }
+  a.cg-node:hover { transform: none; }
+}
+@media print {
+  .tip, .stepper .st-btns { display: none; }
+  .plate { break-inside: avoid; box-shadow: none; }
+}

@@ -1,0 +1,84 @@
+# Running themes: ideas that come back again and again across the site.
+# In a page:   ::: theme predict-correct   (optional title)   …markdown…   :::
+# Every theme callout automatically lists the other places the same theme appears,
+# and the Themes page (X) collects them all. Keep this list short; add a theme only when it
+# genuinely recurs in at least three Parts.
+predict-correct:
+  title: Predict, then store only the surprise
+  emblem: target
+  color: var(--peacock)
+  short: >
+    Every lossless coder in this story has the same shape: guess the next thing from what both sides
+    already know, then store only how wrong the guess was. The better the guess, the fewer bits.
+
+side-info:
+  title: Side information at both ends
+  emblem: link
+  color: var(--lapis)
+  short: >
+    A message gets cheaper when the receiver already knows something relevant — an almanac, a trained
+    dictionary, a block's statistics sitting on the GPU. The catch is that the receiver must really have it.
+
+amortize:
+  title: Pay once, use many times
+  emblem: ticket
+  color: var(--saffron)
+  short: >
+    A fixed cost (a dictionary, a codebook, a calibration) is worth paying only when it is shared by
+    enough items. Per item it costs (fixed cost) ÷ (number of items).
+
+access-pattern:
+  title: The access pattern decides the form
+  emblem: ruler
+  color: var(--slate)
+  short: >
+    How data is read — one big stream, or many tiny scattered pieces — decides what a compressor is
+    allowed to look like, before any statistics are considered.
+
+which-vs-what:
+  title: "Which entries, versus what is inside them"
+  emblem: eye
+  color: var(--emerald)
+  short: >
+    Knowing which items will be wanted (a property of the requests) is a different thing from the items
+    being alike (a property of their bytes). Evidence for one is not evidence for the other.
+
+bits-unit:
+  title: Bits are the unit
+  emblem: abacus
+  color: var(--amethyst)
+  short: >
+    Surprise, redundancy, mutual information and compressed size are all measured in bits, and
+    bits × item size = bytes on a wire. Similarity scores that do not convert to bits do not count.
+
+noise-floor:
+  title: Lossless pays for all the noise
+  emblem: bell
+  color: var(--rose)
+  short: >
+    A lossless code must reproduce every last bit, including the parts that are pure noise. Whatever no
+    predictor can explain sets a floor that no clever dictionary can go below.
+
+every-tax:
+  title: Every helper charges a tax
+  emblem: weight
+  color: var(--umber)
+  short: >
+    Each piece of side information costs something to store or send: index bits, dictionary bytes,
+    escape lists, flags. A method wins only if its gain is larger than its tax.
+
+controls:
+  title: Trust, but shuffle
+  emblem: shield
+  color: var(--carmine)
+  short: >
+    A measurement is believable only with controls that would expose a mistake: shuffled data where
+    the effect must vanish, synthetic data with a known answer, and a real round trip that must be exact.
+
+grid-matters:
+  title: The number grid is not neutral
+  emblem: loggrid
+  color: var(--sage)
+  short: >
+    How numbers are stored (a uniform integer grid or a logarithmic floating-point grid) changes which
+    tricks work. The same prediction can save bits on one grid and lose bits on another.

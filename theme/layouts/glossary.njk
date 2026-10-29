@@ -1,0 +1,20 @@
+---
+layout: page.njk
+---
+{{ content | safe }}
+{%- for cid, cat in categories %}
+{%- set list = glossary | termsInCat(cid) %}
+{%- if list.length %}
+<section class="gl-cat" style="--tc:{{ cat.color }}">
+  <h2 id="cat-{{ cid }}"><span class="swatch"></span>{{ cat.label }}</h2>
+  <div class="gl-list">
+    {%- for t in list %}
+    <div class="gl-item" id="g-{{ t.id }}">
+      <div>{{ t.id | termChip | safe }}<div class="gl-name">{{ t.name or t.label }}{% if t.nick %} · “{{ t.nick }}”{% endif %}</div></div>
+      <div><div class="gl-short">{{ t.short | mdInline | safe }}</div></div>
+    </div>
+    {%- endfor %}
+  </div>
+</section>
+{%- endif %}
+{%- endfor %}

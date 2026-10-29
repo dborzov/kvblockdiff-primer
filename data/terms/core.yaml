@@ -1,0 +1,1118 @@
+# Central glossary. One entry per term. In Markdown:  [[id]] mention · [[id|other words]] · [[=id]] the definition.
+# Fields: label (chip text) · name (full name) · cat (category) · home (page id where it is DEFINED, once)
+#         short (the hover reminder: one or two plain sentences, may use $math$ with \v… symbol macros)
+#         brand: true + nick + emblem + color [light, dark] for the signature terms (they get a badge).
+# Writers: add NEW terms in data/terms/<your-part>.yaml, never here, and never define an id twice.
+
+# =============================================================== brand terms: the cast
+dictionary:
+  label: dictionary
+  name: dictionary (side information shared by many items)
+  brand: true
+  nick: the Almanac
+  emblem: book
+  color: ["#94650a", "#f2c45a"]
+  cat: project
+  home: tiny-files-trained-dictionary
+  short: >-
+    Information shared by many items and sent to the receiver once, so that each item can be sent as a short delta instead. A zstd trained dictionary, a codebook and a set of per-channel means are all dictionaries.
+
+delta:
+  label: delta
+  name: delta δ (what is left to send once the dictionary is known)
+  brand: true
+  nick: the Remainder
+  emblem: delta
+  color: ["#b3264f", "#ff7aa0"]
+  cat: project
+  home: tiny-files-trained-dictionary
+  short: >-
+    The bytes needed to rebuild one item exactly, given its dictionary. For a KV entry, its size is $\vdsz = \vrho\,\ve$.
+
+kv-blockdiff:
+  label: kv-blockdiff
+  name: kv-blockdiff (this project's proposal)
+  brand: true
+  nick: the Delta Store
+  emblem: delta
+  color: ["#b8441a", "#ff9a63"]
+  cat: project
+  home: idea-mapping
+  short: >-
+    Store a long KV history as per-block dictionaries plus tiny per-entry deltas, so that a cache miss moves a delta instead of a raw entry and the GPU rebuilds the entry bit for bit.
+
+entry:
+  label: entry
+  name: entry (one token's KV numbers at one layer)
+  brand: true
+  nick: the Tile
+  emblem: tile
+  color: ["#6b4423", "#e3b48a"]
+  cat: project
+  home: landscape-kv-cache
+  short: >-
+    All the key and value numbers of one token at one layer, $\vE_{\vl,\vt}$, of size $\ve$ bytes. The unit the indexer selects, the cache moves and our coder must rebuild.
+
+block:
+  label: block
+  name: block (b consecutive entries of one request at one layer)
+  brand: true
+  nick: the Row
+  emblem: tiles
+  color: ["#8a6612", "#ecc75e"]
+  cat: project
+  home: idea-dictionary-delta-block
+  short: >-
+    $\vb$ consecutive tokens' entries of one request at one layer. A design knob of the algorithm (we choose $\vb$), not a property of the data.
+
+hot-cache:
+  label: hot cache
+  name: hot cache (HiSparse's per-layer GPU buffer)
+  brand: true
+  nick: the Hearth
+  emblem: flame
+  color: ["#c2550a", "#ffa24d"]
+  cat: systems
+  home: landscape-hisparse
+  short: >-
+    HiSparse's small buffer of $\vB$ raw entries per request per layer, kept in GPU memory and managed least-recently-used. Entries found there are hits; the rest are misses fetched from host memory.
+
+dictionary-cache:
+  label: dictionary cache
+  name: dictionary cache (kv-blockdiff's resident dictionaries)
+  brand: true
+  nick: the Bookshelf
+  emblem: shelf
+  color: ["#6a4a9a", "#c0a4f2"]
+  cat: project
+  home: idea-blockdiff-step-by-step
+  short: >-
+    kv-blockdiff's per-layer set of $\vnD$ block dictionaries kept in GPU memory. A miss in a block whose dictionary is on this shelf can be served by a delta.
+
+delta-miss:
+  label: δ-miss
+  name: δ-miss (a miss served by a delta)
+  brand: true
+  nick: the Feather
+  emblem: dart
+  color: ["#0f7f5f", "#5fe0b8"]
+  cat: project
+  home: idea-blockdiff-step-by-step
+  short: >-
+    A hot-cache miss whose block dictionary is resident, so only the delta ($\vrho\,\ve$ bytes) crosses the link and the GPU rebuilds the entry.
+
+raw-miss:
+  label: raw miss
+  name: raw miss (a miss served by the raw entry)
+  brand: true
+  nick: the Crate
+  emblem: crate
+  color: ["#7a5636", "#d9b38a"]
+  cat: project
+  home: idea-blockdiff-step-by-step
+  short: >-
+    A hot-cache miss whose block dictionary is not resident, so the full raw entry ($\ve$ bytes) crosses the link, exactly as in HiSparse today.
+
+heavy-block:
+  label: heavy block
+  name: heavy block
+  brand: true
+  nick: the Anvil
+  emblem: weight
+  color: ["#4a4a63", "#b8b8dc"]
+  cat: project
+  home: idea-heavy-blocks
+  short: >-
+    A block that holds many of the current step's selections. If selections pile into a few heavy blocks for many steps, keeping their dictionaries on the GPU is cheap.
+
+victim-tier:
+  label: victim tier
+  name: victim tier (a GPU tier of evicted entries' deltas)
+  brand: true
+  nick: the Lifebuoy
+  emblem: lifebuoy
+  color: ["#c0392b", "#ff8a7a"]
+  cat: project
+  home: missed-victim-tier
+  short: >-
+    A second GPU tier holding the deltas of entries just evicted from the hot cache. If one of them is selected again it is rebuilt on the GPU instead of being fetched over the link.
+
+reference-setting:
+  label: reference setting
+  name: reference setting (the frozen numbers for all napkin math)
+  brand: true
+  nick: the Pin
+  emblem: pin
+  color: ["#3b6e8f", "#8fc6ea"]
+  cat: project
+  home: landscape-reference-setting
+  short: >-
+    One fixed rig used for every estimate: HiSparse's GLM-5.1 deployment converted to 8-bit storage — 78 sparse layers, top-2048 selection, 100K-token context, 0.64 KB entries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for KV.
+
+hisparse:
+  label: HiSparse
+  name: HiSparse (Xie et al., 2026)
+  brand: true
+  nick: the Two-tier Library
+  emblem: layers
+  color: ["#2d4fa0", "#8eaaf5"]
+  cat: systems
+  home: landscape-hisparse
+  short: >-
+    The production system we build on. It keeps each request's full KV history in host memory and a small least-recently-used hot cache of raw entries per layer on the GPU. Model outputs are unchanged.
+
+indexer:
+  label: indexer
+  name: indexer (the selector of sparse attention)
+  brand: true
+  nick: the Scout
+  emblem: magnifier
+  color: ["#7a3a1a", "#efa27a"]
+  cat: llm
+  home: landscape-sparse-attention
+  short: >-
+    A cheap scorer that, at every layer and every decode step, looks over all past positions and picks the $\vk$ that attention will read. Its picks are announced before any KV bytes are touched.
+
+lucky-louis:
+  label: Lucky Louis property
+  name: the Lucky Louis property of the indexer
+  brand: true
+  nick: the Gambler
+  emblem: clover
+  color: ["#1a8a4a", "#63d98f"]
+  cat: project
+  home: landscape-lucky-louis
+  short: >-
+    From one decode step to the next, the indexer re-selects mostly the same positions, so a cache that bets on last round's winners keeps winning. It is about WHICH entries are wanted, not about their bytes.
+
+neighbour:
+  label: neighbour similarity
+  name: KV's neighbour similarity (umbrella term)
+  brand: true
+  nick: the Neighbours
+  emblem: houses
+  color: ["#8a5a1c", "#e3ad6c"]
+  cat: project
+  home: idea-neighbour-similarity
+  short: >-
+    The family of hypotheses that an entry costs fewer bits to store exactly when a neighbouring entry (along some axis of the KV tensor) is already known. Members: fallen-apple (token axis) and upstairs (layer axis).
+
+fallen-apple:
+  label: fallen-apple similarity
+  name: KV's fallen-apple similarity
+  brand: true
+  nick: the Apple
+  emblem: apple
+  color: ["#c4281f", "#ff7466"]
+  cat: project
+  home: idea-fallen-apple
+  short: >-
+    Hypothesis: an entry is cheaper to store exactly given an entry of the same layer a small token distance $\vgap$ away, and the closer the neighbour the cheaper. A curve over $\vgap$, not a threshold. 'The apple does not fall far from the tree.'
+
+upstairs:
+  label: upstairs similarity
+  name: KV's upstairs similarity
+  brand: true
+  nick: the Staircase
+  emblem: stairs
+  color: ["#2a63b8", "#82b3ff"]
+  cat: project
+  home: idea-upstairs
+  short: >-
+    Hypothesis: the entry of the same token one layer up is partly predictable from the entry below it. Layers are the floors of a building; tokens run along each floor.
+
+cat-ladder:
+  label: cat-thread ladder
+  name: the cat-thread ladder (the intuitive argument)
+  brand: true
+  nick: the Ladder
+  emblem: cat
+  color: ["#7d4f9e", "#d0a6f0"]
+  cat: project
+  home: idea-cat-thread-ladder
+  short: >-
+    The intuitive argument for the project — an entry is less surprising against its thread than against everything, and least surprising against its own neighbourhood. Right in direction, leaky in its evidence, and harsh in its exchange rate.
+
+solo:
+  label: solo
+  name: solo coding (rung 0, no dictionary)
+  brand: true
+  nick: the Hermit
+  emblem: lantern
+  color: ["#4d5f86", "#a9bbe6"]
+  cat: project
+  home: homework-solo-coding
+  short: >-
+    Coding each entry by itself with one fixed, global, context-free code (per-channel histograms fit once on a calibration corpus). Worth about 1.1–1.3× on 8-bit KV. The baseline every dictionary must beat.
+
+loc:
+  label: loc
+  name: location dictionary (loc)
+  brand: true
+  nick: the Anchor
+  emblem: anchor
+  color: ["#0a7c78", "#45d3c6"]
+  cat: project
+  home: homework-loc
+  short: >-
+    The lightest dictionary: for each channel, a typical value (location) and spread (scale). Predict each element by its channel's location; store the exact difference. Costs about 2 entries' worth, no per-entry tax.
+
+klt:
+  label: KLT
+  name: Karhunen–Loève transform (KLT)
+  brand: true
+  nick: the Compass
+  emblem: compass
+  color: ["#7a35a8", "#c79af2"]
+  cat: linalg
+  home: school-rotation
+  short: >-
+    The rotation of the axes that lines them up with the directions in which the data spreads most (the same thing as PCA). After it, the coordinates are uncorrelated and can be coded one by one with no loss of efficiency.
+
+vq:
+  label: VQ
+  name: vector quantization (VQ)
+  brand: true
+  nick: the Hive
+  emblem: hive
+  color: ["#b87400", "#f6b73c"]
+  cat: coding
+  home: school-clusters
+  short: >-
+    Describe each vector by the index of the nearest of $\vC$ reference vectors (centroids) in a codebook. Losslessly, the index is a prediction and the exact residual is stored too; the index costs $\log_2 \vC$ bits per vector.
+
+sib:
+  label: sib
+  name: sibling dictionary (sib)
+  brand: true
+  nick: the Twin
+  emblem: twins
+  color: ["#cc3d5a", "#ff8aa0"]
+  cat: project
+  home: homework-sib
+  short: >-
+    Use another entry of the same block (the nearest "sibling") as the prediction, plus a pointer to it. Cheap side information, but the residual is the difference of two noisy vectors, so its noise doubles.
+
+scope-global:
+  label: global scope
+  name: global scope (one dictionary for all requests)
+  brand: true
+  nick: the Globe
+  emblem: globe
+  color: ["#22407e", "#8fb0f0"]
+  cat: project
+  home: homework-scope
+  short: >-
+    A dictionary fit once, offline, on a calibration corpus and shared by every request. Free at serving time; captures only what all texts have in common.
+
+scope-request:
+  label: request scope
+  name: request scope (one dictionary per request)
+  brand: true
+  nick: the Thread
+  emblem: spool
+  color: ["#8b3a7a", "#e392d2"]
+  cat: project
+  home: homework-scope
+  short: >-
+    A dictionary fit on one request's own history, loaded once when the request is admitted. Captures what is special about this conversation.
+
+scope-block:
+  label: block scope
+  name: block scope (one dictionary per block)
+  brand: true
+  nick: the Brick
+  emblem: brick
+  color: ["#b8502a", "#ff9a6e"]
+  cat: project
+  home: homework-scope
+  short: >-
+    A dictionary per block of $\vb$ tokens. Fits the local neighbourhood best, but there are many of them per request and they must be cached on the GPU.
+
+curve:
+  label: compressibility curve
+  name: the delta–dictionary compressibility curve
+  brand: true
+  nick: the Arch
+  emblem: roofline
+  color: ["#5a6b1c", "#c3d96a"]
+  cat: project
+  home: questions-framework-b
+  short: >-
+    For one algorithm at one block size, the points (dictionary cost per entry, delta size per entry) it reaches as its settings vary. The lower envelope over all algorithms is the roofline the data allows.
+
+# =============================================================== information theory (Back to school)
+bit:
+  label: bit
+  name: bit
+  cat: info
+  home: school-bits
+  short: >-
+    The answer to one yes/no question; the unit of information. With $n$ bits you can tell apart $2^n$ equally likely possibilities.
+
+lossless:
+  label: lossless
+  name: lossless compression
+  cat: coding
+  home: tiny-files-notice-anything
+  short: >-
+    Compression after which the original is rebuilt exactly, bit for bit. The opposite, lossy compression, keeps only an approximation.
+
+lossy:
+  label: lossy
+  name: lossy compression
+  cat: coding
+  home: tiny-files-notice-anything
+  short: >-
+    Compression that throws some detail away for good and rebuilds only an approximation (JPEG photos, 2-bit KV quantization). This project is lossless.
+
+probability:
+  label: probability
+  name: probability p
+  cat: info
+  home: school-surprise
+  short: >-
+    How often an outcome happens in the long run, a number $\vp$ between 0 and 1. All outcomes' probabilities add up to 1 (their distribution).
+
+distribution:
+  label: distribution
+  name: probability distribution
+  cat: stats
+  home: school-surprise
+  short: >-
+    The list of all possible outcomes together with their probabilities. A histogram of real data is an estimate of it.
+
+surprisal:
+  label: surprisal
+  name: surprisal (self-information)
+  cat: info
+  home: school-surprise
+  short: >-
+    How surprising one outcome is, in bits, $-\log_2 \vp$. Rare outcomes carry many bits; certain outcomes carry none. An ideal code spends exactly this many bits on the outcome.
+
+entropy:
+  label: entropy
+  name: entropy H
+  cat: info
+  home: school-entropy
+  short: >-
+    The average surprisal of a source, $\vH$, in bits per symbol — the fewest bits per symbol any lossless code can average.
+
+order-0-entropy:
+  label: order-0 entropy
+  name: order-0 entropy (context-free entropy)
+  cat: info
+  home: school-entropy
+  short: >-
+    The entropy computed from symbol frequencies alone, ignoring any context such as the previous symbols. The best a code can do if it looks at each symbol in isolation.
+
+perplexity:
+  label: perplexity
+  name: perplexity
+  cat: info
+  home: school-entropy
+  short: >-
+    $2^{\vH}$ — entropy expressed as an "effective number of equally likely choices". Popular for language models; this site uses bits because bits × size = bytes on a wire.
+
+side-information:
+  label: side information
+  name: side information
+  cat: info
+  home: school-side-information
+  short: >-
+    Something the receiver already knows that is relevant to the message (an almanac, a dictionary). It makes the message cheaper to send, by exactly the mutual information.
+
+conditional-entropy:
+  label: conditional entropy
+  name: conditional entropy H(X | Y)
+  cat: info
+  home: school-side-information
+  short: >-
+    The average number of bits still needed to describe $\vX$ when $\vY$ is already known. Never more than $\vH(\vX)$, on average.
+
+mutual-information:
+  label: mutual information
+  name: mutual information I(X; Y)
+  cat: info
+  home: school-mutual-information
+  short: >-
+    How many bits knowing $\vY$ saves when describing $\vX$, $\vI(\vX;\vY) = \vH(\vX) - \vH(\vX \mid \vY)$. Also called redundancy or, loosely, similarity — all three are the same number of bits.
+
+redundancy:
+  label: redundancy
+  name: redundancy
+  cat: info
+  home: school-mutual-information
+  short: >-
+    The bits a message spends on things the receiver could have predicted. Removing redundancy is what every compressor does.
+
+cross-entropy:
+  label: cross-entropy
+  name: cross-entropy
+  cat: info
+  home: school-arithmetic
+  short: >-
+    The average bits per symbol you pay when you code data with a model that is not exactly the data's true distribution. Always at least the entropy; the gap is the price of a wrong model.
+
+# =============================================================== coding & compression
+code:
+  label: code
+  name: code and codeword
+  cat: coding
+  home: school-codes
+  short: >-
+    A rule that turns each symbol into a string of bits (its codeword) and back. A prefix code is one where no codeword starts another, so a stream of codewords can be read without separators.
+
+huffman:
+  label: Huffman code
+  name: Huffman code
+  cat: coding
+  home: school-codes
+  short: >-
+    The best prefix code for known symbol probabilities, built by repeatedly merging the two rarest symbols. Codeword lengths are whole bits, close to each symbol's surprisal.
+
+entropy-coder:
+  label: entropy coder
+  name: entropy coder
+  cat: coding
+  home: school-arithmetic
+  short: >-
+    Any coder that spends about $-\log_2 \vp$ bits on a symbol of probability $\vp$, so its average rate approaches the entropy. Huffman, arithmetic coding and rANS are entropy coders.
+
+arithmetic-coding:
+  label: arithmetic coding
+  name: arithmetic coding
+  cat: coding
+  home: school-arithmetic
+  short: >-
+    An entropy coder that codes a whole message as one number in a shrinking interval, so symbols can cost fractions of a bit. Near-ideal, but sequential: you must decode from the start.
+
+rans:
+  label: rANS
+  name: rANS (range asymmetric numeral systems)
+  cat: coding
+  home: school-arithmetic
+  short: >-
+    A modern entropy coder with arithmetic coding's near-ideal rates and much faster decoding. Like arithmetic coding, it keeps a running state, so a stream decodes front to back.
+
+fixed-length-code:
+  label: fixed-length code
+  name: fixed-length code
+  cat: coding
+  home: school-fixed-length
+  short: >-
+    Every value gets the same number of bits, $\vn$. Wasteful compared with an entropy coder, but any value's position is known in advance, so decoding is trivially parallel and random access is free.
+
+escape:
+  label: escape
+  name: escape (and the escape stream)
+  cat: coding
+  home: school-fixed-length
+  short: >-
+    A value too big for the fixed width is "escaped" — marked, and stored separately in full, in an escape stream of (position, raw value) pairs. Rare escapes keep the common case short.
+
+random-access:
+  label: random access
+  name: random access
+  cat: coding
+  home: school-fixed-length
+  short: >-
+    Being able to decode any single item on its own, without decoding what came before it. Stream coders (zstd, arithmetic coding) give it up; fixed-length codes keep it.
+
+zstd:
+  label: zstd
+  name: Zstandard (zstd)
+  cat: coding
+  home: tiny-files-one-at-a-time
+  short: >-
+    A widely used general-purpose lossless compressor. It replaces repeated byte strings with short references to an earlier copy and entropy-codes the rest; it can be primed with a trained dictionary.
+
+lz-match:
+  label: LZ matching
+  name: LZ matching (Lempel–Ziv)
+  cat: coding
+  home: tiny-files-one-at-a-time
+  short: >-
+    The trick at the heart of zip and zstd: when a string of bytes has appeared before, write "copy n bytes from k bytes back" instead of the bytes themselves.
+
+trained-dictionary:
+  label: trained dictionary
+  name: trained dictionary (zstd)
+  cat: coding
+  home: tiny-files-trained-dictionary
+  short: >-
+    A zstd dictionary built from a sample of typical records and given to both sender and receiver in advance, so that even a single small record compresses as if the compressor had seen its siblings.
+
+prediction:
+  label: prediction
+  name: prediction and predictor
+  cat: coding
+  home: school-prediction
+  short: >-
+    A guess $\vxhat$ of the next value made only from things the receiver also knows. The rule that makes the guess is the predictor.
+
+residual:
+  label: residual
+  name: residual
+  cat: coding
+  home: school-prediction
+  short: >-
+    The exact difference between a value and its prediction, $\vr = \vx - \vxhat$. In lossless coding it is an integer and is stored exactly; good predictions give small residuals that cost few bits.
+
+predictive-coding:
+  label: predictive coding
+  name: lossless predictive coding (DPCM)
+  cat: coding
+  home: school-prediction
+  short: >-
+    Predict each value from what is already known, store the exact integer residual, entropy-code the residual. Lossless audio (FLAC), lossless images (PNG filters) and this project all have this shape.
+
+context-modeling:
+  label: context modelling
+  name: context modelling
+  cat: coding
+  home: missed-context-modeling
+  short: >-
+    Instead of subtracting a prediction, use it as context — pick the probability table for the value based on the prediction. It can never do worse than ignoring the prediction, but it is not fixed-length.
+
+codebook:
+  label: codebook
+  name: codebook
+  cat: coding
+  home: school-clusters
+  short: >-
+    The list of $\vC$ reference vectors (centroids) used by vector quantization. On this site "codebook" means only this; the general word is dictionary.
+
+centroid:
+  label: centroid
+  name: centroid
+  cat: stats
+  home: school-clusters
+  short: >-
+    The average point of a group of vectors; the representative stored in a codebook.
+
+k-means:
+  label: k-means
+  name: k-means clustering
+  cat: stats
+  home: school-clusters
+  short: >-
+    The standard way to fit a codebook — alternately assign every vector to its nearest centroid and move each centroid to the average of its vectors, until nothing changes.
+
+index-tax:
+  label: index tax
+  name: index tax (the cost of naming a centroid)
+  cat: coding
+  home: school-clusters
+  short: >-
+    The $\log_2 \vC$ bits per vector that vector quantization spends to say which centroid was used. A codebook helps only if it saves more bits than this.
+
+product-quantization:
+  label: product quantization
+  name: product quantization (PQ)
+  cat: coding
+  home: school-vq-vs-klt
+  short: >-
+    Split each vector into $\vnsub$ pieces and give each piece its own small codebook. Much larger effective codebooks for the same storage; the same economics as plain VQ.
+
+rate-distortion:
+  label: rate–distortion
+  name: rate–distortion theory
+  cat: info
+  home: school-vq-vs-klt
+  short: >-
+    The theory of the best trade-off between how many bits you spend and how much error you accept. For Gaussian data it gives hard bounds that tell us when a codebook cannot win.
+
+transform-coding-gain:
+  label: transform coding gain
+  name: transform coding gain
+  cat: coding
+  home: school-coding-gain
+  short: >-
+    The bits saved per element by rotating data to its KLT axes before coding, $\tfrac12\log_2(\mathrm{AM}/\mathrm{GM})$ of the eigenvalues. Large only when a few directions hold most of the spread.
+
+lifting:
+  label: lifting
+  name: lifting (integer-reversible transforms)
+  cat: linalg
+  home: school-coding-gain
+  short: >-
+    A way to split a rotation into a few integer "shear" steps, each exactly reversible, so a transform can be lossless on integers. Used in lossless JPEG 2000.
+
+amortization:
+  label: amortization
+  name: amortization
+  cat: coding
+  home: school-amortization
+  short: >-
+    Spreading a one-time cost over everything that shares it. A dictionary of $\vw$ entries' worth shared by $\vb$ entries costs $8\vw/\vb$ bits per element.
+
+# =============================================================== statistics
+mean:
+  label: mean
+  name: mean μ
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    The average value, $\vmu$. Subtracting it is the simplest prediction of all.
+
+variance:
+  label: variance
+  name: variance σ²
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    The average squared distance from the mean, $\vsigma^2$ — how spread out values are. Its square root $\vsigma$ is the standard deviation.
+
+standard-deviation:
+  label: standard deviation
+  name: standard deviation σ
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    The typical distance of a value from the mean, $\vsigma$. Halving it saves one bit per value for bell-shaped data.
+
+gaussian:
+  label: Gaussian
+  name: Gaussian (normal) distribution
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    The bell curve. Sums of many small independent effects look Gaussian. For a given spread it is the most unpredictable shape, so it is the honest worst case.
+
+laplace:
+  label: Laplace
+  name: Laplace distribution
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    A sharper, pointier cousin of the bell curve (two exponential tails) with scale $\vbeta$. Prediction residuals usually look like this, so coders model them with it.
+
+r-squared:
+  label: R²
+  name: R² (fraction of variance explained)
+  cat: stats
+  home: school-exchange-rate
+  short: >-
+    The share of a value's variance that a predictor accounts for, $\vRsq$ between 0 and 1. The residual keeps variance $(1-\vRsq)\vsigma^2$.
+
+monte-carlo:
+  label: Monte Carlo
+  name: Monte Carlo simulation
+  cat: stats
+  home: school-residual-shapes
+  short: >-
+    Checking a claim by simulating many random samples on a computer and measuring, instead of (or as well as) deriving it with formulas.
+
+histogram:
+  label: histogram
+  name: histogram
+  cat: stats
+  home: school-entropy
+  short: >-
+    A count of how often each value (or range of values) occurs in a sample; the measured estimate of a distribution.
+
+covariance:
+  label: covariance
+  name: covariance and correlation
+  cat: stats
+  home: school-correlation
+  short: >-
+    How much two channels move together. Correlation is covariance rescaled to −1 … +1. Correlated channels can partly predict each other.
+
+covariance-matrix:
+  label: covariance matrix
+  name: covariance matrix
+  cat: linalg
+  home: school-correlation
+  short: >-
+    The $\vd \times \vd$ table of covariances between every pair of channels. Its eigenvectors are the KLT axes and its eigenvalues the spreads along them.
+
+# =============================================================== vectors & linear algebra
+vector:
+  label: vector
+  name: vector
+  cat: linalg
+  home: school-vectors
+  short: >-
+    An ordered list of $\vd$ numbers, e.g. one weather reading (temperature, humidity, …) or one entry. Each number is an element.
+
+channel:
+  label: channel
+  name: channel (one element position, across many vectors)
+  cat: linalg
+  home: school-vectors
+  short: >-
+    One fixed position $\vc$ inside a vector, looked at across many vectors — like one sensor's column in a table of readings. 'Per-channel' statistics are computed separately for each position.
+
+rotation:
+  label: rotation
+  name: rotation (change of basis)
+  cat: linalg
+  home: school-rotation
+  short: >-
+    Describing the same points with a different set of perpendicular axes. Nothing about the data changes; only which numbers we write down.
+
+eigenvalue:
+  label: eigenvalue
+  name: eigenvectors and eigenvalues
+  cat: linalg
+  home: school-rotation
+  short: >-
+    For a covariance matrix, the eigenvectors are the natural axes of the data cloud and the eigenvalue $\vlambda$ of each is the variance along it.
+
+pca:
+  label: PCA
+  name: principal component analysis (PCA)
+  cat: linalg
+  home: school-rotation
+  short: >-
+    The statistics name for the KLT — rotate to the directions of greatest spread. Same mathematics, different tradition.
+
+low-rank:
+  label: low rank
+  name: low rank
+  cat: linalg
+  home: school-coding-gain
+  short: >-
+    Data whose spread lives mostly in a few directions (a few large eigenvalues, the rest small). The sharper the drop, the more a KLT saves.
+
+am-gm:
+  label: AM/GM
+  name: arithmetic mean over geometric mean
+  cat: linalg
+  home: school-coding-gain
+  short: >-
+    The ratio of the ordinary average of the eigenvalues to their geometric average. It is 1 when all are equal and grows when a few dominate; $\tfrac12\log_2$ of it is the transform coding gain.
+
+# =============================================================== number formats
+integer-grid:
+  label: INT8
+  name: INT8 with a scale (a uniform grid)
+  cat: numbers
+  home: school-integers-floats
+  short: >-
+    Store $x$ as the nearest integer to $x/\text{scale}$, between −127 and 127. Representable values are evenly spaced, so differences behave as in ordinary arithmetic.
+
+floating-point:
+  label: floating point
+  name: floating point (sign, exponent, mantissa)
+  cat: numbers
+  home: school-integers-floats
+  short: >-
+    Numbers stored as sign × mantissa × 2^exponent. Spacing between neighbours grows with size, so relative precision is constant and the grid is logarithmic.
+
+exponent:
+  label: exponent
+  name: exponent and mantissa
+  cat: numbers
+  home: school-integers-floats
+  short: >-
+    In a floating-point number, the exponent picks the power of two (the "binade") and the mantissa picks the position inside it. In model data the exponent is predictable and the low mantissa bits are close to noise.
+
+bf16:
+  label: BF16
+  name: bfloat16 (BF16)
+  cat: numbers
+  home: school-integers-floats
+  short: >-
+    A 16-bit floating-point format with 8 exponent bits and 7 mantissa bits — the usual working format of language models.
+
+fp8:
+  label: FP8
+  name: 8-bit floating point (E4M3, E5M2)
+  cat: numbers
+  home: school-fp8
+  short: >-
+    8-bit floats. E4M3 has 4 exponent and 3 mantissa bits (values up to 448), E5M2 has 5 and 2. Where KV-cache storage is heading.
+
+quantization:
+  label: quantization
+  name: quantization (rounding to a grid)
+  cat: numbers
+  home: school-fp8
+  short: >-
+    Rounding numbers to the nearest point of a fixed grid of representable values. Done once, it defines the exact values our lossless coder must reproduce.
+
+index-space:
+  label: index space
+  name: index space (counting grid steps)
+  cat: numbers
+  home: school-fp8
+  short: >-
+    Number the representable values of a format in order, …, −1, 0, 1, …, and work with those integer indices. A residual of 1 then means "one grid step", however big the step is.
+
+# =============================================================== memory, caches & hardware
+cache:
+  label: cache
+  name: cache
+  cat: systems
+  home: school-caches
+  short: >-
+    A small, fast memory that keeps copies of some items from a big, slow one. A request found in it is a hit; otherwise a miss, and the item must be fetched.
+
+hit-miss:
+  label: hit / miss
+  name: hit and miss
+  cat: systems
+  home: school-caches
+  short: >-
+    A hit is a request served from the cache; a miss must fetch the item from slower memory. The miss rate $\vm$ is the fraction of requests that miss.
+
+eviction:
+  label: eviction
+  name: eviction
+  cat: systems
+  home: school-caches
+  short: >-
+    Removing an item from a full cache to make room for a new one. The eviction policy decides which item goes.
+
+lru:
+  label: LRU
+  name: least recently used (LRU)
+  cat: systems
+  home: school-caches
+  short: >-
+    The eviction policy that throws out the item whose last use was longest ago. Simple, and very good when recent use predicts future use.
+
+reuse-distance:
+  label: reuse distance
+  name: reuse distance (stack distance)
+  cat: systems
+  home: school-reuse-distance
+  short: >-
+    For a request, the number of distinct other items requested since this item's previous request. Under LRU with $\vB$ slots, a request misses exactly when its reuse distance is at least $\vB$.
+
+miss-rate-curve:
+  label: miss-rate curve
+  name: miss-rate curve m(B)
+  cat: systems
+  home: school-reuse-distance
+  short: >-
+    The miss rate of an LRU cache as a function of its size $\vB$. One curve, read off the reuse distances, gives the miss rate at every size.
+
+belady:
+  label: Bélády
+  name: Bélády's optimal policy
+  cat: systems
+  home: school-reuse-distance
+  short: >-
+    The clairvoyant eviction policy — evict the item whose next use is furthest in the future. Impossible in practice, but it bounds what any policy could achieve.
+
+bandwidth:
+  label: bandwidth
+  name: bandwidth and latency
+  cat: systems
+  home: school-wires
+  short: >-
+    Bandwidth is how many bytes per second a link carries once data flows; latency is how long one request takes to start arriving. Many tiny scattered reads hurt both.
+
+hbm:
+  label: HBM
+  name: HBM (GPU memory)
+  cat: systems
+  home: school-wires
+  short: >-
+    High-bandwidth memory stacked next to the GPU — very fast, small (tens of GB) and expensive. The hot cache lives here.
+
+dram:
+  label: host DRAM
+  name: host memory (DRAM)
+  cat: systems
+  home: school-wires
+  short: >-
+    The CPU's main memory — much larger than HBM, much slower to reach from the GPU. HiSparse keeps the full KV history here.
+
+pcie:
+  label: PCIe
+  name: PCIe link
+  cat: systems
+  home: school-wires
+  short: >-
+    The wire between host memory and the GPU. PCIe Gen5 ×16 carries about 64 GB/s each way (≈50 in practice) — roughly 100× less than HBM.
+
+# =============================================================== transformers & attention (Where things stand)
+token:
+  label: token
+  name: token
+  cat: llm
+  home: landscape-tokens-and-decoding
+  short: >-
+    The unit of text a language model reads and writes — a word or a piece of one. A model generates one token per decode step.
+
+prefill-decode:
+  label: prefill / decode
+  name: prefill and decode
+  cat: llm
+  home: landscape-tokens-and-decoding
+  short: >-
+    Prefill reads the whole prompt at once; decode then generates the answer one token per step, each step reading everything stored so far.
+
+layer:
+  label: layer
+  name: layer
+  cat: llm
+  home: landscape-tokens-and-decoding
+  short: >-
+    One of the $\vNL$ stacked processing stages of a transformer. Each layer has its own attention and its own part of the KV cache.
+
+tpot:
+  label: TPOT
+  name: time per output token (TPOT)
+  cat: llm
+  home: landscape-tokens-and-decoding
+  short: >-
+    How long one decode step takes for a request — 30 ms in the reference setting. Every byte moved per step must fit into this time.
+
+attention:
+  label: attention
+  name: attention (query, key, value)
+  cat: llm
+  home: landscape-attention
+  short: >-
+    The step where a token looks back. Its query vector is compared with every stored key; the scores become weights; the output is the weighted mix of the stored values.
+
+head:
+  label: head
+  name: attention head and GQA
+  cat: llm
+  home: landscape-attention
+  short: >-
+    Attention is split into several heads that work in parallel on slices of the vectors. With grouped-query attention (GQA) several query heads share one key/value head, which shrinks the KV cache.
+
+kv-cache:
+  label: KV cache
+  name: KV cache
+  cat: llm
+  home: landscape-kv-cache
+  short: >-
+    The stored keys and values of every previous token at every layer, kept so they need not be recomputed at each decode step. It grows by one entry per layer per token.
+
+rope:
+  label: RoPE
+  name: rotary position embedding (RoPE)
+  cat: llm
+  home: landscape-kv-cache
+  short: >-
+    The way many models tell attention where a token sits — by rotating pairs of key and query channels by an angle that grows with the position. Keys are more regular before this rotation than after it.
+
+mla:
+  label: MLA
+  name: multi-head latent attention (MLA)
+  cat: llm
+  home: landscape-kv-cache
+  short: >-
+    DeepSeek's variant of attention that stores one compressed latent vector per token per layer instead of separate keys and values. Still one fixed-size entry per position.
+
+sparse-attention:
+  label: sparse attention
+  name: top-k sparse attention
+  cat: llm
+  home: landscape-sparse-attention
+  short: >-
+    Attention that reads only $\vk$ selected past entries per layer per step (chosen by an indexer) instead of all of them. Compute stops growing with context; storage does not.
+
+dsa:
+  label: DSA
+  name: DeepSeek Sparse Attention (DSA)
+  cat: llm
+  home: landscape-sparse-attention
+  short: >-
+    The top-k sparse attention of DeepSeek-V3.2 (also used by GLM-5.x), with a small trained "lightning indexer" that scores every past token cheaply.
+
+# =============================================================== this project's own words (not brand)
+weight:
+  label: dictionary weight
+  name: dictionary weight w
+  cat: project
+  home: idea-dictionary-delta-block
+  short: >-
+    A dictionary's size measured in entries' worth, $\vw$, so it is $\vDsz = \vw\,\ve$ bytes. Amortized over a block it costs $8\vw/\vb$ bits per element.
+
+delta-ratio:
+  label: delta ratio
+  name: delta ratio ρ
+  cat: project
+  home: idea-dictionary-delta-block
+  short: >-
+    $\vrho = \vdsz / \ve$ — how much a miss shrinks. For 8-bit storage $\vrho = \vbpe/8$.
+
+delta-miss-fraction:
+  label: δ-miss fraction
+  name: δ-miss fraction f_D
+  cat: project
+  home: idea-blockdiff-step-by-step
+  short: >-
+    $\vfD$, the share of misses that are δ-misses (their dictionary was resident). Decided by the residency policy and by where misses land.
+
+bpe:
+  label: bpe
+  name: bits per element (bpe)
+  cat: project
+  home: homework-the-budget
+  short: >-
+    The rate of a lossless code in bits per 8-bit element, everything included (residuals, side channel, amortized dictionary). Raw storage is 8; $\vrho = \vbpe/8$.
+
+scope:
+  label: dictionary scope
+  name: dictionary scope
+  cat: project
+  home: homework-scope
+  short: >-
+    What a dictionary is fit on and shared by — global (all requests), request (one conversation) or block (b tokens). The one axis that organizes the whole design space.
+
+scope-gain:
+  label: scope gain
+  name: scope gains g_req and g_blk
+  cat: project
+  home: homework-scope
+  short: >-
+    The bits per element saved by narrowing the scope one rung — from global to request ($\vgainreq$) and from request to block ($\vgainblk$), for the same type of dictionary.
+
+entropy-rate:
+  label: entropy rate
+  name: entropy rate (the scientific number)
+  cat: project
+  home: homework-two-rates
+  short: >-
+    The rate an ideal entropy coder would reach on the residuals, plus side channel and dictionary. What arithmetic coding or rANS would achieve.
+
+fixed-length-rate:
+  label: fixed-length rate
+  name: fixed-length rate (the engineering number)
+  cat: project
+  home: homework-two-rates
+  short: >-
+    The rate of a fixed-length code with escapes on the residuals, plus side channel and dictionary. What a fast GPU decoder achieves, and directly the delta size of the store.
+
+lever:
+  label: lever
+  name: the two levers (cheaper misses, cheaper slots)
+  cat: project
+  home: idea-two-levers
+  short: >-
+    Lever 1 makes misses cheaper (move $\vrho\,\ve$ instead of $\ve$ over the link); lever 2 makes hot-cache slots cheaper (store heavy blocks as deltas in GPU memory).
+
+roofline:
+  label: roofline
+  name: roofline (of the compressibility curve)
+  cat: project
+  home: questions-framework-b
+  short: >-
+    The lower envelope of the compressibility curves of all algorithms tried — the best trade-off between dictionary cost and delta size that the data allows.
+
+harness:
+  label: harness
+  name: the measurement harness
+  cat: project
+  home: plan-harness-interface
+  short: >-
+    The small program that runs every dictionary algorithm through the same interface, charges every byte by the same rule, runs the controls and plots the results.
+
+shuffle-control:
+  label: shuffle control
+  name: shuffle control
+  cat: project
+  home: homework-rehearsal
+  short: >-
+    Rerun the measurement after shuffling tokens across sequences. Any gain that depends on neighbours being neighbours must vanish; a gain that survives is a bug.

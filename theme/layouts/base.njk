@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if num %}{{ num }} {% endif %}{{ title | striptags }} — {{ site.title }}</title>
+<meta name="description" content="{{ (lede or site.subtitle) | striptags | truncate(180) }}">
+<script>try{var t=localStorage.getItem('kvp.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Alegreya+Sans+SC:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Federo&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/gen/terms.css">
+<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/figures.css">
+<link rel="stylesheet" href="/assets/css/cards.css">
+{%- for f in figList %}{% if f | hasFigCss %}
+<link rel="stylesheet" href="/assets/figs/{{ f }}.css">{% endif %}{% endfor %}
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<script>window.KV={page:{{ {pageId: pageId, num: num, title: title, partId: partId, permalink: permalink} | pageInfoJson | safe }}};</script>
+<script src="/assets/gen/site-data.js"></script>
+<script defer src="/assets/vendor/katex/katex.min.js"></script>
+<script defer src="/assets/js/core.js"></script>
+<script defer src="/assets/js/plotkit.js"></script>
+<script defer src="/assets/js/cgraph.js"></script>
+<script defer src="/assets/js/cards.js"></script>
+<script defer src="/assets/js/figs-loader.js"></script>
+{%- for s in vendor or [] %}
+<script defer src="/assets/vendor/{{ s }}"></script>
+{%- endfor %}
+{%- for f in figList %}
+<script defer src="/assets/figs/{{ f }}.js"></script>
+{%- endfor %}
+{%- for s in extraScripts or [] %}
+<script defer src="/assets/js/{{ s }}"></script>
+{%- endfor %}
+</head>
+<body data-page-id="{{ pageId }}" data-page-num="{{ num }}" data-page-title="{{ title | striptags }}" data-part="{{ partId or 'home' }}" class="{{ bodyClass or 'is-page' }}" style="--c:var(--part-{{ partId or 'home' }})">
+{% include "partials/emblems.njk" %}
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="ib menu-btn" type="button" aria-label="Open the table of contents" aria-controls="sidenav" aria-expanded="false">{{ 'menu' | emblem | safe }}</button>
+  <a class="site-brand" href="/">{{ 'delta' | emblem | safe }}<span class="brand-name">{{ site.title }}</span><span class="brand-sub">primer &amp; proposal</span></a>
+  <div class="crumb">
+    {%- if partId %}<span class="crumb-part">Part {{ part.id }} · {{ part.short }}</span><span class="crumb-sep">›</span><span class="crumb-page"><b>{{ num }}</b> {{ (nav or title) | striptags }}</span>{% endif -%}
+  </div>
+  <a id="deck-count" class="deck-count" href="/practice/" title="Your flashcard deck">{{ 'cards' | emblem | safe }}<span class="dc-n">0</span></a>
+  <button class="ib theme-btn" type="button" aria-label="Switch between light and dark">{{ 'moon' | emblem | safe }}</button>
+</header>
+
+<nav id="sidenav" class="sidenav" aria-label="Table of contents">
+  <div class="sn-top">
+    <a class="sn-home{% if pageId == 'home' %} is-current{% endif %}" href="/">{{ 'lighthouse' | emblem | safe }}<span>Start here</span></a>
+    <button class="ib sn-close" type="button" aria-label="Close the table of contents">×</button>
+  </div>
+  {%- for p in collections.pages | navTree %}
+  <details class="sn-part" style="--pc:var(--part-{{ p.id }})"{% if p.id == partId %} open{% endif %}>
+    <summary><span class="sn-roman">{{ p.id }}</span><span class="sn-title">{{ p.title }}</span><span class="sn-count">{{ p.count }}</span></summary>
+    <ol class="sn-pages">
+      {%- for g in p.groups %}
+      {%- if g.name %}<li class="sn-group">{{ g.name }}</li>{% endif %}
+      {%- for pg in g.pages %}
+      <li><a href="{{ pg.url }}" data-page="{{ pg.id }}"{% if pg.id == pageId %} aria-current="page"{% endif %}><span class="sn-num">{{ pg.num }}</span><span class="sn-name">{{ pg.nav | striptags }}</span></a></li>
+      {%- endfor %}
+      {%- endfor %}
+    </ol>
+  </details>
+  {%- endfor %}
+  <div class="sn-foot">
+    <a href="/practice/">{{ 'cards' | emblem | safe }}<span>Flashcard practice</span></a>
+    <a href="/reference/glossary/">{{ 'book' | emblem | safe }}<span>Glossary</span></a>
+    <a href="/reference/notation/">{{ 'sigma' | emblem | safe }}<span>Notation &amp; colours</span></a>
+  </div>
+</nav>
+<div class="backdrop" hidden></div>
+
+<main id="main" class="main">
+{{ content | safe }}
+</main>
+
+<footer class="colophon">
+  <div class="orn-rule" aria-hidden="true">{% include "partials/rule.njk" %}</div>
+  <p><b>{{ site.title }}</b> — {{ site.subtitle }}. Written by {{ site.author }}. Source, figures and analysis scripts: <a href="{{ site.repo }}">{{ site.repo | replace('https://', '') }}</a>.</p>
+  <p class="small">Keys: <kbd>←</kbd> <kbd>→</kbd> previous / next page · <kbd>g</kbd> glossary · <kbd>p</kbd> practise flashcards. Hover any coloured term or symbol for a reminder.</p>
+</footer>
+</body>
+</html>

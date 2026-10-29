@@ -1,0 +1,27 @@
+/* Part I figures. Tokens only (see theme/assets/css/tokens.css). */
+.rr-box { font-family: var(--f-mono); font-size: .74rem; line-height: 1.5; background: var(--code-bg); color: var(--code-fg); border-radius: 10px; padding: .6rem .4rem; overflow-x: auto; }
+.rr-line { display: grid; grid-template-columns: 3.2rem auto 4.6rem; gap: .6rem; align-items: baseline; padding: .12rem .4rem; border-radius: 6px; cursor: pointer; white-space: pre; min-width: max-content; }
+.rr-line:hover { background: rgba(255,255,255,.06); }
+.rr-line.is-sel { background: color-mix(in srgb, var(--gold-2) 22%, transparent); outline: 1px solid color-mix(in srgb, var(--gold-2) 60%, transparent); }
+.rr-time { color: var(--gold-2); }
+.rr-code { background: none !important; padding: 0 !important; font-size: 1em; }
+.rr-same { color: color-mix(in srgb, var(--code-fg) 32%, transparent); }
+.rr-new { color: #ffd166; font-weight: 600; background: color-mix(in srgb, #ff7a59 35%, transparent); border-radius: 2px; }
+.rr-plain .rr-same, .rr-plain .rr-new { color: var(--code-fg); background: none; font-weight: 400; }
+.rr-count { color: var(--tok-str); text-align: right; }
+.rr-toggle { display: inline-flex; gap: .4rem; align-items: center; cursor: pointer; }
+.co-msg { display: block; font-size: .78rem; background: var(--code-bg) !important; color: var(--code-fg); padding: .6rem .8rem !important; border-radius: 8px; overflow-x: auto; white-space: pre; }
+.co-bars { display: flex; flex-direction: column; gap: .5rem; }
+.co-row { display: grid; grid-template-columns: 9rem 1fr 3.5rem; gap: .7rem; align-items: center; font-family: var(--f-sc); font-size: .92rem; }
+.co-track { height: 1.3rem; background: color-mix(in srgb, var(--ink) 8%, transparent); border-radius: 999px; overflow: hidden; }
+.co-fill { display: block; height: 100%; border-radius: 999px; }
+.co-fill.is-raw { background: linear-gradient(90deg, var(--slate), color-mix(in srgb, var(--slate) 60%, var(--paper))); }
+.co-fill.is-z { background: linear-gradient(90deg, var(--vermilion), var(--saffron)); }
+.co-n { font-family: var(--f-mono); font-size: .85rem; text-align: right; }
+@media (max-width: 520px) { .co-row { grid-template-columns: 6.5rem 1fr 3.2rem; } }
+/* keep the time and the count visible while the long messages scroll sideways */
+.rr-time, .rr-count { position: sticky; z-index: 1; background: var(--code-bg); }
+.rr-time { left: 0; padding-right: .3rem; }
+.rr-count { right: 0; padding-left: .5rem; box-shadow: -10px 0 10px -6px var(--code-bg); }
+.rr-line.is-sel .rr-time, .rr-line.is-sel .rr-count { background: color-mix(in srgb, var(--gold-2) 22%, var(--code-bg)); }
+.rr-box::after { content: "scroll sideways for the whole message →"; display: block; text-align: center; font-family: var(--f-sc); font-size: .8rem; color: var(--code-dim); margin-top: .3rem; position: sticky; left: 0; }

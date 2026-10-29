@@ -1,0 +1,37 @@
+---
+layout: base.njk
+---
+{%- set nb = collections.pages | neighbors(pageId) -%}
+<header class="banner">
+  <div class="banner-orn" aria-hidden="true">{% include "partials/banner-ornament.njk" %}</div>
+  <div class="banner-inner">
+    {%- if part %}
+    <a class="banner-part" href="{{ (collections.pages | navTree)[part.index].first.url }}"><span class="banner-roman">{{ part.id }}</span><span class="banner-ptitle">Part {{ part.id }} · {{ part.title }}</span></a>
+    <div class="banner-num" aria-label="Page {{ num }}">{{ num }}</div>
+    {%- else %}
+    <span class="banner-part"><span class="banner-roman">✦</span><span class="banner-ptitle">{{ site.title }}</span></span>
+    {%- endif %}
+    <h1>{{ title | mdInline(page.inputPath) | safe }}</h1>
+    {%- if lede %}<p class="lede">{{ lede | mdInline(page.inputPath) | safe }}</p>{% endif %}
+  </div>
+</header>
+
+<div class="page-body">
+  <article class="prose">
+{{ content | safe }}
+  </article>
+</div>
+
+{%- if deck !== false %}
+<section id="deck" class="deck" aria-label="Flashcards for this page"></section>
+{%- endif %}
+<script type="application/json" id="page-cards">{{ cards | pageCardsJson(pageId, num, title, partId, permalink, page.inputPath) | safe }}</script>
+
+<nav class="pager" aria-label="Previous and next page">
+  {%- if nb.prev %}
+  <a class="pg pg-prev" href="{{ nb.prev.url }}" rel="prev" style="--pc:var(--part-{{ nb.prev.partId }})"><span class="pg-dir">← previous</span><span class="pg-num">{{ nb.prev.num }}</span><span class="pg-title">{{ nb.prev.title | striptags }}</span></a>
+  {%- else %}<span></span>{% endif %}
+  {%- if nb.next %}
+  <a class="pg pg-next" href="{{ nb.next.url }}" rel="next" style="--pc:var(--part-{{ nb.next.partId }})"><span class="pg-dir">next →</span><span class="pg-num">{{ nb.next.num }}</span><span class="pg-title">{{ nb.next.title | striptags }}</span></a>
+  {%- endif %}
+</nav>

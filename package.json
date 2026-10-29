@@ -1,0 +1,28 @@
+{
+  "name": "kvblockdiff-primer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "kv-blockdiff: a research proposal and primer on lossless dictionary coding of LLM KV caches, as a static site.",
+  "type": "module",
+  "scripts": {
+    "build": "eleventy",
+    "build:strict": "STRICT=1 eleventy",
+    "serve": "eleventy --serve",
+    "check": "node scripts/check.mjs _site",
+    "clean": "rm -rf _site"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.7",
+    "js-yaml": "^5.5.0",
+    "katex": "^0.19.1",
+    "markdown-it": "^15.0.3",
+    "markdown-it-attrs": "^5.0.1",
+    "markdown-it-container": "^4.0.0",
+    "node-html-parser": "^9.0.5",
+    "pako": "^3.0.3",
+    "prismjs": "^1.30.0"
+  }
+}

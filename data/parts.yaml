@@ -1,0 +1,113 @@
+# The Parts of the site, in reading order. Each Part is a folder in content/ ("dir").
+# Pages inside a folder are ordered by their numeric file prefix: 03-entropy.md is page 3.
+# "figs" names the figure files (figures/<name>.js) loaded on every page of the Part.
+- id: I
+  dir: 01-tiny-files
+  slug: tiny-files
+  title: The tiny-file problem
+  short: Tiny files
+  emblem: braces
+  figs: [tiny]
+  lede: >
+    A story everyone has met: small, similar records that refuse to compress one at a time.
+    It contains the whole idea of this project in a setting with no machine learning at all.
+
+- id: II
+  dir: 02-school
+  slug: school
+  title: Back to school
+  short: Back to school
+  emblem: quill
+  figs: [school-info, school-vectors]
+  lede: >
+    A gentle, self-contained primer on every idea the rest of the site leans on: bits and entropy,
+    side information, entropy coders, prediction and residuals, vectors and rotations, codebooks,
+    number formats, caches and wires. Toy examples only — no KV caches yet.
+
+- id: III
+  dir: 03-landscape
+  slug: landscape
+  title: Where things stand
+  short: Where things stand
+  emblem: eye
+  figs: [landscape]
+  lede: >
+    How a language model reads its KV cache while it writes, how sparse attention changes what is
+    read, and how HiSparse keeps a long history in host memory with a small hot cache on the GPU.
+
+- id: IV
+  dir: 04-idea
+  slug: idea
+  title: The idea, and what it bets on
+  short: The idea
+  emblem: delta
+  figs: [idea]
+  lede: >
+    kv-blockdiff maps the tiny-file story onto the sparse-attention cache, and names, carefully,
+    the properties of KV caches that would have to be true for it to pay off.
+
+- id: V
+  dir: 05-papers
+  slug: papers
+  title: Papers
+  short: Papers
+  emblem: scroll
+  figs: [papers-a, papers-b]
+  lede: >
+    One page per paper worth our attention: what it does, retold in this site's vocabulary,
+    what it tells us, what it does not, and where we are not convinced.
+
+- id: VI
+  dir: 06-homework
+  slug: homework
+  title: Homework — napkin math before building
+  short: Homework
+  emblem: abacus
+  figs: [homework-a, homework-b]
+  lede: >
+    Information theory on the back of a napkin: how many bits there are to win, what each kind of
+    dictionary pays, what the 8-bit grid does to prediction, and when a dictionary pays for itself.
+
+- id: VII
+  dir: 07-missed
+  slug: missed
+  title: What Dima missed
+  short: What Dima missed
+  emblem: quill
+  figs: [missed-a, missed-b]
+  lede: >
+    Every correction and addition to the first draft of the idea, each one introduced slowly,
+    with examples and the reason it matters.
+
+- id: VIII
+  dir: 08-questions
+  slug: questions
+  title: The questions
+  short: Questions
+  emblem: question
+  figs: [questions]
+  lede: >
+    From a vague direction to questions an experiment can answer: three big-picture questions,
+    four experiment frameworks, and a shelf of parked ideas.
+
+- id: IX
+  dir: 09-plan
+  slug: plan
+  title: The plan
+  short: The plan
+  emblem: map
+  figs: [plan]
+  lede: >
+    The measuring harness, the first weekend of experiments, the second wave, every fixed choice
+    with its assumption, and the risks with their pivots.
+
+- id: X
+  dir: 10-reference
+  slug: reference
+  title: Summary and reference
+  short: Reference
+  emblem: book
+  figs: []
+  lede: >
+    The one-page summary, the glossary, the notation and its colours, the running themes,
+    and the grounded numbers with their sources.
