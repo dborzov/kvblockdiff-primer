@@ -24,6 +24,11 @@ cards:
     wrong: ["Only the entropy rate", "The BF16 rate", "Whichever rate is larger"]
     why: The fixed-length rate is the size of the delta a miss would actually move. The source's rule does not say which rate it means.
     sec: hole
+  - q: 'The same synthetic data, read in E4M3''s fixed-length rate, gives 0.058 + 0.161 bit. Which row?'
+    a: The negative row — below 0.25 bit in total
+    wrong: ["Block scope", "Request scope", "The gap"]
+    why: In INT8's entropy rate the same data gives 0.80 bit and lands in the gap. Which grid and which rate the rule reads matters as much as its thresholds.
+    sec: try
 ---
 
 Before a clinical trial starts, its authors register what they will measure and what each result will mean. It is a promise to their future selves: no reading the tea leaves once the data is in. Wave 1 makes the same promise, in four rows.

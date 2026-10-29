@@ -94,10 +94,6 @@ What would make reviewers nod, in any outcome:
 - **the HiSparse-calibrated replay** — not a toy workload;
 - **the cost model with every assumed number marked** — like the plot above.
 
-::: theme controls
-In every one of the three papers, the controls are part of the claim. A positive result without its shuffled twin is an anecdote; a negative result without it is an accusation of a bug.
-:::
-
 ::: takeaway
 - Three outcomes, three papers: blockdiff, requestdiff, and a well-controlled negative.
 - The negative is publishable because no lossless measurement exists yet.

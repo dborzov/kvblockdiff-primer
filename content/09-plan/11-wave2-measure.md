@@ -75,10 +75,6 @@ What the curves of measurement 4 look like can be seen on the synthetic trace of
 4. Compare the policies on the right: chasing every miss loads more than one dictionary per step when few fit; keeping the heaviest blocks loads rarely.
 :::
 
-::: theme which-vs-what
-The synthetic keys here have block topics, so selections concentrate. Concentration of *selections* says nothing about whether the selected *entries* compress — that is why wave 2 runs only after wave 1's "go".
-:::
-
 ::: takeaway
 - The replay turns a recorded trace into $\vfD$ and $\vnload$ curves for any cache size and policy.
 - Concentration depends on the keys; the synthetic curves show the shape, the real dump the answer.

@@ -24,6 +24,11 @@ cards:
     wrong: ["Sink tokens", "The parallelism layout", "Speculative decoding"]
     why: The ladder applies unchanged, but the statistics may not transfer. That is a measurement, scheduled for later.
     sec: list
+  - q: What must exist before the victim tier and lever 2 proper are built?
+    a: A decode kernel with measured throughput — and a "go" from waves 1 and 2
+    wrong: ["An MLA model", "Cross-layer dictionaries", "Nothing; they come first"]
+    why: Both put the decoder on the critical path of attention; its speed must be known first.
+    sec: later
 ---
 
 In a story by Borges, the cartographers of an empire draw a map at the scale of one mile to the mile. It covers the empire exactly, and is abandoned. A useful plan is a map with most things left off — on purpose, and with a note saying why each omission is safe.
@@ -44,10 +49,6 @@ Grouped by the reason each omission is safe:
 | **later phases** | kernels | Phase 2. The fixed-length format fixes the decoder's shape in advance: a gather, an add, an escape fix-up. |
 
 Our read on the riskiest line: **MLA**. It is the real target, and its latents are already a learned low-rank projection of the hidden state. The [[klt|KLT]] rung may find much less there than in a plain attention layer, and [[loc]] might be all that is left. The ladder does not change; its answer might.
-
-::: theme access-pattern
-Every item on this list was judged by one question: does it change what a single miss must fetch and decode? If not, it can wait.
-:::
 
 ::: takeaway
 - Omissions are safe when they change the count of misses, not the cost of one; or the statistics, not the method.

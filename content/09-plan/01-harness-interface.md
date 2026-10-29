@@ -172,10 +172,6 @@ One could write one script per idea. The interface is better for two reasons.
 
 **A search that can be automated.** Because the score is fixed, the loop "propose a coder, score it, read the curve, propose the next" can run without a human judging each step. The source proposal parks this idea as a question ([[#questions-parked-automation]]). The harness is what makes it safe: its controls catch the three ways a search would cheat — forgetting to charge bytes, fitting on the test set, losing bits.
 
-::: theme controls
-The harness is where the controls live. A clever coder that skips the referee is a claim; a coder that passes through it is a measurement.
-:::
-
 ::: takeaway
 - An interface turns a pile of scripts into comparable points on one curve.
 - A fixed score makes an automated search over coders possible; the controls keep it honest.

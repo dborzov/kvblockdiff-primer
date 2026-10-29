@@ -1035,7 +1035,7 @@ delta-ratio:
   cat: project
   home: idea-dictionary-delta-block
   short: >-
-    $\vrho = \vdsz / \ve$ — how much a miss shrinks. For 8-bit storage $\vrho = \vbpe/8$.
+    $\vrho = \vdsz / \ve$ — how much a miss shrinks. For 8-bit storage $\vrho \approx \vbpe/8$ (the rate also counts the amortized dictionary, which is not part of the delta).
 
 delta-miss-fraction:
   label: δ-miss fraction
@@ -1051,7 +1051,7 @@ bpe:
   cat: project
   home: homework-the-budget
   short: >-
-    The rate of a lossless code in bits per 8-bit element, everything included (residuals, side channel, amortized dictionary). Raw storage is 8; $\vrho = \vbpe/8$.
+    The rate of a lossless code in bits per 8-bit element, everything included (residuals, per-entry tax, amortized dictionary). Raw storage is 8; $\vrho = \vbpe/8$.
 
 scope:
   label: dictionary scope
@@ -1075,7 +1075,7 @@ entropy-rate:
   cat: project
   home: homework-two-rates
   short: >-
-    The rate an ideal entropy coder would reach on the residuals, plus side channel and dictionary. What arithmetic coding or rANS would achieve.
+    The rate an ideal entropy coder would reach on the residuals, plus the per-entry tax and the amortized dictionary. What arithmetic coding or rANS would achieve.
 
 fixed-length-rate:
   label: fixed-length rate
@@ -1083,7 +1083,7 @@ fixed-length-rate:
   cat: project
   home: homework-two-rates
   short: >-
-    The rate of a fixed-length code with escapes on the residuals, plus side channel and dictionary. What a fast GPU decoder achieves, and directly the delta size of the store.
+    The rate of a fixed-length code with escapes on the residuals, plus the per-entry tax and the amortized dictionary. What a fast GPU decoder achieves, and directly the delta size of the store.
 
 lever:
   label: lever

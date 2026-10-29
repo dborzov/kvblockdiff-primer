@@ -99,7 +99,7 @@ The horizontal axis *is* amortization: dictionary bytes divided by the entries t
 Framework B is built as a machine because the space of coders is large: codebooks and product codebooks, rotations and learned decorrelations, rate allocation across channels, different residual coders. Nobody can pick the winner from an armchair. The machine is the measuring program of [[#plan-harness-interface]], and it is deliberately strict.
 
 1. **One interface.** An algorithm takes all entries of one block at one layer, returns one dictionary and one delta per entry, and must rebuild every entry bit-exactly from (dictionary, delta).
-2. **One accounting rule.** Every byte of dictionary, side channel and residual is charged, by the same rule for every rung ([[#plan-accounting]]).
+2. **One accounting rule.** Every byte of dictionary, per-entry tax and residual is charged, by the same rule for every rung ([[#plan-accounting]]).
 3. **Four controls.** Synthetic data with a known answer, the shuffle, scope consistency, and a real round trip ([[#plan-controls]]).
 4. **One plot.** Every algorithm becomes a cloud of points on the same plane.
 

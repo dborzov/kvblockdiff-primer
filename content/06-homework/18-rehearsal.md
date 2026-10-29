@@ -54,7 +54,7 @@ The true blocks are 2048 tokens long and line up with the block grid — kinder 
 Every rate is in [[bpe]] with everything included, as the harness will count it:
 
 - **residual bits** under a per-channel discretized [[laplace]] model fitted on the scope's own data (for global scope, fitted on the calibration requests and charged on the test requests);
-- **side channel**: [[vq]]'s 8-bit index, [[sib]]'s pointer to the nearest *earlier* entry of its block (so the block decodes in order);
+- **per-entry tax**: [[vq]]'s 8-bit index, [[sib]]'s pointer to the nearest *earlier* entry of its block (so the block decodes in order);
 - **dictionary**, amortized as $8\vw/\vb$: [[loc]] $\vw = 2$, VQ $\vw = 257$. The [[klt]] line is a **bound**: its basis is not charged.
 
 The control is the most important part of the design.
@@ -95,7 +95,7 @@ The exchange rate predicts $\tfrac12\log_2(596/400) \approx 0.29$ bit for this t
 ## What the plots must look like {#shapes}
 
 ::: figure fig-hwb-rehearsal hwbRehearsal wide
-**The scope ladder on synthetic data.** Horizontal axis: block size $\vb$ in tokens (log scale, 128 to 8K). Vertical axis: lossless rate in bits per element, everything included (lower is better; raw is 8). Curves with dots: the four dictionary types at block scope — loc (teal), the KLT bound (purple, dashed; basis not charged), VQ with 256 centroids (amber; arrows mark points off the top of the chart) and sib (rose). Flat lines: the same type at global scope (dark blue) and at request scope (plum, dotted), for loc and KLT. The vertical line is the planted block length. Toggle between the original data and the shuffle control (tokens permuted across 32 requests); buttons show or hide each type. Hover a dot for its split into residual, side channel and dictionary. Computed by `analysis/homework_b_rehearsal.py` (numpy, seeded; about half a minute on four idle cores). **Synthetic data: a check of the method, not a result about KV caches.**
+**The scope ladder on synthetic data.** Horizontal axis: block size $\vb$ in tokens (log scale, 128 to 8K). Vertical axis: lossless rate in bits per element, everything included (lower is better; raw is 8). Curves with dots: the four dictionary types at block scope — loc (teal), the KLT bound (purple, dashed; basis not charged), VQ with 256 centroids (amber; arrows mark points off the top of the chart) and sib (rose). Flat lines: the same type at global scope (dark blue) and at request scope (plum, dotted), for loc and KLT. The vertical line is the planted block length. Toggle between the original data and the shuffle control (tokens permuted across 32 requests); buttons show or hide each type. Hover a dot for its split into residual, per-entry tax and dictionary. Computed by `analysis/homework_b_rehearsal.py` (numpy, seeded; about half a minute on four idle cores). **Synthetic data: a check of the method, not a result about KV caches.**
 :::
 
 Read the original data first.

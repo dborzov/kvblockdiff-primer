@@ -24,6 +24,11 @@ cards:
     wrong: ["Exactly two days", "One afternoon", "A month"]
     why: Day 1 builds and runs 1a, Day 2 runs 1b with VQ overnight, Day 3 reads and decides. Call it a long weekend.
     sec: timeline
+  - q: Why do the four controls sit in front of experiment 1b in the pipeline, not after it?
+    a: Because a control run after the results are known invites explaining a failure away
+    wrong: ["Because the controls need the 1b results as input", "Because the controls run on the GPU", "Because 1b is too slow to repeat"]
+    why: The controls must pass on synthetic data before real data enters the harness; they gate the measurement.
+    sec: pipeline
 ---
 
 A good weekend project ends with something on the desk you can point at. For wave 1 that is a short list: two figures, one table, a page of diagnostics, and one number handed forward to [[#plan-cost-model-and-paper]]. This page shows how the data flows into them, and when.
@@ -110,10 +115,6 @@ The source calls this "one weekend". Counted honestly, it is three days of work 
 - **Day 1** is mostly done already: the step-0 functions, both rates, the interface and the synthetic controls run in `analysis/plan_harness.py`. What remains is plugging in the real dumps and running 1a.
 - **Day 2** is the long one; VQ is left running overnight because k-means is slow.
 - **Day 3** ends with the [[#plan-decision-rule|decision]], made by a rule written down before the data was seen.
-
-::: theme controls
-The schedule puts the controls on the morning of Day 1, before any real entry is read. Run afterwards, a control becomes a temptation to explain a failure away.
-:::
 
 ::: takeaway
 - A long weekend: an evening of dumping, then build-and-diagnose, the ladder, and the decision.

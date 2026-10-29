@@ -80,7 +80,7 @@ p:     { tex: "p", fam: frac, name: probability, unit: "", home: school-surprise
 m:     { tex: "m", fam: frac, name: miss rate, unit: "", home: school-reuse-distance,
          short: "Fraction of requests (selections) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$." }
 rho:   { tex: "\\rho", fam: frac, name: delta ratio, unit: "", home: idea-dictionary-delta-block,
-         short: "Delta size over entry size, $\\vrho = \\vdsz/\\ve = \\vbpe/8$. Smaller is better." }
+         short: "Delta size over entry size, $\\vrho = \\vdsz/\\ve \\approx \\vbpe/8$ (the rate also counts the amortized dictionary). Smaller is better." }
 fD:    { tex: "f_D", fam: frac, name: δ-miss fraction, unit: "", home: idea-blockdiff-step-by-step,
          short: "Share of misses served by a delta (their dictionary was resident)." }
 Rsq:   { tex: "R^2", fam: frac, name: variance explained, unit: "", home: school-exchange-rate,

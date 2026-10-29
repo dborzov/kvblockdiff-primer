@@ -45,12 +45,13 @@ These were computed for this site; the scripts are in the repository's `analysis
 
 | check | result | where |
 |---|---|---|
-| Order-0 entropy of one Gaussian channel stored in E4M3 | ≈ 6.47 bits, whatever the channel's scale (≈ 7.04 bits on a uniform INT8 grid at σ = 32 codes) | [[#homework-the-budget]] |
-| Block-mean prediction in E4M3 index space | net negative below R² ≈ 0.7 | [[#homework-the-grid]] |
-| k-means codebooks vs a rotation on bell-shaped correlated data | VQ nets at most about +0.25 bit; the rotation +0.50, with no tax | [[#homework-vq]] |
-| k-means codebooks on clustered data | VQ +1.5 bit vs the rotation +0.68 | [[#homework-vq]] |
+| Order-0 entropy of one Gaussian channel stored in E4M3 | ≈ 6.47 bits, whatever the channel's scale (≈ 7.05 bits on a uniform INT8 grid at σ = 32 codes; the first draft said 7.04) | [[#homework-the-budget]] |
+| Block-mean prediction in E4M3 index space | net negative below R² ≈ 0.7; INT8's advantage is 0.2–0.3 bit only for R² between 0.7 and 0.93 | [[#homework-the-grid]] |
+| k-means codebooks vs a rotation on bell-shaped correlated data | VQ nets at most about +0.22 bit; the rotation +0.50, with no tax (first draft: +0.25) | [[#homework-vq]] |
+| k-means codebooks on clustered data | VQ +1.45 bit vs the rotation +0.68 (first draft: +1.53) | [[#homework-vq]] |
 | HiSparse's LRU points | fit $\vm(\vB) \propto \vB^{-1.08}$ (in effect a two-point fit) | [[#landscape-reuse-curve]] |
 | Context modelling on the E4M3 grid (exact computation) | recovers the full exchange rate, and beats INT8-with-subtraction by about 0.5 bit at every $\vRsq$ | [[#missed-context-modeling]] |
+| Entropy rate vs fixed-length rate on the same residuals | about 1 bit per element apart — 15–22 % at 8-bit rates (the first draft said 10–15 %) | [[#homework-two-rates]] |
 | The synthetic dress rehearsal (planted structure, INT8) | loc is best at the true block length 2,048; $\vgainreq \approx 0.10$ and $\vgainblk \approx 0.16$ bit; both vanish under the shuffle control | [[#homework-rehearsal]] |
 | Independent random keys with a slowly drifting query (our live toy: 4,096 keys of 32 numbers, top-64) | 63–80 % of each step's selections repeat for a drift between 0.2 and 0.4; hit rate 86 % at 0.25 — with nothing to compress ($\vRsq = 0.000$). The first draft's larger toy gave 63–84 % | [[#idea-the-leak]] |
 
