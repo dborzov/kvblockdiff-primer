@@ -123,12 +123,6 @@
   max-width: var(--col);
   margin: 0 auto;
 }
-@media (min-width: 1460px) {
-  .deck {
-    max-width: calc(var(--col) + var(--side) + 2.5rem);
-    padding-right: calc(var(--side) + 2.5rem);
-  }
-}
 .deck[hidden],
 .deck:empty {
   display: none;

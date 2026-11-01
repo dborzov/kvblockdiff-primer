@@ -150,10 +150,10 @@ img, svg { max-width: 100%; }
 .banner .term { color: #fff6dd !important; background: rgba(255,255,255,.12) !important; border-color: rgba(255,255,255,.35) !important; }
 
 /* ---------------------------------------------------------------- prose */
+/* The reading column is always centred on the same axis as the banner (the .main content
+   box). Sidenotes hang in the right margin outside it (see the 1576px rule below) rather than
+   widening or padding this box, which would push the text off-centre. */
 .page-body { max-width: var(--col); margin: 0 auto; }
-@media (min-width: 1460px) {
-  .page-body { max-width: calc(var(--col) + var(--side) + 2.5rem); padding-right: calc(var(--side) + 2.5rem); }
-}
 .prose { padding-top: 2rem; display: flow-root; }
 .prose > * + * { margin-top: 1.05rem; }
 .prose > h2 { margin-top: 2.6rem; font-size: clamp(1.45rem, 3vw, 1.85rem); color: color-mix(in srgb, var(--c) 70%, var(--ink)); padding-bottom: .35rem; background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--gold-2) 70%, transparent) 40%, transparent) bottom / 100% 1.5px no-repeat; scroll-margin-top: calc(var(--topbar) + 16px); }
@@ -268,7 +268,10 @@ dfn.term.def.brand { background: color-mix(in srgb, var(--tc) 22%, transparent);
 .eq-legend .lg-unit { font-family: var(--f-mono); font-size: .75rem; color: var(--ink-3); }
 .eq-legend .lg-home { font-family: var(--f-sc); font-size: .78rem; white-space: nowrap; }
 .eq-legend .lg-home::before { content: "↪ "; }
-@media (min-width: 1460px) {
+/* Hang sidenotes in the right margin only once the centred column leaves room for them:
+   (100vw - nav - 2 * 2rem main padding - col) / 2 >= side + 2.5rem  ->  100vw >= 1576px
+   (nav 17.5rem, col 42rem, side 15rem at 16px). Below that they stay inline in the column. */
+@media (min-width: 1576px) {
   .prose > .side { float: right; clear: right; width: var(--side); margin: .2rem calc(-1 * (var(--side) + 2.5rem)) .8rem 0; }
   .prose > .side + * { margin-top: 0; }
   .eq-legend { position: absolute; top: 0; right: calc(-1 * (var(--side) + 2.5rem)); width: var(--side); margin: 0; z-index: 2; }
@@ -464,7 +467,6 @@ a.xref::before { content: "§ "; color: var(--gold); font-family: var(--f-body);
 /* wide elements (concept graphs, wide plates) break out of the reading column */
 .prose > .cgraph, .prose > .plate.wide { position: relative; width: min(62rem, calc(100vw - 32px)); left: 50%; transform: translateX(-50%); }
 @media (min-width: 1100px) { .prose > .cgraph, .prose > .plate.wide { width: min(62rem, calc(100vw - var(--nav) - 4rem)); } }
-@media (min-width: 1460px) { .prose > .cgraph, .prose > .plate.wide { left: 0; transform: none; width: calc(var(--col) + var(--side) + 2.5rem); } }
 
 /* dark theme: keep the jewel banners deep so the cream lettering stays legible */
 :root[data-theme="dark"] .banner { background:
