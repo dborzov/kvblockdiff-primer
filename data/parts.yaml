@@ -111,3 +111,15 @@
   lede: >
     The one-page summary, the glossary, the notation and its colours, the running themes,
     and the grounded numbers with their sources.
+
+- id: XI
+  dir: 11-measured
+  slug: measured
+  title: What the data said
+  short: What the data said
+  emblem: roofline
+  figs: [measured]
+  lede: >
+    A dispatch from the first real measurements: two autonomous research campaigns ran the
+    kv-blockdiff question through a harness on real Qwen3.5-2B caches. What held, what broke,
+    and what the bytes turned out to be made of.

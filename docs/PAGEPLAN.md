@@ -204,3 +204,26 @@ examples and a figure or worked example, what changes in the plan, links to wher
 | X.6 | `reference-fp8-facts` | FP8 E4M3 facts used by the coder |
 | X.7 | `reference-prior-art-map` | Prior-art map |
 | X.8 | `reference-references` | References |
+
+## XI. What the data said — `content/11-measured/` (figures: `figures/measured.js`)
+
+A journalist's dispatch on what two autonomous research campaigns (29–30 October 2026) measured when the
+kv-blockdiff question was run through a harness on real Qwen3.5-2B caches. The specification with every pinned
+number and its receipt is `experiment_repos/kv-compress-roofline/PART-XI-SPEC.md`; the verification notes behind
+it are in `experiment_repos/kv-compress-roofline/notes/`.
+
+| # | id | title | defines |
+|---|---|---|---|
+| XI.1 | `measured-dispatch` | A dispatch from the harness | `campaign` |
+| XI.2 | `measured-the-data` | The data on the table | |
+| XI.3 | `measured-rules-of-the-game` | The rules of the game | `mdl-ratio`, `verified-result`, `entry-split`, `screen`, `read-budget` |
+| XI.4 | `measured-night-one` | Night one: the twin ladder | `reference-entry`, `reference-tree` |
+| XI.5 | `measured-two-kinds-of-structure` | Two kinds of structure | `linear-prediction` |
+| XI.6 | `measured-cutting-the-tensor` | How to cut the tensor | `same-window` |
+| XI.7 | `measured-codebooks-and-rotations` | Codebooks and rotations | `exact-model` |
+| XI.8 | `measured-time-and-bits` | Sound, time and bits | |
+| XI.9 | `measured-reading-one-entry` | Reading one entry | |
+| XI.10 | `measured-where-the-bits-come-from` | Where the bits come from | `hidden-state`, `shared-table` |
+| XI.11 | `measured-signal-or-noise` | Signal or noise | `paired-difference` |
+| XI.12 | `measured-scorecard` | The scorecard | |
+| XI.13 | `measured-what-it-means` | What it means for kv-blockdiff | |

@@ -28,6 +28,10 @@ cards:
 
 A forecaster writes tomorrow's forecast down *before* looking out of the window, so that the window can prove her wrong. The same discipline applies here. Measurements of KV caches at 8 bits do not exist yet; [[#questions-q1]] asks for them. What follows is our prior: where we expect bits to come from, and how much they could add up to. It is meant to be replaced.
 
+::: note connection The window has been looked out of
+Part XI reports what two research campaigns measured on real caches. This prior was wrong in an instructive way: the values, planned for as nothing, gave about 1.2 bits per element, and the keys compressed about as well. The scorecard is on [[#measured-scorecard]].
+:::
+
 ## A prior, written down before the data {#prior}
 
 Three sources of structure, in the order we expect them to matter:

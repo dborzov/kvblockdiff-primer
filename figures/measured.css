@@ -1,0 +1,31 @@
+/* Part XI, "What the data said" (figures/measured.js). Tokens only; every class starts with msr-. */
+
+/* panel headings inside a plate */
+.msr-head { font-family: var(--f-sc); font-size: .88rem; letter-spacing: .03em; color: var(--ink-2); margin: 0 0 .25rem; }
+
+/* two-up rows with unequal columns (3:2, 2:3); they stack where the host is narrow */
+.msr-row { display: grid; gap: 1rem; align-items: start; }
+.msr-row > * { min-width: 0; }
+.msr-row-32 { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.msr-row-23 { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+@container fighost (max-width: 36rem) {
+  .msr-row-32, .msr-row-23 { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* the compressibility square keeps a square aspect and does not sprawl in a wide plate */
+.msr-square { width: 100%; max-width: 36rem; margin: 0 auto; }
+
+/* the clickable entry cuts of the tensor diagram */
+svg.plot .msr-cut { cursor: pointer; outline: none; transition: opacity .15s; }
+svg.plot .msr-cut:focus-visible rect { stroke: var(--c); stroke-width: 3; }
+svg.plot .msr-pt { cursor: pointer; outline: none; }
+svg.plot .msr-pt:focus-visible { stroke: var(--c); stroke-width: 3; }
+
+/* second tick row in bits along the top edge */
+svg.plot .msr-bits .tick text { fill: var(--ink-3); }
+
+/* the economics table: a colour key and measured / assumed tags */
+.msr-key { display: inline-block; width: .65rem; height: .65rem; border-radius: 2px 4px 2px 4px; background: var(--kc); margin-right: .4rem; vertical-align: -1px; }
+.msr-tag { display: inline-block; font-family: var(--f-sc); font-size: .74rem; letter-spacing: .03em; color: var(--ink-2); padding: .05rem .45rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent); white-space: nowrap; }
+.msr-tag.is-measured { color: var(--good); border-color: color-mix(in srgb, var(--good) 55%, transparent); }
+.msr-tag.is-hypo { color: var(--ink-3); border-style: dashed; }

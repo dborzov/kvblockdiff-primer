@@ -1,0 +1,310 @@
+{
+  "_about": "Part XI (measured-*): numbers of experiment_repos/kv-compress-roofline/PART-XI-SPEC.md section 1 that exist only on iteration pages, journals or KNOWLEDGE tags of /attic/d/kv-compress-roofline, not in the ledgers. Hand-entered 2026-10-31 from the page named in each `receipt` (cross-checked against experiment_repos/kv-compress-roofline/notes/02..04). analysis/measured_extract.py merges each block into the figures/data/measured-*.json file named in `_file`. Paths are relative to the experiments repo. Grades: 'encoded bytes' = real encoder output not isolated-verified; 'exact model' / 'bound' = a code-length calculation, no coder; 'in-process' = bit-exact in process, reads sampled.",
+
+  "same_window": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r24/pages/iter-1-3.md; KNOWLEDGE [split/same-bytes]",
+    "grade": "encoded bytes, 20 sequences of target 02, one 4096-token window each, not isolated-verified",
+    "n_sequences": 20,
+    "window_tokens": 4096,
+    "means": {
+      "head": {"coder": 102, "ratio": 0.66036},
+      "layer": {"coder": 102, "ratio": 0.62814},
+      "token": {"coder": 94, "ratio": 0.62382}
+    },
+    "joins": [
+      {"from": "head", "to": "layer", "delta": -0.03216, "spread": 0.00086, "agree": "20 of 20"},
+      {"from": "layer", "to": "token", "delta": -0.00432, "spread": 0.00136, "agree": "20 of 20", "ci95": [-0.00495, -0.00368],
+       "understated_by": 0.002, "note": "coder 102 at head and layer, coder 94 at token, so the second gap is understated by about 0.002"}
+    ],
+    "regime_vs_triple": {"delta": -0.00148, "spread": 0.00065, "agree": "7 of 7", "windows": 8,
+      "note": "regime = layers 3+19+23 and 7+11+15; triple = 3+7+11 and 15+19+23"},
+    "recovered_share_of_free_model_gap": {"head_to_layer": 0.90, "layer_to_token": 0.19,
+      "receipt": "research/agents/r24/pages/iter-1-2.md (0.0322/0.036 and 0.0043/0.023)"}
+  },
+
+  "shuffle": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r12/pages/iter-1-2.md and iter-1-3.md; KNOWLEDGE [struct/shuffle]",
+    "grade": "encoded bytes on shuffled blocks of the 2 dev sequences of target 03 (blocks rebuilt from a layer's tokens drawn at random across both sequences, both heads of a token kept together); 8 to 41 windows",
+    "tree_coder": {"label": "base head coder (reference tree, no prediction)", "original": 0.6907, "shuffled": 0.7520, "windows": 41,
+      "note": "destroys about 70 % of the reference gain over solo"},
+    "tree_coder_other_slice": {"label": "base coder of the 8-window slice", "original": 0.711, "shuffled": 0.773, "windows": 8},
+    "prediction_gain": [
+      {"coder": 80, "label": "sparse triangular linear prediction", "original": -0.0337, "shuffled": -0.0344, "windows": 8},
+      {"coder": 74, "label": "forward-selected cross-head prediction", "original": -0.0232, "shuffled": -0.0210, "windows": 8}
+    ],
+    "other_gains": [
+      {"label": "shared reference for both heads", "original": -0.0030, "shuffled": -0.0031, "windows": 14},
+      {"label": "cross-head linear prediction (16 terms)", "original": -0.0098, "shuffled": -0.0093, "windows": 14}
+    ]
+  },
+
+  "free_model": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r9/pages/iter-1-6.md (tables 'free model + 0.004 overhead' and 'Bigger blocks'); r24 iter-1-2 for the recovered shares",
+    "grade": "exact model, dense linear rule fit on the other sequence and not paid for, 4 blocks of the 2 dev sequences",
+    "by_split_4k": {"head": 0.677, "layer": 0.641, "token": 0.618},
+    "real_coders_at_the_time": {"head": {"ratio": 0.6845, "coder": 80}, "layer": {"ratio": 0.6562, "coder": 80}, "token": {"ratio": 0.6461, "coder": 94}},
+    "bigger_blocks": {
+      "reference_plus_prediction": {"4k": {"head": 0.689, "layer": 0.655, "token": 0.630}, "16k": {"head": 0.669, "layer": 0.636, "token": 0.616}},
+      "reference_plus_triangle": {"4k": {"head": 0.673, "layer": 0.637, "token": 0.614}, "16k": {"head": 0.654, "layer": 0.620, "token": 0.600}}
+    }
+  },
+
+  "overlap": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r11/pages/iter-1-2.md",
+    "grade": "encoded bytes, one 4096-token block per layer of sequence 0000, layer entries",
+    "tree_alone": [0.064, 0.142],
+    "prediction_alone": [0.055, 0.095],
+    "overlap_by_layer": {"3": 0.030, "7": 0.027, "11": 0.024, "15": 0.026, "19": 0.042, "23": 0.037},
+    "note": "prediction alone beats the tree at L7 (0.091 vs 0.087) and L11 (0.077 vs 0.064)"
+  },
+
+  "heads_geometry": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r7/pages/iter-1-1.md (36 blocks); research/agents/r9/pages/iter-1-2.md (4 blocks, bound)",
+    "same_channel_cosine": 0.05,
+    "token_distance_correlation_max": 0.92,
+    "shared_bits_per_element": {"raw": 0.85, "after_one_reference_for_both_heads": 0.54, "with_separate_references": 0.21},
+    "l19_terms": {"inside_head_0": 4103, "head_0_into_head_1": 29835, "receipt": "research/agents/r22/pages/iter-1-2.md, one block"}
+  },
+
+  "rule_portability": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r7/pages/iter-1-2.md (91-96 %); research/agents/r9/pages/iter-1-3.md (0.9995, 10 sequences, Gaussian estimate)",
+    "gain_recovered_by_rule_fit_elsewhere": [0.91, 0.96],
+    "shared_pattern_correlation_between_datasets": 0.9995,
+    "rule_storage_cost_at_4k": {"range": [0.013, 0.021], "receipt": "research/agents/r22/pages/iter-1-1.md (0.0129 to 0.0208, six blocks)"}
+  },
+
+  "codebooks": {
+    "_file": "measured-splits.json",
+    "receipt": "research/agents/r26/pages/iter-1-3.md (RQ, PQ); research/agents/r25/pages/iter-1-2.md (anchors curve, pointer); research/agents/r11/pages/iter-1-1.md (rotations); research/agents/r25/pages/iter-1-1.md (coverage)",
+    "rq_no_tree": {"delta_vs_own_control": -0.00294, "spread": 0.00092, "segments": "14 of 14", "blocks_better": "54 of 72",
+      "note": "r26-t0011 (isolated) against the same coder's prediction-only control r26-t0002 (quick); the ledger values are merged by the script"},
+    "pq_no_tree": {"delta_vs_own_control": -0.00172, "grade": "quick"},
+    "behind_tree_102": {"rq": 0.0493, "pq": 0.0505},
+    "on_tree_plus_prediction": {"codebook_chosen_on_blocks": "0 of 72", "trial": "r26-t0010 (quick)"},
+    "anchors_curve": {
+      "grade": "encoded bytes, one block per layer (sequence 0000, tokens 57344-61439)",
+      "rows": [
+        {"references": "64", "L3": 0.6858, "L7": 0.6838, "L19": 0.7015},
+        {"references": "256", "L3": 0.6518, "L7": 0.6703, "L19": 0.6841},
+        {"references": "whole tree", "L3": 0.5737, "L7": 0.6275, "L19": 0.6403}
+      ],
+      "coder_129_same_blocks": {"L3": 0.6775, "L7": 0.6713, "L19": 0.6811}
+    },
+    "pointer_bits_uncoded": 12,
+    "fixed_rotations": {"penalty_bits_per_element": [0.28, 0.32], "lattice_constant_bits": 0.2546, "measured_rounding_bits": [0.29, 0.32],
+      "same_index_correlation": 0.0734, "grade": "exact-model bounds, two heads (V L3 h0, L11 h0), no coder"},
+    "clusters": {"rq_saving_share_from_top_tenth": 0.42, "note": "one L3 block"},
+    "coverage": {"techniques": 62, "real_coder": 21, "bound_only": 18, "untried": 16, "not_applicable": 7}
+  },
+
+  "flac": {
+    "_file": "measured-time.json",
+    "receipt": "research/agents/r16/pages/iter-1-1.md (4 blocks per series, exact model); KNOWLEDGE [family/blend] for serial coding",
+    "grade": "exact model, 4 mid-sequence blocks per layer/head, 2 sequences",
+    "order8_alone_bits": {"L7_h0": 0.329, "L11_h0": 0.331},
+    "after_reference_max_bits": 0.063,
+    "shuffled_control_bits": 0.001,
+    "next_token_correlation_middle_layers": 0.48,
+    "slowest_direction_correlation_max": 0.98,
+    "serial_coding_gain_bits": [0.02, 0.05],
+    "adjacent_reference_share_pct": {"middle_layers": [16, 30], "outer_layers": [3, 4]},
+    "within_8_tokens_share_pct_r16": {"middle_layers": [25, 52], "outer_layers": [7, 10]},
+    "adaptive_filters_share_of_shared_rule": 0.1,
+    "adaptive_filters_receipt": "research/agents/r17/pages/iter-1-1.md (online scale -0.0019, gain -0.0008, blend -0.0010 vs 0.015 for a decoder-learned shared rule at b = 512)"
+  },
+
+  "references_point": {
+    "_file": "measured-time.json",
+    "receipt": "research/agents/r6/pages/iter-2-1.md (24 blocks at 4k, value-space L2 tree)",
+    "layers": [3, 7, 11, 15, 19, 23],
+    "within_8_tokens_pct": {"3": 9, "7": 37, "11": 47, "15": 39, "19": 7, "23": 12},
+    "largest_degree": {"3": 14, "7": 8, "11": 6, "15": 10, "19": 22, "23": 12},
+    "parent_bits": {"3": 9.8, "7": 7.4, "11": 6.6, "15": 7.4, "19": 10.0, "23": 9.6}
+  },
+
+  "neural_network": {
+    "_file": "measured-time.json",
+    "receipt": "research/agents/r21/pages/iter-1-1.md",
+    "grade": "exact model, one run, L7, no reference, fit on 100,000 tokens of one sequence, tested on the other",
+    "layer": 7,
+    "bits": {"solo": 6.435, "linear": 5.804, "network": 5.636},
+    "with_reference_bits": {"network": [-0.0020, -0.0100], "trees": [-0.0038, -0.0224]},
+    "positive_control_recovery": 0.45
+  },
+
+  "b512_learned_vs_paid": {
+    "_file": "measured-time.json",
+    "receipt": "research/agents/r21/pages/iter-1-2.md (best fully paid model 0.6960 on the screen); research/agents/r17/pages/iter-1-2.md (48 blocks in process: 0.71174 reference alone, 0.69981 paid rows, 0.69016 learned)",
+    "best_fully_paid_on_screen": 0.6960,
+    "in_process_48_blocks": {"reference_alone": 0.71174, "paid_rows_89": 0.69981, "learned_96": 0.69016}
+  },
+
+  "values_not_bits": {
+    "_file": "measured-time.json",
+    "receipt": "research/agents/r13/pages/iter-1-2.md and iter-1-5.md; research/agents/r15/pages/iter-1-1.md; KNOWLEDGE [value/*]",
+    "c1_false_floor": 0.37,
+    "one_head_model_from_local_history_ratio": 0.50,
+    "blocks": 48,
+    "framing_cost_max": 0.009,
+    "shared_bits_estimate_vs_real": {"estimate": 0.278, "real": 0.263, "r": 0.9993},
+    "estimate_on_fp8_code_index": 0.104,
+    "error_skew": {"value": -0.03, "code_index": -1.60},
+    "any_error_curve_gain_max": 0.014
+  },
+
+  "memory_table": {
+    "_file": "measured-memory.json",
+    "receipt": "research/agents/r23/pages/iter-1-3.md (table 'what the network is missing'); research/agents/r23/journal/SESSION-001.md 18:31 for the per-layer values; KNOWLEDGE [net/memory]",
+    "grade": "one 2048-token window of sequence 0000 of target 03 (tokens 40960-43008), torch 2.11, logistic over the FP8 cell with per-channel scale fit in-sample; the removal masks only the final chunk's attention",
+    "window": {"sequence": "0000", "target": "03", "tokens": [40960, 43008]},
+    "layers": [3, 7, 11, 15, 19, 23],
+    "rows": [
+      {"id": "intact", "label": "intact model (torch 2.11 rounding)", "mean_bits": 1.345, "per_layer": [1.148, 1.278, 1.419, 1.495, 1.566, 1.167]},
+      {"id": "attn16k", "label": "attention cut beyond the last 16,384 tokens", "mean_bits": 3.494, "per_layer": [1.15, 3.30, 4.58, 4.44, 4.13, 3.36]},
+      {"id": "attn2k", "label": "attention cut beyond the last 2,048 tokens", "mean_bits": 4.221, "per_layer": [1.15, 4.26, 5.47, 5.32, 4.96, 4.17]},
+      {"id": "attn256", "label": "attention cut beyond the last 256 tokens", "mean_bits": 4.759, "per_layer": [1.15, 4.88, 6.04, 5.96, 5.64, 4.88]},
+      {"id": "reset", "label": "delta-rule state reset", "mean_bits": 4.970, "per_layer": [3.86, 5.45, 5.80, 5.39, 5.13, 4.19]},
+      {"id": "both", "label": "state reset and attention cut beyond 2,048", "mean_bits": 5.164, "per_layer": [3.86, 5.39, 5.97, 5.71, 5.43, 4.62]}
+    ],
+    "coder_102_yardstick": {"mean_bits": 5.13, "ratio": 0.6407, "per_layer": [4.85, 5.16, 5.50, 5.69, 5.22, 4.32],
+      "blocks": 12, "note": "6 layers x both dev sequences, b = 4096, block start 40960; receipt research/agents/r23/pages/iter-1-2.md"}
+  },
+
+  "replay": {
+    "_file": "measured-memory.json",
+    "receipt": "research/agents/r23/pages/iter-1-1.md and iter-1-3.md; KNOWLEDGE [net/exact], [net/arith]",
+    "bytes_reproduced_exactly": 50331648,
+    "windows": "first 8192 tokens of sequence 0000 plus two 4096-token tails",
+    "text_bits_per_token": 2.6,
+    "ratio_with_same_binary": 0.0001,
+    "other_arithmetic": {"fp8_cells_changed": 0.28, "bits_per_value": [1.2, 1.4], "ratio": [0.15, 0.17],
+      "note": "torch 2.11 with a stand-in loader, or float32; one window; the torch-version attribution is a reading, the control never finished"}
+  },
+
+  "weights_rule": {
+    "_file": "measured-memory.json",
+    "receipt": "research/agents/r23/pages/iter-1-2.md and iter-1-4.md; KNOWLEDGE [net/weights]",
+    "grade": "exact model, 12 blocks; illegal today (a shared table)",
+    "share_of_gain": {"all": 0.72, "L19": 0.89, "L3": 0.49},
+    "coder_102_under_smaller_paid_rule": {"4k": [0.6407, 0.6326], "512": [0.7015, 0.6723]}
+  },
+
+  "variance_and_sharing": {
+    "_file": "measured-memory.json",
+    "receipt": "research/agents/r23/pages (variance); research/agents/r9/pages/iter-1-2.md and iter-1-3.md (conditional sharing); KNOWLEDGE [info/*]",
+    "hidden_state_variance_kept": {"one_layer": [0.30, 0.38], "all_12_views": [0.62, 0.73]},
+    "shared_bits_given_all_other_parts": {"two_heads": [0.19, 1.19], "adjacent_layers": [0.03, 0.08], "further_layers": 0.01},
+    "metadata_savings_of_4_89_bits": {"token_id": 0.004, "role": 0.0003, "previous_token": 0.007, "other_layers": 0.025, "blocks": 24},
+    "new_text_share": {"entries": 0.74, "bits": 0.75, "reread_text_cheaper_by_bits": [0.2, 0.45]}
+  },
+
+  "floors": {
+    "_file": "measured-memory.json",
+    "receipt": "research/agents/r9/pages/iter-1-6.md ('Bigger blocks', token row at 16k: 4.80 bit, 0.600); research/agents/r23/pages/iter-1-3.md (adopted as block ceiling; 0.57 'not a measurement'); c1/KNOWLEDGE.md [sim/whole-thread]",
+    "block_16k": {"ratio": 0.60, "grade": "exact model, unpaid dense rule plus one reference, 4 blocks, 2 sequences"},
+    "whole_sequence": {"ratio": 0.57, "grade": "extrapolation: 0.614 -> 0.600 from 4k to 16k, about -0.007 per doubling, 3.8 more doublings to a 225K-token sequence"},
+    "c1_whole_sequence_bound_l3h0": [0.594, 0.600]
+  },
+
+  "reads_curve": {
+    "_file": "measured-reads.json",
+    "receipt": "research/agents/r6/pages/iter-2-2.md (result table)",
+    "grade": "in-process block tests, 12 blocks at 4k, head entries, all six layers, both dev sequences, coder 50's value model, reads = sampled mean before the every-entry rule",
+    "points": [
+      {"coder": 103, "label": "median root", "x": 0.56, "ratio": 0.70463, "reads_mean": 26},
+      {"coder": 91, "label": "path streams", "x": 0.56, "ratio": 0.70461, "reads_mean": 39},
+      {"coder": 101, "label": "every entry a tree row", "x": 1.00, "ratio": 0.70465, "reads_mean": 52},
+      {"coder": 109, "label": "connected subtrees, cap 64", "x": 1.00, "ratio": 0.70407, "reads_mean": 43},
+      {"coder": 109, "label": "connected subtrees, cap 128", "x": 1.00, "ratio": 0.70389, "reads_mean": 83},
+      {"coder": 109, "label": "connected subtrees, cap 256", "x": 1.00, "ratio": 0.70382, "reads_mean": 106},
+      {"coder": 104, "label": "all entries, chunks of 8", "x": 1.00, "ratio": 0.7032, "reads_mean": 667},
+      {"coder": 104, "label": "all entries, chunks of 16", "x": 1.00, "ratio": 0.7024, "reads_mean": 1042},
+      {"coder": 104, "label": "all entries, level chunks", "x": 1.00, "ratio": 0.7018, "reads_mean": 1524}
+    ],
+    "quote": "From 36 to 1,524 reads the best MDL falls by 0.0028 in 5.4 doublings, about 0.0005 per doubling",
+    "budget_cost_at_mean_137": 0.0023
+  },
+
+  "x_stopped_mattering": {
+    "_file": "measured-reads.json",
+    "receipt": "research/agents/r6/pages/iter-2-2.md and journal/SESSION-002.md line 42 (101 vs 91); KNOWLEDGE [ra/split] (5.84 vs 5.85 bits); KNOWLEDGE [pure/delta-sizes], [ra/free-length] (empty deltas)",
+    "coder_101_vs_91": {"x": [0.56, 1.00], "ratio": [0.70461, 0.70465], "delta": 0.00004, "reads_mean": [39, 52], "grade": "in-process, 12 blocks at 4k"},
+    "anchor_vs_delta_bits_per_element_L11": [5.84, 5.85],
+    "coder_102_empty_delta_share": [0.80, 0.83],
+    "coder_102_nonempty_delta_of_raw": [0.5, 0.75],
+    "tree_coders_x_range": [0.43, 0.54],
+    "no_tree_coders_x_range": [0.02, 0.04]
+  },
+
+  "reads_rule_change": {
+    "_file": "measured-reads.json",
+    "receipt": "research/agents/env/pages/retro-review.md; research/agents/env/pages/reads-recheck.json",
+    "winners_changed": "4 of 19",
+    "changed": [
+      {"track": "s-layer-b4k-r137", "from": 121, "to": 97},
+      {"track": "s-head-b512-r293", "from": 124, "to": 109},
+      {"track": "s-layer-b512-r293", "from": 124, "to": 113},
+      {"track": "s-tok8-b4k-r293", "from": 99, "to": 85}
+    ],
+    "sampled_max_low_by_up_to": 0.26,
+    "worst_over_mean": [1.1, 3.7],
+    "coder_124": {"layer_b512": {"ratio": 0.68526, "sampled_max_at_least": 389}, "head_b512": {"ratio": 0.70568, "sampled_max_at_least": 402}},
+    "budget_293_cost_at_4k_and_above": 0.0
+  },
+
+  "block_scaling": {
+    "_file": "measured-reads.json",
+    "receipt": "research/agents/r19/pages/iter-1-1.md, iter-1-2.md, iter-1-3.md; KNOWLEDGE [big/anatomy]",
+    "grade": "one 32,768-token window of sequence 0000, encoded bytes (per-doubling); nearest-neighbour bound allowing cycles and free pointers (whole-sequence pool)",
+    "tree_gain_per_doubling_16k_to_32k": [0.010, 0.020],
+    "tree_alone_16k_to_32k": {"L7": [0.68301, 0.67297], "L19": [0.68152, 0.66734]},
+    "prediction_net_gain_16k_to_32k": {"L7": [0.0684, 0.0697], "L19": [0.0640, 0.0641]},
+    "whole_sequence_pool_below_16k_bits": {"L7": 0.26, "L19": 0.27, "L3": 0.45},
+    "overheads_at_16k_of_raw": {"prediction": [0.005, 0.007], "parents": 0.003, "classes_flags_tables": 0.003, "total_share_of_ratio": 0.02}
+  },
+
+  "noise": {
+    "_file": "measured-noise.json",
+    "receipt": "research/agents/r12/pages/iter-1-1.md and iter-1-2.md; research/agents/r12/journal/SESSION-001.md line 42 (r = -0.91); KNOWLEDGE [noise/*]",
+    "between_sequence_sd_20_sequences": 0.0120,
+    "paired_sd_range": [0.0001, 0.001],
+    "c1_detection_limit": 0.002,
+    "limit_over_paired_noise": [5, 30],
+    "hidden_effect_example": {"label": "neighbour term, 62 x0 vs 50 on head", "delta": -0.00059, "sd": 0.00007},
+    "screen_offset_from_full_track": {"token": 0.00462, "pair": -0.00206, "note": "the same for every coder within 0.0001"},
+    "hardness": {"one_number_per_window_share": 0.97, "r_between_heads": 0.99, "r_L3_L23": 0.96, "r_repeated_token_share": -0.91,
+      "gain_variance_between_layers": 0.99, "windows": 110}
+  },
+
+  "how_the_day_ran": {
+    "_file": "measured-noise.json",
+    "receipt": "research/agents/env/pages/retro-review.md; research/agents/env/journal/SUPERVISOR.md",
+    "crash_utc": "12:35", "empty_git_objects": 14, "researchers_at_peak": 12, "threads": 16,
+    "verification_minutes": {"planned": 10, "observed": 50, "cut_to_agents": 7},
+    "status_loop_hung_minutes": 55, "failing_tests_in_one_commit": 9,
+    "false_lossy_coders": 2, "duplicate_ledger_rows": 74,
+    "duplicate_rows_note": "env-t0014..env-t0087, counted again from the ledger by the script"
+  },
+
+  "c1_extras": {
+    "_file": "measured-ladders.json",
+    "receipt": "research/c1/KNOWLEDGE.md [sim/repeats], [sim/adjacency], [sim/tree], [sim/accounting], [t02/confirmed], [gen/regimes]; research/c1/DEADENDS.md; research/agents/r6/pages/iter-2-2.md (1,490 reads); notes/04 sections 1-3",
+    "y0_reads_estimate": 1490,
+    "same_token_nearest_pct_L3": {"512": 55, "4k": 78},
+    "mutual_information_adjacent_bits": {"L3": 0.058, "L7_L11": 0.31},
+    "mutual_nearest_neighbours_pct": 51,
+    "kmeans_centroids_vs_exemplars": {"centroids": 0.780, "exemplars": 0.753},
+    "cross_head_r2": {"L11": 0.70, "L3": 0.35},
+    "claims_reproduced_on_target_02": "49 of 53",
+    "keys_vs_values_4k_h0": {"3": [0.660, 0.673], "7": [0.692, 0.712], "11": [0.701, 0.740], "15": [0.695, 0.744], "19": [0.681, 0.728], "23": [0.687, 0.572]},
+    "k_solo_range": [0.776, 0.786],
+    "bf16_rule": "bf16 = fp8/2 + 0.25",
+    "l23_one_signed_channels_share": 0.10
+  }
+}

@@ -47,6 +47,7 @@
   --part-VIII: var(--emerald);     /* the questions */
   --part-IX:   var(--carmine);     /* the plan */
   --part-X:    var(--dusk);        /* reference */
+  --part-XI:   var(--sky);         /* what the data said */
 
   /* glossary categories (plain terms are tinted by category) */
   --cat-info:    #a35a00;   /* information theory */

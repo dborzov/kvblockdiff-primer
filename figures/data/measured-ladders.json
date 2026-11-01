@@ -1,0 +1,700 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/measured_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0007",
+   "env-t0009",
+   "env-t0010",
+   "env-t0011",
+   "env-t0012",
+   "env-t0089",
+   "env-t0090",
+   "env-t0091",
+   "env-t0092",
+   "env-t0093",
+   "env-t0094",
+   "env-t0095",
+   "env-t0096",
+   "env-t0097",
+   "r1-t0005",
+   "r1-t0008",
+   "r1-t0009",
+   "r1-t0014",
+   "r1-t0019",
+   "r1-t0021",
+   "r1-t0035",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0045",
+   "r1-t0068",
+   "r11-t0001",
+   "r11-t0002",
+   "r11-t0003",
+   "r12-t0001",
+   "r12-t0002",
+   "r12-t0005",
+   "r12-t0006",
+   "r16-t0003",
+   "r17-t0001",
+   "r20-t0001",
+   "r22-t0001",
+   "r22-t0003",
+   "r22-t0005",
+   "r24-t0002",
+   "r25-t0003",
+   "r3-t0002",
+   "r4-t0008",
+   "r4-t0019",
+   "r6-t0004",
+   "r7-t0001",
+   "r7-t0002",
+   "r7-t0003",
+   "r8-t0002"
+  ],
+  "hand_entered": "analysis/measured_pages.json (blocks carry their own receipt)",
+  "notes": [
+   "c1: V layer 3 head 0, blocks of 4096, no read budget, 2 dev sequences of target 03; track v-l3h0-fp8-b4k",
+   "c2: s-layer-b4k-r293 (one layer's entry, 512 B, blocks of 4096, budget 293, 72 blocks, 2 dev sequences); every row isolated-verified",
+   "blocks.c2 are three different screens (180 / 72 / 36 blocks): the shape is solid, the third decimal is not",
+   "C1 and C2 numbers are different slices; 0.6731 (C1 4k) and 0.674 (C2 head 4k) look alike by coincidence"
+  ]
+ },
+ "c1": {
+  "track": "v-l3h0-fp8-b4k",
+  "rows": [
+   {
+    "step": "per-channel statistics only (solo)",
+    "coder": 9,
+    "x": 0.0005,
+    "y": 0.8034,
+    "ratio": 0.80385,
+    "verified": true,
+    "name": "blockstats-logistic-tail",
+    "per_sequence": {
+     "0000": 0.80405,
+     "0001": 0.80365
+    },
+    "trial": "r1-t0005"
+   },
+   {
+    "step": "each entry predicted from its nearest earlier entry",
+    "coder": 4,
+    "x": 0.2061,
+    "y": 0.5638,
+    "ratio": 0.76985,
+    "verified": true,
+    "name": "selfanchor-mixrans",
+    "per_sequence": {
+     "0000": 0.77001,
+     "0001": 0.76969
+    },
+    "trial": "r3-t0002"
+   },
+   {
+    "step": "references chosen recursively",
+    "coder": 15,
+    "x": 0.3825,
+    "y": 0.3623,
+    "ratio": 0.74474,
+    "verified": true,
+    "name": "recursive-anchors",
+    "per_sequence": {
+     "0000": 0.74592,
+     "0001": 0.74355
+    },
+    "trial": "r1-t0008"
+   },
+   {
+    "step": "references coded along their own tree",
+    "coder": 17,
+    "x": 0.3758,
+    "y": 0.3614,
+    "ratio": 0.73728,
+    "verified": true,
+    "name": "recursive-anchors-mst",
+    "per_sequence": {
+     "0000": 0.73851,
+     "0001": 0.73604
+    },
+    "trial": "r1-t0009"
+   },
+   {
+    "step": "a per-entry match-quality class (8 classes)",
+    "coder": 19,
+    "x": 0.3618,
+    "y": 0.3426,
+    "ratio": 0.70434,
+    "verified": true,
+    "name": "recursive-anchors-scaleclass",
+    "per_sequence": {
+     "0000": 0.70535,
+     "0001": 0.70333
+    },
+    "trial": "r1-t0014"
+   },
+   {
+    "step": "shrink toward the reference",
+    "trial_in_spec": "r1-t0018",
+    "coder": 21,
+    "x": 0.3577,
+    "y": 0.3374,
+    "ratio": 0.69513,
+    "verified": true,
+    "name": "recursive-anchors-shrink",
+    "note": "spec names r1-t0018, whose fp8 rows are status gate_failed (same score); r1-t0021 is the status-ok re-evaluation",
+    "per_sequence": {
+     "0000": 0.69584,
+     "0001": 0.69442
+    },
+    "trial": "r1-t0021"
+   },
+   {
+    "step": "k-medoid references",
+    "coder": 23,
+    "x": 0.3617,
+    "y": 0.3273,
+    "ratio": 0.68903,
+    "verified": true,
+    "name": "recursive-anchors-medoids",
+    "per_sequence": {
+     "0000": 0.69009,
+     "0001": 0.68796
+    },
+    "trial": "r1-t0019"
+   },
+   {
+    "step": "one stream per tree level",
+    "coder": 27,
+    "x": 0.3577,
+    "y": 0.3273,
+    "ratio": 0.68504,
+    "verified": true,
+    "name": "level-streams",
+    "per_sequence": {
+     "0000": 0.68611,
+     "0001": 0.68397
+    },
+    "trial": "r1-t0035"
+   },
+   {
+    "step": "copy-shrink",
+    "coder": 30,
+    "x": 0.3564,
+    "y": 0.325,
+    "ratio": 0.68145,
+    "verified": true,
+    "name": "copy-shrink",
+    "per_sequence": {
+     "0000": 0.68226,
+     "0001": 0.68063
+    },
+    "trial": "r1-t0037"
+   },
+   {
+    "step": "references = internal nodes of the block's minimum spanning tree",
+    "coder": 34,
+    "x": 0.4061,
+    "y": 0.267,
+    "ratio": 0.67309,
+    "verified": true,
+    "name": "mst-anchors",
+    "per_sequence": {
+     "0000": 0.67404,
+     "0001": 0.67213
+    },
+    "trial": "r1-t0042"
+   },
+   {
+    "step": "lean tables",
+    "coder": 37,
+    "x": 0.4056,
+    "y": 0.267,
+    "ratio": 0.67253,
+    "verified": true,
+    "name": "lean-tables",
+    "per_sequence": {
+     "0000": 0.67348,
+     "0001": 0.67157
+    },
+    "trial": "r1-t0045",
+    "ratio_at_512": 0.72372
+   },
+   {
+    "step": "every entry in the dictionary (y = 0)",
+    "coder": 43,
+    "set_aside_note": "C1 set this corner aside as stream compression (about 1,490 reads per entry); the ledger incumbent, not the story's end",
+    "x": 0.6705,
+    "y": 0.0,
+    "ratio": 0.67048,
+    "verified": true,
+    "set_aside": true,
+    "name": "fast-lean",
+    "per_sequence": {
+     "0000": 0.67143,
+     "0001": 0.66953
+    },
+    "trial": "r1-t0068"
+   }
+  ],
+  "landmarks": {
+   "solo_ideal": 0.79989,
+   "baseline": 1.0
+  }
+ },
+ "c2": {
+  "track": "s-layer-b4k-r293",
+  "rows": [
+   {
+    "coder": 71,
+    "name": "xhead-phased",
+    "what": "the tree coder of C1 on both heads (no linear prediction)",
+    "ratio": 0.69018,
+    "x": 0.441,
+    "y": 0.2492,
+    "trial": "r7-t0002",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.69644,
+     "0001": 0.68392
+    },
+    "reads": {
+     "mean": 39.0,
+     "p99": null,
+     "max": 89.1
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 71,
+    "name": "xhead-phased",
+    "what": "+ prediction from the other head, 16 terms per channel",
+    "ratio": 0.67746,
+    "x": 0.4344,
+    "y": 0.2431,
+    "trial": "r7-t0001",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.68376,
+     "0001": 0.67115
+    },
+    "reads": {
+     "mean": 54.4,
+     "p99": null,
+     "max": 114.8
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 74,
+    "name": "xhead-omp",
+    "what": "terms chosen one at a time until a term stops paying",
+    "ratio": 0.66641,
+    "x": 0.4286,
+    "y": 0.2378,
+    "trial": "r7-t0003",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.67296,
+     "0001": 0.65986
+    },
+    "reads": {
+     "mean": 67.4,
+     "p99": null,
+     "max": 117.0
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 80,
+    "name": "sparse-rows-ols",
+    "what": "any earlier channel may be a term, either head",
+    "ratio": 0.6562,
+    "x": 0.4248,
+    "y": 0.2314,
+    "trial": "r11-t0001",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.66278,
+     "0001": 0.64961
+    },
+    "reads": {
+     "mean": 97.3,
+     "p99": null,
+     "max": 161.9
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 89,
+    "name": "rows-gaps",
+    "what": "positions stored more cheaply",
+    "ratio": 0.64704,
+    "x": 0.4195,
+    "y": 0.2275,
+    "trial": "r11-t0003",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.65372,
+     "0001": 0.64036
+    },
+    "reads": {
+     "mean": 102.2,
+     "p99": null,
+     "max": 150.6
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 102,
+    "name": "path-rows",
+    "what": "laid out along tree paths (reads one path, not whole levels)",
+    "ratio": 0.64494,
+    "x": 0.5277,
+    "y": 0.1173,
+    "trial": "r11-t0002",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.65165,
+     "0001": 0.63823
+    },
+    "reads": {
+     "mean": 100.9,
+     "p99": null,
+     "max": 149.0
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 111,
+    "name": "metric-rows",
+    "what": "tree built on distance after prediction",
+    "ratio": 0.64352,
+    "x": 0.5191,
+    "y": 0.1244,
+    "trial": "r22-t0001",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.6503,
+     "0001": 0.63674
+    },
+    "reads": {
+     "mean": 99.3,
+     "p99": null,
+     "max": 155.4
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 114,
+    "name": "rdo-rows",
+    "what": "weights rounded by what each rounding costs in bits",
+    "ratio": 0.64167,
+    "x": 0.5169,
+    "y": 0.1248,
+    "trial": "r22-t0003",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.64846,
+     "0001": 0.63488
+    },
+    "reads": {
+     "mean": 89.9,
+     "p99": null,
+     "max": 144.0
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 126,
+    "name": "path-factors",
+    "what": "decoder blends ancestors' errors, no byte sent (on 102)",
+    "ratio": 0.64074,
+    "x": 0.5242,
+    "y": 0.1166,
+    "trial": "r20-t0001",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.64755,
+     "0001": 0.63393
+    },
+    "reads": {
+     "mean": 101.0,
+     "p99": null,
+     "max": 145.7
+    },
+    "every_entry": false,
+    "side_branch": "off 102, not a rung under 115/121"
+   },
+   {
+    "coder": 115,
+    "name": "order-rows",
+    "what": "head 0 first then head 1, no stored order",
+    "ratio": 0.64003,
+    "x": 0.5155,
+    "y": 0.1245,
+    "trial": "r22-t0005",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.6468,
+     "0001": 0.63327
+    },
+    "reads": {
+     "mean": 87.2,
+     "p99": null,
+     "max": 159.2
+    },
+    "every_entry": false
+   },
+   {
+    "coder": 121,
+    "name": "stack-rows",
+    "what": "115 + refit slopes and tree",
+    "ratio": 0.63639,
+    "x": 0.5247,
+    "y": 0.1116,
+    "trial": "env-t0096",
+    "verified": true,
+    "per_sequence": {
+     "0000": 0.6431,
+     "0001": 0.62968
+    },
+    "reads": {
+     "mean": 120.4,
+     "p99": 184.0,
+     "max": 225.8
+    },
+    "every_entry": true
+   }
+  ],
+  "landmarks": {
+   "solo_ideal": 0.77811,
+   "baseline": 1.0
+  },
+  "five_sequences": {
+   "track": "st02n5-layer-b4k-r293",
+   "n_blocks": 182,
+   "n_entries": 745472,
+   "sequences": [
+    "0000",
+    "0001",
+    "0002",
+    "0003",
+    "0004"
+   ],
+   "coder_121": {
+    "trial": "env-t0096",
+    "ratio": 0.6297,
+    "per_sequence": {
+     "0000": 0.6414,
+     "0001": 0.62464,
+     "0002": 0.63118,
+     "0003": 0.62817,
+     "0004": 0.6231
+    },
+    "reads_mean": 119.7,
+    "reads_every_entry": true,
+    "verified": true
+   },
+   "coder_102": {
+    "trial": "r24-t0002",
+    "ratio": 0.63848,
+    "per_sequence": {
+     "0000": 0.65023,
+     "0001": 0.63351,
+     "0002": 0.63979,
+     "0003": 0.63691,
+     "0004": 0.63196
+    },
+    "reads_mean": 102.9,
+    "reads_every_entry": false,
+    "verified": true
+   },
+   "paired_difference": {
+    "per_sequence": {
+     "0000": -0.00883,
+     "0001": -0.00887,
+     "0002": -0.00861,
+     "0003": -0.00874,
+     "0004": -0.00886
+    },
+    "mean": -0.00878,
+    "sd": 0.00011,
+    "grade_in_ledger": "better-t95",
+    "graded_trial": "env-t0007 (same bytes as env-t0096, reads sampled)"
+   }
+  }
+ },
+ "blocks": {
+  "c1": {
+   "track_family": "v-l3h0-fp8",
+   "points": [
+    {
+     "b": 512,
+     "ratio": 0.72372,
+     "coder": 37,
+     "trial": "r1-t0045",
+     "track": "v-l3h0-fp8-b512",
+     "x": 0.3987,
+     "y": 0.3251
+    },
+    {
+     "b": 4096,
+     "ratio": 0.67309,
+     "coder": 34,
+     "trial": "r1-t0042",
+     "track": "v-l3h0-fp8-b4k",
+     "x": 0.4061,
+     "y": 0.267
+    },
+    {
+     "b": 16384,
+     "ratio": 0.64157,
+     "coder": 50,
+     "trial": "r4-t0008",
+     "track": "v-l3h0-fp8-b16k",
+     "x": 0.3979,
+     "y": 0.2437
+    },
+    {
+     "b": 32768,
+     "ratio": 0.62939,
+     "coder": 50,
+     "trial": "r4-t0008",
+     "track": "v-l3h0-fp8-b32k",
+     "x": 0.3918,
+     "y": 0.2376
+    }
+   ],
+   "y0_incumbents": [
+    {
+     "b": 16384,
+     "ratio": 0.63842,
+     "trial": "r4-t0019"
+    },
+    {
+     "b": 32768,
+     "ratio": 0.62642,
+     "trial": "r4-t0019"
+    },
+    {
+     "b": 512,
+     "ratio": 0.72095,
+     "trial": "r1-t0068"
+    },
+    {
+     "b": 4096,
+     "ratio": 0.67048,
+     "trial": "r1-t0068"
+    }
+   ]
+  },
+  "c2": {
+   "split": "layer",
+   "budget": 293,
+   "points": [
+    {
+     "b": 512,
+     "ratio": 0.68938,
+     "coder": 113,
+     "trial": "env-t0010",
+     "track": "s-layer-b512-r293",
+     "x": 0.4299,
+     "y": 0.2595,
+     "reads": {
+      "mean": 159.1,
+      "p99": 249.0,
+      "max": 257.2
+     }
+    },
+    {
+     "b": 4096,
+     "ratio": 0.63639,
+     "coder": 121,
+     "trial": "env-t0096",
+     "track": "s-layer-b4k-r293",
+     "x": 0.5247,
+     "y": 0.1116,
+     "reads": {
+      "mean": 120.4,
+      "p99": 184.0,
+      "max": 225.8
+     }
+    },
+    {
+     "b": 16384,
+     "ratio": 0.61768,
+     "coder": 120,
+     "trial": "env-t0097",
+     "track": "s-layer-b16k-r293",
+     "x": 0.4939,
+     "y": 0.1238,
+     "reads": {
+      "mean": 141.0,
+      "p99": 190.0,
+      "max": 229.3
+     }
+    }
+   ]
+  },
+  "floor_whole_sequence_exact_model": 0.57,
+  "floor_receipt": "research/agents/r9/pages/iter-1-6.md ('Bigger blocks', token row at 16k: 4.80 bit, 0.600); research/agents/r23/pages/iter-1-3.md (adopted as block ceiling; 0.57 'not a measurement'); c1/KNOWLEDGE.md [sim/whole-thread]"
+ },
+ "c1_extras": {
+  "receipt": "research/c1/KNOWLEDGE.md [sim/repeats], [sim/adjacency], [sim/tree], [sim/accounting], [t02/confirmed], [gen/regimes]; research/c1/DEADENDS.md; research/agents/r6/pages/iter-2-2.md (1,490 reads); notes/04 sections 1-3",
+  "y0_reads_estimate": 1490,
+  "same_token_nearest_pct_L3": {
+   "512": 55,
+   "4k": 78
+  },
+  "mutual_information_adjacent_bits": {
+   "L3": 0.058,
+   "L7_L11": 0.31
+  },
+  "mutual_nearest_neighbours_pct": 51,
+  "kmeans_centroids_vs_exemplars": {
+   "centroids": 0.78,
+   "exemplars": 0.753
+  },
+  "cross_head_r2": {
+   "L11": 0.7,
+   "L3": 0.35
+  },
+  "claims_reproduced_on_target_02": "49 of 53",
+  "keys_vs_values_4k_h0": {
+   "3": [
+    0.66,
+    0.673
+   ],
+   "7": [
+    0.692,
+    0.712
+   ],
+   "11": [
+    0.701,
+    0.74
+   ],
+   "15": [
+    0.695,
+    0.744
+   ],
+   "19": [
+    0.681,
+    0.728
+   ],
+   "23": [
+    0.687,
+    0.572
+   ]
+  },
+  "k_solo_range": [
+   0.776,
+   0.786
+  ],
+  "bf16_rule": "bf16 = fp8/2 + 0.25",
+  "l23_one_signed_channels_share": 0.1
+ }
+}

@@ -78,6 +78,10 @@ Wave 1 replaces the first and third with measurements; wave 2 replaces the secon
 Most of the source's "next action" is already done on this site: `analysis/plan_harness.py` contains `e4m3_round`, `e4m3_index`, `int8_index`, both rates and the `DeltaCoder` interface, and passes all four controls on synthetic data. What remains is the real data — plus the three cheap fixes above.
 :::
 
+::: note connection What came back
+The real data arrived by another road: a harness and two campaigns of autonomous research agents. Which of these risks materialised, and which did not, is on [[#measured-scorecard]] and [[#measured-what-it-means]].
+:::
+
 ::: takeaway
 - Thinnest: the prior on fallen-apple similarity, the assumed economics, and how much a fast 8-bit format can cash in.
 - The harness is written and controlled; the next step is the dump.

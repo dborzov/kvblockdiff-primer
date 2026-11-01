@@ -22,7 +22,7 @@ bodyClass: home
 
 <section class="home-section" id="map">
   <h2>The map</h2>
-  <p class="sec-lede">Ten parts, each made of short pages — one idea per page. Read them in order, or jump to whatever you need; every term links back to where it was defined.</p>
+  <p class="sec-lede">Eleven parts, each made of short pages — one idea per page. Read them in order, or jump to whatever you need; every term links back to where it was defined.</p>
   <div class="parts-grid">
     {%- for p in tree %}
     {%- if p.first %}<a class="part-card" href="{{ p.first.url }}" style="--pc:var(--part-{{ p.id }})">{% else %}<div class="part-card" style="--pc:var(--part-{{ p.id }})">{% endif %}

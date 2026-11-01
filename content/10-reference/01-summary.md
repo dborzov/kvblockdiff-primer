@@ -39,7 +39,7 @@ Under sparse-attention decoding, [[hisparse]] keeps each request's full KV histo
 ## What it rests on {#rests-on}
 
 - **The [[lucky-louis]]** — selections repeat from step to step. *Established* (HiSparse: 87 % hits at twice the top-k size). The design also needs it per block: misses piling into a few long-lived [[heavy-block|heavy blocks]]. *Unmeasured*, and needed only if the dictionaries turn out heavy. → [[#landscape-lucky-louis]], [[#idea-heavy-blocks]]
-- **[[fallen-apple]]** — an entry is cheaper to code given a neighbour a small token distance away, and cheaper the closer the neighbour. *Unmeasured at 8 bits, anywhere.* Information theory only guarantees that a neighbour cannot hurt on average; that it helps *enough*, and more when closer, is the hypothesis. HiSparse's hit rate is **not** evidence for it. → [[#idea-fallen-apple]], [[#idea-the-leak]]
+- **[[fallen-apple]]** — an entry is cheaper to code given a neighbour a small token distance away, and cheaper the closer the neighbour. *Unmeasured at 8 bits when this was written; Part XI reports the measurement ([[#measured-cutting-the-tensor]]).* Information theory only guarantees that a neighbour cannot hurt on average; that it helps *enough*, and more when closer, is the hypothesis. HiSparse's hit rate is **not** evidence for it. → [[#idea-fallen-apple]], [[#idea-the-leak]]
 - **[[upstairs]]** — the same across adjacent layers. Second priority; the proposal works without it. → [[#idea-upstairs]]
 
 ::: theme which-vs-what
@@ -91,4 +91,19 @@ Open the dumps, add the query vectors to the dump script, write the 8-bit roundi
 
 ::: takeaway
 - A weekend decides whether the idea lives; either answer is a publishable measurement.
+:::
+
+## What was measured {#measured}
+
+The weekend became a night and a day. A harness was built, and two campaigns of autonomous research agents ran the question on real Qwen3.5-2B caches. Part XI tells the story; the short version:
+
+- **Solo coding landed where the homework said** (about 0.78 of raw as the ideal, 0.80 coded). Everything else is counted from there. → [[#measured-night-one]]
+- **Values compress to about 0.63 of raw at 4,096-token blocks and 0.62 at 16K**, roughly 1.2–1.3 bits per element below solo coding. The prior that values would give almost nothing was wrong; keys compress about as well as values. → [[#measured-dispatch]], [[#measured-scorecard]]
+- **Two kinds of structure carried the gain**: repeats of earlier tokens, captured by a tree of reference entries (the Twin's world, [[#homework-sib]]), and a geometry fixed by the model's weights, captured by linear prediction across channels. Codebooks and fixed rotations lost, for stated reasons. → [[#measured-two-kinds-of-structure]], [[#measured-codebooks-and-rotations]]
+- **Distance was the wrong axis.** Adjacent tokens are nearly useless at the outer layers; references point to the same token again, far away. Bigger blocks always won; the whole sequence is the best scope. → [[#measured-cutting-the-tensor]], [[#measured-reading-one-entry]]
+- **Random access was nearly free; the remaining bits look like the text's long memory.** → [[#measured-where-the-bits-come-from]]
+- **For kv-blockdiff:** the decision rule says go, with the scopes reread; the miss path has two pictures, a light coder at about 0.69 of an entry per miss and a tree coder whose dictionary is half the block. → [[#measured-what-it-means]]
+
+::: takeaway
+- The measurement exists now, and it moved the project: the Twin won, distance lost, the whole sequence is the scope.
 :::

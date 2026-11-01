@@ -1,0 +1,32 @@
+# Terms of Part XI (What the data said), writer B. Each is defined ([[=id]]) once, on its home page.
+reference-entry:
+  label: reference entry
+  name: reference entry
+  cat: coding
+  home: measured-night-one
+  short: >-
+    An earlier entry of the same block, stored in the dictionary, that a coder uses as the prediction for another entry; the delta then codes the exact difference.
+
+reference-tree:
+  label: reference tree
+  name: reference tree
+  cat: coding
+  home: measured-night-one
+  short: >-
+    The links from every entry of a block to its reference entry; the best coders use the block's minimum spanning tree by distance, so each entry hangs off its closest relative.
+
+linear-prediction:
+  label: linear prediction
+  name: linear prediction across channels
+  cat: coding
+  home: measured-two-kinds-of-structure
+  short: >-
+    Guessing a channel's value from channels already decoded in the same entry, as a weighted sum; the table of which channels and which weights is stored once per block.
+
+same-window:
+  label: same-window comparison
+  name: same-window comparison
+  cat: stats
+  home: measured-cutting-the-tensor
+  short: >-
+    Two coders or two entry splits run on exactly the same elements; the only fair way to rank entry splits.

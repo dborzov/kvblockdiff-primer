@@ -11,6 +11,10 @@ vectors and rotations, codebooks, 8-bit number formats, caches), then maps the s
 of a sparse-attention language model: could the tiny pieces fetched at every decode step travel as
 short deltas against shared dictionaries, and be rebuilt bit for bit on the GPU?
 
+Part XI reports what two autonomous research campaigns measured when the question was run through a real
+harness on Qwen3.5-2B caches. The verification notes behind that Part, and a guide to the experiments repository
+they came from, live in `experiment_repos/kv-compress-roofline/` (start with its `README.md`).
+
 ## How the site is built
 
 Content and presentation are kept apart. Writers touch only Markdown and data; the theme is separate.
@@ -24,6 +28,7 @@ theme/        presentation — page layouts (Nunjucks), CSS, the client-side eng
 lib/          the Markdown dialect (math, [[terms]], ::: blocks) and the post-build linker
 scripts/      headless checker, preview server, data validator
 docs/         AUTHORING.md (how to write pages), figures.md, flashcards.md, PAGEPLAN.md
+experiment_repos/  how to navigate the experiments repo behind Part XI; verified notes; the Part XI spec
 ```
 
 The generator is [Eleventy](https://www.11ty.dev/) with a small Markdown dialect:

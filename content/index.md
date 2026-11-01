@@ -8,7 +8,7 @@ A weather station on a lonely rock sends the mainland a short message every half
 
 A large language model has the same problem, at a much bigger scale. While it writes, it keeps a working memory of everything it has read — its **KV cache**. Modern models with sparse attention keep that memory in the computer's main memory and fetch small pieces of it to the GPU at every step, thousands of tiny fetches per word. This site asks one question: **could those tiny pieces travel as short deltas against a shared dictionary — and come back bit for bit identical?**
 
-The answer depends on one property of KV caches that nobody has measured yet. The site names that property, does the homework around it, and plans a weekend-sized first experiment.
+The answer depends on one property of KV caches that nobody had measured when this site was written. Parts I–X name that property, do the homework around it, and plan a weekend-sized first experiment. Part XI reports what two autonomous research campaigns then measured on real caches: the plan met the data, and the data had its own ideas.
 
 ## How to read this site {#how-to-read}
 
@@ -18,10 +18,11 @@ The answer depends on one property of KV caches that nobody has measured yet. Th
 - **Takeaway cards** close every section; **flashcards** let you keep what you learned. Add them as you read and practise them on the [practice page](/practice/).
 - **Running themes** — a few ideas that keep coming back — are marked with dashed cards that link to each other.
 
-::: note intuition Three ways in
+::: note intuition Four ways in
 - **The story first:** start with [[#tiny-files-notice-anything]] and read straight through.
 - **Rusty on bits and vectors?** Start with [[#school-why-school]]; it assumes nothing.
 - **Just the proposal:** read [[#reference-summary]], then dip into the Parts it points to.
+- **Just the results:** start with [[#measured-dispatch]] and read Part XI straight through; it defines what it needs as it goes.
 :::
 
 ## What this is, and what it is not {#scope}

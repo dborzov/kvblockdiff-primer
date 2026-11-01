@@ -1,0 +1,48 @@
+# Terms of Part XI (What the data said), writer A: the rules of the campaigns. Each is defined ([[=id]]) once, on its home page.
+campaign:
+  label: campaign
+  name: research campaign
+  cat: project
+  home: measured-dispatch
+  short: >-
+    One run of the autonomous research loop: several AI researcher agents writing and testing coders against one harness, under one set of rules, with every trial recorded. C1 was the night of 29–30 October 2026; C2 the day of 30 October.
+
+mdl-ratio:
+  label: MDL ratio
+  name: MDL ratio
+  cat: info
+  home: measured-rules-of-the-game
+  short: >-
+    (dictionary bytes + all delta bytes) ÷ raw bytes of a block, so $\vw/\vb + \vrho$ in units of a raw entry. 1.0 means no compression; 8 × the ratio is bits per element.
+
+verified-result:
+  label: verified
+  name: verified result
+  cat: project
+  home: measured-rules-of-the-game
+  short: >-
+    A score whose every entry was rebuilt bit for bit by a separate decoder process from the stored bytes alone. Anything else is a block test, an exact model or a bound.
+
+entry-split:
+  label: entry split
+  name: entry split
+  cat: project
+  home: measured-rules-of-the-game
+  short: >-
+    Which elements form one entry: one KV head (256 B), one layer with both heads (512 B), or one token across all six layers (3072 B). A setting of the test, not of the coder.
+
+screen:
+  label: screen
+  name: screen
+  cat: project
+  home: measured-rules-of-the-game
+  short: >-
+    A fixed test: a tenth of the blocks of two (or five) sequences at one entry split, block size and read budget. Two screens read different blocks, so their scores cannot be subtracted.
+
+read-budget:
+  label: read budget
+  name: read budget
+  cat: systems
+  home: measured-rules-of-the-game
+  short: >-
+    The most dictionary bytes a decoder may touch, starting cold, to rebuild one entry: 137, 293 or 1103 entries' worth, counted for every single entry. It keeps a coder from hiding the whole block in the dictionary.

@@ -40,7 +40,7 @@ The apple does not fall far from the tree. This page turns that proverb into a h
 ::: define fallen-apple
 - **What it is:** for two entries of the same layer (and head) of the same sequence, at token positions $\vt$ and $\vt - \vgap$, the bits needed to store $\vE_{\vt}$ exactly given $\vE_{\vt-\vgap}$ are, on average over the data, *lower the smaller $\vgap$ is*.
 - **Mnemonic:** "the apple does not fall far from the tree". The word *apple* appears on this site in no other sense.
-- **Status:** a hypothesis. Not measured anywhere at 8-bit precision.
+- **Status:** a hypothesis when this page was written; measured since. [[#measured-cutting-the-tensor]] reports the verdict: distance turned out to be the wrong axis.
 :::
 
 $\vgap$ is the **token distance** between the two entries, and on this site the letter means only that. In symbols, the claim is about one curve:

@@ -1,0 +1,25 @@
+# Terms of Part XI (What the data said), writer W4: pages XI.10 and XI.11.
+# Each is defined once ([[=id]] or ::: define) on its home page.
+hidden-state:
+  label: hidden state
+  name: hidden state
+  cat: llm
+  home: measured-where-the-bits-come-from
+  short: >-
+    The vector a transformer carries for each token between layers; keys and values are fixed linear projections of it.
+
+shared-table:
+  label: shared table
+  name: shared table
+  cat: project
+  home: measured-where-the-bits-come-from
+  short: >-
+    A large data structure specific to no sequence and no block, prepared in advance and held by both sides, trained on an independent dataset; legitimate by the human's ruling, used by no coder yet.
+
+paired-difference:
+  label: paired difference
+  name: paired difference
+  cat: stats
+  home: measured-signal-or-noise
+  short: >-
+    One coder's score minus another's on exactly the same blocks, per sequence; its spread over sequences is the noise that matters.
