@@ -1,0 +1,24 @@
+# Terms of Part XII (The interesting range), pages XII.3–XII.5. Writer: range-b. Each is defined ([[=id]]) once, on its home page.
+interesting-range:
+  label: the interesting range
+  name: the interesting range of dictionaries
+  cat: project
+  home: range-two-boring-corners
+  short: >-
+    Dictionaries large enough to carry a block's shared structure and too large to keep resident for every block: kept in host memory, brought to the GPU for the blocks the selector keeps wanting.
+
+on-fire:
+  label: on fire
+  name: an on-fire block
+  cat: project
+  home: range-on-fire
+  short: >-
+    A block whose popularity crossed the threshold, so its dictionary has been loaded into GPU memory and its misses travel as deltas; the opposite state is ice.
+
+popularity:
+  label: popularity
+  name: block popularity
+  cat: systems
+  home: range-on-fire
+  short: >-
+    The running count of misses (or selections) a block has received over a window of recent decode steps; the statistic that decides which blocks are on fire.

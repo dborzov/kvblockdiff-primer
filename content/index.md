@@ -17,12 +17,14 @@ The answer depends on one property of KV caches that nobody had measured when th
 - **Coloured letters are symbols.** Every symbol has one meaning on the whole site, and its colour tells you what kind of quantity it is. Under each equation, *What's in this equation* lists them all.
 - **Takeaway cards** close every section; **flashcards** let you keep what you learned. Add them as you read and practise them on the [practice page](/practice/).
 - **Running themes** — a few ideas that keep coming back — are marked with dashed cards that link to each other.
+- **Two reference settings.** Every estimate is quoted for one frozen rig. The pill in the top bar switches between the Pin (the production deployment of Part III) and the Bench (the campaigns' own data of Part XI); hover reminders and the numbers marked with a dotted underline follow your choice. [[#range-two-settings]] explains both.
 
 ::: note intuition Four ways in
 - **The story first:** start with [[#tiny-files-notice-anything]] and read straight through.
 - **Rusty on bits and vectors?** Start with [[#school-why-school]]; it assumes nothing.
 - **Just the proposal:** read [[#reference-summary]], then dip into the Parts it points to.
 - **Just the results:** start with [[#measured-dispatch]] and read Part XI straight through; it defines what it needs as it goes.
+- **What comes next:** Part XII, from [[#range-what-the-half-means]], reads the measurements for what they say about the information in a block and designs the mechanism that follows.
 :::
 
 ## What this is, and what it is not {#scope}

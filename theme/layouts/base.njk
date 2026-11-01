@@ -47,6 +47,8 @@
     {%- if partId %}<span class="crumb-part">Part {{ part.id }} · {{ part.short }}</span><span class="crumb-sep">›</span><span class="crumb-page"><b>{{ num }}</b> {{ (nav or title) | striptags }}</span>{% endif -%}
   </div>
   <a id="deck-count" class="deck-count" href="/practice/" title="Your flashcard deck">{{ 'cards' | emblem | safe }}<span class="dc-n">0</span></a>
+  {%- set dflt = settings.settings[settings.default] %}
+  <button id="setting-pill" class="setting-pill" type="button" data-setting="{{ settings.default }}" aria-label="Reference setting for the examples: {{ dflt.label }}. Press to switch." title="{{ dflt.label }}: {{ dflt.name }}">{{ dflt.emblem | emblem | safe }}<span class="sp-label" aria-live="polite">{{ dflt.label }}</span></button>
   <button class="ib theme-btn" type="button" aria-label="Switch between light and dark">{{ 'moon' | emblem | safe }}</button>
 </header>
 

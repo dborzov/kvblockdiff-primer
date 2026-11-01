@@ -1,0 +1,8 @@
+# Terms of Part XII (The interesting range), writer A (pages XII.1–XII.2). Each is defined ([[=id]] or ::: define) once, on its home page.
+block-redundancy:
+  label: block redundancy
+  name: block redundancy (shared information per element)
+  cat: info
+  home: range-what-the-half-means
+  short: >-
+    The bits per element that the entries of a block share: the sum of their solo entropies minus their joint entropy, per element. The most any per-block coder can save over solo coding.

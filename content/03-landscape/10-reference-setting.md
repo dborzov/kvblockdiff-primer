@@ -75,6 +75,8 @@ Which of these depend on the number format? Flip the switch.
 
 Freezing the numbers has a second benefit. Most conclusions on this site come out as **ratios**: "a miss that moves 60 % of an entry moves 60 % of the bytes". Ratios carry over to other machines far better than absolute numbers do. If your link is twice as fast, every request count doubles, and every comparison between methods stays the same.
 
+The site also keeps a second frozen setting beside the Pin: the Bench, the measurement rig of Part XI (Qwen3.5-2B on one RTX 5080). The switch in the top bar moves every number marked like these between the two; in the setting selected now, an entry is [[@e]], [[@NL]] layers keep a KV cache, and a request holds [[@L]] tokens. The prose and the worked arithmetic of this Part stay on the Pin.
+
 Still, every number in the table is an assumption about one deployment. In order of how much we worry about them:
 
 1. **One trace.** All miss rates come from one prompt, one model, 1,799 decode steps, averaged over 78 layers. A different task, or a different model, could move them a lot.

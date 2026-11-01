@@ -26,6 +26,7 @@ that writes, never start its daemon, never touch `targets/`, `results/`, `artifa
 | campaign C1's story, the keys results (K vs V), bf16 vs fp8, the goal clarifications, what C2 overturned | `notes/04-campaign-c1-and-keys.md` |
 | what this site predicted before the data, page by page, with the site's glossary terms and symbols | `notes/05-primer-predictions-inventory.md` |
 | the Part XI specification: page plan, pinned numbers with receipts, term allocation, figure list | `PART-XI-SPEC.md` |
+| Part XII (the information-theory reading, the on-fire design, bits to dollars, the Bench setting) | `docs/plans/part-xii-spec.md` in the site repo; its curve points come from C1's dictionary-budget tracks (`figures/data/range-curve.json`, `analysis/range_extract.py`) |
 
 ## The ten things to know before quoting anything
 

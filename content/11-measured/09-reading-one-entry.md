@@ -14,7 +14,7 @@ cards:
     wrong: ["Nothing", "About 0.1 of ratio", "It cannot be met at all"]
     why: No coder was tuned for its worst entry, so this is the most the rule costs today, not what it must cost.
     sec: the-budget-cost
-  - q: Moving every entry of a tree coder into the dictionary took the dictionary share from 0.56 to 1.00. What did it cost?
+  - q: Moving every entry of a tree coder into the dictionary, so that every delta was empty, changed the ratio by how much?
     a: '+0.00004 of ratio'
     wrong: ["+0.44, the extra dictionary bytes", "−0.05, a large saving", "+0.0234"]
     why: A reference entry costs the same per element inside the dictionary as outside (5.84 against 5.85 bits). Where the bytes sit is bookkeeping; the real price is a pointer.
@@ -69,7 +69,7 @@ The access pattern of the miss path (one entry, alone, cold) was written into th
 
 ## The dictionary share stopped mattering {#x-stopped-mattering}
 
-The proposal drew a block as a small [[dictionary]] plus one [[delta]] per entry, and expected a real trade-off between the two ([[#idea-size-relations]]). The tree coders erased it. Moving every entry of coder 91 into the dictionary (coder 101) took the dictionary share $\vw/\vb$ from 0.56 to 1.00 for **+0.00004** of ratio (12 blocks, in process, a block test), and coder 109, with every entry in the dictionary and every delta empty, is the incumbent on two screens. A [[reference-entry]] costs the same per element inside the dictionary as outside: 5.84 against 5.85 bits at L11. Where the bytes sit is bookkeeping. The real price of a tree coder is one pointer per entry.
+The proposal drew a block as a small [[dictionary]] plus one [[delta]] per entry, and expected a real trade-off between the two ([[#idea-size-relations]]). The tree coders erased it. Moving every entry of coder 91 into the dictionary (coder 101) left every delta empty and every coded byte filed as dictionary, for **+0.00004** of ratio (12 blocks, in process, a block test; the dictionary share $\vw/\vb$ went from 0.56 to the whole coded size, about 0.69), and coder 109, with every entry in the dictionary and every delta empty, is the incumbent on two screens. A [[reference-entry]] costs the same per element inside the dictionary as outside: 5.84 against 5.85 bits at L11. Where the bytes sit is bookkeeping. The real price of a tree coder is one pointer per entry.
 
 The same fact from the delta side: about 80 % of coder 102's deltas are **empty**, because the entry sits in the dictionary as somebody's reference; the remaining deltas are 0.5–0.75 of a raw entry. Every good tree coder sits at a dictionary share of 0.43–0.54.
 
@@ -93,7 +93,7 @@ The receiver's side information here is other entries of the same block rather t
 :::
 
 ::: takeaway
-- Dictionary share 0.56 → 1.00 cost +0.00004; a reference entry costs the same inside or outside the dictionary. The price is a pointer.
+- Filing every coded byte as dictionary (every delta empty) cost +0.00004; a reference entry costs the same inside or outside the dictionary. The price is a pointer.
 - About 80 % of a tree coder's deltas are empty; good tree coders sit at a dictionary share of 0.43–0.54.
 - The proposal's small-dictionary picture is the no-tree coder's; a tree coder's dictionary is half the block, resident.
 :::
@@ -120,7 +120,7 @@ Block size is the one knob that costs nothing to turn. A bigger block is free to
 
 ::: aside source Receipts
 - The every-entry table: env-t0009 to t0013 and env-t0088 to t0097 (all isolated, every entry counted cold); the re-count of 19 tracks: env retro-review and `reads-recheck.json`, which also give the worst-entry ratios and the 26 % shortfall. 137 on layer entries: env-t0089 (coder 97) against env-t0096 (coder 121).
-- Dictionary share 0.56 → 1.00 for +0.00004, and 5.84 against 5.85 bits: r6 iter-2-2 (12 blocks, in process). Coder 109 at a dictionary share of 1: r6-t0004, env-t0009. Empty deltas: r24 and r25 delta-size analyses (one block per layer); 121's delta sizes in env-t0096.
+- Every delta empty for +0.00004, and 5.84 against 5.85 bits: r6 iter-2-2 (12 blocks, in process; that page's "x = 1.00" is the share of coded bytes, the ledger's dictionary share is bytes over raw, so coder 109 sits at a share equal to its ratio). Coder 109 with every delta empty: r6-t0004, env-t0009. Empty deltas: r24 and r25 delta-size analyses (one block per layer); 121's delta sizes in env-t0096.
 - Block sizes: env-t0010 (113), env-t0096 (121), env-t0097 (120). Per-doubling gains and the whole-sequence pool: r19 iter-1-1 to 1-3 (one window). The 2 % at 16k: r19 iter-1-1 (36 blocks). C1 line: r1-t0045, r1-t0042, r4-t0008.
 - Notes: `notes/03-structure-and-method.md` §5, `notes/01-headline-numbers-and-coders.md` §A, §F; spec §1.9.
 :::

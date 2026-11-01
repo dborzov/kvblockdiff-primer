@@ -227,3 +227,17 @@ it are in `experiment_repos/kv-compress-roofline/notes/`.
 | XI.11 | `measured-signal-or-noise` | Signal or noise | `paired-difference` |
 | XI.12 | `measured-scorecard` | The scorecard | |
 | XI.13 | `measured-what-it-means` | What it means for kv-blockdiff | |
+
+## XII. The interesting range — `content/12-range/` (figures: `figures/range.js`)
+
+Specification: `docs/plans/part-xii-spec.md` (pinned numbers, page briefs, figure list, the reference-setting switch).
+
+| # | id | title | defines |
+|---|---|---|---|
+| XII.1 | `range-what-the-half-means` | What the half says, and what it does not | `block-redundancy` |
+| XII.2 | `range-shared-across-the-block` | Shared across the block, in bits | |
+| XII.3 | `range-two-boring-corners` | The two boring corners | `interesting-range` |
+| XII.4 | `range-on-fire` | On fire and ice: a dictionary cache at block level | `on-fire`, `popularity` |
+| XII.5 | `range-the-napkin-for-fire` | The napkin for on fire | |
+| XII.6 | `range-from-bits-to-dollars` | From bits to dollars | `decode-throughput`, `cost-per-token`; symbols `tps`, `price`, `cost` |
+| XII.7 | `range-two-settings` | Two reference settings: the Pin and the Bench | `bench-setting` |

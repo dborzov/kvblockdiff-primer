@@ -123,3 +123,15 @@
     A dispatch from the first real measurements: two autonomous research campaigns ran the
     kv-blockdiff question through a harness on real Qwen3.5-2B caches. What held, what broke,
     and what the bytes turned out to be made of.
+
+- id: XII
+  dir: 12-range
+  slug: range
+  title: The interesting range
+  short: The interesting range
+  emblem: flame
+  figs: [range]
+  lede: >
+    What the measurements say about the information in a block, which corners of the design
+    space are boring and why, a block-level dictionary cache that sets popular blocks on fire,
+    the napkin for it, and the chain from bytes on a link to dollars per million tokens.

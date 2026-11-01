@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import katex from "katex";
 import { HtmlBasePlugin } from "@11ty/eleventy";
-import { loadParts, loadGlossary, loadSymbols, loadThemes, symbolMacros, CATEGORIES, FAMILIES } from "./lib/data.js";
+import { loadParts, loadGlossary, loadSymbols, loadThemes, loadSettings, validateRefs, symbolMacros, CATEGORIES, FAMILIES } from "./lib/data.js";
 import { createMarkdown } from "./lib/markdown.js";
 import { runLinker } from "./lib/linker.js";
 import { slugify, esc, emblem, termChip } from "./lib/render.js";
@@ -28,13 +28,15 @@ export default function (cfg) {
   const glossary = loadGlossary();
   const symbols = loadSymbols();
   const themes = loadThemes();
+  const settings = loadSettings();
+  validateRefs(settings, glossary, symbols);
   const macros = symbolMacros(symbols);
   for (const id of Object.keys(symbols)) {
     let builtin = true;
     try { katex.renderToString("\\v" + id, { throwOnError: true }); } catch { builtin = false; }
     if (builtin) throw new Error(`symbol id "${id}" collides with the KaTeX command \\v${id}; rename it`);
   }
-  const md = createMarkdown({ glossary, symbols, macros, themes, prefix: PREFIX });
+  const md = createMarkdown({ glossary, symbols, macros, themes, settings, prefix: PREFIX });
   cfg.setLibrary("md", md);
   cfg.addPlugin(HtmlBasePlugin);
 
@@ -50,6 +52,7 @@ export default function (cfg) {
   cfg.addGlobalData("glossary", glossary);
   cfg.addGlobalData("symbols", symbols);
   cfg.addGlobalData("themes", themes);
+  cfg.addGlobalData("settings", settings);
   cfg.addGlobalData("categories", CATEGORIES);
   cfg.addGlobalData("families", FAMILIES);
   cfg.addGlobalData("layout", "page.njk");
@@ -137,15 +140,22 @@ export default function (cfg) {
       pages: Object.fromEntries(pages.map(p => [p.data.pageId, { num: p.data.num, title: p.data.title, url: PREFIX + p.url.replace(/^\//, ""), part: p.data.partId }])),
       glossary: Object.fromEntries(Object.values(glossary).map(t => [t.id, {
         label: t.label, name: t.name || "", nick: t.nick || "", short: r(t.short), cat: t.cat,
-        brand: !!t.brand, emblem: t.emblem || "",
+        brand: !!t.brand, emblem: t.emblem || "", ref: t.ref || "",
       }])),
       symbols: Object.fromEntries(Object.values(symbols).map(s => [s.id, {
         html: md.kv.renderTex("\\v" + s.id, false, env0), name: r(s.name), short: r(s.short),
-        unit: r(s.unit), fam: s.fam, home: s.home || "",
+        unit: r(s.unit), fam: s.fam, home: s.home || "", ref: s.ref || "",
       }])),
       macros,
+      // the reference settings (data/settings.yaml): KV.setting, KV.ref(), KV.setSetting() live in core.js
+      settings: Object.fromEntries(settings.ids.map(id => { const s = settings.settings[id]; return [id, { label: s.label, name: s.name, home: s.home, emblem: s.emblem, values: s.values }]; })),
+      settingDefault: settings.default,
+      settingKeys: settings.keys,
     };
-    return `window.KV=Object.assign(window.KV||{},${scriptJson(kv)});\n`;
+    // lib/settings-fmt.js is the one copy of the number formatting; it is inlined here for the client as KV.fmt
+    const fmtSrc = fs.readFileSync(path.join(import.meta.dirname, "lib/settings-fmt.js"), "utf8").replace(/^export /gm, "");
+    return `window.KV=Object.assign(window.KV||{},${scriptJson(kv)});\n`
+      + `(function(){\n${fmtSrc}\nwindow.KV.fmt={formatValue,fillTemplate,templateKeys,groupInt,NOT_MEASURED,FORMATS};\n})();\n`;
   });
   cfg.addFilter("termsCss", () => {
     const brand = Object.values(glossary).filter(t => t.brand);

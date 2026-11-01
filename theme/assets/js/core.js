@@ -1,4 +1,5 @@
 /* Page shell behaviour: theme, navigation drawer, keyboard paging, reading progress,
+   the reference-setting switch (the Pin / the Bench: KV.setting, KV.ref, KV.setSetting, event kv:setting),
    and the hover/tap reminders for glossary terms (.term) and math symbols (.sym). */
 (function () {
   'use strict';
@@ -37,6 +38,64 @@
     if (open) { const cur = D.querySelector('.sidenav [aria-current="page"]') || D.querySelector('.sn-home'); cur && cur.focus({ preventScroll: true }); }
   }
 
+  // ------------------------------------------------------------ reference setting (the Pin / the Bench)
+  // KV.settings, KV.settingDefault and KV.settingKeys come from assets/gen/site-data.js (data/settings.yaml),
+  // and KV.fmt is lib/settings-fmt.js inlined there. The chosen setting lives in localStorage 'kvp.setting'.
+  const SETTINGS = KV.settings || {};
+  const SETTING_IDS = Object.keys(SETTINGS);
+  const FMT = KV.fmt || { formatValue: v => (v == null ? 'not measured' : String(v)), fillTemplate: t => String(t == null ? '' : t), templateKeys: () => [] };
+  function validSetting(id) { return id && SETTINGS[id] ? id : (SETTINGS[KV.settingDefault] ? KV.settingDefault : SETTING_IDS[0] || ''); }
+  function nextSetting(id) { return SETTING_IDS[(SETTING_IDS.indexOf(validSetting(id)) + 1) % SETTING_IDS.length]; }
+  KV.setting = validSetting(KV.store.get('kvp.setting', null));
+  KV.settingLabel = id => (SETTINGS[validSetting(id || KV.setting)] || {}).label || '';
+  // the raw value of a key (null = not measured) in the current setting, or in the setting `id`
+  KV.ref = (key, id) => { const s = SETTINGS[validSetting(id || KV.setting)]; return s ? s.values[key] : undefined; };
+  // the same, formatted ("640 B", "13.4 %", "not measured")
+  KV.refFmt = (key, id) => { const spec = (KV.settingKeys || {})[key]; return spec ? FMT.formatValue(KV.ref(key, id), spec.fmt) : ''; };
+  // a template with {key} placeholders, filled for the current setting (or the setting `id`)
+  KV.refText = (tpl, id) => { const s = SETTINGS[validSetting(id || KV.setting)]; return s ? FMT.fillTemplate(tpl, s.values, KV.settingKeys || {}) : ''; };
+
+  function paintSetting() {
+    const s = SETTINGS[KV.setting];
+    if (!s) return;
+    R.setAttribute('data-setting', KV.setting);
+    const pill = D.querySelector('.setting-pill');
+    if (pill) {
+      const next = SETTINGS[nextSetting(KV.setting)];
+      pill.setAttribute('data-setting', KV.setting);
+      // update the nodes in place: a replaced aria-live span is a new live region, and the announcement is lost
+      const lab = pill.querySelector('.sp-label'), use = pill.querySelector('use');
+      if (lab) lab.textContent = s.label; else pill.insertAdjacentHTML('beforeend', `<span class="sp-label" aria-live="polite">${esc(s.label)}</span>`);
+      if (use) use.setAttribute('href', '#emb-' + (s.emblem || 'map')); else pill.insertAdjacentHTML('afterbegin', emblem(s.emblem || 'map'));
+      pill.setAttribute('aria-label', `Reference setting for the examples: ${s.label}.` + (next && next !== s ? ` Press to switch to ${next.label}.` : ''));
+      pill.title = `${s.label}: ${s.name}` + (next && next !== s ? ` — click for ${next.label}` : '');
+    }
+    D.querySelectorAll('.refv[data-key]').forEach(el => {
+      const v = KV.refFmt(el.getAttribute('data-key'));
+      if (el.textContent !== v) { el.textContent = v; el.classList.remove('is-fresh'); void el.offsetWidth; el.classList.add('is-fresh'); }
+      el.title = 'in ' + s.label;
+    });
+  }
+  function applySetting(id, store) {
+    id = validSetting(id);
+    if (!SETTINGS[id]) return;
+    KV.setting = id;
+    if (store) KV.store.set('kvp.setting', id);
+    paintSetting();
+    D.dispatchEvent(new CustomEvent('kv:setting', { detail: id }));
+  }
+  KV.setSetting = id => applySetting(id, true);
+
+  // the "In the Pin: … · in the Bench: …" line of a reminder; a template without placeholders is shown as it is
+  function refLine(tpl) {
+    const cur = SETTINGS[KV.setting];
+    if (!tpl || !cur) return '';
+    if (!FMT.templateKeys(tpl).length) return `<div class="pop-ref">${esc(tpl)}</div>`;
+    const others = SETTING_IDS.filter(id => id !== KV.setting)
+      .map(id => `<span class="pop-ref-other"> · in ${esc(SETTINGS[id].label)}: ${esc(KV.refText(tpl, id))}</span>`).join('');
+    return `<div class="pop-ref"><b>In ${esc(cur.label)}:</b> ${esc(KV.refText(tpl))}${others}</div>`;
+  }
+
   // ------------------------------------------------------------ reminders (popovers)
   let pop = null, popFor = null, hideTimer = 0, showTimer = 0;
   const HOVER = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -56,7 +115,7 @@
       html: `<div class="pop-head"><span class="pop-emb">${emblem(t.brand ? t.emblem : CAT_EMBLEM[t.cat] || 'seal')}</span>`
         + `<span><div class="pop-name">${esc(t.name || t.label)}</div>${t.nick ? `<div class="pop-nick">“${esc(t.nick)}”</div>` : ''}</span>`
         + `<span class="pop-cat">${esc(cat.label || '')}</span></div>`
-        + `<div class="pop-short">${t.short}</div>${go}`,
+        + `<div class="pop-short">${t.short}</div>${go}${refLine(t.ref)}`,
     };
   }
   function symHtml(el) {
@@ -70,7 +129,8 @@
       html: `<div class="pop-head"><span class="pop-sym">${s.html}</span><span><div class="pop-name">${s.name}</div>`
         + (s.unit ? `<div class="pop-unit">unit: ${s.unit}</div>` : '') + `</span><span class="pop-cat">${esc(fam.label || '')}</span></div>`
         + `<div class="pop-short">${s.short}</div>`
-        + (home ? `<a class="pop-go" href="${esc(home.url)}">Introduced in ${esc(home.num)} ${esc(home.title)} →</a>` : ''),
+        + (home ? `<a class="pop-go" href="${esc(home.url)}">Introduced in ${esc(home.num)} ${esc(home.title)} →</a>` : '')
+        + refLine(s.ref),
     };
   }
   function place(anchor) {
@@ -147,6 +207,12 @@
   function boot() {
     const tb = D.querySelector('.theme-btn');
     if (tb) tb.addEventListener('click', () => setTheme(isDark() ? 'light' : 'dark'));
+
+    // the reference-setting pill cycles through the settings; another tab's choice is followed too
+    const sp = D.querySelector('.setting-pill');
+    if (sp) sp.addEventListener('click', () => KV.setSetting(nextSetting(KV.setting)));
+    paintSetting();
+    addEventListener('storage', e => { if (e.key === 'kvp.setting') { const id = validSetting(KV.store.get('kvp.setting', null)); if (id !== KV.setting) applySetting(id, false); } });
 
     const mb = D.querySelector('.menu-btn');
     if (mb) mb.addEventListener('click', () => openNav(!D.body.classList.contains('nav-open')));

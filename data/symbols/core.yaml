@@ -22,17 +22,17 @@ gap:   { tex: "\\Delta", fam: index, name: token distance, unit: tokens, home: i
 
 # ------------------------------------------------------------ bytes, seconds, bandwidth
 e:     { tex: "e", fam: resource, name: entry size, unit: bytes, home: landscape-kv-cache,
-         short: "Bytes of one entry (one token, one layer, keys and values). 640 B in the reference setting." }
+         short: "Bytes of one entry (one token, one layer, keys and values). 640 B in the reference setting.", ref: "{e}" }
 dsz:   { tex: "\\lvert\\delta\\rvert", fam: resource, name: delta size, unit: bytes, home: idea-dictionary-delta-block,
          short: "Bytes of one entry's delta; $\\vdsz = \\vrho\\,\\ve$." }
 Dsz:   { tex: "\\lvert D\\rvert", fam: resource, name: dictionary size, unit: bytes, home: idea-dictionary-delta-block,
          short: "Bytes of one dictionary; $\\vDsz = \\vw\\,\\ve$." }
 tpot:  { tex: "\\mathrm{TPOT}", fam: resource, name: time per output token, unit: seconds, home: landscape-tokens-and-decoding,
-         short: "Duration of one decode step for a request; 30 ms in the reference setting." }
+         short: "Duration of one decode step for a request; 30 ms in the reference setting.", ref: "{tpot}" }
 Wlink: { tex: "W_{\\mathrm{link}}", fam: resource, name: link bandwidth, unit: "bytes/s", home: landscape-reference-setting,
-         short: "Practical host-to-GPU bandwidth; 50 GB/s for PCIe Gen5 ×16 in the reference setting." }
+         short: "Practical host-to-GPU bandwidth; 50 GB/s for PCIe Gen5 ×16 in the reference setting.", ref: "{Wlink}" }
 Mhbm:  { tex: "M_{\\mathrm{HBM}}", fam: resource, name: GPU memory for KV, unit: bytes, home: landscape-reference-setting,
-         short: "GPU memory available for KV caches per GPU; 30 GB in the reference setting." }
+         short: "GPU memory available for KV caches per GPU; 30 GB in the reference setting.", ref: "{Mhbm}" }
 Tstep: { tex: "T_{\\mathrm{step}}", fam: resource, name: bytes moved per step, unit: bytes, home: homework-economics,
          short: "Bytes one request moves over the link in one decode step (misses plus dictionary loads)." }
 Mreq:  { tex: "M_{\\mathrm{req}}", fam: resource, name: GPU memory per request, unit: bytes, home: homework-economics,
@@ -40,23 +40,23 @@ Mreq:  { tex: "M_{\\mathrm{req}}", fam: resource, name: GPU memory per request, 
 
 # ------------------------------------------------------------ counts & design knobs
 k:     { tex: "k", fam: count, name: selections per step, unit: entries, home: landscape-sparse-attention,
-         short: "How many entries the indexer selects per layer per decode step; 2048 in the reference setting." }
+         short: "How many entries the indexer selects per layer per decode step; 2048 in the reference setting.", ref: "{k}" }
 B:     { tex: "B", fam: count, name: cache slots, unit: items, home: school-caches,
-         short: "How many items a cache can hold. For HiSparse's hot cache: entry slots per request per layer (2048, 4096 or 8192 in the examples)." }
+         short: "How many items a cache can hold. For HiSparse's hot cache: entry slots per request per layer (2048, 4096 or 8192 in the examples).", ref: "2048 / 4096 / 8192 slots in the examples" }
 BV:    { tex: "B_V", fam: count, name: victim-tier slots, unit: deltas, home: missed-victim-tier,
          short: "How many evicted entries' deltas the victim tier keeps per layer." }
 b:     { tex: "b", fam: count, name: block size, unit: tokens, home: idea-dictionary-delta-block,
-         short: "Tokens (entries) per block — a knob we choose." }
+         short: "Tokens (entries) per block — a knob we choose.", ref: "{b}" }
 w:     { tex: "w", fam: count, name: dictionary weight, unit: entries' worth, home: idea-dictionary-delta-block,
          short: "A dictionary's size in entries' worth: $\\vDsz = \\vw\\,\\ve$." }
 nD:    { tex: "n_D", fam: count, name: resident dictionaries, unit: per layer, home: idea-blockdiff-step-by-step,
          short: "How many block dictionaries the dictionary cache keeps on the GPU per layer." }
 NL:    { tex: "N_L", fam: count, name: number of layers, unit: layers, home: landscape-tokens-and-decoding,
-         short: "Number of (sparse-attention) layers; 78 in the reference setting." }
+         short: "Number of (sparse-attention) layers; 78 in the reference setting.", ref: "{NL}" }
 L:     { tex: "L", fam: count, name: context length, unit: tokens, home: landscape-tokens-and-decoding,
-         short: "Tokens stored for one request; 100K in the reference setting." }
+         short: "Tokens stored for one request; 100K in the reference setting.", ref: "{L}" }
 d:     { tex: "d", fam: count, name: dimension, unit: elements, home: school-vectors,
-         short: "Number of elements in a vector (an entry has $\\vd$ elements; 640 in the reference setting)." }
+         short: "Number of elements in a vector (an entry has $\\vd$ elements; 640 in the reference setting).", ref: "{d}" }
 C:     { tex: "C", fam: count, name: codebook size, unit: centroids, home: school-clusters,
          short: "Number of centroids in a VQ codebook; naming one costs $\\log_2 \\vC$ bits." }
 nsub:  { tex: "n_{\\mathrm{sub}}", fam: count, name: sub-codebooks, unit: "", home: school-vq-vs-klt,
@@ -78,7 +78,7 @@ wres:  { tex: "w_{\\mathrm{res}}", fam: count, name: resident dictionary weight,
 p:     { tex: "p", fam: frac, name: probability, unit: "", home: school-surprise,
          short: "Probability of an outcome, between 0 and 1." }
 m:     { tex: "m", fam: frac, name: miss rate, unit: "", home: school-reuse-distance,
-         short: "Fraction of requests (selections) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$." }
+         short: "Fraction of requests (selections) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$.", ref: "{m2} / {m4} / {m8} at 2048 / 4096 / 8192 slots" }
 rho:   { tex: "\\rho", fam: frac, name: delta ratio, unit: "", home: idea-dictionary-delta-block,
          short: "Delta size over entry size, $\\vrho = \\vdsz/\\ve \\approx \\vbpe/8$ (the rate also counts the amortized dictionary). Smaller is better." }
 fD:    { tex: "f_D", fam: frac, name: δ-miss fraction, unit: "", home: idea-blockdiff-step-by-step,

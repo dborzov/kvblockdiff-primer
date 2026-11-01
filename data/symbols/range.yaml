@@ -1,0 +1,7 @@
+# Symbols added by the range-c writer (Part XII, pages XII.6–XII.7): the chain from requests to dollars.
+tps:   { tex: "\\mathrm{TPS}", fam: resource, name: tokens per second per GPU, unit: "tokens/s", home: range-from-bits-to-dollars,
+         short: "Output tokens one GPU produces per second over all its concurrent requests; $\\vtps = \\vN / \\vtpot$. About 3,630 for HiSparse on the Pin." }
+price: { tex: "P", fam: resource, name: price of one GPU-hour, unit: "USD per GPU-hour", home: range-from-bits-to-dollars,
+         short: "What one hour of one GPU costs, in dollars. An assumption (USD 3 per H200-hour in the examples) that cancels out of every ratio between designs." }
+cost:  { tex: "\\mathrm{cost}_{1\\mathrm{M}}", fam: resource, name: cost per million output tokens, unit: USD, home: range-from-bits-to-dollars,
+         short: "Dollars per million output tokens: $\\vcost = \\vprice / (\\vtps \\cdot 3600) \\cdot 10^6$. About USD 0.23 for HiSparse on the Pin at USD 3 per GPU-hour." }

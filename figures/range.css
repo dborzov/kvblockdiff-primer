@@ -1,0 +1,56 @@
+/* Part XII, "The interesting range" (figures/range.js). Tokens only; every class starts with rng-. */
+
+/* panel headings and the chosen-point line of the napkin */
+.rng-head { font-family: var(--f-sc); font-size: .88rem; letter-spacing: .03em; color: var(--ink-2); margin: 0 0 .25rem; }
+.rng-ptline { font-size: .9rem; color: var(--ink-2); margin: 0; }
+.rng-ptline b { color: var(--ink); }
+
+/* the compressibility square keeps a square aspect and does not sprawl in a wide plate */
+.rng-square { width: 100%; max-width: 36rem; margin: 0 auto; }
+
+/* points that can take focus (ringed landmarks) */
+svg.plot .rng-pt { cursor: pointer; outline: none; }
+svg.plot .rng-pt:focus-visible { stroke: var(--c); stroke-width: 3; }
+
+/* second tick column in bits along the right edge */
+svg.plot .rng-bits .tick text { fill: var(--ink-3); }
+
+/* grade tags in the ladder's table */
+.rng-tag { display: inline-block; font-family: var(--f-sc); font-size: .74rem; letter-spacing: .03em; color: var(--ink-2); padding: .05rem .45rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent); white-space: nowrap; }
+.rng-tag.is-measured { color: var(--good); border-color: color-mix(in srgb, var(--good) 55%, transparent); }
+.rng-tag.is-model { color: var(--ink-2); border-style: dashed; }
+.rng-tag.is-hypo { color: var(--ink-3); border-style: dashed; }
+.rng-tag.is-def { color: var(--ink-3); }
+
+/* a labelled number input (the dollars figure's TPOT) */
+.rng-in { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--f-sc); font-size: .88rem; color: var(--ink-2); }
+.rng-in-box { display: inline-flex; align-items: center; gap: .3rem; }
+.rng-in input { font-family: var(--f-mono); font-size: .84rem; color: var(--ink); background: var(--paper-3); border: 1px solid var(--rule); border-radius: 6px; padding: .18rem .35rem; min-height: 1.8rem; width: 5rem; text-align: right; }
+.rng-in input:disabled { opacity: .45; }
+.rng-in input:focus-visible { outline: 2px solid var(--c); outline-offset: 1px; }
+.rng-in-unit { font-size: .78rem; color: var(--ink-3); }
+
+/* the two settings side by side (XII.7) */
+.rng-set-wrap { width: 100%; overflow-x: auto; }
+.rng-set { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.rng-set th, .rng-set td { padding: .3rem .55rem; text-align: right; border-bottom: 1px solid color-mix(in srgb, var(--rule) 45%, transparent); vertical-align: top; }
+.rng-set th.l, .rng-set td.l { text-align: left; }
+.rng-set thead th { font-family: var(--f-sc); font-weight: 500; letter-spacing: .03em; color: var(--ink-2); border-bottom: 1.5px solid var(--rule); vertical-align: bottom; }
+.rng-set td { font-family: var(--f-mono); font-size: .84rem; color: var(--ink); }
+.rng-set td.is-null { color: var(--ink-3); font-style: italic; font-family: var(--f-body); }
+.rng-set td.is-cur, .rng-set th.is-cur { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.rng-set tr.is-diff td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--c) 55%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--c) 55%, transparent); }
+.rng-set tr.is-diff td.l { box-shadow: inset 2px 0 0 var(--c), inset 0 1px 0 color-mix(in srgb, var(--c) 55%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--c) 55%, transparent); }
+.rng-key { font-family: var(--f-body); color: var(--ink); }
+.rng-unit { color: var(--ink-3); font-family: var(--f-body); }
+.rng-code { display: block; font-family: var(--f-mono); font-size: .72rem; color: var(--ink-3); }
+.rng-card { min-width: 9rem; }
+.rng-card .rng-card-label { display: block; font-family: var(--f-display); font-size: 1.05rem; color: var(--ink); letter-spacing: .02em; }
+.rng-card .rng-card-name { display: block; font-family: var(--f-body); font-size: .8rem; color: var(--ink-3); font-weight: 400; letter-spacing: 0; white-space: normal; }
+.rng-card .rng-card-cur { display: inline-block; margin-top: .25rem; font-family: var(--f-sc); font-size: .72rem; letter-spacing: .05em; color: var(--paper-3); background: var(--c); border-radius: 999px; padding: .05rem .5rem; }
+@media (max-width: 520px) {
+  .rng-set { font-size: .84rem; }
+  .rng-set th, .rng-set td { padding: .25rem .35rem; }
+  .rng-card { min-width: 7rem; }
+  .rng-card .rng-card-name { display: none; }
+}

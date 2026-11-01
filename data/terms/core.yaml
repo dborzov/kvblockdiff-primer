@@ -50,6 +50,7 @@ entry:
   color: ["#6b4423", "#e3b48a"]
   cat: project
   home: landscape-kv-cache
+  ref: "{d} elements, {e} per entry; {NL} layers keep one per token"
   short: >-
     All the key and value numbers of one token at one layer, $\vE_{\vl,\vt}$, of size $\ve$ bytes. The unit the indexer selects, the cache moves and our coder must rebuild.
 
@@ -62,6 +63,7 @@ block:
   color: ["#8a6612", "#ecc75e"]
   cat: project
   home: idea-dictionary-delta-block
+  ref: "{b} tokens per block in the examples: {b} entries of {e}"
   short: >-
     $\vb$ consecutive tokens' entries of one request at one layer. A design knob of the algorithm (we choose $\vb$), not a property of the data.
 
@@ -74,6 +76,7 @@ hot-cache:
   color: ["#c2550a", "#ffa24d"]
   cat: systems
   home: landscape-hisparse
+  ref: "2048 / 4096 / 8192 slots of {e} per layer in the examples"
   short: >-
     HiSparse's small buffer of $\vB$ raw entries per request per layer, kept in GPU memory and managed least-recently-used. Entries found there are hits; the rest are misses fetched from host memory.
 
@@ -146,6 +149,7 @@ reference-setting:
   color: ["#3b6e8f", "#8fc6ea"]
   cat: project
   home: landscape-reference-setting
+  ref: "{model} · {NL} layers · entries of {e} · link {Wlink} · {Mhbm} of GPU memory for KV"
   short: >-
     One fixed rig used for every estimate: HiSparse's GLM-5.1 deployment converted to 8-bit storage — 78 sparse layers, top-2048 selection, 100K-token context, 0.64 KB entries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for KV.
 
@@ -953,6 +957,7 @@ layer:
   name: layer
   cat: llm
   home: landscape-tokens-and-decoding
+  ref: "{NL} layers keep a KV cache"
   short: >-
     One of the $\vNL$ stacked processing stages of a transformer. Each layer has its own attention and its own part of the KV cache.
 
@@ -977,6 +982,7 @@ head:
   name: attention head and GQA
   cat: llm
   home: landscape-attention
+  ref: "{heads} KV heads of {headdim} elements per layer"
   short: >-
     Attention is split into several heads that work in parallel on slices of the vectors. With grouped-query attention (GQA) several query heads share one key/value head, which shrinks the KV cache.
 
@@ -985,6 +991,7 @@ kv-cache:
   name: KV cache
   cat: llm
   home: landscape-kv-cache
+  ref: "{L} tokens × {NL} layers × {e} per entry per request"
   short: >-
     The stored keys and values of every previous token at every layer, kept so they need not be recomputed at each decode step. It grows by one entry per layer per token.
 

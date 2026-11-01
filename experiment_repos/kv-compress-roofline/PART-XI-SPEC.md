@@ -196,7 +196,7 @@ On 5 sequences of target 02: 121 = **0.62970** vs 102 = 0.63848, difference −0
 - A budget of 293 for every entry costs nothing at 4096 and above. Counting every entry (instead of 8 sampled per block) changed 4 of 19 winners
   and no headline; sampled maxima had run up to 26 % low; the worst entry reads 1.1–3.7× the mean (long chains). At 137 on layer entries the
   rule costs 0.0234 (121 does not fit, 97 does); no coder was tuned for its worst entry.
-- **The dictionary share stopped mattering for tree coders.** 101 vs 91: x from 0.56 to 1.00 for +0.00004 (12 blocks, in-process); 109 at x = 1 is
+- **The dictionary share stopped mattering for tree coders.** 101 vs 91: every delta empty for +0.00004 (12 blocks, in-process; r6's "x = 1.00" is the share of coded bytes, the ledger's x is dictionary bytes over raw, so 109 sits at x = its ratio, 0.69–0.72); 109 with every delta empty at x = 1 is
   the incumbent on two screens. A reference entry costs the same per element inside the dictionary as outside (5.84 vs 5.85 bits at L11);
   the real price is a pointer. ≈80 % of coder 102's deltas are empty (the entry sits in the dictionary); the rest are 0.5–0.75 of a raw entry.
   All good tree coders sit at x ≈ 0.43–0.54. For no-tree coders (129) x = 0.02–0.04 is meaningful.

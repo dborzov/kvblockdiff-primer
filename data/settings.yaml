@@ -1,0 +1,36 @@
+# The frozen reference settings. Every setting has the same keys; null = not measured in that setting.
+# `[[@key]]` in Markdown renders a key's value in the current setting; `ref:` templates in terms and
+# symbols use `{key}` placeholders. Formats (fmt): int | bytes | pct | ms | gbps | gb | text.
+# The optional `emblem` is a name from theme/layouts/partials/emblems.njk (default: map).
+default: pin
+keys:                      # key: {name, unit, fmt}
+  model: {name: model, fmt: text}
+  NL: {name: layers with a KV cache, unit: layers, fmt: int}
+  heads: {name: KV heads per layer, fmt: int}
+  headdim: {name: elements per head, fmt: int}
+  d: {name: elements per entry, unit: elements, fmt: int}
+  e: {name: entry size, unit: bytes, fmt: bytes}
+  k: {name: selections per layer per step, fmt: int}
+  L: {name: context length, unit: tokens, fmt: int}
+  b: {name: block size used in examples, unit: tokens, fmt: int}
+  m2: {name: miss rate at 2048 slots, fmt: pct}
+  m4: {name: miss rate at 4096 slots, fmt: pct}
+  m8: {name: miss rate at 8192 slots, fmt: pct}
+  tpot: {name: time per output token, unit: ms, fmt: ms}
+  Wlink: {name: link bandwidth, unit: GB/s, fmt: gbps}
+  Mhbm: {name: GPU memory for KV, unit: GB, fmt: gb}
+  gpu: {name: GPU, fmt: text}
+  format: {name: storage format, fmt: text}
+settings:
+  pin:
+    label: the Pin
+    name: GLM-5.1 on 8 × H200, as HiSparse serves it, at 8-bit storage
+    home: landscape-reference-setting
+    emblem: pin
+    values: {model: GLM-5.1, NL: 78, heads: null, headdim: null, d: 640, e: 640, k: 2048, L: 100384, b: 4096, m2: 0.30, m4: 0.134, m8: 0.067, tpot: 30, Wlink: 50, Mhbm: 30, gpu: "H200 (141 GB)", format: "8-bit (E4M3)"}
+  bench:
+    label: the Bench
+    name: Qwen3.5-2B on one RTX 5080, the campaigns' data
+    home: range-two-settings
+    emblem: flask
+    values: {model: Qwen3.5-2B, NL: 6, heads: 2, headdim: 256, d: 512, e: 512, k: null, L: 225000, b: 4096, m2: null, m4: null, m8: null, tpot: null, Wlink: 50, Mhbm: 10, gpu: "RTX 5080 (16 GB)", format: "FP8 E4M3, values"}

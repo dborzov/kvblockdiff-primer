@@ -1,0 +1,29 @@
+# Terms of Part XII (The interesting range), writer W-C: pages XII.6 and XII.7.
+# Each is defined once ([[=id]] or ::: define) on its home page.
+decode-throughput:
+  label: tokens per second
+  name: decode throughput per GPU
+  cat: systems
+  home: range-from-bits-to-dollars
+  short: >-
+    Output tokens one GPU produces per second across all its concurrent requests: the requests it serves divided by the time per output token, $\vtps = \vN / \vtpot$. About 3,630 for HiSparse on the Pin.
+
+cost-per-token:
+  label: cost per million tokens
+  name: cost per million output tokens
+  cat: project
+  home: range-from-bits-to-dollars
+  short: >-
+    The price of one GPU-hour divided by the tokens that hour produces, scaled to a million. The price is an assumption; the ratio between two designs is not.
+
+bench-setting:
+  label: the Bench
+  name: the Bench (the campaigns' reference setting)
+  brand: true
+  nick: the Bench
+  emblem: flask
+  color: ["#5f8a52", "#a5cf8f"]
+  cat: project
+  home: range-two-settings
+  short: >-
+    The second frozen setting: Qwen3.5-2B's six KV layers, 2 heads × 256, 512-byte value entries, 225K-token coding-agent transcripts, FP8, on one RTX 5080 with a 50 GB/s link; the data-side twin of the Pin. No selector ran on it, so misses and step time are not measured.

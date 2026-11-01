@@ -104,6 +104,16 @@ another.
    error and the checker catches it. Do not `try/catch` to hide problems.
 9. **Mark illustrative numbers as illustrative** in the caption or the KPI
    subtitle.
+10. **The reference setting is a global the reader can switch.** The pill in
+    the top bar chooses between the Pin and the Bench (`data/settings.yaml`).
+    A figure that depends on it reads `KV.setting` (the id, `'pin'` or
+    `'bench'`), `KV.ref(key)` (the raw value in the current setting; `null`
+    means not measured there) or `KV.refFmt(key)` (formatted, "640 B"), and
+    `KV.settings[id].values` for any setting. To follow a switch after the
+    figure is built, listen on `document` for `kv:setting` (`e.detail` is the
+    new id) and redraw; `KV.setSetting(id)` changes it from code. A figure
+    that uses the Pin's numbers only (most figures) needs none of this — say
+    so in its caption if it matters.
 
 ---
 

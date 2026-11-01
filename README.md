@@ -13,7 +13,13 @@ short deltas against shared dictionaries, and be rebuilt bit for bit on the GPU?
 
 Part XI reports what two autonomous research campaigns measured when the question was run through a real
 harness on Qwen3.5-2B caches. The verification notes behind that Part, and a guide to the experiments repository
-they came from, live in `experiment_repos/kv-compress-roofline/` (start with its `README.md`).
+they came from, live in `experiment_repos/kv-compress-roofline/` (start with its `README.md`). Part XII reads those
+measurements for what they say about the information in a block, designs a block-level dictionary cache around the
+interesting range of dictionary sizes, and connects bytes on the link to dollars per million tokens.
+
+Every estimate on the site is quoted for a frozen reference setting; a pill in the top bar switches between two of them
+(the Pin, a production deployment; the Bench, the campaigns' own rig), and hover reminders and `[[@key]]` numbers follow
+the choice (`data/settings.yaml`, `docs/AUTHORING.md` §3.4).
 
 ## How the site is built
 

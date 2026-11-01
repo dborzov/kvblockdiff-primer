@@ -161,6 +161,38 @@ Quote any string that contains `: ` or starts with `[`, `{`, `*`, `&`, `!`, `%`,
   Figure and equation ids must be unique across the whole site — prefix them with your topic.
 - The linker resolves and checks all of them after every build.
 
+### Reference settings and `[[@key]]`
+
+The site has two frozen reference settings, **the Pin** (GLM-5.1 on 8 × H200, the deployment-side
+numbers) and **the Bench** (Qwen3.5-2B on one RTX 5080, the campaigns' data), in `data/settings.yaml`.
+A pill in the top bar switches between them; the choice is remembered in the browser.
+
+- **Prose written for the Pin keeps its numbers.** "640 B", "78 layers", "30 ms" typed in a sentence
+  stay as they are, and the site's arithmetic is still done once, on the Pin. Only numbers you mark
+  follow the switch.
+- **`[[@key]]`** renders one setting-dependent number and keeps it live: `an entry is [[@e]]` → "an
+  entry is 640 B" with the Pin, "512 B" with the Bench (build-time text is the default setting's; the
+  client repaints every such span when the setting changes). The keys are those of `settings.yaml`:
+  `model`, `NL`, `heads`, `headdim`, `d`, `e`, `k`, `L`, `b`, `m2`, `m4`, `m8`, `tpot`, `Wlink`, `Mhbm`,
+  `gpu`, `format`. An unknown key is a build error. A key that is `null` in a setting renders "not
+  measured" there, so write the sentence so that it still reads (say what the number is of).
+  Formats come from the key's `fmt`: `int` (thin-space thousands, 100 384), `bytes` (640 B, 1.5 KB,
+  20.9 GB — decimal units), `pct` (13.4 %), `ms`, `gbps` (50 GB/s), `gb` (30 GB), `text`.
+- Use it only where the sentence is true for every setting. Do **not** write `[[@e]]` inside a worked
+  computation whose other numbers are typed by hand — the result would stop matching when the reader
+  switches. Say "in the setting selected now" or similar when the sentence states a value.
+- **`ref:` on terms and symbols.** A term or a symbol in `data/terms/*.yaml` or `data/symbols/*.yaml`
+  may carry `ref:`, a plain template with `{key}` placeholders:
+  `ref: "{d} elements, {e} per entry; {NL} layers keep one per token"`. The hover reminder then ends
+  with "In the Pin: 640 elements, 640 B per entry; 78 layers keep one per token", followed in smaller
+  type by the same line for the other setting. Placeholders are substituted and formatted, nothing is
+  computed; a placeholder that is `null` in a setting reads "not measured", and a template whose
+  placeholders are all `null` there collapses to "not measured". A template without placeholders is
+  shown as it is (one line, no setting named). Every `{key}` must be a settings key (checked by
+  `node scripts/validate-data.mjs` and by the build).
+- Figures that want to follow the switch read `KV.setting`, `KV.ref(key)` / `KV.refFmt(key)` and
+  listen to the `kv:setting` event (see `docs/figures.md` §2).
+
 ## 4. The Markdown dialect
 
 Standard Markdown (CommonMark + pipe tables) plus:

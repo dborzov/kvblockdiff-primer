@@ -103,6 +103,7 @@ The weekend became a night and a day. A harness was built, and two campaigns of 
 - **Distance was the wrong axis.** Adjacent tokens are nearly useless at the outer layers; references point to the same token again, far away. Bigger blocks always won; the whole sequence is the best scope. → [[#measured-cutting-the-tensor]], [[#measured-reading-one-entry]]
 - **Random access was nearly free; the remaining bits look like the text's long memory.** → [[#measured-where-the-bits-come-from]]
 - **For kv-blockdiff:** the decision rule says go, with the scopes reread; the miss path has two pictures, a light coder at about 0.69 of an entry per miss and a tree coder whose dictionary is half the block. → [[#measured-what-it-means]]
+- **What follows (Part XII):** the dictionary share measures bookkeeping, not shared information; the interesting designs keep heavy dictionaries in host memory and set popular blocks "on fire"; the napkin for that, and the chain from bytes to dollars. → [[#range-what-the-half-means]], [[#range-on-fire]], [[#range-from-bits-to-dollars]]
 
 ::: takeaway
 - The measurement exists now, and it moved the project: the Twin won, distance lost, the whole sequence is the scope.
