@@ -104,7 +104,8 @@ function scannable(file, src) {
       if (cell === "their word" || cell.includes("their words")) { theirTable = true; continue; }
       if (theirTable) continue;                   // the data rows of a "their word" table
     } else if (!line.trim()) theirTable = false;  // a blank line ends the table
-    const t = stripLinkTargets(stripCodeSpans(line));
+    // a container directive's kind and id (`::: define grid-aware-model …`, `::: figure fig-x builder`) are ids, not prose
+    const t = stripLinkTargets(stripCodeSpans(line.replace(/^(\s*:{3,}\s*)(\S+)(\s+\S+)?(\s+\S+)?/, (m, c, kind) => (kind === 'figure' || kind === 'define' || kind === 'theme' ? c + kind : m))));
     if (t.trim()) out.push([i + 1, t]);
   }
   return out;
