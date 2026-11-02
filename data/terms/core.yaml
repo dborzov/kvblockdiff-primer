@@ -1,13 +1,15 @@
-# Central glossary. One entry per term. In Markdown:  [[id]] mention · [[id|other words]] · [[=id]] the definition.
+# The glossary. One entry per term. In Markdown:  [[id]] mention · [[id|other words]] · [[=id]] the definition.
 # Fields: label (chip text) · name (full name) · cat (category) · home (page id where it is DEFINED, once)
 #         short (the hover reminder: one or two plain sentences, may use $math$ with \v… symbol macros)
+#         ref (optional template with {key} placeholders over data/settings.yaml, shown per reference setting)
 #         brand: true + nick + emblem + color [light, dark] for the signature terms (they get a badge).
-# Writers: add NEW terms in data/terms/<your-part>.yaml, never here, and never define an id twice.
+# The rule behind the words: docs/style/terminology.md. Homes follow docs/project/page-plan.md.
+# Writers: add NEW terms in data/terms/<part-slug>.yaml, never here, and never define an id twice.
 
-# =============================================================== brand terms: the cast
+# =============================================================== the cast: brand terms
 dictionary:
   label: dictionary
-  name: dictionary (side information shared by many items)
+  name: dictionary (side information shared by a punnet)
   brand: true
   nick: the Almanac
   emblem: book
@@ -15,11 +17,11 @@ dictionary:
   cat: project
   home: tiny-files-trained-dictionary
   short: >-
-    Information shared by many items and sent to the receiver once, so that each item can be sent as a short delta instead. A zstd trained dictionary, a codebook and a set of per-channel means are all dictionaries.
+    Bytes shared by many cherries and held by the receiver before it asks for any of them, so that each cherry can be sent as a short delta. A zstd trained dictionary, a codebook, furrow statistics and a set of reference cherries are all dictionaries. Not a Python dict.
 
 delta:
   label: delta
-  name: delta δ (what is left to send once the dictionary is known)
+  name: delta δ (what is sent for one cherry once the dictionary is known)
   brand: true
   nick: the Remainder
   emblem: delta
@@ -27,45 +29,131 @@ delta:
   cat: project
   home: tiny-files-trained-dictionary
   short: >-
-    The bytes needed to rebuild one item exactly, given its dictionary. For a KV entry, its size is $\vdsz = \vrho\,\ve$.
+    The bytes sent for one cherry; with the dictionary they rebuild it bit for bit. Its size over the cherry's raw size is the delta share, $\vrho$.
 
-kv-blockdiff:
-  label: kv-blockdiff
-  name: kv-blockdiff (this project's proposal)
+kvblockdiff:
+  label: kvblockdiff
+  name: kvblockdiff (this project's proposal)
   brand: true
   nick: the Delta Store
   emblem: delta
   color: ["#b8441a", "#ff9a63"]
   cat: project
-  home: idea-mapping
+  home: app-mapping
   short: >-
-    Store a long KV history as per-block dictionaries plus tiny per-entry deltas, so that a cache miss moves a delta instead of a raw entry and the GPU rebuilds the entry bit for bit.
+    Serve the indexer's picks as deltas against punnet dictionaries kept on the GPU, so that a hot-cache miss moves a delta instead of a raw pick and the GPU rebuilds it bit for bit. One spelling, no hyphen.
 
-entry:
-  label: entry
-  name: entry (one token's KV numbers at one layer)
+orchard:
+  label: orchard
+  name: the orchard (all keys and values one sequence has grown)
   brand: true
-  nick: the Tile
-  emblem: tile
-  color: ["#6b4423", "#e3b48a"]
-  cat: project
-  home: landscape-kv-cache
-  ref: "{d} elements, {e} per entry; {NL} layers keep one per token"
+  nick: the Orchard
+  emblem: tree
+  color: ["#3f6b2a", "#9fd47a"]
+  cat: llm
+  home: landscape-orchard
+  ref: "{L} tokens × {NL} KV layers × {heads} heads × {headdim} elements, for keys and again for values"
   short: >-
-    All the key and value numbers of one token at one layer, $\vE_{\vl,\vt}$, of size $\ve$ bytes. The unit the indexer selects, the cache moves and our coder must rebuild.
+    Every key and every value of one sequence at every KV layer, kept in host memory: two arrays `k`, `v` of shape `(n_tokens, n_kv_layers, n_kv_heads, head_dim)`. It grows one row per token and is never pruned. A store, not a cache; the thing usually called the "KV cache".
 
-block:
-  label: block
-  name: block (b consecutive entries of one request at one layer)
+furrow:
+  label: furrow
+  name: furrow (one element position followed along the token axis)
   brand: true
-  nick: the Row
-  emblem: tiles
+  nick: the Furrow
+  emblem: furrow
+  color: ["#6b5a1e", "#d9c25e"]
+  cat: linalg
+  home: school-vectors
+  short: >-
+    One fixed `elem_id`, read across many vectors: `v[:, layer_id, head_id, elem_id]` in the orchard, one sensor's column in a table of readings. Per-furrow statistics are a location and a scale for each element position.
+
+pick:
+  label: pick
+  name: pick (one unit of demand, as the indexer names it)
+  brand: true
+  nick: the Pick
+  emblem: target
+  color: ["#7a3a1a", "#efa27a"]
+  cat: llm
+  home: landscape-sparse-attention
+  ref: "{k} picks per layer per decode step"
+  short: >-
+    One `(layer_id, token_pos_id)` the indexer selects at one decode step: the unit the hot cache holds and a miss fetches. What a pick covers depends on the LLM (one layer in DSA, a group of layers in GLM-5.1). A pick is served with one or more cherries.
+
+stretch:
+  label: stretch
+  name: stretch (a run of consecutive token positions)
+  brand: true
+  nick: the Stretch
+  emblem: ruler
   color: ["#8a6612", "#ecc75e"]
   cat: project
-  home: idea-dictionary-delta-block
-  ref: "{b} tokens per block in the examples: {b} entries of {e}"
+  home: scenario-stretch
+  ref: "{b} tokens per stretch in the examples"
   short: >-
-    $\vb$ consecutive tokens' entries of one request at one layer. A design knob of the algorithm (we choose $\vb$), not a property of the data.
+    `stretch_len` consecutive token positions of one sequence; `stretch_id = token_pos_id // stretch_len`. A knob we choose, not a fact of the data, and it says nothing about which tensor coordinates are in play.
+
+slice:
+  label: slice
+  name: slice (which coordinates of the orchard are in play)
+  brand: true
+  nick: the Slice
+  emblem: axes
+  color: ["#2a63b8", "#82b3ff"]
+  cat: project
+  home: scenario-slice
+  short: >-
+    The rule naming which part of the orchard a scenario compresses: keys or values or both, which layers, which heads, which elements; written as the Python slice it is, e.g. `v[:, [1, 3], 0, :]`.
+
+cherry:
+  label: cherry
+  name: cherry (one unit of ask-and-answer)
+  brand: true
+  nick: the Cherry
+  emblem: cherry
+  color: ["#b4212e", "#ff6b7a"]
+  cat: project
+  home: scenario-cherry
+  ref: "{e} per cherry when a cherry is one token's values at one layer"
+  short: >-
+    The unit the receiver asks for and the sender answers with one delta: a fixed-shape sub-array of the slice, e.g. `cherry.shape == (2, 256)`, `cherry_bytes == 512`. Every cherry of a scenario has the same shape, known to both sides in advance.
+
+punnet:
+  label: punnet
+  name: punnet (all the cherries one dictionary serves)
+  brand: true
+  nick: the Punnet
+  emblem: basket
+  color: ["#8b3a7a", "#e392d2"]
+  cat: project
+  home: scenario-punnet
+  short: >-
+    All cherries of one stretch under one slice and one cherry shape: what one `compress` call sees and what one dictionary serves. `punnet_size` cherries. Not an orchard and not a stretch.
+
+leash:
+  label: leash
+  name: the leash (the cap on dictionary bytes one cold decode may touch)
+  brand: true
+  nick: the Leash
+  emblem: leash
+  color: ["#c0392b", "#ff8a7a"]
+  cat: project
+  home: scenario-the-leash
+  short: >-
+    Rebuilding any one cherry from cold may read at most `leash × cherry_bytes` distinct bytes of the dictionary: 137 cherries' worth in the baseline scenario (293 and 1103 in variants). It keeps "compress the whole punnet as one stream" out of the game.
+
+compressor:
+  label: compressor
+  name: compressor (one concrete compress/decompress pair)
+  brand: true
+  nick: the Press
+  emblem: gear
+  color: ["#4d5f86", "#a9bbe6"]
+  cat: coding
+  home: scenario-compressors-and-stages
+  short: >-
+    One concrete pair of functions, `deltas, dictionary = compress(punnet)` and `decompress(delta, dictionary)`, built as a dataflow graph of stages. The campaigns wrote 126 of them.
 
 hot-cache:
   label: hot cache
@@ -78,19 +166,19 @@ hot-cache:
   home: landscape-hisparse
   ref: "2048 / 4096 / 8192 slots of {e} per layer in the examples"
   short: >-
-    HiSparse's small buffer of $\vB$ raw entries per request per layer, kept in GPU memory and managed least-recently-used. Entries found there are hits; the rest are misses fetched from host memory.
+    HiSparse's small buffer of $\vB$ raw picks per sequence per layer, kept in GPU memory and managed least-recently-used. Picks found there are hits; the rest are misses fetched from host memory over the link.
 
-dictionary-cache:
-  label: dictionary cache
-  name: dictionary cache (kv-blockdiff's resident dictionaries)
+dictionary-shelf:
+  label: dictionary shelf
+  name: dictionary shelf (kvblockdiff's resident dictionaries)
   brand: true
   nick: the Bookshelf
   emblem: shelf
   color: ["#6a4a9a", "#c0a4f2"]
   cat: project
-  home: idea-blockdiff-step-by-step
+  home: app-shelf-and-two-misses
   short: >-
-    kv-blockdiff's per-layer set of $\vnD$ block dictionaries kept in GPU memory. A miss in a block whose dictionary is on this shelf can be served by a delta.
+    kvblockdiff's per-layer set of $\vnD$ punnet dictionaries kept in GPU memory, one per stretch that is on fire. A miss in a stretch whose dictionary is on the shelf can be served by a delta.
 
 delta-miss:
   label: δ-miss
@@ -100,58 +188,71 @@ delta-miss:
   emblem: dart
   color: ["#0f7f5f", "#5fe0b8"]
   cat: project
-  home: idea-blockdiff-step-by-step
+  home: app-shelf-and-two-misses
   short: >-
-    A hot-cache miss whose block dictionary is resident, so only the delta ($\vrho\,\ve$ bytes) crosses the link and the GPU rebuilds the entry.
+    A hot-cache miss whose stretch's dictionary is on the shelf, so only the delta ($\vrho\,\ve$ bytes) crosses the link and the GPU rebuilds the pick.
 
 raw-miss:
   label: raw miss
-  name: raw miss (a miss served by the raw entry)
+  name: raw miss (a miss served by the raw pick)
   brand: true
   nick: the Crate
   emblem: crate
   color: ["#7a5636", "#d9b38a"]
   cat: project
-  home: idea-blockdiff-step-by-step
+  home: app-shelf-and-two-misses
   short: >-
-    A hot-cache miss whose block dictionary is not resident, so the full raw entry ($\ve$ bytes) crosses the link, exactly as in HiSparse today.
+    A hot-cache miss whose stretch's dictionary is not on the shelf, so the full raw pick ($\ve$ bytes) crosses the link, exactly as in HiSparse today.
 
-heavy-block:
-  label: heavy block
-  name: heavy block
+heavy-stretch:
+  label: heavy stretch
+  name: heavy stretch
   brand: true
   nick: the Anvil
   emblem: weight
   color: ["#4a4a63", "#b8b8dc"]
   cat: project
-  home: idea-heavy-blocks
+  home: app-on-fire
   short: >-
-    A block that holds many of the current step's selections. If selections pile into a few heavy blocks for many steps, keeping their dictionaries on the GPU is cheap.
+    A stretch that holds many of the current step's picks. If picks pile into a few heavy stretches for many steps, keeping their dictionaries on the shelf is cheap.
 
 victim-tier:
   label: victim tier
-  name: victim tier (a GPU tier of evicted entries' deltas)
+  name: victim tier (a GPU tier of evicted picks' deltas)
   brand: true
   nick: the Lifebuoy
   emblem: lifebuoy
   color: ["#c0392b", "#ff8a7a"]
   cat: project
-  home: missed-victim-tier
+  home: app-victim-tier
   short: >-
-    A second GPU tier holding the deltas of entries just evicted from the hot cache. If one of them is selected again it is rebuilt on the GPU instead of being fetched over the link.
+    A second GPU tier holding the deltas of picks just evicted from the hot cache. If one of them is picked again it is rebuilt on the GPU instead of being fetched over the link.
 
-reference-setting:
-  label: reference setting
-  name: reference setting (the frozen numbers for all napkin math)
+pin:
+  label: the Pin
+  name: the Pin (the deployment-side reference setting)
   brand: true
   nick: the Pin
   emblem: pin
   color: ["#3b6e8f", "#8fc6ea"]
   cat: project
-  home: landscape-reference-setting
-  ref: "{model} · {NL} layers · entries of {e} · link {Wlink} · {Mhbm} of GPU memory for KV"
+  home: landscape-reference-settings
+  ref: "{model} · {NL} KV layers · cherries of {e} · link {Wlink} · {Mhbm} of GPU memory for orchards"
   short: >-
-    One fixed rig used for every estimate: HiSparse's GLM-5.1 deployment converted to 8-bit storage — 78 sparse layers, top-2048 selection, 100K-token context, 0.64 KB entries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for KV.
+    One of the two frozen rigs every estimate is quoted for: HiSparse's GLM-5.1 deployment at 8-bit storage: 78 sparse layers, 2048 picks per layer per step, 100K-token context, 640-byte cherries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for orchards.
+
+bench:
+  label: the Bench
+  name: the Bench (the campaigns' data-side reference setting)
+  brand: true
+  nick: the Bench
+  emblem: flask
+  color: ["#5f8a52", "#a5cf8f"]
+  cat: project
+  home: landscape-reference-settings
+  ref: "{model} · {NL} KV layers · {heads} heads × {headdim} · {L}-token sequences · {gpu}"
+  short: >-
+    The second frozen rig: Qwen3.5-2B's six KV layers, 2 heads × 256, 512-byte cherries for one token's values at one layer, 225K-token coding-agent transcripts, FP8, on one RTX 5080 with a 50 GB/s link. No indexer ran on it, so picks, misses and step time are not measured there.
 
 hisparse:
   label: HiSparse
@@ -163,7 +264,7 @@ hisparse:
   cat: systems
   home: landscape-hisparse
   short: >-
-    The production system we build on. It keeps each request's full KV history in host memory and a small least-recently-used hot cache of raw entries per layer on the GPU. Model outputs are unchanged.
+    The serving system we build on. It keeps each sequence's orchard in host memory and a small least-recently-used hot cache of raw picks per layer on the GPU. The LLM's outputs are unchanged.
 
 indexer:
   label: indexer
@@ -175,7 +276,7 @@ indexer:
   cat: llm
   home: landscape-sparse-attention
   short: >-
-    A cheap scorer that, at every layer and every decode step, looks over all past positions and picks the $\vk$ that attention will read. Its picks are announced before any KV bytes are touched.
+    A cheap scorer that, at every layer and every decode step, looks over all past positions and names the $\vk$ picks attention will read. Its picks are announced before any bytes of the orchard are touched.
 
 lucky-louis:
   label: Lucky Louis property
@@ -187,43 +288,67 @@ lucky-louis:
   cat: project
   home: landscape-lucky-louis
   short: >-
-    From one decode step to the next, the indexer re-selects mostly the same positions, so a cache that bets on last round's winners keeps winning. It is about WHICH entries are wanted, not about their bytes.
+    From one decode step to the next, the indexer re-picks mostly the same positions, so a cache that bets on last round's winners keeps winning. It is about WHICH picks are wanted, not about their bytes.
 
 neighbour:
   label: neighbour similarity
-  name: KV's neighbour similarity (umbrella term)
+  name: neighbour similarity (umbrella term)
   brand: true
   nick: the Neighbours
   emblem: houses
   color: ["#8a5a1c", "#e3ad6c"]
   cat: project
-  home: idea-neighbour-similarity
+  home: hypotheses-neighbour-similarity
   short: >-
-    The family of hypotheses that an entry costs fewer bits to store exactly when a neighbouring entry (along some axis of the KV tensor) is already known. Members: fallen-apple (token axis) and upstairs (layer axis).
+    The family of hypotheses that a cherry costs fewer bits to store exactly when a neighbouring cherry along some axis of the orchard is already known. Members: fallen-apple (token axis), upstairs (layer axis), stereo (head axis), echo (repeats).
 
 fallen-apple:
   label: fallen-apple similarity
-  name: KV's fallen-apple similarity
+  name: fallen-apple similarity (token axis)
   brand: true
   nick: the Apple
   emblem: apple
   color: ["#c4281f", "#ff7466"]
   cat: project
-  home: idea-fallen-apple
+  home: hypotheses-fallen-apple
   short: >-
-    Hypothesis: an entry is cheaper to store exactly given an entry of the same layer a small token distance $\vgap$ away, and the closer the neighbour the cheaper. A curve over $\vgap$, not a threshold. 'The apple does not fall far from the tree.'
+    Hypothesis: a cherry is cheaper to store exactly given a cherry of the same layer a small token distance $\vgap$ away, and the closer the neighbour the cheaper. A curve over $\vgap$, not a threshold. Measured: weak, except in the middle layers.
 
 upstairs:
   label: upstairs similarity
-  name: KV's upstairs similarity
+  name: upstairs similarity (layer axis)
   brand: true
   nick: the Staircase
   emblem: stairs
   color: ["#2a63b8", "#82b3ff"]
   cat: project
-  home: idea-upstairs
+  home: hypotheses-upstairs
   short: >-
-    Hypothesis: the entry of the same token one layer up is partly predictable from the entry below it. Layers are the floors of a building; tokens run along each floor.
+    Hypothesis: the cherry of the same token one layer up is partly predictable from the one below it. Measured: small, and by kind of layer rather than by adjacency.
+
+stereo:
+  label: stereo similarity
+  name: stereo similarity (head axis)
+  brand: true
+  nick: the Stereo Pair
+  emblem: stereo
+  color: ["#0a7c78", "#45d3c6"]
+  cat: project
+  home: hypotheses-stereo
+  short: >-
+    The two KV heads of a layer at one token are two views of one vector: their elements have a cosine near zero, yet joining them into one cherry saves about 0.85 bit per element. The strongest structure the campaigns measured.
+
+echo:
+  label: echo similarity
+  name: echo similarity (repeats of the same token)
+  brand: true
+  nick: the Echo
+  emblem: echo
+  color: ["#5a6b1c", "#c3d96a"]
+  cat: project
+  home: hypotheses-echo
+  short: >-
+    An earlier occurrence of the same token, however far away, predicts a cherry far better than its neighbours do. Reference trees live on echoes; in the data the axis that mattered was repetition, not distance.
 
 cat-ladder:
   label: cat-thread ladder
@@ -233,33 +358,33 @@ cat-ladder:
   emblem: cat
   color: ["#7d4f9e", "#d0a6f0"]
   cat: project
-  home: idea-cat-thread-ladder
+  home: hypotheses-the-ladder
   short: >-
-    The intuitive argument for the project — an entry is less surprising against its thread than against everything, and least surprising against its own neighbourhood. Right in direction, leaky in its evidence, and harsh in its exchange rate.
+    The intuitive argument for the project: a cherry is less surprising against its own sequence than against everything, and least surprising against its own neighbourhood. Right in direction, leaky in its evidence, and harsh in its exchange rate.
 
 solo:
   label: solo
-  name: solo coding (rung 0, no dictionary)
+  name: solo (compressors with an empty dictionary)
   brand: true
   nick: the Hermit
   emblem: lantern
   color: ["#4d5f86", "#a9bbe6"]
   cat: project
-  home: homework-solo-coding
+  home: scenario-compressors-and-stages
   short: >-
-    Coding each entry by itself with one fixed, global, context-free code (per-channel histograms fit once on a calibration corpus). Worth about 1.1–1.3× on 8-bit KV. The baseline every dictionary must beat.
+    Coding each cherry by itself with one fixed, context-free table (per-furrow histograms fit once on a calibration corpus). 0.778 on the Bench's values. The baseline every dictionary must beat.
 
 loc:
-  label: loc
-  name: location dictionary (loc)
+  label: furrow statistics
+  name: furrow statistics (the loc stage)
   brand: true
   nick: the Anchor
   emblem: anchor
   color: ["#0a7c78", "#45d3c6"]
   cat: project
-  home: homework-loc
+  home: toolbox-furrow-statistics
   short: >-
-    The lightest dictionary: for each channel, a typical value (location) and spread (scale). Predict each element by its channel's location; store the exact difference. Costs about 2 entries' worth, no per-entry tax.
+    The lightest dictionary: for each furrow, a typical value (location) and a spread (scale). Predict each element by its furrow's location; store the exact difference. Weighs about two cherries, no per-cherry tax.
 
 klt:
   label: KLT
@@ -286,52 +411,52 @@ vq:
     Describe each vector by the index of the nearest of $\vC$ reference vectors (centroids) in a codebook. Losslessly, the index is a prediction and the exact residual is stored too; the index costs $\log_2 \vC$ bits per vector.
 
 sib:
-  label: sib
-  name: sibling dictionary (sib)
+  label: sibling
+  name: sibling prediction (the sib stage)
   brand: true
   nick: the Twin
   emblem: twins
   color: ["#cc3d5a", "#ff8aa0"]
   cat: project
-  home: homework-sib
+  home: toolbox-reference-cherries
   short: >-
-    Use another entry of the same block (the nearest "sibling") as the prediction, plus a pointer to it. Cheap side information, but the residual is the difference of two noisy vectors, so its noise doubles.
+    Use another cherry of the same punnet (the nearest "sibling") as the prediction, plus a pointer to it. Cheap side information, but the residual is the difference of two noisy vectors, so its noise doubles. The reference tree is its grown-up form.
 
 scope-global:
   label: global scope
-  name: global scope (one dictionary for all requests)
+  name: global scope (one dictionary for all sequences)
   brand: true
   nick: the Globe
   emblem: globe
   color: ["#22407e", "#8fb0f0"]
   cat: project
-  home: homework-scope
+  home: scenario-scope
   short: >-
-    A dictionary fit once, offline, on a calibration corpus and shared by every request. Free at serving time; captures only what all texts have in common.
+    A dictionary fit once, offline, on a calibration corpus and shared by every sequence. Free at serving time; captures only what all texts have in common.
 
-scope-request:
-  label: request scope
-  name: request scope (one dictionary per request)
+scope-sequence:
+  label: sequence scope
+  name: sequence scope (one dictionary per sequence)
   brand: true
-  nick: the Thread
+  nick: the Spool
   emblem: spool
   color: ["#8b3a7a", "#e392d2"]
   cat: project
-  home: homework-scope
+  home: scenario-scope
   short: >-
-    A dictionary fit on one request's own history, loaded once when the request is admitted. Captures what is special about this conversation.
+    A dictionary fit on one sequence's own slice, loaded once when the sequence is admitted. Captures what is special about this conversation. The same as stretch scope with one stretch as long as the sequence.
 
-scope-block:
-  label: block scope
-  name: block scope (one dictionary per block)
+scope-stretch:
+  label: stretch scope
+  name: stretch scope (one dictionary per punnet)
   brand: true
   nick: the Brick
   emblem: brick
   color: ["#b8502a", "#ff9a6e"]
   cat: project
-  home: homework-scope
+  home: scenario-scope
   short: >-
-    A dictionary per block of $\vb$ tokens. Fits the local neighbourhood best, but there are many of them per request and they must be cached on the GPU.
+    A dictionary per punnet, fit on the punnet itself. Fits the local neighbourhood best, but there are many of them per sequence and the ones in use must be on the GPU.
 
 curve:
   label: compressibility curve
@@ -341,9 +466,9 @@ curve:
   emblem: roofline
   color: ["#5a6b1c", "#c3d96a"]
   cat: project
-  home: questions-framework-b
+  home: scenario-the-score
   short: >-
-    For one algorithm at one block size, the points (dictionary cost per entry, delta size per entry) it reaches as its settings vary. The lower envelope over all algorithms is the roofline the data allows.
+    For one compressor family at one stretch length, the points (dictionary share, delta share) it reaches as its settings vary. The lower envelope over all compressors is the roofline the data allows.
 
 # =============================================================== information theory (Back to school)
 bit:
@@ -400,7 +525,7 @@ entropy:
   cat: info
   home: school-entropy
   short: >-
-    The average surprisal of a source, $\vH$, in bits per symbol — the fewest bits per symbol any lossless code can average.
+    The average surprisal of a source, $\vH$, in bits per symbol: the fewest bits per symbol any lossless code can average.
 
 order-0-entropy:
   label: order-0 entropy
@@ -416,7 +541,7 @@ perplexity:
   cat: info
   home: school-entropy
   short: >-
-    $2^{\vH}$ — entropy expressed as an "effective number of equally likely choices". Popular for language models; this site uses bits because bits × size = bytes on a wire.
+    $2^{\vH}$: entropy expressed as an "effective number of equally likely choices". Popular for language models; this site uses bits because bits × size = bytes on a link.
 
 side-information:
   label: side information
@@ -440,7 +565,7 @@ mutual-information:
   cat: info
   home: school-mutual-information
   short: >-
-    How many bits knowing $\vY$ saves when describing $\vX$, $\vI(\vX;\vY) = \vH(\vX) - \vH(\vX \mid \vY)$. Also called redundancy or, loosely, similarity — all three are the same number of bits.
+    How many bits knowing $\vY$ saves when describing $\vX$, $\vI(\vX;\vY) = \vH(\vX) - \vH(\vX \mid \vY)$. Also called redundancy or, loosely, similarity: all three are the same number of bits.
 
 redundancy:
   label: redundancy
@@ -456,7 +581,7 @@ cross-entropy:
   cat: info
   home: school-arithmetic
   short: >-
-    The average bits per symbol you pay when you code data with a model that is not exactly the data's true distribution. Always at least the entropy; the gap is the price of a wrong model.
+    The average bits per symbol you pay when you code data with a probability table that is not exactly the data's true distribution. Always at least the entropy; the gap is the price of a wrong table.
 
 # =============================================================== coding & compression
 code:
@@ -481,7 +606,7 @@ entropy-coder:
   cat: coding
   home: school-arithmetic
   short: >-
-    Any coder that spends about $-\log_2 \vp$ bits on a symbol of probability $\vp$, so its average rate approaches the entropy. Huffman, arithmetic coding and rANS are entropy coders.
+    Any stage that spends about $-\log_2 \vp$ bits on a symbol of probability $\vp$, so its average rate approaches the entropy. Huffman, arithmetic coding and rANS are entropy coders.
 
 arithmetic-coding:
   label: arithmetic coding
@@ -513,7 +638,7 @@ escape:
   cat: coding
   home: school-fixed-length
   short: >-
-    A value too big for the fixed width is "escaped" — marked, and stored separately in full, in an escape stream of (position, raw value) pairs. Rare escapes keep the common case short.
+    A value too big for the fixed width is "escaped": marked, and stored separately in full. Rare escapes keep the common case short.
 
 random-access:
   label: random access
@@ -521,7 +646,7 @@ random-access:
   cat: coding
   home: school-fixed-length
   short: >-
-    Being able to decode any single item on its own, without decoding what came before it. Stream coders (zstd, arithmetic coding) give it up; fixed-length codes keep it.
+    Being able to decode any single item on its own, without decoding what came before it. Stream compressors (zstd, arithmetic coding) give it up; fixed-length codes keep it. The leash is random access as a rule.
 
 zstd:
   label: zstd
@@ -575,9 +700,9 @@ context-modeling:
   label: context modelling
   name: context modelling
   cat: coding
-  home: missed-context-modeling
+  home: toolbox-context-modelling
   short: >-
-    Instead of subtracting a prediction, use it as context — pick the probability table for the value based on the prediction. It can never do worse than ignoring the prediction, but it is not fixed-length.
+    Instead of subtracting a prediction, use it as context: pick the probability table for the value based on the prediction. It can never do worse than ignoring the prediction, but it is not fixed-length.
 
 codebook:
   label: codebook
@@ -601,7 +726,7 @@ k-means:
   cat: stats
   home: school-clusters
   short: >-
-    The standard way to fit a codebook — alternately assign every vector to its nearest centroid and move each centroid to the average of its vectors, until nothing changes.
+    The standard way to fit a codebook: alternately assign every vector to its nearest centroid and move each centroid to the average of its vectors, until nothing changes.
 
 index-tax:
   label: index tax
@@ -649,7 +774,7 @@ amortization:
   cat: coding
   home: school-amortization
   short: >-
-    Spreading a one-time cost over everything that shares it. A dictionary of $\vw$ entries' worth shared by $\vb$ entries costs $8\vw/\vb$ bits per element.
+    Spreading a one-time cost over everything that shares it. A dictionary of $\vw$ cherries' worth shared by $\vb$ cherries costs $8\vw/\vb$ bits per element.
 
 # =============================================================== statistics
 mean:
@@ -666,7 +791,7 @@ variance:
   cat: stats
   home: school-residual-shapes
   short: >-
-    The average squared distance from the mean, $\vsigma^2$ — how spread out values are. Its square root $\vsigma$ is the standard deviation.
+    The average squared distance from the mean, $\vsigma^2$: how spread out values are. Its square root $\vsigma$ is the standard deviation.
 
 standard-deviation:
   label: standard deviation
@@ -690,7 +815,7 @@ laplace:
   cat: stats
   home: school-residual-shapes
   short: >-
-    A sharper, pointier cousin of the bell curve (two exponential tails) with scale $\vbeta$. Prediction residuals usually look like this, so coders model them with it.
+    A sharper, pointier cousin of the bell curve (two exponential tails) with scale $\vbeta$. Prediction residuals usually look like this, so compressors model them with it.
 
 r-squared:
   label: R²
@@ -722,7 +847,7 @@ covariance:
   cat: stats
   home: school-correlation
   short: >-
-    How much two channels move together. Correlation is covariance rescaled to −1 … +1. Correlated channels can partly predict each other.
+    How much two furrows move together. Correlation is covariance rescaled to −1 … +1. Correlated furrows can partly predict each other.
 
 covariance-matrix:
   label: covariance matrix
@@ -730,7 +855,15 @@ covariance-matrix:
   cat: linalg
   home: school-correlation
   short: >-
-    The $\vd \times \vd$ table of covariances between every pair of channels. Its eigenvectors are the KLT axes and its eigenvalues the spreads along them.
+    The $\vd \times \vd$ table of covariances between every pair of furrows. Its eigenvectors are the KLT axes and its eigenvalues the spreads along them.
+
+standardize:
+  label: standardize
+  name: standardizing a furrow
+  cat: stats
+  home: school-vectors
+  short: >-
+    Subtract a furrow's mean and divide by its standard deviation, so every furrow has mean 0 and spread 1 and furrows measured in different units can be compared.
 
 # =============================================================== vectors & linear algebra
 vector:
@@ -739,15 +872,15 @@ vector:
   cat: linalg
   home: school-vectors
   short: >-
-    An ordered list of $\vd$ numbers, e.g. one weather reading (temperature, humidity, …) or one entry. Each number is an element.
+    An ordered list of $\vd$ numbers, e.g. one weather reading (temperature, humidity, …) or one cherry. Each number is an element.
 
-channel:
-  label: channel
-  name: channel (one element position, across many vectors)
+element:
+  label: element
+  name: element (one stored number, and its position `elem_id`)
   cat: linalg
   home: school-vectors
   short: >-
-    One fixed position $\vc$ inside a vector, looked at across many vectors — like one sensor's column in a table of readings. 'Per-channel' statistics are computed separately for each position.
+    One number inside a vector, and its position `elem_id` from 0 to $\vd - 1$. "Bits per element" counts bits per stored number. The same position across many vectors is a furrow.
 
 rotation:
   label: rotation
@@ -771,7 +904,7 @@ pca:
   cat: linalg
   home: school-rotation
   short: >-
-    The statistics name for the KLT — rotate to the directions of greatest spread. Same mathematics, different tradition.
+    The statistics name for the KLT: rotate to the directions of greatest spread. Same mathematics, different tradition.
 
 low-rank:
   label: low rank
@@ -812,7 +945,7 @@ exponent:
   cat: numbers
   home: school-integers-floats
   short: >-
-    In a floating-point number, the exponent picks the power of two (the "binade") and the mantissa picks the position inside it. In model data the exponent is predictable and the low mantissa bits are close to noise.
+    In a floating-point number, the exponent picks the power of two (the "binade") and the mantissa picks the position inside it. In the orchard the exponent is predictable and the low mantissa bits are close to noise.
 
 bf16:
   label: BF16
@@ -820,7 +953,7 @@ bf16:
   cat: numbers
   home: school-integers-floats
   short: >-
-    A 16-bit floating-point format with 8 exponent bits and 7 mantissa bits — the usual working format of language models.
+    A 16-bit floating-point format with 8 exponent bits and 7 mantissa bits: the usual working format of LLMs.
 
 fp8:
   label: FP8
@@ -828,7 +961,7 @@ fp8:
   cat: numbers
   home: school-fp8
   short: >-
-    8-bit floats. E4M3 has 4 exponent and 3 mantissa bits (values up to 448), E5M2 has 5 and 2. Where KV-cache storage is heading.
+    8-bit floats. E4M3 has 4 exponent and 3 mantissa bits (values up to 448), E5M2 has 5 and 2. Where orchard storage is heading.
 
 quantization:
   label: quantization
@@ -836,7 +969,7 @@ quantization:
   cat: numbers
   home: school-fp8
   short: >-
-    Rounding numbers to the nearest point of a fixed grid of representable values. Done once, it defines the exact values our lossless coder must reproduce.
+    Rounding numbers to the nearest point of a fixed grid of representable values. Done once, it defines the exact values our lossless compressor must reproduce.
 
 index-space:
   label: index space
@@ -853,7 +986,7 @@ cache:
   cat: systems
   home: school-caches
   short: >-
-    A small, fast memory that keeps copies of some items from a big, slow one. A request found in it is a hit; otherwise a miss, and the item must be fetched.
+    A small, fast memory that keeps copies of some items from a big, slow one. An item found in it is a hit; otherwise a miss, and the item must be fetched. On this site the word stands alone only for real caches: the hot cache and the dictionary shelf. The orchard is not one.
 
 hit-miss:
   label: hit / miss
@@ -861,7 +994,7 @@ hit-miss:
   cat: systems
   home: school-caches
   short: >-
-    A hit is a request served from the cache; a miss must fetch the item from slower memory. The miss rate $\vm$ is the fraction of requests that miss.
+    A hit is an ask served from the cache; a miss must fetch the item from slower memory. The miss rate $\vm$ is the fraction of asks that miss.
 
 eviction:
   label: eviction
@@ -885,7 +1018,7 @@ reuse-distance:
   cat: systems
   home: school-reuse-distance
   short: >-
-    For a request, the number of distinct other items requested since this item's previous request. Under LRU with $\vB$ slots, a request misses exactly when its reuse distance is at least $\vB$.
+    For an ask, the number of distinct other items asked for since this item's previous ask. Under LRU with $\vB$ slots, an ask misses exactly when its reuse distance is at least $\vB$.
 
 miss-rate-curve:
   label: miss-rate curve
@@ -901,7 +1034,7 @@ belady:
   cat: systems
   home: school-reuse-distance
   short: >-
-    The clairvoyant eviction policy — evict the item whose next use is furthest in the future. Impossible in practice, but it bounds what any policy could achieve.
+    The clairvoyant eviction policy: evict the item whose next use is furthest in the future. Impossible in practice, but it bounds what any policy could achieve.
 
 bandwidth:
   label: bandwidth
@@ -909,7 +1042,7 @@ bandwidth:
   cat: systems
   home: school-wires
   short: >-
-    Bandwidth is how many bytes per second a link carries once data flows; latency is how long one request takes to start arriving. Many tiny scattered reads hurt both.
+    Bandwidth is how many bytes per second a link carries once data flows; latency is how long one ask takes to start arriving. Many tiny scattered reads hurt both.
 
 hbm:
   label: HBM
@@ -917,7 +1050,7 @@ hbm:
   cat: systems
   home: school-wires
   short: >-
-    High-bandwidth memory stacked next to the GPU — very fast, small (tens of GB) and expensive. The hot cache lives here.
+    High-bandwidth memory stacked next to the GPU: very fast, small (tens of GB) and expensive. The hot cache lives here.
 
 dram:
   label: host DRAM
@@ -925,7 +1058,7 @@ dram:
   cat: systems
   home: school-wires
   short: >-
-    The CPU's main memory — much larger than HBM, much slower to reach from the GPU. HiSparse keeps the full KV history here.
+    The CPU's main memory, much larger than HBM and much slower to reach from the GPU. HiSparse keeps every orchard here.
 
 pcie:
   label: PCIe
@@ -933,16 +1066,51 @@ pcie:
   cat: systems
   home: school-wires
   short: >-
-    The wire between host memory and the GPU. PCIe Gen5 ×16 carries about 64 GB/s each way (≈50 in practice) — roughly 100× less than HBM.
+    The wire between host memory and the GPU. PCIe Gen5 ×16 carries about 64 GB/s each way (≈50 in practice), roughly 100× less than HBM.
 
-# =============================================================== transformers & attention (Where things stand)
+link:
+  label: the link
+  name: the link (host memory ↔ GPU)
+  cat: systems
+  home: landscape-memory-wall
+  ref: "{Wlink} in both settings"
+  short: >-
+    The PCIe wire between the host memory that holds the orchards and the GPU; $\vWlink$ is its practical bandwidth. Every miss and every dictionary load crosses it. What the compression scenario calls "the channel" in textbooks is this wire.
+
+# =============================================================== transformers & attention (Part III)
 token:
   label: token
   name: token
   cat: llm
   home: landscape-tokens-and-decoding
   short: >-
-    The unit of text a language model reads and writes — a word or a piece of one. A model generates one token per decode step.
+    The unit of text an LLM reads and writes: a word or a piece of one. Its position in the sequence is `token_pos_id`. An LLM generates one token per decode step.
+
+sequence:
+  label: sequence
+  name: sequence (one LLM context)
+  cat: llm
+  home: landscape-tokens-and-decoding
+  ref: "{L} tokens in the examples"
+  short: >-
+    One conversation's tokens as the LLM sees them, from its first token to now; the thing that grows an orchard. A serving system runs many sequences at once. On this site the word never means "the order of cherries".
+
+llm:
+  label: LLM
+  name: the LLM (always named)
+  cat: llm
+  home: landscape-tokens-and-decoding
+  ref: "{model}"
+  short: >-
+    The language model whose orchard we study, always named: GLM-5.1 on the Pin, Qwen3.5-2B on the Bench. A stand-in LLM is one measured in place of the real target. Never "the model".
+
+stand-in-llm:
+  label: stand-in LLM
+  name: stand-in LLM (a small open LLM measured in place of the target)
+  cat: llm
+  home: landscape-reference-settings
+  short: >-
+    A small open LLM whose orchard is measured in place of the real sparse-attention target: Qwen3.5-2B on the Bench. Whether its statistics transfer to GLM-5.1 is itself a risk.
 
 prefill-decode:
   label: prefill / decode
@@ -957,17 +1125,35 @@ layer:
   name: layer
   cat: llm
   home: landscape-tokens-and-decoding
-  ref: "{NL} layers keep a KV cache"
+  ref: "{NL} KV layers"
   short: >-
-    One of the $\vNL$ stacked processing stages of a transformer. Each layer has its own attention and its own part of the KV cache.
+    One of the stacked processing stages of a transformer, numbered by `layer_id`. Each layer has its own attention and, if it is a KV layer, its own rows of the orchard.
+
+kv-layer:
+  label: KV layer
+  name: KV layer (a layer that keeps keys and values)
+  cat: llm
+  home: landscape-tokens-and-decoding
+  ref: "{NL} of them"
+  short: >-
+    A layer that keeps keys and values for every token. In hybrid LLMs only some layers do: 6 of Qwen3.5-2B's 24; the others carry a fixed-size state and have nothing per token to store. The orchard's `layer_id` counts KV layers only.
+
+hidden-state:
+  label: hidden state
+  name: hidden state
+  cat: llm
+  home: landscape-tokens-and-decoding
+  short: >-
+    The vector `x` a transformer carries for each token between layers; keys, values and queries are fixed linear projections of it.
 
 tpot:
   label: TPOT
   name: time per output token (TPOT)
   cat: llm
   home: landscape-tokens-and-decoding
+  ref: "{tpot}"
   short: >-
-    How long one decode step takes for a request — 30 ms in the reference setting. Every byte moved per step must fit into this time.
+    How long one decode step takes for a sequence: 30 ms on the Pin. Every byte moved per step must fit into this time.
 
 attention:
   label: attention
@@ -977,39 +1163,38 @@ attention:
   short: >-
     The step where a token looks back. Its query vector is compared with every stored key; the scores become weights; the output is the weighted mix of the stored values.
 
+query:
+  label: query
+  name: query
+  cat: llm
+  home: landscape-attention
+  short: >-
+    The vector `q` the current token uses to score every stored key at one layer; one per query head. Queries are not stored, which is why the dataset has none unless they are recomputed.
+
 head:
-  label: head
-  name: attention head and GQA
+  label: KV head
+  name: KV head and GQA
   cat: llm
   home: landscape-attention
   ref: "{heads} KV heads of {headdim} elements per layer"
   short: >-
-    Attention is split into several heads that work in parallel on slices of the vectors. With grouped-query attention (GQA) several query heads share one key/value head, which shrinks the KV cache.
-
-kv-cache:
-  label: KV cache
-  name: KV cache
-  cat: llm
-  home: landscape-kv-cache
-  ref: "{L} tokens × {NL} layers × {e} per entry per request"
-  short: >-
-    The stored keys and values of every previous token at every layer, kept so they need not be recomputed at each decode step. It grows by one entry per layer per token.
+    Attention is split into several heads that work in parallel. With grouped-query attention (GQA) several query heads share one key/value head, `head_id`; only the KV heads are stored, which shrinks the orchard.
 
 rope:
   label: RoPE
   name: rotary position embedding (RoPE)
   cat: llm
-  home: landscape-kv-cache
+  home: landscape-rope-and-mla
   short: >-
-    The way many models tell attention where a token sits — by rotating pairs of key and query channels by an angle that grows with the position. Keys are more regular before this rotation than after it.
+    The way many LLMs tell attention where a token sits: by rotating pairs of key and query elements by an angle that grows with the position. Keys are more regular before this rotation than after it.
 
 mla:
   label: MLA
   name: multi-head latent attention (MLA)
   cat: llm
-  home: landscape-kv-cache
+  home: landscape-rope-and-mla
   short: >-
-    DeepSeek's variant of attention that stores one compressed latent vector per token per layer instead of separate keys and values. Still one fixed-size entry per position.
+    DeepSeek's variant of attention that stores one compressed latent vector per token per layer instead of separate keys and values. Still one fixed-size row of the orchard per token per layer.
 
 sparse-attention:
   label: sparse attention
@@ -1017,7 +1202,7 @@ sparse-attention:
   cat: llm
   home: landscape-sparse-attention
   short: >-
-    Attention that reads only $\vk$ selected past entries per layer per step (chosen by an indexer) instead of all of them. Compute stops growing with context; storage does not.
+    Attention that reads only $\vk$ picks per layer per step (named by an indexer) instead of every stored token. Compute stops growing with context; storage does not.
 
 dsa:
   label: DSA
@@ -1027,99 +1212,433 @@ dsa:
   short: >-
     The top-k sparse attention of DeepSeek-V3.2 (also used by GLM-5.x), with a small trained "lightning indexer" that scores every past token cheaply.
 
-# =============================================================== this project's own words (not brand)
-weight:
-  label: dictionary weight
-  name: dictionary weight w
+# =============================================================== the compression scenario (Part IV)
+sender-receiver:
+  label: sender / receiver
+  name: sender and receiver
   cat: project
-  home: idea-dictionary-delta-block
+  home: scenario-one-cherry-at-a-time
   short: >-
-    A dictionary's size measured in entries' worth, $\vw$, so it is $\vDsz = \vw\,\ve$ bytes. Amortized over a block it costs $8\vw/\vb$ bits per element.
+    The two ends of the scenario: the sender holds the orchard in host memory and prepares dictionaries and deltas at leisure; the receiver on the GPU side asks for one cherry at a time and must rebuild it from its delta and the dictionary it already holds.
 
-delta-ratio:
-  label: delta ratio
-  name: delta ratio ρ
+scenario:
+  label: scenario
+  name: scenario (one fully specified compression problem)
   cat: project
-  home: idea-dictionary-delta-block
+  home: scenario-one-cherry-at-a-time
   short: >-
-    $\vrho = \vdsz / \ve$ — how much a miss shrinks. For 8-bit storage $\vrho \approx \vbpe/8$ (the rate also counts the amortized dictionary, which is not part of the delta).
+    The tuple `(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)`. Written in prose as `V · layers 1,3 · head 0 · cherry (2, 256) · stretch 4096 · leash 137`. Two scenarios with the same slice and different cherry shapes are different problems.
 
-delta-miss-fraction:
-  label: δ-miss fraction
-  name: δ-miss fraction f_D
+cherry-shape:
+  label: cherry shape
+  name: cherry shape (how the slice is diced into cherries)
   cat: project
-  home: idea-blockdiff-step-by-step
+  home: scenario-cherry
   short: >-
-    $\vfD$, the share of misses that are δ-misses (their dictionary was resident). Decided by the residency policy and by where misses land.
+    The dicing rule of a scenario: `cherry_shape == (256,)` makes one cherry per head vector, `(2, 256)` one per token across two layers or heads, `(6, 2, 256)` one per token across six layers. The other half, with the slice, of what used to be called an "entry split".
+
+contract:
+  label: the contract
+  name: the contract (what makes a compression valid)
+  cat: project
+  home: scenario-the-contract
+  short: >-
+    `deltas, dictionary = compress(punnet)` once on the sender's side; then `decompress(deltas[i], dictionary) == punnet[i]` for every cherry `i`, bit for bit, decoded cold. Anything less is not a result.
+
+cold-decode:
+  label: cold decode
+  name: cold decode
+  cat: project
+  home: scenario-the-contract
+  short: >-
+    Rebuilding one cherry from nothing but its own delta, the dictionary and the scenario's known constants, without having decoded any other cherry first. The way the harness checks every cherry and counts its reads.
+
+mdl-ratio:
+  label: MDL ratio
+  name: MDL ratio
+  cat: info
+  home: scenario-the-score
+  short: >-
+    (dictionary bytes + all delta bytes) ÷ raw bytes of the punnet, so $\vxshare + \vrho$ in units of a raw cherry. 1.0 means no compression; 8 × the ratio is bits per element.
+
+dictionary-share:
+  label: dictionary share
+  name: dictionary share x
+  cat: info
+  home: scenario-the-score
+  short: >-
+    The dictionary's bytes over the punnet's raw bytes, $\vxshare = \vw/\vb$. Bookkeeping, not a measure of shared information: a compressor may file reference cherries in the dictionary or in deltas and the ratio barely moves.
+
+delta-share:
+  label: delta share
+  name: delta share ρ
+  cat: info
+  home: scenario-the-score
+  short: >-
+    The mean delta over a raw cherry, $\vrho$, averaged over every cherry of the punnet, empty deltas included. For 8-bit storage it is the bits per element of the deltas alone, divided by 8. The number a miss on the link cares about.
 
 bpe:
-  label: bpe
+  label: bits per element
   name: bits per element (bpe)
   cat: project
-  home: homework-the-budget
+  home: scenario-the-score
   short: >-
-    The rate of a lossless code in bits per 8-bit element, everything included (residuals, per-entry tax, amortized dictionary). Raw storage is 8; $\vrho = \vbpe/8$.
+    The rate of a lossless compressor per 8-bit element, everything included (residuals, per-cherry tax, the dictionary spread over its punnet). Raw storage is 8; bits per element = 8 × MDL ratio.
+
+reads:
+  label: reads
+  name: reads (dictionary bytes one cold decode touched)
+  cat: project
+  home: scenario-the-leash
+  short: >-
+    The distinct dictionary bytes the decoder touched while rebuilding one cherry from cold, in cherries' worth; re-reads count once and the cherry's own delta is free. Must stay under the leash for every cherry, not on average.
 
 scope:
   label: dictionary scope
   name: dictionary scope
   cat: project
-  home: homework-scope
+  home: scenario-scope
   short: >-
-    What a dictionary is fit on and shared by — global (all requests), request (one conversation) or block (b tokens). The one axis that organizes the whole design space.
+    What a dictionary is fit on and shared by: global (all sequences), sequence (one conversation) or stretch (one punnet). The one axis that decides who pays for the dictionary.
 
-scope-gain:
-  label: scope gain
-  name: scope gains g_req and g_blk
+weight:
+  label: dictionary weight
+  name: dictionary weight w
   cat: project
-  home: homework-scope
+  home: scenario-scope
   short: >-
-    The bits per element saved by narrowing the scope one rung — from global to request ($\vgainreq$) and from request to block ($\vgainblk$), for the same type of dictionary.
+    A dictionary's size measured in cherries' worth, $\vw$, so it is $\vDsz = \vw\,\ve$ bytes. Spread over a punnet of $\vb$ cherries it costs $8\vw/\vb$ bits per element.
 
-entropy-rate:
-  label: entropy rate
-  name: entropy rate (the scientific number)
+calibration-set:
+  label: calibration corpus
+  name: calibration corpus (data kept apart for the global scope)
   cat: project
-  home: homework-two-rates
+  home: scenario-scope
   short: >-
-    The rate an ideal entropy coder would reach on the residuals, plus the per-entry tax and the amortized dictionary. What arithmetic coding or rANS would achieve.
+    Sequences kept apart from the evaluation data. Every global-scope dictionary and every solo table is fit on them. If they overlap the evaluation data, the global scope cheats.
 
-fixed-length-rate:
-  label: fixed-length rate
-  name: fixed-length rate (the engineering number)
-  cat: project
-  home: homework-two-rates
+stage:
+  label: stage
+  name: stage (one node of a compressor's graph)
+  cat: coding
+  home: scenario-compressors-and-stages
   short: >-
-    The rate of a fixed-length code with escapes on the residuals, plus the per-entry tax and the amortized dictionary. What a fast GPU decoder achieves, and directly the delta size of the store.
-
-lever:
-  label: lever
-  name: the two levers (cheaper misses, cheaper slots)
-  cat: project
-  home: idea-two-levers
-  short: >-
-    Lever 1 makes misses cheaper (move $\vrho\,\ve$ instead of $\ve$ over the link); lever 2 makes hot-cache slots cheaper (store heavy blocks as deltas in GPU memory).
-
-roofline:
-  label: roofline
-  name: roofline (of the compressibility curve)
-  cat: project
-  home: questions-framework-b
-  short: >-
-    The lower envelope of the compressibility curves of all algorithms tried — the best trade-off between dictionary cost and delta size that the data allows.
+    One step of a compressor's dataflow graph: a bit-field split, a predictor (furrow statistics, a reference cherry, a linear prediction, a basis, a codebook), the exact residual, a quantiser on the dictionary side, an entropy coder or a fixed-length code, the layout. Part V is the catalogue.
 
 harness:
   label: harness
-  name: the measurement harness
+  name: the harness (the referee)
   cat: project
-  home: plan-harness-interface
+  home: scenario-the-harness
   short: >-
-    The small program that runs every dictionary algorithm through the same interface, charges every byte by the same rule, runs the controls and plots the results.
+    The program every compressor runs through: it checks the contract for every cherry in a fresh process, counts every byte by one rule, measures reads against the leash, pairs scores on the same punnets and records every trial in a ledger no one may edit.
 
 shuffle-control:
   label: shuffle control
   name: shuffle control
   cat: project
-  home: homework-rehearsal
+  home: scenario-the-harness
   short: >-
     Rerun the measurement after shuffling tokens across sequences. Any gain that depends on neighbours being neighbours must vanish; a gain that survives is a bug.
+
+verified-result:
+  label: verified
+  name: verified result
+  cat: project
+  home: scenario-the-harness
+  short: >-
+    A score whose every cherry was rebuilt bit for bit by a separate decoder-only process from the stored bytes alone, with its reads counted. Anything else is a quick trial, a code-length estimate or a bound.
+
+# =============================================================== the toolbox (Part V)
+cherry-tax:
+  label: per-cherry tax
+  name: per-cherry tax (side information sent with every cherry)
+  cat: project
+  home: toolbox-the-bill
+  short: >-
+    Bits a stage must put into every delta on top of its residual: which centroid ($\log_2 \vC$ bits), which reference cherry ($\log_2 \vb$ bits), a flag. Spread over the cherry's $\vd$ elements it is the $\vtax$ of the bill.
+
+bill:
+  label: the bill
+  name: the bill (rate = residual bits + per-cherry tax + dictionary share)
+  cat: project
+  home: toolbox-the-bill
+  short: >-
+    Every compressor's rate in bits per element has three lines: what the residuals cost, what each cherry carries besides its residual, and the dictionary's bytes spread over its punnet ($8\vw/\vb$). The harness charges all three, always.
+
+reference-cherry:
+  label: reference cherry
+  name: reference cherry
+  cat: coding
+  home: toolbox-reference-cherries
+  short: >-
+    Another cherry of the same punnet, stored in the dictionary or already decodable, that a compressor uses as the prediction for a cherry; the delta then codes the exact difference. The sibling stage grown up.
+
+reference-tree:
+  label: reference tree
+  name: reference tree
+  cat: coding
+  home: toolbox-reference-cherries
+  short: >-
+    The links from every cherry of a punnet to its reference cherry; the best compressors use the punnet's minimum spanning tree by distance, so each cherry hangs off its closest relative, usually an echo.
+
+linear-prediction:
+  label: linear prediction
+  name: linear prediction across elements
+  cat: coding
+  home: toolbox-linear-prediction
+  short: >-
+    Guessing an element's value from elements already decoded in the same cherry, as a weighted sum; the table of which elements and which weights is stored once per punnet.
+
+bit-field-split:
+  label: bit-field split
+  name: bit-field split (sign and exponent one way, mantissa another)
+  cat: coding
+  home: toolbox-bit-fields
+  short: >-
+    A stage that separates the bit fields of each FP8 element and routes them to different parts of the compressor's graph: the predictable sign and exponent to a predictor and entropy coder, the noisy mantissa to a cheaper path.
+
+grid-aware-model:
+  label: grid-aware table
+  name: grid-aware probability table
+  cat: coding
+  home: toolbox-bit-fields
+  short: >-
+    A probability table that describes the value, not the code number: a Laplace bump in value units, centred on the prediction, whose probability for each 8-bit code is the area over that code's grid cell. Needed on E4M3, where a single bump in index space fits badly.
+
+entropy-rate:
+  label: entropy rate
+  name: entropy rate (the scientific number)
+  cat: project
+  home: toolbox-two-rates
+  short: >-
+    The rate an ideal entropy coder would reach on the residuals, plus the per-cherry tax and the amortized dictionary. What arithmetic coding or rANS would achieve.
+
+fixed-length-rate:
+  label: fixed-length rate
+  name: fixed-length rate (the engineering number)
+  cat: project
+  home: toolbox-two-rates
+  short: >-
+    The rate of a fixed-length code with escapes on the residuals, plus the per-cherry tax and the amortized dictionary. What a fast GPU decoder achieves, and directly the delta size on the link.
+
+code-length-estimate:
+  label: code-length estimate
+  name: code-length estimate
+  cat: info
+  home: toolbox-bounds
+  short: >-
+    The code length a probability table would reach, computed exactly on the data without building the compressor; a lead, not a result. The campaigns' "exact model" numbers.
+
+# =============================================================== the application (Part VI)
+delta-miss-fraction:
+  label: δ-miss fraction
+  name: δ-miss fraction f_D
+  cat: project
+  home: app-shelf-and-two-misses
+  short: >-
+    $\vfD$, the share of misses that are δ-misses (their stretch's dictionary was on the shelf). Decided by the residency policy and by where misses land.
+
+lever:
+  label: lever
+  name: the two levers (cheaper misses, cheaper slots)
+  cat: project
+  home: app-two-levers
+  short: >-
+    Lever 1 makes misses cheaper (move $\vrho\,\ve$ instead of $\ve$ over the link); lever 2 makes hot-cache slots cheaper (keep heavy stretches as deltas in GPU memory).
+
+roofline:
+  label: roofline
+  name: roofline (of the compressibility curve)
+  cat: project
+  home: scenario-the-score
+  short: >-
+    The lower envelope of the compressibility curves of all compressors tried: the best trade-off between dictionary share and delta share that the data allows.
+
+interesting-range:
+  label: the interesting range
+  name: the interesting range of dictionaries
+  cat: project
+  home: app-two-boring-corners
+  short: >-
+    Dictionaries large enough to carry a punnet's shared structure and too large to keep resident for every stretch: kept in host memory, brought to the GPU for the stretches the indexer keeps wanting.
+
+on-fire:
+  label: on fire
+  name: an on-fire stretch
+  cat: project
+  home: app-on-fire
+  short: >-
+    A stretch whose popularity crossed the threshold, so its dictionary has been loaded onto the shelf and its misses travel as deltas; the opposite state is ice.
+
+popularity:
+  label: popularity
+  name: stretch popularity
+  cat: systems
+  home: app-on-fire
+  short: >-
+    The running count of misses (or picks) a stretch has received over a window of recent decode steps; the statistic that decides which stretches are on fire.
+
+decode-throughput:
+  label: tokens per second
+  name: decode throughput per GPU
+  cat: systems
+  home: app-bits-to-dollars
+  short: >-
+    Output tokens one GPU produces per second across all its concurrent sequences: the sequences it serves divided by the time per output token, $\vtps = \vN / \vtpot$. About 3,630 for HiSparse on the Pin.
+
+cost-per-token:
+  label: cost per million tokens
+  name: cost per million output tokens
+  cat: project
+  home: app-bits-to-dollars
+  short: >-
+    The price of one GPU-hour divided by the tokens that hour produces, scaled to a million. The price is an assumption; the ratio between two designs is not.
+
+# =============================================================== hypotheses (Part VII)
+leak:
+  label: the leak
+  name: the leak (hit rate is about queries, not bytes)
+  cat: project
+  home: hypotheses-the-leak
+  short: >-
+    The flaw in the intuitive argument: HiSparse's high hit rates follow from slowly drifting queries and say nothing about whether the picks' bytes are alike. A Monte Carlo with i.i.d. keys reproduces the hit rates with zero compressibility.
+
+trap:
+  label: the trap
+  name: the trap (the exchange rate is harsh)
+  cat: project
+  home: hypotheses-the-trap
+  short: >-
+    Explaining 75 % of a value's variance saves only one bit of eight; 94 % saves two. A lossless compressor is paid in variance explained at a harsh rate, and the noise floor is paid in full.
+
+# =============================================================== the measurements (Part VIII)
+campaign:
+  label: campaign
+  name: research campaign
+  cat: project
+  home: measured-dispatch
+  short: >-
+    One run of the autonomous research loop: several AI researcher agents writing and testing compressors against one harness, under one set of rules, with every trial recorded. C1 was the night of 29–30 October 2026; C2 the day of 30 October.
+
+screen:
+  label: screen
+  name: screen
+  cat: project
+  home: measured-rules-of-the-game
+  short: >-
+    A fixed, cheap test: a tenth of the stretches of two (or five) sequences at one scenario. Two screens read different punnets, so their scores cannot be subtracted.
+
+same-window:
+  label: same-window comparison
+  name: same-window comparison
+  cat: stats
+  home: measured-cutting-the-tensor
+  short: >-
+    Two compressors or two cherry shapes run on exactly the same elements; the only fair way to rank cherry shapes.
+
+shared-table:
+  label: shared table
+  name: shared table
+  cat: project
+  home: measured-where-the-bits-come-from
+  short: >-
+    A large data structure specific to no sequence and no punnet, prepared in advance and held by both sides, trained on an independent dataset; legitimate by the human's ruling, used by no compressor yet.
+
+paired-difference:
+  label: paired difference
+  name: paired difference
+  cat: stats
+  home: measured-signal-or-noise
+  short: >-
+    One compressor's score minus another's on exactly the same punnets, per sequence; its spread over sequences is the noise that matters.
+
+punnet-redundancy:
+  label: punnet redundancy
+  name: punnet redundancy (shared information per element)
+  cat: info
+  home: measured-what-the-half-means
+  short: >-
+    The bits per element that the cherries of a punnet share: the sum of their solo entropies minus their joint entropy, per element. The most any per-punnet compressor can save over solo coding.
+
+# =============================================================== papers (Part IX)
+data-path:
+  label: data path
+  name: data path (where compressed orchard bytes travel, and how they are read)
+  cat: systems
+  home: papers-reading-guide
+  short: >-
+    Where a compressed orchard travels and how it is read back: a bulk transfer between machines, a network fetch of a stored prefix, the GPU-resident footprint, or the sparse-decode miss path of scattered single-cherry reads. The path, more than the statistics, decides what a compressor may look like.
+
+disaggregation:
+  label: disaggregated serving
+  name: disaggregated serving (prefill and decode on separate GPUs)
+  cat: systems
+  home: papers-splitzip
+  short: >-
+    Running the prefill of a prompt and the decoding of its answer on different GPUs or machines. The finished orchard of the prompt must then be shipped from the prefill side to the decode side, in one bulk transfer per sequence.
+
+slepian-wolf:
+  label: Slepian–Wolf
+  name: Slepian–Wolf coding (side information only at the decoder)
+  cat: info
+  home: papers-classics
+  short: >-
+    The 1973 theorem that $\vX$ can be sent losslessly at $\vH(\vX \mid \vY)$ bits even when only the receiver knows $\vY$: the sender groups messages into bins and the receiver uses $\vY$ to pick the right member. Its lossy sibling is Wyner–Ziv coding.
+
+plus-factorization:
+  label: PLUS factorization
+  name: PLUS factorization (a rotation as integer-reversible steps)
+  cat: linalg
+  home: papers-classics
+  short: >-
+    Writing a matrix as a reordering of its rows (P) times three triangular factors (L, U, S) whose diagonals hold only ones when the matrix is a rotation. Each factor can be applied to integers with rounding and undone exactly: lifting for whole matrices.
+
+scale-group:
+  label: scale group
+  name: scale group (numbers that share one rounding ruler)
+  cat: numbers
+  home: papers-kivi
+  short: >-
+    The set of numbers that are rounded with one shared ruler, one smallest value and one step size. Per-furrow rounding makes each scale group one furrow over a run of tokens; per-token rounding makes it one token's vector.
+
+sparse-coding:
+  label: sparse coding
+  name: sparse coding (a vector as a few atoms of a large dictionary)
+  cat: linalg
+  home: papers-lexico
+  short: >-
+    Describe a vector as a weighted sum of a few vectors ("atoms") picked from a large, fixed dictionary, and store only which atoms and their weights. VQ is the special case of one atom with weight 1; a KLT uses every axis with a weight.
+
+# =============================================================== the plan (Part X)
+big-question:
+  label: big-picture question
+  name: big-picture question (Q1–Q3)
+  cat: project
+  home: plan-where-we-stand
+  short: >-
+    An open-ended question the project exists to get closer to: Q1 (what structure does the orchard have, in bits?), Q2 (can a dictionary-and-delta store beat raw storage on the miss path?), Q3 (do picks pile into few stretches?). Too wide to answer with one experiment.
+
+framework-question:
+  label: experiment question
+  name: experiment question (one scenario, one decision)
+  cat: project
+  home: plan-principles
+  short: >-
+    A question asked together with its scenario, its controls and each possible outcome's meaning, all written down before any data.
+
+trace-replay:
+  label: trace replay
+  name: trace replay (re-running caches on recorded picks)
+  cat: systems
+  home: plan-queries-and-picks
+  short: >-
+    Recording which picks a (stand-in) indexer names at every decode step, then re-running the hot cache and the dictionary shelf on that list. It measures miss rates, the δ-miss fraction and dictionary loads without running any kernel.
+
+decision-rule:
+  label: decision rule
+  name: decision rule
+  cat: project
+  home: plan-decision-rules
+  short: >-
+    The table, written before any data, that maps an experiment's readings to what happens next.

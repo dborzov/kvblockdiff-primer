@@ -1,6 +1,6 @@
 /* Page shell behaviour: theme, navigation drawer, keyboard paging, reading progress,
    the reference-setting switch (the Pin / the Bench: KV.setting, KV.ref, KV.setSetting, event kv:setting),
-   and the hover/tap reminders for glossary terms (.term) and math symbols (.sym). */
+   and the hover/tap reminders for glossary terms (.term), math symbols (.sym) and Python notation (.nota). */
 (function () {
   'use strict';
   const KV = (window.KV = window.KV || {});
@@ -86,14 +86,16 @@
   }
   KV.setSetting = id => applySetting(id, true);
 
-  // the "In the Pin: … · in the Bench: …" line of a reminder; a template without placeholders is shown as it is
-  function refLine(tpl) {
+  // the "In the Pin: … · in the Bench: …" line of a reminder; a template without placeholders is shown as it is.
+  // With a label (the notation reminders' "shape", "bytes"): "shape (in the Pin): … · in the Bench: …".
+  function refLine(tpl, label) {
     const cur = SETTINGS[KV.setting];
     if (!tpl || !cur) return '';
-    if (!FMT.templateKeys(tpl).length) return `<div class="pop-ref">${esc(tpl)}</div>`;
+    const lead = label ? `<b>${esc(label)}` : '';
+    if (!FMT.templateKeys(tpl).length) return `<div class="pop-ref">${lead ? lead + ':</b> ' : ''}${esc(tpl)}</div>`;
     const others = SETTING_IDS.filter(id => id !== KV.setting)
       .map(id => `<span class="pop-ref-other"> · in ${esc(SETTINGS[id].label)}: ${esc(KV.refText(tpl, id))}</span>`).join('');
-    return `<div class="pop-ref"><b>In ${esc(cur.label)}:</b> ${esc(KV.refText(tpl))}${others}</div>`;
+    return `<div class="pop-ref">${lead ? `${lead} (in ${esc(cur.label)}):</b>` : `<b>In ${esc(cur.label)}:</b>`} ${esc(KV.refText(tpl))}${others}</div>`;
   }
 
   // ------------------------------------------------------------ reminders (popovers)
@@ -133,6 +135,20 @@
         + refLine(s.ref),
     };
   }
+  function notaHtml(el) {
+    const id = el.getAttribute('data-nota');
+    const n = (KV.notation || {})[id];
+    if (!n) return null;
+    const home = n.home && (KV.pages || {})[n.home];
+    return {
+      color: 'var(--nota)',
+      html: `<div class="pop-head"><span><code class="pop-code">${esc(n.code)}</code><div class="pop-name">${n.name}</div></span>`
+        + `<span class="pop-cat">Python notation</span></div>`
+        + `<div class="pop-short">${n.short}</div>`
+        + refLine(n.shape, 'shape') + refLine(n.bytes, 'bytes')
+        + (home ? `<a class="pop-go" href="${esc(home.url)}">Introduced in ${esc(home.num)} ${esc(home.title)} →</a>` : ''),
+    };
+  }
   function place(anchor) {
     const r = anchor.getBoundingClientRect();
     const pr = pop.getBoundingClientRect();
@@ -142,7 +158,7 @@
     pop.style.left = x + 'px'; pop.style.top = y + 'px';
   }
   function show(el) {
-    const info = el.classList.contains('term') ? termHtml(el) : symHtml(el);
+    const info = el.classList.contains('term') ? termHtml(el) : el.classList.contains('nota') ? notaHtml(el) : symHtml(el);
     if (!info) return;
     clearTimeout(hideTimer);
     if (!pop) {
@@ -159,7 +175,7 @@
   }
   function hide() { if (pop) pop.hidden = true; popFor = null; }
   function hideSoon() { clearTimeout(hideTimer); hideTimer = setTimeout(hide, 220); }
-  function remindable(target) { return target.closest && target.closest('.term, .sym'); }
+  function remindable(target) { return target.closest && target.closest('.term, .sym, .nota'); }
 
   function wireReminders() {
     if (HOVER) {
@@ -189,6 +205,8 @@
       }, true);
     }
     addEventListener('scroll', () => { if (popFor && HOVER) hide(); else if (popFor) place(popFor); }, { passive: true });
+    // a reminder is built when it opens; one that is open while the setting switches is rebuilt for the new setting
+    D.addEventListener('kv:setting', () => { if (popFor) show(popFor); });
     addEventListener('keydown', e => { if (e.key === 'Escape') { hide(); openNav(false); } });
   }
 

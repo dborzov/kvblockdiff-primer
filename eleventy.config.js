@@ -1,15 +1,16 @@
 // Build configuration.
-//   content/   Markdown pages (prose only)          data/     parts, glossary terms, math symbols (YAML)
+//   content/   Markdown pages (prose only)          data/     parts, glossary terms, math symbols, Python notation (YAML)
 //   theme/     layouts, CSS, client-side engine     figures/  interactive figure code + data
 //   lib/       Markdown dialect, linker             _site/    the generated website
 import fs from "node:fs";
 import path from "node:path";
 import katex from "katex";
 import { HtmlBasePlugin } from "@11ty/eleventy";
-import { loadParts, loadGlossary, loadSymbols, loadThemes, loadSettings, validateRefs, symbolMacros, CATEGORIES, FAMILIES } from "./lib/data.js";
+import { loadParts, loadGlossary, loadSymbols, loadThemes, loadSettings, loadNotation, validateRefs, symbolMacros, refFmt, CATEGORIES, FAMILIES } from "./lib/data.js";
 import { createMarkdown } from "./lib/markdown.js";
 import { runLinker } from "./lib/linker.js";
-import { slugify, esc, emblem, termChip } from "./lib/render.js";
+import { slugify, esc, emblem, termChip, notaChip } from "./lib/render.js";
+import { fillTemplate } from "./lib/settings-fmt.js";
 
 const PREFIX = process.env.PATH_PREFIX ?? "/kvblockdiff-primer/";
 const STRICT = process.env.STRICT === "1";
@@ -22,6 +23,7 @@ const SITE = {
 };
 
 let READING_ORDER = [];   // page ids in reading order, filled by the "pages" collection, used by the linker
+let PAGE_IDS = new Set(); // every page id of this build (reference pages included), for the notation home links
 
 export default function (cfg) {
   const parts = loadParts();
@@ -29,14 +31,18 @@ export default function (cfg) {
   const symbols = loadSymbols();
   const themes = loadThemes();
   const settings = loadSettings();
-  validateRefs(settings, glossary, symbols);
+  const notation = loadNotation();
+  validateRefs(settings, glossary, symbols, notation);
   const macros = symbolMacros(symbols);
   for (const id of Object.keys(symbols)) {
     let builtin = true;
     try { katex.renderToString("\\v" + id, { throwOnError: true }); } catch { builtin = false; }
     if (builtin) throw new Error(`symbol id "${id}" collides with the KaTeX command \\v${id}; rename it`);
   }
-  const md = createMarkdown({ glossary, symbols, macros, themes, settings, prefix: PREFIX });
+  // ONLY=03-landscape,02-school builds just those Part folders (plus the home and reference pages),
+  // so that one writer's half-finished page cannot break another writer's build.
+  const ONLY = (process.env.ONLY || "").split(",").map(s => s.trim()).filter(Boolean);
+  const md = createMarkdown({ glossary, symbols, macros, themes, settings, notation, prefix: PREFIX });
   cfg.setLibrary("md", md);
   cfg.addPlugin(HtmlBasePlugin);
 
@@ -53,6 +59,7 @@ export default function (cfg) {
   cfg.addGlobalData("symbols", symbols);
   cfg.addGlobalData("themes", themes);
   cfg.addGlobalData("settings", settings);
+  cfg.addGlobalData("notation", notation);
   cfg.addGlobalData("categories", CATEGORIES);
   cfg.addGlobalData("families", FAMILIES);
   cfg.addGlobalData("layout", "page.njk");
@@ -71,6 +78,13 @@ export default function (cfg) {
       .filter(p => p.data.partId)
       .sort((a, b) => a.data.part.index - b.data.part.index || a.data.pageOrder - b.data.pageOrder);
     READING_ORDER = ["home", ...pages.map(p => p.data.pageId)];
+    PAGE_IDS = new Set(api.getAll().map(p => p.data.pageId).filter(Boolean));
+    // a notation entry's home may name a page that is still being written: warn, do not fail
+    const missing = {};
+    for (const n of Object.values(notation)) if (n.home && !PAGE_IDS.has(n.home)) (missing[n.home] = missing[n.home] || []).push(n.id);
+    for (const [home, ids] of Object.entries(missing)) {
+      console.warn(`[notation] home "${home}" is not a page of this build${ONLY.length ? " (partial build)" : ""}: the "Introduced in" link is left out for ${ids.join(", ")}`);
+    }
     return pages;
   });
 
@@ -83,6 +97,16 @@ export default function (cfg) {
     return termChip(t, text ? esc(text) : null);
   });
   cfg.addFilter("emblem", name => emblem(name));
+  cfg.addFilter("notaChip", id => {
+    const n = notation[id];
+    if (!n) throw new Error(`notaChip: unknown notation ${id}`);
+    return notaChip(n);
+  });
+  cfg.addFilter("notationList", n => Object.values(n));   // in file order (data/notation/*.yaml, files sorted by name)
+  cfg.addFilter("pageKnown", id => PAGE_IDS.has(id));
+  // a {key} template filled for one setting (the default setting unless an id is given), like the hover reminder does
+  cfg.addFilter("fillRef", (tpl, id) => fillTemplate(tpl, settings.settings[id || settings.default].values, settings.keys));
+  cfg.addFilter("settingLabel", id => settings.settings[id || settings.default].label);
   cfg.addFilter("tex", s => md.kv.renderTex(String(s), false, env0));
 
   const byLabel = (a, b) => a.label.localeCompare(b.label, "en", { sensitivity: "base" });
@@ -146,6 +170,9 @@ export default function (cfg) {
         html: md.kv.renderTex("\\v" + s.id, false, env0), name: r(s.name), short: r(s.short),
         unit: r(s.unit), fam: s.fam, home: s.home || "", ref: s.ref || "",
       }])),
+      notation: Object.fromEntries(Object.values(notation).map(n => [n.id, {
+        code: n.code, name: r(n.name), short: r(n.short), shape: n.shape || "", bytes: n.bytes || "", home: n.home || "",
+      }])),
       macros,
       // the reference settings (data/settings.yaml): KV.setting, KV.ref(), KV.setSetting() live in core.js
       settings: Object.fromEntries(settings.ids.map(id => { const s = settings.settings[id]; return [id, { label: s.label, name: s.name, home: s.home, emblem: s.emblem, values: s.values }]; })),
@@ -185,11 +212,8 @@ export default function (cfg) {
 
   for (const w of ["data", "theme", "figures", "lib"]) cfg.addWatchTarget(w);
 
-  // ONLY=03-landscape,02-school builds just those Part folders (plus the home and reference pages),
-  // so that one writer's half-finished page cannot break another writer's build.
-  const ONLY = (process.env.ONLY || "").split(",").map(s => s.trim()).filter(Boolean);
   if (ONLY.length) {
-    for (const p of parts) if (!ONLY.includes(p.dir) && p.id !== "X") cfg.ignores.add(`content/${p.dir}/**`);
+    for (const p of parts) if (!ONLY.includes(p.dir) && p.slug !== "reference") cfg.ignores.add(`content/${p.dir}/**`);
   }
 
   cfg.on("eleventy.after", ({ directories }) => {

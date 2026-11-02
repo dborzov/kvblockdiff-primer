@@ -1,0 +1,61 @@
+# Python notation: the [[~id]] chips. An inline Python expression over the orchard arrays, shown in monospace
+# with a hover reminder. In Markdown: [[~v-one-head]] shows the entry's code; [[~v-one-head|v[t, l, h, :]]]
+# shows that code instead (inside a table cell write the bar as \|). Unknown ids are build errors.
+# Fields: code (the Python text, quote it) · name · short (1–2 plain sentences, Markdown inline: `code`, $math$
+#         with \v… macros, [[term]] chips) · shape, bytes (optional templates with {key} placeholders over
+#         data/settings.yaml keys, filled per setting in the reminder) · home (optional page id: "Introduced in …").
+# Writers: add NEW entries in data/notation/<your-part>.yaml; an id defined twice is a build error.
+
+k-tensor:
+  code: "k"
+  name: the key half of the orchard
+  short: >-
+    All keys of one sequence: `k[token_pos_id, layer_id, head_id, elem_id]`, one 8-bit element each.
+  shape: "({L}, {NL}, {heads}, {headdim})"
+  bytes: "{L} × {NL} × {heads} × {headdim} B at 8 bits"
+  home: landscape-orchard
+
+v-tensor:
+  code: "v"
+  name: the value half of the orchard
+  short: >-
+    All values of one sequence: `v[token_pos_id, layer_id, head_id, elem_id]`, one 8-bit element each.
+  shape: "({L}, {NL}, {heads}, {headdim})"
+  bytes: "{L} × {NL} × {heads} × {headdim} B at 8 bits"
+  home: landscape-orchard
+
+v-one-head:
+  code: "v[token_pos_id, layer_id, head_id, :]"
+  name: one V vector (one token, one layer, one KV head)
+  short: >-
+    All the elements of one key/value head's value vector for one token at one layer.
+  shape: "({headdim},)"
+  bytes: "{headdim} B at 8 bits"
+  home: landscape-orchard
+
+v-one-token-layer:
+  code: "v[token_pos_id, layer_id]"
+  name: the values of one token at one layer (every KV head)
+  short: >-
+    Every KV head's value vector for one token at one layer, stacked head by head.
+  shape: "({heads}, {headdim})"
+  bytes: "{heads} × {headdim} B at 8 bits"
+  home: landscape-orchard
+
+v-furrow:
+  code: "v[:, layer_id, head_id, elem_id]"
+  name: one furrow of the values
+  short: >-
+    One element position of one head, followed along every token position of the sequence.
+  shape: "({L},)"
+  bytes: "{L} B at 8 bits"
+  home: landscape-orchard
+
+stretch-slice:
+  code: "v[stretch_id*stretch_len:(stretch_id+1)*stretch_len]"
+  name: the values of one stretch
+  short: >-
+    The values of one run of consecutive token positions, every layer and head included.
+  shape: "({b}, {NL}, {heads}, {headdim})"
+  bytes: "{b} × {NL} × {heads} × {headdim} B at 8 bits"
+  home: landscape-orchard

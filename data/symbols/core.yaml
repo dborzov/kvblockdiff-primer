@@ -2,92 +2,97 @@
 # The id becomes a TeX macro: id "rho" -> \vrho. Write $\vrho$ (not $\rho$) in prose and equations,
 # so the symbol gets its family colour, its hover reminder and a row in the equation's legend.
 # Fields: tex · fam (index | resource | count | frac | info | stat | object) · name · unit · short · home (page id)
+# Letters are for equations; in prose the Python names of docs/project/notation.md are used.
 # Writers: add NEW symbols in data/symbols/<your-part>.yaml; check here first that the letter is free.
 
 # ------------------------------------------------------------ positions & indices
 t:     { tex: "t", fam: index, name: token position, unit: "", home: landscape-tokens-and-decoding,
-         short: "Position of a token in the sequence, counted from 0. Decode step $\\vt$ produces token $\\vt$." }
-l:     { tex: "l", fam: index, name: layer index, unit: "", home: landscape-tokens-and-decoding,
-         short: "Which layer, from 0 to $\\vNL - 1$." }
-c:     { tex: "c", fam: index, name: channel index, unit: "", home: school-vectors,
-         short: "Which element position inside a vector, from 0 to $\\vd - 1$ — one sensor's column, one channel." }
+         short: "Position of a token in the sequence, counted from 0 (`token_pos_id`). Decode step $\\vt$ produces token $\\vt$." }
+l:     { tex: "l", fam: index, name: KV-layer index, unit: "", home: landscape-tokens-and-decoding,
+         short: "Which KV layer, from 0 to $\\vNL - 1$ (`layer_id`)." }
+c:     { tex: "c", fam: index, name: element index, unit: "", home: school-vectors,
+         short: "Which element position inside a vector, from 0 to $\\vd - 1$ (`elem_id`); one fixed $\\vc$ across many vectors is a furrow." }
 h:     { tex: "h", fam: index, name: KV-head index, unit: "", home: landscape-attention,
-         short: "Which key/value head of a layer." }
-j:     { tex: "j", fam: index, name: block index, unit: "", home: idea-dictionary-delta-block,
-         short: "Which block: block $\\vj$ holds tokens $\\vj\\vb$ to $(\\vj+1)\\vb - 1$." }
+         short: "Which key/value head of a layer (`head_id`)." }
+j:     { tex: "j", fam: index, name: stretch index, unit: "", home: scenario-stretch,
+         short: "Which stretch: stretch $\\vj$ holds token positions $\\vj\\vb$ to $(\\vj+1)\\vb - 1$ (`stretch_id`)." }
 i:     { tex: "i", fam: index, name: item index, unit: "", home: school-entropy,
-         short: "Generic counter over items or outcomes (the $\\vi$-th symbol, reading, value)." }
-gap:   { tex: "\\Delta", fam: index, name: token distance, unit: tokens, home: idea-fallen-apple,
-         short: "How many tokens apart two entries are. Used only for this distance on this site." }
+         short: "Generic counter over items or outcomes (the $\\vi$-th symbol, reading, cherry)." }
+gap:   { tex: "\\Delta", fam: index, name: token distance, unit: tokens, home: hypotheses-fallen-apple,
+         short: "How many tokens apart two cherries are. Used only for this distance on this site." }
 
 # ------------------------------------------------------------ bytes, seconds, bandwidth
-e:     { tex: "e", fam: resource, name: entry size, unit: bytes, home: landscape-kv-cache,
-         short: "Bytes of one entry (one token, one layer, keys and values). 640 B in the reference setting.", ref: "{e}" }
-dsz:   { tex: "\\lvert\\delta\\rvert", fam: resource, name: delta size, unit: bytes, home: idea-dictionary-delta-block,
-         short: "Bytes of one entry's delta; $\\vdsz = \\vrho\\,\\ve$." }
-Dsz:   { tex: "\\lvert D\\rvert", fam: resource, name: dictionary size, unit: bytes, home: idea-dictionary-delta-block,
+e:     { tex: "e", fam: resource, name: cherry bytes, unit: bytes, home: landscape-orchard,
+         short: "Bytes of one cherry (`cherry_bytes`). In the examples a cherry is one token's values at one layer: 640 B on the Pin, 512 B on the Bench.", ref: "{e}" }
+dsz:   { tex: "\\lvert\\delta\\rvert", fam: resource, name: delta size, unit: bytes, home: scenario-the-score,
+         short: "Bytes of one cherry's delta; on average $\\vdsz = \\vrho\\,\\ve$." }
+Dsz:   { tex: "\\lvert D\\rvert", fam: resource, name: dictionary size, unit: bytes, home: scenario-scope,
          short: "Bytes of one dictionary; $\\vDsz = \\vw\\,\\ve$." }
 tpot:  { tex: "\\mathrm{TPOT}", fam: resource, name: time per output token, unit: seconds, home: landscape-tokens-and-decoding,
-         short: "Duration of one decode step for a request; 30 ms in the reference setting.", ref: "{tpot}" }
-Wlink: { tex: "W_{\\mathrm{link}}", fam: resource, name: link bandwidth, unit: "bytes/s", home: landscape-reference-setting,
-         short: "Practical host-to-GPU bandwidth; 50 GB/s for PCIe Gen5 ×16 in the reference setting.", ref: "{Wlink}" }
-Mhbm:  { tex: "M_{\\mathrm{HBM}}", fam: resource, name: GPU memory for KV, unit: bytes, home: landscape-reference-setting,
-         short: "GPU memory available for KV caches per GPU; 30 GB in the reference setting.", ref: "{Mhbm}" }
-Tstep: { tex: "T_{\\mathrm{step}}", fam: resource, name: bytes moved per step, unit: bytes, home: homework-economics,
-         short: "Bytes one request moves over the link in one decode step (misses plus dictionary loads)." }
-Mreq:  { tex: "M_{\\mathrm{req}}", fam: resource, name: GPU memory per request, unit: bytes, home: homework-economics,
-         short: "GPU memory one request occupies: its hot cache plus its resident dictionaries." }
+         short: "Duration of one decode step for a sequence; 30 ms on the Pin.", ref: "{tpot}" }
+Wlink: { tex: "W_{\\mathrm{link}}", fam: resource, name: link bandwidth, unit: "bytes/s", home: landscape-memory-wall,
+         short: "Practical host-to-GPU bandwidth of the link; 50 GB/s for PCIe Gen5 ×16 in both settings.", ref: "{Wlink}" }
+Mhbm:  { tex: "M_{\\mathrm{HBM}}", fam: resource, name: GPU memory for orchards, unit: bytes, home: landscape-reference-settings,
+         short: "GPU memory available for orchards (hot caches and shelves) per GPU; 30 GB on the Pin.", ref: "{Mhbm}" }
+Tstep: { tex: "T_{\\mathrm{step}}", fam: resource, name: bytes moved per step, unit: bytes, home: app-the-napkin,
+         short: "Bytes one sequence moves over the link in one decode step (misses plus dictionary loads)." }
+Mreq:  { tex: "M_{\\mathrm{seq}}", fam: resource, name: GPU memory per sequence, unit: bytes, home: app-the-napkin,
+         short: "GPU memory one sequence occupies: its hot caches plus the dictionaries on its shelf." }
 
 # ------------------------------------------------------------ counts & design knobs
-k:     { tex: "k", fam: count, name: selections per step, unit: entries, home: landscape-sparse-attention,
-         short: "How many entries the indexer selects per layer per decode step; 2048 in the reference setting.", ref: "{k}" }
+k:     { tex: "k", fam: count, name: picks per step, unit: picks, home: landscape-sparse-attention,
+         short: "How many picks the indexer names per layer per decode step; 2048 on the Pin.", ref: "{k}" }
 B:     { tex: "B", fam: count, name: cache slots, unit: items, home: school-caches,
-         short: "How many items a cache can hold. For HiSparse's hot cache: entry slots per request per layer (2048, 4096 or 8192 in the examples).", ref: "2048 / 4096 / 8192 slots in the examples" }
-BV:    { tex: "B_V", fam: count, name: victim-tier slots, unit: deltas, home: missed-victim-tier,
-         short: "How many evicted entries' deltas the victim tier keeps per layer." }
-b:     { tex: "b", fam: count, name: block size, unit: tokens, home: idea-dictionary-delta-block,
-         short: "Tokens (entries) per block — a knob we choose.", ref: "{b}" }
-w:     { tex: "w", fam: count, name: dictionary weight, unit: entries' worth, home: idea-dictionary-delta-block,
-         short: "A dictionary's size in entries' worth: $\\vDsz = \\vw\\,\\ve$." }
-nD:    { tex: "n_D", fam: count, name: resident dictionaries, unit: per layer, home: idea-blockdiff-step-by-step,
-         short: "How many block dictionaries the dictionary cache keeps on the GPU per layer." }
-NL:    { tex: "N_L", fam: count, name: number of layers, unit: layers, home: landscape-tokens-and-decoding,
-         short: "Number of (sparse-attention) layers; 78 in the reference setting.", ref: "{NL}" }
+         short: "How many items a cache can hold. For HiSparse's hot cache: pick slots per sequence per layer (2048, 4096 or 8192 in the examples).", ref: "2048 / 4096 / 8192 slots in the examples" }
+BV:    { tex: "B_V", fam: count, name: victim-tier slots, unit: deltas, home: app-victim-tier,
+         short: "How many evicted picks' deltas the victim tier keeps per layer." }
+b:     { tex: "b", fam: count, name: stretch length, unit: tokens, home: scenario-stretch,
+         short: "Token positions per stretch (`stretch_len`), a knob we choose. When a cherry is one token's values at one layer, also the cherries per punnet.", ref: "{b}" }
+w:     { tex: "w", fam: count, name: dictionary weight, unit: cherries' worth, home: scenario-scope,
+         short: "A dictionary's size in cherries' worth: $\\vDsz = \\vw\\,\\ve$." }
+nD:    { tex: "n_D", fam: count, name: dictionaries on the shelf, unit: per layer, home: app-shelf-and-two-misses,
+         short: "How many punnet dictionaries the dictionary shelf keeps on the GPU per layer." }
+NL:    { tex: "N_L", fam: count, name: number of KV layers, unit: layers, home: landscape-tokens-and-decoding,
+         short: "Number of KV layers (`n_kv_layers`); 78 on the Pin, 6 on the Bench.", ref: "{NL}" }
 L:     { tex: "L", fam: count, name: context length, unit: tokens, home: landscape-tokens-and-decoding,
-         short: "Tokens stored for one request; 100K in the reference setting.", ref: "{L}" }
-d:     { tex: "d", fam: count, name: dimension, unit: elements, home: school-vectors,
-         short: "Number of elements in a vector (an entry has $\\vd$ elements; 640 in the reference setting).", ref: "{d}" }
+         short: "Tokens stored for one sequence (`n_tokens` when frozen); 100K on the Pin, 225K on the Bench.", ref: "{L}" }
+d:     { tex: "d", fam: count, name: elements per cherry, unit: elements, home: school-vectors,
+         short: "Number of elements in a vector; for a cherry, `np.prod(cherry_shape)` (640 on the Pin, 512 on the Bench in the examples).", ref: "{d}" }
 C:     { tex: "C", fam: count, name: codebook size, unit: centroids, home: school-clusters,
          short: "Number of centroids in a VQ codebook; naming one costs $\\log_2 \\vC$ bits." }
 nsub:  { tex: "n_{\\mathrm{sub}}", fam: count, name: sub-codebooks, unit: "", home: school-vq-vs-klt,
          short: "In product quantization, how many pieces each vector is split into (each with its own codebook)." }
 n:     { tex: "n", fam: count, name: code width, unit: bits, home: school-fixed-length,
          short: "Bits per value of a fixed-length code." }
-N:     { tex: "N", fam: count, name: requests per GPU, unit: requests, home: idea-two-levers,
-         short: "Concurrent decode requests one GPU can serve — the headline number; $\\vN = \\min(\\vNlink, \\vNhbm)$." }
-Nlink: { tex: "N_{\\mathrm{link}}", fam: count, name: link-bound requests, unit: requests, home: idea-two-levers,
-         short: "How many requests the host-to-GPU link can feed per GPU." }
-Nhbm:  { tex: "N_{\\mathrm{HBM}}", fam: count, name: memory-bound requests, unit: requests, home: idea-two-levers,
-         short: "How many requests fit in the GPU memory available for KV." }
-nload: { tex: "n_{\\mathrm{load}}", fam: count, name: dictionary loads, unit: per step per layer, home: homework-economics,
-         short: "How many dictionaries are loaded onto the GPU per decode step per layer." }
-wres:  { tex: "w_{\\mathrm{res}}", fam: count, name: resident dictionary weight, unit: entries' worth per layer, home: homework-economics,
-         short: "GPU memory taken by resident dictionaries, in entries' worth per layer." }
+N:     { tex: "N", fam: count, name: sequences per GPU, unit: sequences, home: app-two-levers,
+         short: "Concurrent decoding sequences one GPU can serve, the headline number; $\\vN = \\min(\\vNlink, \\vNhbm)$." }
+Nlink: { tex: "N_{\\mathrm{link}}", fam: count, name: link-bound sequences, unit: sequences, home: app-two-levers,
+         short: "How many sequences the host-to-GPU link can feed per GPU." }
+Nhbm:  { tex: "N_{\\mathrm{HBM}}", fam: count, name: memory-bound sequences, unit: sequences, home: app-two-levers,
+         short: "How many sequences fit in the GPU memory available for orchards." }
+nload: { tex: "n_{\\mathrm{load}}", fam: count, name: dictionary loads, unit: per step per layer, home: app-the-napkin,
+         short: "How many dictionaries are loaded onto the shelf per decode step per layer." }
+wres:  { tex: "w_{\\mathrm{res}}", fam: count, name: resident dictionary weight, unit: cherries' worth per layer, home: app-the-napkin,
+         short: "GPU memory taken by the dictionaries on the shelf, in cherries' worth per layer." }
+leash: { tex: "\\ell", fam: count, name: the leash, unit: cherries' worth, home: scenario-the-leash,
+         short: "The most dictionary bytes one cold decode of one cherry may touch, in cherries' worth: 137 in the baseline scenario." }
 
 # ------------------------------------------------------------ fractions & probabilities
 p:     { tex: "p", fam: frac, name: probability, unit: "", home: school-surprise,
          short: "Probability of an outcome, between 0 and 1." }
 m:     { tex: "m", fam: frac, name: miss rate, unit: "", home: school-reuse-distance,
-         short: "Fraction of requests (selections) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$.", ref: "{m2} / {m4} / {m8} at 2048 / 4096 / 8192 slots" }
-rho:   { tex: "\\rho", fam: frac, name: delta ratio, unit: "", home: idea-dictionary-delta-block,
-         short: "Delta size over entry size, $\\vrho = \\vdsz/\\ve \\approx \\vbpe/8$ (the rate also counts the amortized dictionary). Smaller is better." }
-fD:    { tex: "f_D", fam: frac, name: δ-miss fraction, unit: "", home: idea-blockdiff-step-by-step,
-         short: "Share of misses served by a delta (their dictionary was resident)." }
+         short: "Fraction of asks (picks) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$.", ref: "{m2} / {m4} / {m8} at 2048 / 4096 / 8192 slots" }
+rho:   { tex: "\\rho", fam: frac, name: delta share, unit: "", home: scenario-the-score,
+         short: "Mean delta size over cherry size, $\\vrho = \\vdsz/\\ve$, over every cherry of the punnet. Smaller is better. The MDL ratio is $\\vxshare + \\vrho$." }
+xshare: { tex: "x_{D}", fam: frac, name: dictionary share, unit: "", home: scenario-the-score,
+         short: "Dictionary bytes over the punnet's raw bytes, $\\vxshare = \\vw/\\vb$. Bookkeeping: where the bytes were filed, not how much is shared." }
+fD:    { tex: "f_D", fam: frac, name: δ-miss fraction, unit: "", home: app-shelf-and-two-misses,
+         short: "Share of misses served by a delta (their stretch's dictionary was on the shelf)." }
 Rsq:   { tex: "R^2", fam: frac, name: variance explained, unit: "", home: school-exchange-rate,
          short: "Share of a value's variance a predictor accounts for; the residual keeps $(1-\\vRsq)\\vsigma^2$." }
 eps:   { tex: "\\varepsilon", fam: frac, name: escape fraction, unit: "", home: school-fixed-length,
          short: "Share of values that do not fit a fixed-length code and are escaped." }
-eta:   { tex: "\\eta", fam: frac, name: query drift, unit: per step, home: idea-the-leak,
+eta:   { tex: "\\eta", fam: frac, name: query drift, unit: per step, home: hypotheses-the-leak,
          short: "How far the toy query moves on the unit sphere per decode step." }
 
 # ------------------------------------------------------------ information (bits)
@@ -95,12 +100,12 @@ H:     { tex: "H", fam: info, name: entropy, unit: bits, home: school-entropy,
          short: "Average surprisal: the fewest bits per symbol any lossless code can average." }
 I:     { tex: "I", fam: info, name: mutual information, unit: bits, home: school-mutual-information,
          short: "Bits saved by knowing one thing when describing another: $\\vI(\\vX;\\vY) = \\vH(\\vX) - \\vH(\\vX\\mid\\vY)$." }
-bpe:   { tex: "\\mathrm{bpe}", fam: info, name: bits per element, unit: bits, home: homework-the-budget,
-         short: "Rate of a lossless code per 8-bit element, all costs included. Raw is 8." }
-gainreq: { tex: "g_{\\mathrm{req}}", fam: info, name: request-scope gain, unit: bits per element, home: homework-scope,
-         short: "Bits per element saved by a per-request dictionary over a global one (same dictionary type)." }
-gainblk: { tex: "g_{\\mathrm{blk}}", fam: info, name: block-scope gain, unit: bits per element, home: homework-scope,
-         short: "Bits per element saved by per-block dictionaries over a per-request one — fallen-apple similarity at block scale." }
+bpe:   { tex: "\\mathrm{bpe}", fam: info, name: bits per element, unit: bits, home: scenario-the-score,
+         short: "Rate of a lossless compressor per 8-bit element, all costs included. Raw is 8; $\\vbpe = 8 \\times$ MDL ratio." }
+gainseq: { tex: "g_{\\mathrm{seq}}", fam: info, name: sequence-scope gain, unit: bits per element, home: scenario-scope,
+         short: "Bits per element saved by a per-sequence dictionary over a global one (same compressor family)." }
+gainstr: { tex: "g_{\\mathrm{str}}", fam: info, name: stretch-scope gain, unit: bits per element, home: scenario-scope,
+         short: "Bits per element saved by per-punnet dictionaries over a per-sequence one (same compressor family)." }
 
 # ------------------------------------------------------------ statistics
 sigma: { tex: "\\sigma", fam: stat, name: standard deviation, unit: same as the value, home: school-residual-shapes,
@@ -114,7 +119,7 @@ beta:  { tex: "\\beta", fam: stat, name: Laplace scale, unit: same as the value,
 
 # ------------------------------------------------------------ objects
 X:     { tex: "X", fam: object, name: a message / random variable, unit: "", home: school-entropy,
-         short: "The thing being described or sent (tomorrow's weather, one value, one entry)." }
+         short: "The thing being described or sent (tomorrow's weather, one value, one cherry)." }
 Y:     { tex: "Y", fam: object, name: side information, unit: "", home: school-side-information,
          short: "Something the receiver already knows (the season, a dictionary)." }
 x:     { tex: "x", fam: object, name: a value, unit: "", home: school-prediction,
@@ -123,17 +128,17 @@ xhat:  { tex: "\\hat{x}", fam: object, name: prediction, unit: "", home: school-
          short: "The guess of $\\vx$ made from what the receiver already knows." }
 r:     { tex: "r", fam: object, name: residual, unit: "", home: school-prediction,
          short: "Exact difference $\\vr = \\vx - \\vxhat$; stored instead of $\\vx$." }
-E:     { tex: "E", fam: object, name: entry, unit: "", home: landscape-kv-cache,
-         short: "One entry as a vector of $\\vd$ numbers: $\\vE_{\\vl,\\vt}$ is token $\\vt$ at layer $\\vl$." }
+E:     { tex: "E", fam: object, name: a cherry as a vector, unit: "", home: scenario-cherry,
+         short: "One cherry flattened to a vector of $\\vd$ elements: $\\vE_{\\vi}$ is cherry $\\vi$ of a punnet." }
 D:     { tex: "D", fam: object, name: dictionary, unit: "", home: tiny-files-trained-dictionary,
-         short: "A dictionary: side information both ends hold before any item is sent. Later, $\\vD_{\\vj}$ is the dictionary of block $\\vj$." }
+         short: "A dictionary: side information both ends hold before any cherry is sent. Later, $\\vD_{\\vj}$ is the dictionary of the punnet of stretch $\\vj$." }
 delta: { tex: "\\delta", fam: object, name: delta, unit: "", home: tiny-files-trained-dictionary,
-         short: "A delta: what is sent for one item once the receiver holds the dictionary; item and dictionary together rebuild the original exactly." }
-K:     { tex: "K", fam: object, name: keys, unit: "", home: landscape-kv-cache,
-         short: "The stored key vectors, $\\vK[\\vl, \\vh, \\vt, \\vc]$." }
-V:     { tex: "V", fam: object, name: values, unit: "", home: landscape-kv-cache,
-         short: "The stored value vectors, $\\vV[\\vl, \\vh, \\vt, \\vc]$." }
+         short: "A delta: what is sent for one cherry once the receiver holds the dictionary; delta and dictionary together rebuild the cherry exactly." }
+K:     { tex: "K", fam: object, name: keys, unit: "", home: landscape-orchard,
+         short: "The key half of the orchard, `k[token_pos_id, layer_id, head_id, elem_id]`." }
+V:     { tex: "V", fam: object, name: values, unit: "", home: landscape-orchard,
+         short: "The value half of the orchard, `v[token_pos_id, layer_id, head_id, elem_id]`." }
 q:     { tex: "q", fam: object, name: query, unit: "", home: landscape-attention,
          short: "The vector the current token uses to score all stored keys." }
-S:     { tex: "S", fam: object, name: selected set, unit: "", home: landscape-sparse-attention,
-         short: "Positions the indexer selects at one step and layer; $\\vS_{\\vt}$ has $\\vk$ elements." }
+S:     { tex: "S", fam: object, name: the pick set, unit: "", home: landscape-sparse-attention,
+         short: "The picks the indexer names at one step and layer; $\\vS_{\\vt}$ has $\\vk$ of them." }

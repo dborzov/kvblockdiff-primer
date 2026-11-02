@@ -18,3 +18,18 @@ layout: page.njk
 </section>
 {%- endif %}
 {%- endfor %}
+{%- set notaList = notation | notationList %}
+{%- if notaList.length %}
+<section class="gl-cat" style="--tc:var(--nota)">
+  <h2 id="python-notation"><span class="swatch"></span>Python notation</h2>
+  <p>The orchard as a numpy array, in the indexing every snippet on this site uses. Hover any such expression on any page for its reminder; the shapes and sizes below are for {{ '' | settingLabel }} (the reminders follow the setting switch).</p>
+  <div class="tbl-wrap"><table class="data nt-python">
+    <thead><tr><th>expression</th><th>meaning</th><th>shape · bytes in {{ '' | settingLabel }}</th><th>introduced in</th></tr></thead>
+    <tbody>
+    {%- for n in notaList %}
+    <tr id="nota-{{ n.id }}"><td>{{ n.id | notaChip | safe }}<br><code class="small">[[~{{ n.id }}]]</code></td><td><b>{{ n.name | mdInline | safe }}</b> — {{ n.short | mdInline | safe }}</td><td>{% if n.shape %}shape {{ n.shape | fillRef }}{% endif %}{% if n.shape and n.bytes %}<br>{% endif %}{% if n.bytes %}{{ n.bytes | fillRef }}{% endif %}</td><td>{% if n.home and (n.home | pageKnown) %}<a class="xref" data-ref="{{ n.home }}" data-ref-style="num" href="#"></a>{% elif n.home %}<span class="small" title="this page is not written yet">{{ n.home }}</span>{% endif %}</td></tr>
+    {%- endfor %}
+    </tbody>
+  </table></div>
+</section>
+{%- endif %}

@@ -9,6 +9,7 @@
     "build:strict": "STRICT=1 eleventy",
     "serve": "eleventy --serve",
     "check": "node scripts/check.mjs _site",
+    "check:words": "node scripts/check-words.mjs",
     "clean": "rm -rf _site"
   },
   "engines": {

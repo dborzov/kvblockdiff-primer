@@ -248,6 +248,15 @@ dfn.term.def.brand { background: color-mix(in srgb, var(--tc) 22%, transparent);
 .sym.f-stat { color: var(--fam-stat); }
 .sym.f-object { color: var(--fam-object); }
 .sym:hover { text-decoration: underline dotted; text-underline-offset: 4px; }
+
+/* Python-notation chips ([[~id]]): monospace, dotted underline, no box — readable in prose, define boxes and table cells */
+code.nota { background: transparent; padding: 0 .05em; border-radius: 0; color: var(--nota); font-size: .84em; white-space: nowrap; cursor: help; border-bottom: 1.6px dotted color-mix(in srgb, var(--nota) 70%, transparent); }
+code.nota:hover, code.nota:focus-visible { border-bottom-style: solid; outline: none; }
+.defbox .db-body code.nota, .note code.nota, .takeaway code.nota, table.data code.nota { color: color-mix(in srgb, var(--nota) 88%, var(--ink)); }
+.pop .pop-code { display: inline-block; font-family: var(--f-mono); font-size: .92rem; color: var(--nota); background: color-mix(in srgb, var(--nota) 10%, transparent); padding: .1em .4em; border-radius: 4px; margin-bottom: .2rem; white-space: nowrap; }
+.pop .pop-ref + .pop-ref { border-top: 0; padding-top: 0; }
+.nt-python td:first-child { width: 16rem; }
+.nt-python td:first-child code.nota { white-space: normal; }
 .katex { font-size: 1.07em; }
 .katex-display { margin: 0; }
 
@@ -474,7 +483,7 @@ a.xref::before { content: "§ "; color: var(--gold); font-family: var(--f-body);
 }
 
 /* symbols and chips on the dark banners */
-.banner .sym, .hero .sym { color: #ffe9b0 !important; }
+.banner .sym, .hero .sym, .banner .nota, .hero .nota { color: #ffe9b0 !important; }
 
 /* wide elements (concept graphs, wide plates) break out of the reading column */
 .prose > .cgraph, .prose > .plate.wide { position: relative; width: min(62rem, calc(100vw - 32px)); left: 50%; transform: translateX(-50%); }

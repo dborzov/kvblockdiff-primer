@@ -39,16 +39,15 @@
   --part-home: var(--gold);
   --part-I:    var(--vermilion);   /* the tiny-file story */
   --part-II:   var(--peacock);     /* back to school */
-  --part-III:  var(--lapis);       /* where things stand */
-  --part-IV:   var(--amethyst);    /* the idea */
-  --part-V:    var(--rose);        /* papers */
-  --part-VI:   var(--saffron);     /* homework */
-  --part-VII:  var(--umber);       /* what Dima missed */
-  --part-VIII: var(--emerald);     /* the questions */
-  --part-IX:   var(--carmine);     /* the plan */
-  --part-X:    var(--dusk);        /* reference */
-  --part-XI:   var(--sky);         /* what the data said */
-  --part-XII:  var(--sage);        /* the interesting range */
+  --part-III:  var(--lapis);       /* how an LLM reads its memory */
+  --part-IV:   var(--amethyst);    /* the compression scenario */
+  --part-V:    var(--saffron);     /* the compressor's toolbox */
+  --part-VI:   var(--carmine);     /* kvblockdiff: the application */
+  --part-VII:  var(--emerald);     /* hypotheses about the orchard */
+  --part-VIII: var(--sky);         /* the measurements */
+  --part-IX:   var(--rose);        /* papers */
+  --part-X:    var(--umber);       /* the research plan */
+  --part-XI:   var(--dusk);        /* reference */
 
   /* glossary categories (plain terms are tinted by category) */
   --cat-info:    #a35a00;   /* information theory */
@@ -68,6 +67,9 @@
   --fam-info:     #6a3db3;  /* information, in bits: H, I, bpe */
   --fam-stat:     #3b7d29;  /* statistics: σ, μ, λ */
   --fam-object:   #7a4a1e;  /* objects: E, D, δ, K, V */
+
+  /* Python-notation chips ([[~id]]: k[t, l, h, :]) */
+  --nota: #1f6e86;
 
   /* code */
   --code-bg: #261a2d;
@@ -114,6 +116,7 @@
     --cat-numbers: #a5cf8f; --cat-systems: #7aa8ff; --cat-llm: #e0a368; --cat-project: #b3a1d6;
     --fam-index: #a6b6d8; --fam-resource: #3fd0bf; --fam-count: #ff86b6; --fam-frac: #f7b955;
     --fam-info: #b997ff; --fam-stat: #95d97a; --fam-object: #e8b07a;
+    --nota: #62cde3;
     --code-bg: #0d0e12; --code-fg: #efe6d2; --code-dim: #8d8191;
     color-scheme: dark;
   }
@@ -131,6 +134,7 @@
   --cat-numbers: #a5cf8f; --cat-systems: #7aa8ff; --cat-llm: #e0a368; --cat-project: #b3a1d6;
   --fam-index: #a6b6d8; --fam-resource: #3fd0bf; --fam-count: #ff86b6; --fam-frac: #f7b955;
   --fam-info: #b997ff; --fam-stat: #95d97a; --fam-object: #e8b07a;
+  --nota: #62cde3;
   --code-bg: #0d0e12; --code-fg: #efe6d2; --code-dim: #8d8191;
   color-scheme: dark;
 }

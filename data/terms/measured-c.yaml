@@ -1,8 +1,0 @@
-# Terms of Part XI (What the data said). Writer: W3 (pages XI.7–XI.9). Each is defined ([[=id]]) once, on its home page.
-exact-model:
-  label: exact model
-  name: exact-model estimate
-  cat: info
-  home: measured-codebooks-and-rotations
-  short: >-
-    The code length a model would reach, computed exactly on the data without building the coder; a lead, not a result.

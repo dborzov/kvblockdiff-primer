@@ -32,7 +32,13 @@ node scripts/validate-data.mjs    # quick check of the YAML in data/
 node scripts/check.mjs _site --shots          # headless test of every page + screenshots in .cache/shots
 node scripts/check.mjs _site --pages school/entropy,school/surprise --shots
 STRICT=1 npm run build            # fail on any broken reference or undefined term (CI does this)
+npm run check:words               # retired words (data/banned-words.yaml) in content/ and data/; exits 1 on any hit
 ```
+
+`npm run check:words [paths…]` prints `file:line: "word" — what to say instead` for every retired word in
+prose, front-matter values and data YAML (it skips code, `::: aside source` / `::: note literature`
+blocks, "their word(s)" table rows and lines ending in `<!-- old-words -->`). CI runs it after the strict
+build; while the old content is still being reworked its hits are reported, not fatal.
 
 While several people write at once, build only your own Part into your own folder, so a half-written
 page elsewhere cannot break your build:
@@ -151,6 +157,27 @@ Quote any string that contains `: ` or starts with `[`, `{`, `*`, `&`, `!`, `%`,
   A toy example may use throwaway letters (e.g. $a, b$ in a two-number example) **only** if you say what
   they are right there and they do not leak out of the example.
 - Plain numbers and generic math (`\log_2`, `\sum`, `\min`) need no macros.
+
+### Python notation chips `[[~id]]`
+
+- A chip is an inline Python expression over the orchard arrays, in monospace, with a hover reminder:
+  `[[~v-one-head]]` → `v[token_pos_id, layer_id, head_id, :]`. The reminder shows the code, its name,
+  a one-line meaning, its shape and size in each reference setting, and where it is introduced.
+- Entries live in `data/notation/*.yaml` (core ones in `core.yaml`; add yours in
+  `data/notation/<part-slug>.yaml`; files are merged, an id defined twice is a build error). Fields:
+  `code` (the Python text, quoted), `name`, `short` (1–2 plain sentences; Markdown inline, so `` `code` ``,
+  `$math$` with `…` macros and `[[term]]` chips work), optional `shape` and `bytes` (templates with
+  `{key}` placeholders over the `data/settings.yaml` keys, filled per setting like `ref:`, e.g.
+  `shape: "({heads}, {headdim})"`, `bytes: "{headdim} B at 8 bits"`), optional `home` (the page id that
+  introduces it; an unknown page only warns while that page is being written). All of this is checked
+  by `node scripts/validate-data.mjs`; an unknown `[[~id]]` in text is a build error naming the file.
+- `[[~id|code]]` shows other code instead of the entry's: `[[~v-one-head|v[t, l, h, :]]]`. The text is
+  code, not Markdown (no chips or math in it); it keeps its own brackets. Inside a table cell write the bar
+  as `\|`, as for terms, and a `|` inside the code too: `[[~k-tensor\|k[0] \| 1]]`.
+- Chip or plain `` `code` ``? Chip the first mention of an expression in a section, and wherever the
+  shape or the byte count helps the reader (a slice whose size matters to the argument). Use plain
+  `` `code` `` for the rest, and for throwaway expressions that are not in `data/notation/`.
+  Every entry is listed on the notation page under "Python notation".
 
 ### Cross-references
 

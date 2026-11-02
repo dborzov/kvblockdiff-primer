@@ -1,0 +1,5 @@
+# Symbols of the toolbox (Part V): the bill.
+gain: { tex: '\mathrm{gain}', fam: info, name: gain of a dictionary, unit: bits per element, home: toolbox-the-bill,
+        short: 'Bits per element that a dictionary''s prediction saves on the residual, compared with coding the element alone (solo), before any of the dictionary''s costs are paid.' }
+tax:  { tex: '\mathrm{tax}', fam: info, name: per-cherry tax per element, unit: bits per element, home: toolbox-the-bill,
+        short: 'The per-cherry tax (an index, a pointer, a flag) spread over the cherry: its bits per cherry divided by $\vd$.' }

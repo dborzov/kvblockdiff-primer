@@ -1,6 +1,7 @@
-# The Parts of the site, in reading order. Each Part is a folder in content/ ("dir").
+# The Parts of the site, in reading order (= dependency order). Each Part is a folder in content/ ("dir").
 # Pages inside a folder are ordered by their numeric file prefix: 03-entropy.md is page 3.
 # "figs" names the figure files (figures/<name>.js) loaded on every page of the Part.
+# The page plan with every page id and scope: docs/project/page-plan.md.
 - id: I
   dir: 01-tiny-files
   slug: tiny-files
@@ -21,88 +22,102 @@
   figs: [school-info, school-vectors]
   lede: >
     A gentle, self-contained primer on every idea the rest of the site leans on: bits and entropy,
-    side information, entropy coders, prediction and residuals, vectors and rotations, codebooks,
-    number formats, caches and wires. Toy examples only — no KV caches yet.
+    side information, entropy coders, prediction and residuals, vectors and furrows, codebooks,
+    number formats, caches and wires. Toy examples only; no language models yet.
 
 - id: III
   dir: 03-landscape
   slug: landscape
-  title: Where things stand
-  short: Where things stand
+  title: How an LLM reads its memory
+  short: How an LLM reads
   emblem: eye
   figs: [landscape]
   lede: >
-    How a language model reads its KV cache while it writes, how sparse attention changes what is
-    read, and how HiSparse keeps a long history in host memory with a small hot cache on the GPU.
+    Attention, written out in Python with every shape named; the orchard of keys and values a sequence
+    grows; the indexer and its picks; HiSparse's hot cache; and the two frozen reference settings every
+    number on this site is quoted for.
 
 - id: IV
-  dir: 04-idea
-  slug: idea
-  title: The idea, and what it bets on
-  short: The idea
-  emblem: delta
-  figs: [idea]
+  dir: 04-scenario
+  slug: scenario
+  title: The compression scenario
+  short: The scenario
+  emblem: envelope
+  figs: [scenario, plan, measured]
   lede: >
-    kv-blockdiff maps the tiny-file story onto the sparse-attention cache, and names, carefully,
-    the properties of KV caches that would have to be true for it to pay off.
+    The standalone problem this project studies: a receiver asks for one cherry at a time, a sender
+    answers with a delta, a dictionary is shared in advance. Stretch, slice, cherry, punnet, the contract,
+    the score and the leash, each pinned down in Python before any compressor is built.
 
 - id: V
-  dir: 05-papers
+  dir: 05-toolbox
+  slug: toolbox
+  title: The compressor's toolbox
+  short: The toolbox
+  emblem: gear
+  figs: [homework-a, missed-a, missed-b, plan, measured]
+  lede: >
+    One page per kind of stage a compressor can be built from, each with a worked example, pseudocode,
+    its bill, and what the campaigns found with it.
+
+- id: VI
+  dir: 06-application
+  slug: app
+  title: "kvblockdiff: the application"
+  short: The application
+  emblem: delta
+  figs: [idea, homework-b, range]
+  lede: >
+    What the scenario's numbers mean on a serving system: picks served as deltas, a shelf of
+    dictionaries on the GPU, stretches on fire, and the chain from bytes on the link to dollars.
+
+- id: VII
+  dir: 07-hypotheses
+  slug: hypotheses
+  title: Hypotheses about the orchard
+  short: Hypotheses
+  emblem: apple
+  figs: [idea, missed-a, questions]
+  lede: >
+    Every property of the orchard the project has bet on, stated in bits, with the way a scenario
+    measures it and the verdict so far.
+
+- id: VIII
+  dir: 08-measured
+  slug: measured
+  title: The measurements
+  short: The measurements
+  emblem: roofline
+  figs: [measured, range]
+  lede: >
+    What two autonomous research campaigns measured when the scenario was run through a harness on
+    real Qwen3.5-2B orchards: what held, what broke, and what the bytes turned out to be made of.
+
+- id: IX
+  dir: 09-papers
   slug: papers
   title: Papers
   short: Papers
   emblem: scroll
   figs: [papers-a, papers-b]
   lede: >
-    One page per paper worth our attention: what it does, retold in this site's vocabulary,
-    what it tells us, what it does not, and where we are not convinced.
-
-- id: VI
-  dir: 06-homework
-  slug: homework
-  title: Homework — napkin math before building
-  short: Homework
-  emblem: abacus
-  figs: [homework-a, homework-b]
-  lede: >
-    Information theory on the back of a napkin: how many bits there are to win, what each kind of
-    dictionary pays, what the 8-bit grid does to prediction, and when a dictionary pays for itself.
-
-- id: VII
-  dir: 07-missed
-  slug: missed
-  title: What Dima missed
-  short: What Dima missed
-  emblem: quill
-  figs: [missed-a, missed-b]
-  lede: >
-    Every correction and addition to the first draft of the idea, each one introduced slowly,
-    with examples and the reason it matters.
-
-- id: VIII
-  dir: 08-questions
-  slug: questions
-  title: The questions
-  short: Questions
-  emblem: question
-  figs: [questions]
-  lede: >
-    From a vague direction to questions an experiment can answer: three big-picture questions,
-    four experiment frameworks, and a shelf of parked ideas.
-
-- id: IX
-  dir: 09-plan
-  slug: plan
-  title: The plan
-  short: The plan
-  emblem: map
-  figs: [plan]
-  lede: >
-    The measuring harness, the first weekend of experiments, the second wave, every fixed choice
-    with its assumption, and the risks with their pivots.
+    One page per paper worth our attention: its idea by example, what it assumes, what it shows,
+    and what it says about our scenario, all in this site's words.
 
 - id: X
-  dir: 10-reference
+  dir: 10-plan
+  slug: plan
+  title: The research plan
+  short: The plan
+  emblem: map
+  figs: [plan, questions]
+  lede: >
+    What is answered, what is open, and the next experiments in order of how fast they return a
+    result: more scenarios in the harness, queries and a stand-in indexer for the dataset we have,
+    and a replay of the hot cache.
+
+- id: XI
+  dir: 11-reference
   slug: reference
   title: Summary and reference
   short: Reference
@@ -110,28 +125,4 @@
   figs: []
   lede: >
     The one-page summary, the glossary, the notation and its colours, the running themes,
-    and the grounded numbers with their sources.
-
-- id: XI
-  dir: 11-measured
-  slug: measured
-  title: What the data said
-  short: What the data said
-  emblem: roofline
-  figs: [measured]
-  lede: >
-    A dispatch from the first real measurements: two autonomous research campaigns ran the
-    kv-blockdiff question through a harness on real Qwen3.5-2B caches. What held, what broke,
-    and what the bytes turned out to be made of.
-
-- id: XII
-  dir: 12-range
-  slug: range
-  title: The interesting range
-  short: The interesting range
-  emblem: flame
-  figs: [range]
-  lede: >
-    What the measurements say about the information in a block, which corners of the design
-    space are boring and why, a block-level dictionary cache that sets popular blocks on fire,
-    the napkin for it, and the chain from bytes on a link to dollars per million tokens.
+    the grounded numbers with their sources, and the old words next to the new ones.
