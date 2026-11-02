@@ -9,6 +9,7 @@ STRICT=1 npm run build                        # any broken reference or undefine
 npm run serve                                 # http://localhost:8080/kvblockdiff-primer/ with live reload
 node scripts/validate-data.mjs                # data/*.yaml: terms, symbols, notation, themes, parts, settings, ref: templates
 npm run check:words [paths…]                  # retired words (data/banned-words.yaml); default paths content/ and data/
+npm run check:tropes [paths…]                 # advisory: poor-prose patterns (data/writing-tropes.yaml); never fails
 node scripts/check.mjs _site --shots          # headless Chromium over every page: console errors, figure builders, screenshots
 node scripts/check.mjs _site --pages school/entropy,toolbox/the-bill --shots --out .cache/shots-x
 python3 scripts/fix-frontmatter-quotes.py content/<dir>/*.md   # quotes YAML scalars that contain ': '

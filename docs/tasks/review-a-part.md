@@ -5,7 +5,7 @@ A review is a report, not an edit, unless the task says to fix. Read `docs/style
 
 Check, per page, and report with file:line:
 
-1. **Vocabulary.** `npm run check:words content/<dir>` is clean. Beyond the checker: a retired *idea*
+1. **Vocabulary and prose.** `npm run check:words content/<dir>` is clean; `npm run check:tropes content/<dir>` hits are read and the real ones fixed (`docs/style/writing.md` §3). Beyond the checker: a retired *idea*
    under a new word (a "stretch" that means a punnet; a "cherry" that means a pick; "the orchard" used for
    a slice). Every project term has its Python form nearby on first use.
 2. **Definitions.** Each term the plan assigns is defined exactly once on its page (`[[=id]]` or

@@ -2,6 +2,8 @@
 # reports them; it never fails a build. Each entry: match (a JS regex, case-insensitive), say (the trope).
 - match: "\\b(what|how much|that)\\s+(\\S+\\s+){0,4}(buys?|bought|purchases?|purchased)\\b|\\bbuys\\b"
   say: "trope 2, the purchasing metaphor: write the actual relation with its numbers"
+- match: "\\b(foots? the bill|on the bill|pays? for (itself|themselves)|earns? (its|their) keep|charges? a tax|the room'?s rent|pay(s|ing)? in bits|the price of a)\\b"
+  say: "trope 2, billing language: state the relation in bits, bytes or dollars (the defined terms *the bill* and *per-cherry tax* are the only allowed uses)"
 - match: "\\b(prices|priced|is the price of)\\b"
   say: "trope 2, the purchasing metaphor (unless the literal price per GPU-hour is meant)"
 - match: "\\b(in one sentence|in a sentence|in short|put simply|simply put|to put it (simply|briefly)|the short version)\\b"

@@ -3,7 +3,8 @@
 You are rewriting one Part of this site. Everything you need is in the repository; read in this order
 before writing a word:
 
-1. `docs/style/philosophy.md` and `docs/style/pitfalls.md`: the reasoning behind the rules and the confusions to avoid.
+1. `docs/style/philosophy.md` and `docs/style/pitfalls.md`: the reasoning behind the rules and the confusions to avoid;
+   `docs/style/writing.md`: how the prose argues (facts before conclusions, simple sentences, the tropes to avoid).
 2. `docs/style/terminology.md`: the vocabulary and the banned words. Non-negotiable.
 2. `docs/style/voice.md`: how a page reads, and the done-checklist.
 3. `docs/project/notation.md`: the Python forms; quote these listings, never invent an axis order.
@@ -55,7 +56,8 @@ definitions (a 1024-element "entry") are corrected, not copied.
 
 ```bash
 python3 scripts/fix-frontmatter-quotes.py content/<dir>/*.md
-node scripts/check-words.mjs content/<dir> data/terms/<slug>.yaml      # must print "no retired words"
+node scripts/check-words.mjs content/<dir> data/terms/<slug>.yaml      # must print "no hits"
+npm run check:tropes content/<dir>                                      # advisory; read every hit and fix the real ones
 node scripts/validate-data.mjs                                          # 0 problems
 ONLY=<dir> npx @11ty/eleventy --output=.cache/site-<slug>               # must finish; read the report:
 grep -v "outside this partial\|used but never defined" .cache/linker-report-site-<slug>.txt

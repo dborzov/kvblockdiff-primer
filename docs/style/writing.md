@@ -52,22 +52,30 @@ That goal decides everything below:
 
 ## 3. Writing tropes to avoid, and why each is bad
 
-These are patterns of poor AI-generated technical prose. Each is listed with examples and the specific
-way it fails the goal of §1. An advisory checker finds the mechanical ones:
+These are patterns of poor AI-generated technical prose. They share one cause: the writer is trying to
+make the text pretty, punchy or persuasive, with the devices of a presentation or a sales pitch, instead of
+stating the facts. Each is listed with examples and the specific way it fails the goal of §1. An advisory checker finds the mechanical ones:
 `npm run check:tropes [paths…]` (rules in `data/writing-tropes.yaml`; it reports, it does not fail
 a build; judgement decides).
 
 1. **The catchphrase of counted things.** "One spectral filter, two notations"; "Two ICs answer two
    questions." It mimics a presentation-title style, tells the reader nothing about the content, and
    often forces a false symmetry on the material.
-2. **The purchasing metaphor.** "What the linear component buys"; "how much GLS buys"; "the
-   information purchased by smoothness"; "prices hidden signal". It replaces the actual relation
-   (an inequality, a difference of two rates) with an economic image that can be read several ways:
-   paid by whom, to whom, once or per use, reversibly or not. On this site the collision is worse,
-   because cost, tax, bill, pay and price have *literal* meanings (bits per element, bytes on the
-   link, dollars per million tokens, and the defined terms *the bill* and *per-cherry tax*). Use
-   those words only in their literal or defined sense. Write the relation instead: "the delta share
-   falls from 0.733 to 0.610 when the dictionary share rises from 0.02 to 0.10".
+2. **The purchasing and billing metaphor.** "What the linear component buys"; "how much GLS
+   buys"; "what label-dependent weights can buy"; "the information purchased by smoothness"; "the
+   zero atom prices hidden signal"; and the whole family of billing language: "the dictionary foots
+   the bill", "every helper charges a tax", "the room's rent is split among the guests", "a stage
+   earns its keep", "the dictionary pays for itself", "the receiver pays in bits", "the price of a
+   wrong table". Why it is bad: the image replaces the actual relation (an inequality, a difference of
+   two rates, a count of bytes) with a transaction the reader has to interpret, and the interpretation
+   is ambiguous: paid by whom, to whom, once or per use, in which unit, reversibly or not. It also
+   smuggles in a judgement (worth it, not worth it) before the numbers are on the page. On this site
+   the collision is worse, because cost, tax, bill, pay and price have *literal* meanings here: bits per
+   element, bytes on the link, dollars per million tokens, and the defined terms *the bill* and
+   *per-cherry tax*. Use those words only in their literal or defined sense, and never as a figure of
+   speech. Write the relation instead: "the delta share falls from 0.733 to 0.610 when the dictionary
+   share rises from 0.02 to 0.10"; "a dictionary of weight 2 150 is amortised over 4 096 cherries, so
+   it adds 4.2 bits per element to the rate".
 3. **Arguing with no one.** "That is not an omission"; "the difference is not a contradiction"; "the
    answer is about a joint spectrum, not the condition number of one matrix", when nobody raised the
    objection. It is filler that imitates argument. A contrast is legitimate only when the
@@ -103,7 +111,9 @@ a build; judgement decides).
     colon serves the text; as a habit it is rhythm in place of content.
 
 The common thread: these devices try to make the writing pretty, memorable or persuasive. The writing
-does not need to be any of those. It needs to be clear and unambiguous about what it says.
+does not need to be any of those. It needs to say, clearly and without ambiguity, what it has to say.
+A useful contrast, a parallel, a technical term or a colon that serves the text is fine; the devices
+above are not that. They mislead, they are vague, and they distract from the argument.
 
 ## 4. Common ground with the rest of the style
 

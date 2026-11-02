@@ -18,7 +18,9 @@ critical paper readings (IX), the research plan (X) and a reference (XI). One-sc
 
 0. **The reasoning comes first.** `docs/style/philosophy.md` is the human's intent behind every rule
    below, written so that an agent can act in cases the rules do not cover; `docs/style/pitfalls.md`
-   lists the confusions this project is prone to. Read both before any task that touches wording.
+   lists the confusions this project is prone to; `docs/style/writing.md` says how the prose must argue
+   (facts before conclusions, simple sentences, no slogans or metaphors). Read them before any task that
+   touches wording.
 
 1. **The vocabulary is a rule, not a style.** `docs/style/terminology.md` defines every project word
    (orchard, furrow, pick, stretch, slice, cherry, cherry shape, punnet, dictionary, delta, leash,
@@ -39,6 +41,7 @@ STRICT=1 npm run build                        # fail on broken references or und
 npm run serve                                 # live preview at http://localhost:8080/kvblockdiff-primer/
 node scripts/validate-data.mjs                # the YAML in data/ (terms, symbols, notation, settings)
 npm run check:words [paths…]                  # retired words; must be clean before a commit touches content
+npm run check:tropes [paths…]                 # advisory: patterns of poor prose (docs/style/writing.md §3)
 ONLY=05-toolbox npx @11ty/eleventy --output=.cache/site-toolbox   # build one Part; linker warns on refs outside it
 node scripts/check.mjs _site --pages toolbox/the-bill --shots     # headless check of pages + figures, screenshots
 python3 scripts/fix-frontmatter-quotes.py content/<dir>/*.md       # quote YAML scalars containing ': '

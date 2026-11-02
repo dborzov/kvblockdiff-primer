@@ -3,7 +3,8 @@
 The site exists because the first draft of the idea was a wall of terse, undefined jargon, and because the
 second draft drifted into twelve Parts that used four words for one thing. The cure, in order of
 importance. The dialect that implements it is in `docs/site/dialect.md`; the words are in
-`docs/style/terminology.md`.
+`docs/style/terminology.md`; how the prose inside a page argues (facts before conclusions, simple sentences,
+the writing tropes to avoid) is in `docs/style/writing.md`, which wins where the two disagree.
 
 ## 1. Define before use, and bundle every term with its Python form
 
@@ -33,9 +34,10 @@ reference setting plugged in.
 ## 4. Plain sentences, warm voice
 
 Write like a good science blog: curious, concrete, short sentences, active voice, one fact per sentence.
-Metaphors are welcome when they carry the logic (the desk and the archive, the apple and the tree, the
-cherry and the punnet). No mannered tics: no "not X, but Y", no "it's worth noting", no colon-then-reveal,
-no em-dashes, no filler, no hype. No "we" that means the reader and the writer at once; "we" is the project.
+The project's named terms (the cherry, the punnet, the leash) and the toy worlds (the desk and the archive) are
+the only metaphors; an explanatory metaphor standing in for an argument is not allowed (`writing.md` §2).
+No mannered tics: no "not X, but Y", no "it's worth noting", no colon-then-reveal, no em-dashes, no filler,
+no hype, no slogans (`writing.md` §3). No "we" that means the reader and the writer at once; "we" is the project.
 
 ## 5. Our words, not the papers' words, not the campaigns' words
 
@@ -45,7 +47,7 @@ their-words-to-ours table. The experiment repository's words (entry split, read 
 translated the same way; its receipts (trial ids, track names) are quoted verbatim inside `::: aside source`
 blocks, which the word checker skips.
 
-## 6. Honest and sceptical
+## 6. Mark assumptions; state grades
 
 Mark assumptions as assumptions and illustrative numbers as illustrative. Say where an argument is thin,
 where a paper is vague, where a result might not transfer. A number from a paper is "their measurement";
@@ -61,12 +63,13 @@ to the hypothesis it tests; every toolbox page links to the campaign result that
 
 ## 8. Break the wall of text
 
-Lists (nested when the content is nested), numbered steps, tables, notes, pull quotes, sidebars, compare
-blocks, keycards. A paragraph longer than about six lines is a smell.
+Lists (nested when the content is nested), numbered steps, tables, notes, sidebars, compare blocks,
+keycards. Pull quotes are no longer used on new pages (`writing.md` §4). A paragraph longer than about six lines is a smell.
 
 ## 9. Every `##` section ends with a `::: takeaway`
 
-Two to four bullets, the gist a reader should keep.
+Two to four bullets listing the concrete facts and numbers the section established, after the facts, never
+a slogan about them (`writing.md` §1).
 
 ## 10. Every page has flashcards
 

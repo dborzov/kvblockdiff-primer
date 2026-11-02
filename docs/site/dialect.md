@@ -65,7 +65,7 @@ Markdown works inside; nest by giving the outer block more colons.
 | `::: figure fig-<id> <builder> [wide]` | an interactive figure (`FIG.<builder>` in a loaded figure file); the content is the caption; `img=/assets/img/x.svg` for a static image |
 | `::: keycard Eyebrow` | a framed key result |
 | `::: try` | things to try after a figure |
-| `::: pull` | the one sentence to remember (at most one per page) |
+| `::: pull` | a pull quote; not used on new pages (`docs/style/writing.md` §4), kept for old ones |
 | `::: theme <theme-id> [title]` | a running-theme callout (`data/themes.yaml`); it lists every other page with the same theme |
 | `:::: compare Title` + `::: col A` … `:::` + `::: col B` … `:::` + `::::` | two things side by side |
 | `:::: cols` + `::: col Title` … | 2–3 cards side by side |

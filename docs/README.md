@@ -12,7 +12,7 @@ truth; these documents are about *working on it*.
 | understand the human's intent and reasoning behind all of this, and apply it where the rules run out | `style/philosophy.md` |
 | use or coin a term; know which words are banned and why | `style/terminology.md` |
 | avoid the confusions this project is prone to (the five objects, the score, the leash, the axes) | `style/pitfalls.md` |
-| write or review prose | `style/voice.md`, then `site/dialect.md` |
+| write or review prose | `style/writing.md` (how to argue clearly, the tropes to avoid), `style/voice.md` (page anatomy), then `site/dialect.md` |
 | quote a Python expression, a shape, an axis name | `project/notation.md` |
 | reason about the compression problem (contract, score, leash, scope) | `project/scenario.md` |
 | see how the project's bill splits into subproblems (scenario, pick trace, replay, decoder speed, economics) | `project/subproblems.md` |
@@ -50,6 +50,7 @@ docs/
     terminology.md          the vocabulary (the rule), banned words, translation tables
     pitfalls.md             the specific confusions to watch for, each with the sentence that resolves it
     voice.md                house style and the done-checklist
+    writing.md              writing clearly: facts before conclusions, simple sentences, the tropes to avoid
   site/
     build.md                commands, partial builds, the checks and what they report
     dialect.md              the Markdown dialect: terms, symbols, notation chips, settings, components
