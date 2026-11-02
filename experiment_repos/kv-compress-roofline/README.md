@@ -1,8 +1,18 @@
 # kv-compress-roofline: how to orient yourself in the experiments repo, for this site's purposes
 
-A skill-style guide, written 2026-10-31, for whoever next has to read `/attic/d/kv-compress-roofline`
-(the measuring harness plus the records of two autonomous research campaigns on Qwen3.5-2B KV caches)
-in order to write or check something on this site. Read this file, then the note that matches your task.
+A skill-style guide, written 2026-10-31 (vocabulary note added 2026-11-02), for whoever next has to read
+`/attic/d/kv-compress-roofline` (the measuring harness plus the records of two autonomous research campaigns on
+Qwen3.5-2B KV caches) in order to write or check something on this site. Read this file, then the note that
+matches your task.
+
+> **Vocabulary.** This guide and the notes under `notes/` are written in the repository's own words (entry, block,
+> channel, coder, read budget, track names), which the site retired on 2026-11-02. They are receipts and are not
+> rewritten. Translate with `docs/style/terminology.md` §4.2 of the site repo: entry → cherry; entry set / block
+> (data) → punnet; block (positions) → stretch; entry split → slice + cherry shape; channel / elephant line →
+> element / furrow; read budget → the leash; coder / algorithm → compressor; map → linear prediction;
+> anchor / exemplar / reference → reference cherry; x / y → dictionary share / delta share; proxy model → stand-in
+> LLM; KV cache → the orchard. Part XI of the old site is Part VIII (`content/08-measured/`) of the new one; its
+> page ids are unchanged. Part XII's pages are now in Parts VI and VIII.
 
 ## What the repo is, in one paragraph
 
@@ -26,13 +36,13 @@ that writes, never start its daemon, never touch `targets/`, `results/`, `artifa
 | campaign C1's story, the keys results (K vs V), bf16 vs fp8, the goal clarifications, what C2 overturned | `notes/04-campaign-c1-and-keys.md` |
 | what this site predicted before the data, page by page, with the site's glossary terms and symbols | `notes/05-primer-predictions-inventory.md` |
 | the Part XI specification: page plan, pinned numbers with receipts, term allocation, figure list | `PART-XI-SPEC.md` |
-| Part XII (the information-theory reading, the on-fire design, bits to dollars, the Bench setting) | `docs/plans/part-xii-spec.md` in the site repo; its curve points come from C1's dictionary-budget tracks (`figures/data/range-curve.json`, `analysis/range_extract.py`) |
+| Part XII (the information-theory reading, the on-fire design, bits to dollars, the Bench setting) | `docs/plans/history/part-xii-spec.md` in the site repo; its curve points come from C1's dictionary-budget tracks (`figures/data/range-curve.json`, `analysis/range_extract.py`) |
 
 ## The ten things to know before quoting anything
 
 1. **Vocabulary changed mid-campaign.** `docs/concepts/terminology.md` is the current one. Retired words still appear in older files:
    channel → "elephant line", thread → sequence, map → linear prediction, anchor (C1) → reference. On this site we say
-   channel, sequence, linear prediction, reference entry.
+   element or furrow, sequence, linear prediction, reference cherry (see the vocabulary note at the top).
 2. **"Verified" has one meaning:** a non-`quick` ledger row with `verification.isolated: true`. Iteration-page numbers labelled
    "block test", "real bytes", "exact model" or "bound" are not verified results, however precise they look.
 3. **Scores from two screens cannot be subtracted.** Each entry split and block size samples different blocks. Only a same-window
@@ -72,6 +82,6 @@ for line in sys.stdin:
 
 - `analysis/measured_extract.py` reads the ledgers (path from `KVCR_REPO`, default `/attic/d/kv-compress-roofline`) and writes
   `figures/data/measured-*.json`; page-only numbers are hand-entered with receipts in `analysis/measured_pages.json`.
-- Part XI (`content/11-measured/`) quotes only numbers pinned in `PART-XI-SPEC.md` §1. If a number there and in a JSON disagree,
+- Part VIII (`content/08-measured/`, the old Part XI) quotes only numbers pinned in `PART-XI-SPEC.md` §1. If a number there and in a JSON disagree,
   the JSON (ledger-derived) wins and the prose is corrected.
 - Nothing from the repo is copied into the site except numbers and plain-word descriptions; its figures are not reused.

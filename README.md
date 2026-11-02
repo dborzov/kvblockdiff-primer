@@ -1,68 +1,59 @@
-# kv-blockdiff — a primer and a research proposal
+# kvblockdiff: the primer and the project's source of truth
 
-**Lossless dictionary coding of LLM KV caches for sparse-attention decoding**, told as a story,
-a self-contained primer, and a concrete research plan.
+**Lossless dictionary coding of the keys and values a sparse-attention LLM keeps in host memory**, told as
+a story, a self-contained primer, a clean statement of one compression problem, the measurements so far,
+and the research plan.
 
 Read it at **https://www.borzov.ca/kvblockdiff-primer/**.
 
-The site starts from a weather station whose tiny JSON messages refuse to compress one at a time,
-teaches every idea it needs from scratch (bits, entropy, side information, entropy coders, prediction,
-vectors and rotations, codebooks, 8-bit number formats, caches), then maps the story onto the KV cache
-of a sparse-attention language model: could the tiny pieces fetched at every decode step travel as
-short deltas against shared dictionaries, and be rebuilt bit for bit on the GPU?
+The site starts from a weather station whose tiny JSON messages refuse to compress one at a time, teaches
+every idea it needs from scratch (bits, entropy, side information, entropy coders, prediction, vectors and
+furrows, codebooks, 8-bit formats, caches), then writes attention out in Python with every shape named and
+gives the LLM's growing store of keys and values its name, the *orchard*. Part IV states the problem on its
+own: a sender holds the orchard, a receiver asks for one *cherry* at a time, a *dictionary* serves a
+*punnet*, every cherry comes back bit for bit, and a *leash* keeps bulk compression out of the game. Part V
+catalogues the stages a compressor is built from, Part VI maps the numbers onto a serving system
+(HiSparse), Part VII states the hypotheses, Part VIII reports what two autonomous research campaigns
+measured on real Qwen3.5-2B orchards, Part IX reads the papers critically, Part X plans what to measure
+next, and Part XI is the reference.
 
-Part XI reports what two autonomous research campaigns measured when the question was run through a real
-harness on Qwen3.5-2B caches. The verification notes behind that Part, and a guide to the experiments repository
-they came from, live in `experiment_repos/kv-compress-roofline/` (start with its `README.md`). Part XII reads those
-measurements for what they say about the information in a block, designs a block-level dictionary cache around the
-interesting range of dictionary sizes, and connects bytes on the link to dollars per million tokens.
+Every estimate is quoted for a frozen reference setting; a pill in the top bar switches between the Pin
+(a production deployment) and the Bench (the campaigns' own rig). Every project term is bundled with the
+Python expression that pins it down, and shows its shape and bytes on hover.
 
-Every estimate on the site is quoted for a frozen reference setting; a pill in the top bar switches between two of them
-(the Pin, a production deployment; the Bench, the campaigns' own rig), and hover reminders and `[[@key]]` numbers follow
-the choice (`data/settings.yaml`, `docs/AUTHORING.md` §3.4).
+## For contributors and agents
+
+Start with [`AGENTS.md`](AGENTS.md); the documentation catalog is [`docs/README.md`](docs/README.md).
+The vocabulary is a rule (`docs/style/terminology.md`); the checks enforce it.
+
+```bash
+npm install
+npm run serve          # http://localhost:8080/kvblockdiff-primer/ with live reload
+STRICT=1 npm run build # fail on any broken reference or undefined term
+npm run check:words    # retired words
+node scripts/check.mjs _site --shots   # headless check of every page, desktop + phone
+```
 
 ## How the site is built
 
 Content and presentation are kept apart. Writers touch only Markdown and data; the theme is separate.
 
 ```
-content/      the prose — one Markdown file per page, one folder per Part
-data/         the vocabulary — glossary terms, math symbols, running themes, the list of Parts (YAML)
+content/      the prose: one Markdown file per page, one folder per Part
+data/         the vocabulary: glossary terms, math symbols, Python notation, the reference settings, the Parts (YAML)
 figures/      interactive figure code (one JS file per Part) and figure data
 analysis/     Python scripts that reproduce the numbers behind figures
-theme/        presentation — page layouts (Nunjucks), CSS, the client-side engine
-lib/          the Markdown dialect (math, [[terms]], ::: blocks) and the post-build linker
-scripts/      headless checker, preview server, data validator
-docs/         AUTHORING.md (how to write pages), figures.md, flashcards.md, PAGEPLAN.md
-experiment_repos/  how to navigate the experiments repo behind Part XI; verified notes; the Part XI spec
+theme/        presentation: page layouts (Nunjucks), CSS, the client-side engine
+lib/          the Markdown dialect (math, [[terms]], [[~notation]], ::: blocks) and the post-build linker
+scripts/      headless checker, preview server, data validator, word checker
+docs/         the catalog: project, style, site, tasks, papers, experiments
+experiment_repos/  how to read the experiments repository behind Part VIII
 ```
 
-The generator is [Eleventy](https://www.11ty.dev/) with a small Markdown dialect:
-
-- `$…$` and `$$…$$` — math, rendered at build time with KaTeX. Symbols are written as macros
-  (`\ve`, `\vrho`, …) so every symbol has one meaning and one colour site-wide, a hover reminder,
-  and an automatic "what's in this equation" panel.
-- `[[term]]`, `[[=term]]` — glossary terms with hover reminders, and their single definition.
-- `[[#page-id]]`, `[[#fig-id]]` — cross-references, resolved and checked after every build.
-- `::: takeaway`, `::: note`, `::: aside`, `::: define`, `::: figure`, `::: theme`, `::: compare`, … — components.
-- Front-matter `cards:` — flashcards, collected in the browser and practised on `/practice/`.
-
-See [`docs/AUTHORING.md`](docs/AUTHORING.md) for the full guide.
-
-## Build and preview
-
-```bash
-npm install
-npm run serve          # http://localhost:8080/kvblockdiff-primer/ with live reload
-npm run build          # into _site/
-STRICT=1 npm run build # fail on any broken reference or undefined term
-node scripts/check.mjs _site --shots   # headless check of every page, desktop + phone
-```
+The generator is [Eleventy](https://www.11ty.dev/) with a small Markdown dialect (`docs/site/dialect.md`).
 
 ## Deployment
 
-The built site is published on the `gh-pages` branch by [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
-every push to `main` (or a manual run from the Actions tab) runs a strict build and force-pushes the result to
-`gh-pages`. To publish by hand instead, run `STRICT=1 npm run build` and commit the contents of `_site/` to `gh-pages`.
-GitHub Pages serves that branch; because the account's user site has the custom
-domain `www.borzov.ca`, this project appears at `https://www.borzov.ca/kvblockdiff-primer/`.
+The built site is published on the `gh-pages` branch by `.github/workflows/deploy.yml`: every push to
+`main` runs a strict build and pushes the result to `gh-pages`, which GitHub Pages serves at
+`https://www.borzov.ca/kvblockdiff-primer/`. See `docs/site/deploy.md`.
