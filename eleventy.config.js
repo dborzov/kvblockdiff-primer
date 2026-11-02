@@ -3,6 +3,7 @@
 //   theme/     layouts, CSS, client-side engine     figures/  interactive figure code + data
 //   lib/       Markdown dialect, linker             _site/    the generated website
 import fs from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import katex from "katex";
 import { HtmlBasePlugin } from "@11ty/eleventy";
@@ -218,6 +219,11 @@ export default function (cfg) {
 
   cfg.on("eleventy.after", ({ directories }) => {
     runLinker({ outDir: directories.output, prefix: PREFIX, order: READING_ORDER, strict: STRICT, partial: ONLY.length > 0, themes });
+    // A strict full build also refuses the retired words (data/banned-words.yaml): the vocabulary is a rule.
+    if (STRICT && !ONLY.length) {
+      const r = spawnSync(process.execPath, ["scripts/check-words.mjs", "content", "data"], { stdio: "inherit" });
+      if (r.status) throw new Error("retired words in content/ or data/ (see npm run check:words)");
+    }
   });
 
   return {
