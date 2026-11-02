@@ -1,0 +1,18 @@
+# Python notation chips introduced by Part X (the research plan). Format as data/notation/core.yaml.
+q-tensor:
+  code: "q[token_pos_id, layer_id]"
+  name: the queries of one token at one KV layer (every query head)
+  short: >-
+    The query vectors the token at `token_pos_id` scores against stored keys at one KV layer, one per query head; with GQA several query heads share each KV head (8 share 2 on the Bench). Not kept by the dump; one script away.
+  shape: "(n_q_heads, {headdim})"
+  bytes: "n_q_heads × {headdim} × 2 B in BF16"
+  home: plan-the-dataset-we-have
+
+pick-trace:
+  code: "picks[step][layer_id]"
+  name: the pick trace (which positions were picked, per step and layer)
+  short: >-
+    The set of `k` token positions the indexer (or the stand-in exact top-k) names at one decode step for one KV layer; recorded once, replayed through any cache as often as needed. Counts, never bytes.
+  shape: "(n_steps, {NL}, k)"
+  bytes: "n_steps × {NL} × k × 4 B as int32"
+  home: plan-queries-and-picks
