@@ -6,7 +6,7 @@ lede: Small, similar things refuse to compress one at a time, unless the receive
 
 A weather station on a lonely rock sends the mainland a short message every half hour. Each message is almost identical to the one before it, yet compressing any one of them on its own saves almost nothing. The fix is old and clever: agree on a *dictionary* in advance, and from then on send only what is new.
 
-A large language model (an LLM) has the same problem at a much bigger scale. While it writes, it keeps everything it has read in a growing store of keys and values, its **orchard**. Sparse-attention LLMs keep that orchard in the computer's main memory and fetch small pieces of it to the GPU at every step, thousands of tiny fetches per word. This site asks one question: **could those pieces travel as short deltas against a shared dictionary, and come back bit for bit identical?**
+An LLM has the same problem at a much bigger scale. While it writes, it keeps everything it has read in a growing store of keys and values, its **orchard**. Sparse-attention LLMs keep that orchard in the computer's main memory and fetch small pieces of it to the GPU at every step, thousands of tiny fetches per word. This site asks one question: **could those pieces travel as short deltas against a shared dictionary, and come back bit for bit identical?**
 
 The question has a clean core, the **compression scenario** of Part IV: a sender holds the orchard, a receiver asks for one **cherry** at a time, a dictionary is shared in advance, and every cherry must come back exactly. Two autonomous research campaigns ran that scenario through a harness on real Qwen3.5-2B orchards (Part VIII). The plan for what to measure next is Part X.
 

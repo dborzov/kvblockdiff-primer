@@ -505,12 +505,12 @@ window.FIG = window.FIG || {};
     const LETTER = ['S', 'C', 'R', 'F'], HUFF = [1, 2, 3, 3];
     const MODELS = { summer: SUMMER_P, year: SKY_P };
     let model = 'summer', cur = 0;
-    const sm = seg([['summer', 'summer model'], ['year', 'year model']], model, v => { model = v; draw(cur); }, 'model');
+    const sm = seg([['summer', 'summer’s table'], ['year', 'year’s table']], model, v => { model = v; draw(cur); }, 'probability table');
     host.append(controls(h('span', { class: 'fig-note', text: 'Both ends use the' }), sm));
     const D = Diagram(host, { w: 640, h: 226, label: 'The coding interval shrinking as each report is coded', grow: 1 });
     const g = el('g', {}, D.svg);
     const ro = readout();
-    const kB = kpi('this model', '', 'bits so far', series(2));
+    const kB = kpi('this table', '', 'bits so far', series(2));
     const kHf = kpi('Huffman code', '', 'bits so far (0 / 10 / 110 / 111)', series(1));
     function states(P) {                 // [low, width] before each symbol
       const out = [[0, 1]];
@@ -559,7 +559,7 @@ window.FIG = window.FIG || {};
       const bl = bin(lo2, 40), bh = bin(Math.min(lo2 + wd2, 1 - 1e-15), 40);
       let common = 0; while (common < 40 && bl[common] === bh[common]) common++;
       ro.set([['interval', `[${fmt(lo2, 8)}, ${fmt(lo2 + wd2, 8)})`], ['width', i ? `${fmt(wd2, 8)} = 2<sup>−${fmt(bits, 2)}</sup>` : '1'], ['binary digits already settled', i ? `0.<code>${bl.slice(0, common) || '—'}</code>…` : 'none yet']]);
-      kB.set(fmt(bits, 2), `bits so far (${model} model)`);
+      kB.set(fmt(bits, 2), `bits so far (${model}’s table)`);
       kHf.set(String(hf), 'bits so far (0 / 10 / 110 / 111)');
     }
     stepper(host, { steps: MSG.length + 1, label: (_, i) => label(i), render(i) { cur = i; draw(i); }, interval: 1300 });

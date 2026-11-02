@@ -82,11 +82,11 @@ window.FIG = window.FIG || {};
   };
   SV.matrixOf = rows => rows.map(o => SV.CHANNELS.map(c => o[c.key]));
 
-  // The II.13 table in one of four views. Each channel is written as whole numbers of its
+  // The II.13 table in one of four views. Each furrow is written as whole numbers of its
   // sensor step (0.1 °C, 0.01, 0.1 hPa, 1 kn). 'raw': as measured. 'centred': minus the
-  // channel's mean (rounded to the step, so the result is still an exact whole number).
+  // furrow's mean (rounded to the step, so the result is still an exact whole number).
   // 'global': minus one mean of all numbers. 'std': (value − mean) / spread, no grid.
-  // Returns {rows: [[…d values]], shift: [per channel], width: [bits per value], …}.
+  // Returns {rows: [[…d values]], shift: [per furrow], width: [bits per value], …}.
   SV.dayView = function (mode, n = 12) {
     const day = SV.day(n), C = SV.CHANNELS;
     const cols = C.map(c => day.map(o => o[c.key]));
@@ -232,14 +232,14 @@ window.FIG = window.FIG || {};
     pts.forEach((p, i) => { sse += (p[0] - cents[lab[i]][0]) ** 2 + (p[1] - cents[lab[i]][1]) ** 2; });
     return { cents, lab, sse, hist };
   };
-  // Standardize 2-D points per channel (II.13): returns {Z, mu, sd}.
+  // Standardize 2-D points per furrow (II.13): returns {Z, mu, sd}.
   SV.standardize2 = function (pts) {
     const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
     const mu = [mean(xs), mean(ys)];
     const sd = [Math.sqrt(mean(xs.map(v => (v - mu[0]) ** 2))), Math.sqrt(mean(ys.map(v => (v - mu[1]) ** 2)))];
     return { Z: pts.map(p => [(p[0] - mu[0]) / sd[0], (p[1] - mu[1]) / sd[1]]), mu, sd };
   };
-  // Bits per element a VQ codebook saves (Gaussian rule on per-channel residual variances),
+  // Bits per element a VQ codebook saves (Gaussian rule on per-furrow residual variances),
   // its index tax, and the net, on standardized 2-D data Z.
   SV.vqBits = function (Z, C, seed = 1) {
     const km = SV.kmeans(Z, C, seed);
@@ -331,7 +331,7 @@ window.FIG = window.FIG || {};
     const misses = steps.filter(s => !s.hit).length;
     return { steps, misses, hits: seq.length - misses, rate: misses / seq.length };
   };
-  // Reuse (stack) distance of every request: distinct other items since its previous use (Infinity if first).
+  // Reuse (stack) distance of every ask: distinct other items since its previous use (Infinity if first).
   SV.reuseDistances = function (seq) {
     return seq.map((id, t) => {
       const prev = t ? seq.lastIndexOf(id, t - 1) : -1;
@@ -339,7 +339,7 @@ window.FIG = window.FIG || {};
       return new Set(seq.slice(prev + 1, t)).size;
     });
   };
-  // The LRU stack (most recent first) just before request t.
+  // The LRU stack (most recent first) just before ask t.
   SV.lruStack = function (seq, t) {
     const out = [];
     for (let k = t - 1; k >= 0; k--) if (!out.includes(seq[k])) out.push(seq[k]);
@@ -355,7 +355,7 @@ window.FIG = window.FIG || {};
   const onKey = (node, fn) => node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
 
   /* ==================================================================
-     II.13 — the table of readings: vectors are rows, channels are columns
+     II.13 — the table of readings: vectors are rows, furrows are columns
      ================================================================== */
   FIG.svChannelTable = (host) => {
     const C = SV.CHANNELS;
@@ -366,8 +366,8 @@ window.FIG = window.FIG || {};
     const ro = readout();
     const bitsRo = readout();
     host.append(
-      controls(seg([['raw', 'as measured'], ['centred', 'minus each channel’s mean'], ['global', 'minus one mean for all'], ['std', 'standardized']], mode, v => { mode = v; draw(); }, 'Which numbers to show')),
-      h('div', { class: 'fig-note', text: 'Click a column head to pick a channel, or a time to pick a vector.' }),
+      controls(seg([['raw', 'as measured'], ['centred', 'minus each furrow’s mean'], ['global', 'minus one mean for all'], ['std', 'standardized']], mode, v => { mode = v; draw(); }, 'Which numbers to show')),
+      h('div', { class: 'fig-note', text: 'Click a column head to pick a furrow, or a time to pick a vector.' }),
       wrap, ro, bitsRo,
     );
     const fmtCell = (v, j) => (mode === 'std' ? num(v, 2) : mode === 'raw' ? v.toFixed(C[j].dec) : num(v, C[j].dec));
@@ -403,13 +403,13 @@ window.FIG = window.FIG || {};
       wrap.replaceChildren(t);
       if (sel.type === 'col') {
         const j = sel.i, raw = views.raw;
-        ro.set([[`channel ${tex('\\vc = ' + j)}`, C[j].name], ['values', '12, one per reading'], ['mean ' + tex('\\vmu_{' + j + '}'), raw.mu[j].toFixed(C[j].dec + 1) + ' ' + C[j].unit], ['spread ' + tex('\\vsigma_{' + j + '}'), raw.sd[j].toFixed(C[j].dec + 1) + ' ' + C[j].unit]]);
+        ro.set([[`furrow ${tex('\\vc = ' + j)} · R[:, ${j}]`, C[j].name], ['values', '12, one per reading'], ['mean ' + tex('\\vmu_{' + j + '}'), raw.mu[j].toFixed(C[j].dec + 1) + ' ' + C[j].unit], ['spread ' + tex('\\vsigma_{' + j + '}'), raw.sd[j].toFixed(C[j].dec + 1) + ' ' + C[j].unit]]);
       } else {
         const r = views.raw.rows[sel.i];
         ro.set([[`vector at ${views.raw.day[sel.i].time}`, tex('\\vxvec = (' + r.map((x, j) => x.toFixed(C[j].dec)).join(',\\ ') + ')')], [tex('\\vd'), '5 elements']]);
       }
       bitsRo.set(mode === 'std'
-        ? [['no grid', 'standardized numbers are for comparing channels, not for sending']]
+        ? [['no grid', 'standardized numbers are for comparing furrows, not for sending']]
         : [['fixed-length bits per reading', v.width.join(' + ') + ' = <b>' + v.total + '</b>'], ['as measured', views.raw.total + ' bits']]);
     }
     draw();
@@ -424,11 +424,11 @@ window.FIG = window.FIG || {};
     let pi = 0, hl = null;
     const box = h('div'), ro = readout();
     host.append(
-      controls(seg(PAIRS.map((p, i) => [i, p[2]]), pi, v => { pi = v; hl = null; draw(); }, 'Which pair of channels')),
+      controls(seg(PAIRS.map((p, i) => [i, p[2]]), pi, v => { pi = v; hl = null; draw(); }, 'Which pair of furrows')),
       legend([['product positive (same side of both means)', series(0), 'dot'], ['product negative (opposite sides)', series(1), 'dot'], ['the rectangle of the picked reading', 'var(--c)', 'box']]),
       box, ro,
     );
-    const P = Plot(box, { x: [0, 1], y: [0, 1], h: 400, xlabel: 'x', ylabel: 'y', label: 'Scatter of two channels with their means' });
+    const P = Plot(box, { x: [0, 1], y: [0, 1], h: 400, xlabel: 'x', ylabel: 'y', label: 'Scatter of two furrows with their means' });
     const gQ = el('g', {}, P.g.bg), gPts = el('g', {}, P.g.data), gHl = el('g', {}, P.g.data);
     let cur = null;
     function stats() {
@@ -443,8 +443,8 @@ window.FIG = window.FIG || {};
       cur = stats();
       const { a, b, xs, ys, ma, mb } = cur;
       const pad = (lo, hi) => { const d = (hi - lo) * 0.06; return [lo - d, hi + d]; };
-      P.opts.xlabel = `${C[a].name}${C[a].unit ? ' (' + C[a].unit + ')' : ''} — channel ${a}`;
-      P.opts.ylabel = `${C[b].name}${C[b].unit ? ' (' + C[b].unit + ')' : ''} — channel ${b}`;
+      P.opts.xlabel = `${C[a].name}${C[a].unit ? ' (' + C[a].unit + ')' : ''} — furrow ${a}`;
+      P.opts.ylabel = `${C[b].name}${C[b].unit ? ' (' + C[b].unit + ')' : ''} — furrow ${b}`;
       P.domain({ x: pad(...extent(xs)), y: pad(...extent(ys)) });
       gQ.replaceChildren(); gPts.replaceChildren();
       const X0 = P.x(P.x0), X1 = P.x(P.x1), Y0 = P.y(P.y0), Y1 = P.y(P.y1), MX = P.x(ma), MY = P.y(mb);
@@ -465,7 +465,7 @@ window.FIG = window.FIG || {};
       ro.set([
         [tex('\\vsigma_{' + a + '}'), `${fmt(cur.sa, 3)} ${C[a].unit}`], [tex('\\vsigma_{' + b + '}'), `${fmt(cur.sb, 3)} ${C[b].unit}`],
         ['covariance', fmt(cur.cov, 4)], ['correlation', `<b>${fmt(cur.corr, 3)}</b>`],
-        [tex('\\vRsq = \\text{corr}^2'), fmt(r2, 3)], ['bits saved', `${fmt(0.5 * Math.log2(1 / (1 - r2)), 2)} on channel ${b}, knowing channel ${a}`],
+        [tex('\\vRsq = \\text{corr}^2'), fmt(r2, 3)], ['bits saved', `${fmt(0.5 * Math.log2(1 / (1 - r2)), 2)} on furrow ${b}, knowing furrow ${a}`],
       ]);
     }
     function drawHl() {
@@ -513,7 +513,7 @@ window.FIG = window.FIG || {};
         row.forEach((v, b) => {
           const pct = Math.round(8 + 70 * Math.abs(v) / mx);
           const td = h('td', { class: a === b ? 'sv-diag' : null, style: `background:${mix(v >= 0 ? series(0) : series(1), pct)}`, tabindex: '0', text: sig(v) });
-          hover(td, () => `<b>${C[a].short} × ${C[b].short}</b><br>${a === b ? (mode === 'cov' ? 'variance ' + tex('\\vsigma_{' + a + '}^2') : 'a channel with itself: always 1') : (mode === 'cov' ? 'covariance' : 'correlation')} = ${sig(v)}`);
+          hover(td, () => `<b>${C[a].short} × ${C[b].short}</b><br>${a === b ? (mode === 'cov' ? 'variance ' + tex('\\vsigma_{' + a + '}^2') : 'a furrow with itself: always 1') : (mode === 'cov' ? 'covariance' : 'correlation')} = ${sig(v)}`);
           tr.append(td);
         });
         tb.append(tr);
@@ -521,7 +521,7 @@ window.FIG = window.FIG || {};
       t.append(tb);
       wrap.replaceChildren(t);
       ro.set(mode === 'cov'
-        ? [['diagonal', 'each channel’s variance, in its own units squared'], ['biggest entry', 'pressure, ' + sig(S[3][3]) + ' hPa²'], ['smallest diagonal', 'humidity, ' + sig(S[2][2])]]
+        ? [['diagonal', 'each furrow’s variance, in its own units squared'], ['biggest value', 'pressure, ' + sig(S[3][3]) + ' hPa²'], ['smallest diagonal', 'humidity, ' + sig(S[2][2])]]
         : [['diagonal', 'all 1'], ['two thermometers', sig(R[0][1])], ['temperature · humidity', sig(R[0][2])], ['pressure · wind', sig(R[3][4])]]);
     }
     draw();
@@ -599,7 +599,7 @@ window.FIG = window.FIG || {};
     const rep = (v, n) => new Array(n).fill(v);
     const PRE = {
       thermo: { label: 'two thermometers', vals: thermo },
-      gull: { label: 'Gull Rock, 5 channels', vals: gull },
+      gull: { label: 'Gull Rock, 5 furrows', vals: gull },
       flat: { label: 'flat (64)', vals: rep(1, 64) },
       a: { label: '8 strong ×10 (64)', vals: [...rep(10, 8), ...rep(1, 56)] },
       b: { label: '8 strong, 56 quiet (64)', vals: [...rep(50, 8), ...rep(0.1, 56)] },
@@ -694,7 +694,7 @@ window.FIG = window.FIG || {};
       tiles.tax.set(fmt(tax, 2), `log₂ ${C} bits per reading ÷ 2 elements`);
       tiles.net.set(fmt(gross - tax, 2));
       tiles.net.style.setProperty('--kc', gross - tax >= 0 ? 'var(--good)' : 'var(--bad)');
-      ro.set([['k-means steps', `${state.it}${state.done ? ' — converged' : ''}`], ['spread² left, per channel', `${fmt(v[0], 3)} · ${fmt(v[1], 3)} (was 1 · 1)`], ['codebook', `${C} centroid${C > 1 ? 's' : ''} × 2 numbers`]]);
+      ro.set([['k-means steps', `${state.it}${state.done ? ' — converged' : ''}`], ['spread² left, per furrow', `${fmt(v[0], 3)} · ${fmt(v[1], 3)} (was 1 · 1)`], ['codebook', `${C} centroid${C > 1 ? 's' : ''} × 2 numbers`]]);
     }
     init(); draw();
   };
@@ -886,7 +886,7 @@ window.FIG = window.FIG || {};
       at = st ? st.index : 0;
       holder.replaceChildren();
       const sim = SV.simulate(seq, slots, policy);
-      const D = Diagram(holder, { w: 640, h: 285, grow: 0.6, label: 'The request list, the desk and the archive at one step' });
+      const D = Diagram(holder, { w: 640, h: 285, grow: 0.6, label: 'The list of asks, the desk and the archive at one step' });
       const g = el('g', {}, D.svg);
       st = stepper(holder, {
         steps: sim.steps, start: Math.min(at, seq.length - 1),
@@ -894,7 +894,7 @@ window.FIG = window.FIG || {};
         render(i, s) {
           g.replaceChildren();
           const fs = D.fs, bw = 44, gap = 8, x0 = 20;
-          el('text', { x: x0, y: 22 * fs, class: 'lbl', text: 'requests' }, g);
+          el('text', { x: x0, y: 22 * fs, class: 'lbl', text: 'asks' }, g);
           seq.forEach((id, k) => {
             const row = Math.floor(k / 12), col = k % 12, x = x0 + col * (bw + gap), y = 30 * fs + row * (bw * 0.85 + 6);
             const past = k < i, now = k === i, hit = sim.steps[k].hit;
@@ -925,7 +925,7 @@ window.FIG = window.FIG || {};
             el('text', { x, y: ya, class: 'mono', style: `fill:var(--ink-3);opacity:${on ? 0.35 : 1}`, text: id }, g);
           });
           const done = sim.steps.slice(0, i + 1), miss = done.filter(z => !z.hit).length;
-          ro.set([['requests so far', String(i + 1)], ['hits', String(i + 1 - miss)], ['misses', String(miss)], ['miss rate', fmtPct(miss / (i + 1), 0)], ['whole morning', `${sim.misses} misses of ${seq.length} (${fmtPct(sim.rate, 0)})`]]);
+          ro.set([['asks so far', String(i + 1)], ['hits', String(i + 1 - miss)], ['misses', String(miss)], ['miss rate', fmtPct(miss / (i + 1), 0)], ['whole morning', `${sim.misses} misses of ${seq.length} (${fmtPct(sim.rate, 0)})`]]);
         },
       });
     }
@@ -943,9 +943,9 @@ window.FIG = window.FIG || {};
       slider(texify('desk slots $\\vB$'), 1, 8, 1, B, v => { B = v; draw(); }),
     ), top, legend([['LRU, read off the reuse distances', series(0), 'line'], ['LRU, simulated', series(0), 'dot'], ['Bélády (clairvoyant)', series(4), 'dash'], ['FIFO, simulated', series(3), 'dot']]), row, ro);
     row.append(hb, cb);
-    const D = Diagram(top, { w: 640, h: 150, grow: 0.6, label: 'Each request with its reuse distance' });
+    const D = Diagram(top, { w: 640, h: 150, grow: 0.6, label: 'Each ask with its reuse distance' });
     const g = el('g', {}, D.svg);
-    const PH = Plot(hb, { xcats: ['0', '1', '2', '3', '4', '5', '6', '7', '∞'], y: [0, 20], h: 300, grid: 'y', xlabel: 'reuse distance', ylabel: 'requests', label: 'Histogram of reuse distances' });
+    const PH = Plot(hb, { xcats: ['0', '1', '2', '3', '4', '5', '6', '7', '∞'], y: [0, 20], h: 300, grid: 'y', xlabel: 'reuse distance', ylabel: 'asks', label: 'Histogram of reuse distances' });
     const PC = Plot(cb, { x: [0.5, 8.5], y: [0, 1.05], h: 300, xticks: [1, 2, 3, 4, 5, 6, 7, 8], xlabel: 'desk slots B', ylabel: 'miss rate m(B)', yfmt: v => fmtPct(v, 0), label: 'Miss rate against desk size' });
     function draw() {
       const seq = SV.TRACES[trace], rd = SV.reuseDistances(seq);
@@ -961,7 +961,7 @@ window.FIG = window.FIG || {};
       const counts = new Array(9).fill(0);
       rd.forEach(v => { counts[v === Infinity ? 8 : Math.min(v, 7)]++; });
       PH.clear();
-      bars(PH, counts, { colors: i => (i >= B ? mix('var(--bad)', 70) : mix('var(--good)', 70)), labels: v => (v ? String(v) : ''), tip: (v, i) => `<b>distance ${i === 8 ? '∞ (first request)' : i}</b><br>${v} request${v === 1 ? '' : 's'}: ${i >= B ? 'miss' : 'hit'} with ${B} slots` });
+      bars(PH, counts, { colors: i => (i >= B ? mix('var(--bad)', 70) : mix('var(--good)', 70)), labels: v => (v ? String(v) : ''), tip: (v, i) => `<b>distance ${i === 8 ? '∞ (first ask)' : i}</b><br>${v} ask${v === 1 ? '' : 's'}: ${i >= B ? 'miss' : 'hit'} with ${B} slots` });
       const Bs = [1, 2, 3, 4, 5, 6, 7, 8];
       const fromRd = Bs.map(b => [b, rd.filter(v => v >= b).length / seq.length]);
       PC.clear();
@@ -972,7 +972,7 @@ window.FIG = window.FIG || {};
       fifo.forEach(([b, m]) => dot(PC.g.data, PC.x(b) + 7 * PC.fs, PC.y(m), 3.6 * PC.fs, series(3)));
       lru.forEach(([b, m]) => dot(PC.g.data, PC.x(b), PC.y(m), 4.6 * PC.fs, series(0)));
       const at = b => SV.simulate(seq, b, 'lru');
-      ro.set([['reuse distance ≥ B', `${rd.filter(v => v >= B).length} of ${seq.length} requests`], [`LRU with ${B} slots`, `${at(B).misses} misses (${fmtPct(at(B).rate, 0)})`], ['Bélády', `${SV.simulate(seq, B, 'opt').misses} misses`], ['FIFO', `${SV.simulate(seq, B, 'fifo').misses} misses`], ['first requests (∞)', String(rd.filter(v => v === Infinity).length)]]);
+      ro.set([['reuse distance ≥ B', `${rd.filter(v => v >= B).length} of ${seq.length} asks`], [`LRU with ${B} slots`, `${at(B).misses} misses (${fmtPct(at(B).rate, 0)})`], ['Bélády', `${SV.simulate(seq, B, 'opt').misses} misses`], ['FIFO', `${SV.simulate(seq, B, 'fifo').misses} misses`], ['first asks (∞)', String(rd.filter(v => v === Infinity).length)]]);
     }
     draw();
   };
@@ -1016,7 +1016,7 @@ window.FIG = window.FIG || {};
   FIG.svAmortize = (host) => {
     const PRE = {
       ferry: { label: 'ferry season ticket', fixed: 300, save: 12, unit: 'crowns', item: 'trips', what: 'crowns per trip' },
-      means: { label: 'channel means (II.13)', fixed: 45, save: 24, unit: 'bits', item: 'readings', what: 'bits per reading' },
+      means: { label: 'furrow means (II.13)', fixed: 45, save: 24, unit: 'bits', item: 'readings', what: 'bits per reading' },
       codebook: { label: 'regime codebook (II.17)', fixed: 96, save: 2.92, unit: 'bits', item: 'readings', what: 'bits per reading' },
     };
     let pre = 'ferry', o = { ...PRE.ferry };
