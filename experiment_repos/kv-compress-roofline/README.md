@@ -5,9 +5,11 @@ A skill-style guide, written 2026-10-31 (vocabulary note added 2026-11-02), for 
 Qwen3.5-2B KV caches) in order to write or check something on this site. Read this file, then the note that
 matches your task.
 
-> **Vocabulary.** This guide and the notes under `notes/` are written in the repository's own words (entry, block,
+> **Vocabulary.** This guide and the notes under `notes/` are written in the repository's older words (entry, block,
 > channel, coder, read budget, track names), which the site retired on 2026-11-02. They are receipts and are not
-> rewritten. Translate with `docs/style/terminology.md` §4.2 of the site repo: entry → cherry; entry set / block
+> rewritten. The repository's own living docs were switched to the site's words the same day; start there with its
+> `docs/concepts/terminology.md` (code names → words) and `docs/concepts/experiments-and-scenarios.md` (every track
+> as a scenario, with grades and the runs to repeat). Its records (ledgers, digests, articles, notebooks) stay as written. Translate with `docs/style/terminology.md` §4.2 of the site repo: entry → cherry; entry set / block
 > (data) → punnet; block (positions) → stretch; entry split → slice + cherry shape; channel / elephant line →
 > element / furrow; read budget → the leash; coder / algorithm → compressor; map → linear prediction;
 > anchor / exemplar / reference → reference cherry; x / y → dictionary share / delta share; proxy model → stand-in
