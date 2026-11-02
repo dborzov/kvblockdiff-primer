@@ -15,7 +15,7 @@
 
 /* trace replay (VIII.7) */
 .q-band { fill: var(--ink); fill-opacity: .04; }
-.q-res { fill: var(--t-dictionary-cache); fill-opacity: .2; }
+.q-res { fill: var(--t-dictionary-shelf); fill-opacity: .2; }
 .q-hit { fill: var(--ink-3); fill-opacity: .55; }
 .q-dm { fill: var(--t-delta-miss); stroke: var(--paper-3); stroke-width: 1; }
 .q-rm { fill: var(--t-raw-miss); stroke: var(--paper-3); stroke-width: 1; }

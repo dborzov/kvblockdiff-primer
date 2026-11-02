@@ -15,7 +15,7 @@
 /* the compressibility square keeps a square aspect and does not sprawl in a wide plate */
 .msr-square { width: 100%; max-width: 36rem; margin: 0 auto; }
 
-/* the clickable entry cuts of the tensor diagram */
+/* the clickable cherry shapes of the tensor diagram */
 svg.plot .msr-cut { cursor: pointer; outline: none; transition: opacity .15s; }
 svg.plot .msr-cut:focus-visible rect { stroke: var(--c); stroke-width: 3; }
 svg.plot .msr-pt { cursor: pointer; outline: none; }

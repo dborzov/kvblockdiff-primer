@@ -1,4 +1,4 @@
-/* Figures for homework-a: Part VI, pages VI.1–VI.12 (napkin information theory, the four dictionaries).
+/* Figures for homework-a: Part V, the toolbox (napkin information theory, the four dictionaries).
    Builders are prefixed "hwa" (homework-b's figures load on the same pages).
    Monte Carlo data comes from analysis/homework_a_*.py → figures/data/homework-a-*.json. */
 window.FIG = window.FIG || {};
@@ -56,11 +56,11 @@ window.FIG = window.FIG || {};
   const gauss = (x, b) => 0.5 * Math.log2(x / b);
   const hwa = { GRID, e4m3Index, Phi, Hbits, histH, data, BRAND, EMB, NAME, NICK, embSvg, castLabel, gauss };
 
-  // ================================================================== VI.1  the bit budget
-  /* Exact code usage of a Gaussian channel on the E4M3 grid and on an INT8 grid. */
+  // ================================================================== V.1  the bit budget
+  /* Exact code usage of a Gaussian furrow on the E4M3 grid and on an INT8 grid. */
   FIG.hwaCodeUsage = (host) => {
     let lg = 5, int8mode = 'tensor';               // σ = 2^lg, in E4M3's own units (largest value 448)
-    const TSTEP = 2;                               // INT8, one scale per tensor: the widest channel (σ = 64) puts 4σ at code 127
+    const TSTEP = 2;                               // INT8, one scale per tensor: the widest furrow (σ = 64) puts 4σ at code 127
     // E4M3 cell edges in index space: midpoints between neighbouring grid values (positive side)
     function e4m3Probs(sig) {
       const s = sig, out = new Map();
@@ -88,9 +88,9 @@ window.FIG = window.FIG || {};
     const kA = kpi('E4M3: order-0 entropy', '', 'bits per element', series(0));
     const kB = kpi('INT8: order-0 entropy', '', 'bits per element', series(1));
     const kC = kpi('codes in use', '', 'covering 99 % of values');
-    const sl = slider(texify('channel spread $\\vsigma$'), -4, 7, 0.25, lg, v => { lg = v; draw(); },
+    const sl = slider(texify('furrow spread $\\vsigma$'), -4, 7, 0.25, lg, v => { lg = v; draw(); },
       v => { const s = 2 ** v; return s >= 1 ? fmt(s, s % 1 ? 2 : 0) : '1/' + fmt(1 / s, 1); });
-    const sw = seg([['tensor', 'INT8: one scale per tensor'], ['channel', 'INT8: own scale per channel']], int8mode, v => { int8mode = v; draw(); }, 'INT8 scaling');
+    const sw = seg([['tensor', 'INT8: one scale per tensor'], ['channel', 'INT8: own scale per furrow']], int8mode, v => { int8mode = v; draw(); }, 'INT8 scaling');
     host.append(controls(sl, sw), boxA, boxB, h('div', { class: 'kpis' }, kA, kB, kC));
     const mk = (box, xl, col) => Plot(box, { x: [-128, 128], y: [0, 1], h: 190, xlabel: xl, ylabel: 'probability', yfmt: v => fmtPct(v, 0), grid: 'y', label: xl + ': probability of each code', xticks: [-120, -80, -40, 0, 40, 80, 120] });
     const PA = mk(boxA, 'E4M3 grid position (index space)'), PB = mk(boxB, 'INT8 code');
@@ -118,7 +118,7 @@ window.FIG = window.FIG || {};
       drawHist(PB, B, series(1), 'INT8');
       const HA = Hbits([...A.values()]), HB = Hbits([...B.values()]);
       kA.set(fmt(HA, 2), 'bits per element');
-      kB.set(fmt(HB, 2), int8mode === 'channel' ? 'bits — own scale per channel' : 'bits — one scale per tensor');
+      kB.set(fmt(HB, 2), int8mode === 'channel' ? 'bits — own scale per furrow' : 'bits — one scale per tensor');
       kC.set(`${covering(A)} · ${covering(B)}`, 'E4M3 · INT8, covering 99 % of values');
     }
     draw();
@@ -132,11 +132,11 @@ window.FIG = window.FIG || {};
       { cat: 'raw 8-bit', v: 8, c: 'var(--slate)', note: 'every element stored as its byte' },
       { cat: 'E4M3 · fixed-length', v: r.fixed_length.top8.bits, c: series(0), note: `sign + mantissa raw, exponent in 3 bits (top 8), ${fmtPct(r.fixed_length.top8.escape_fraction, 1)} escaped — our Monte Carlo` },
       { cat: 'E5M2 · fixed-length', v: 8 / 1.14, c: series(1), note: 'SplitZip on real KV: 1.14× (reported ratio)' },
-      { cat: 'E4M3 · ideal', v: r.H_e4m3, c: series(0), note: 'order-0 entropy of a Gaussian channel — our Monte Carlo' },
+      { cat: 'E4M3 · ideal', v: r.H_e4m3, c: series(0), note: 'order-0 entropy of a Gaussian furrow — our Monte Carlo' },
       { cat: 'E5M2 · ideal', v: 6.19, c: series(1), note: 'order-0 bound SplitZip reports for real KV' },
     ];
     const box = h('div');
-    host.append(legend([['E4M3, Gaussian channel (our Monte Carlo)', series(0), 'box'], ['E5M2, real KV (SplitZip)', series(1), 'box'], ['raw', 'var(--slate)', 'box']]), box);
+    host.append(legend([['E4M3, Gaussian furrow (our Monte Carlo)', series(0), 'box'], ['E5M2, real orchard values (SplitZip)', series(1), 'box'], ['raw', 'var(--slate)', 'box']]), box);
     const P = Plot(box, { ycats: rows.map(x => x.cat), x: [0, 10], xticks: [0, 2, 4, 6, 8], h: 250, xlabel: 'bits per element (bpe)', grid: 'x', label: 'Bits per element for raw storage and context-free codes' });
     bars(P, rows.map(x => x.v), {
       horizontal: true, colors: (i) => rows[i].c, width: 30,
@@ -145,17 +145,17 @@ window.FIG = window.FIG || {};
     });
   };
 
-  // ================================================================== VI.2  solo coding
-  /* The Hermit's blind spot: a block's distribution vs the global code (Gaussian cross-entropy penalty). */
+  // ================================================================== V.2  solo coding
+  /* The Hermit's blind spot: a punnet's distribution vs the global code (Gaussian cross-entropy penalty). */
   FIG.hwaSoloDrift = (host) => {
     let mu = 0.6, R2 = 0.6;
     const box = h('div');
-    const kNow = kpi('extra cost on this block', '', 'bits per element', BRAND.solo);
-    const kAvg = kpi('average over all blocks', '', texify('$\\tfrac12\\log_2\\frac{1}{1-\\vRsq}$'), BRAND.loc);
-    const slMu = slider('this block\'s offset (σ)', -2, 2, 0.05, mu, v => { mu = v; draw(); }, v => fmtS(v, 1));
-    const slR = slider(texify('block means explain $\\vRsq$'), 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0));
-    host.append(controls(slMu, slR), legend([['the whole corpus (the Hermit\'s code is fit to this)', 'var(--ink-3)', 'band'], ['this block\'s values', BRAND.loc, 'band']]), box, h('div', { class: 'kpis' }, kNow, kAvg));
-    const P = Plot(box, { x: [-4, 4], y: [0, 1], h: 260, xlabel: 'value, in units of the corpus spread', ylabel: 'density', grid: 'x', label: 'Global distribution and one block distribution' });
+    const kNow = kpi('extra cost on this punnet', '', 'bits per element', BRAND.solo);
+    const kAvg = kpi('average over all punnets', '', texify('$\\tfrac12\\log_2\\frac{1}{1-\\vRsq}$'), BRAND.loc);
+    const slMu = slider('this punnet\'s offset (σ)', -2, 2, 0.05, mu, v => { mu = v; draw(); }, v => fmtS(v, 1));
+    const slR = slider(texify('punnet locations explain $\\vRsq$'), 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0));
+    host.append(controls(slMu, slR), legend([['the whole corpus (the Hermit\'s code is fit to this)', 'var(--ink-3)', 'band'], ['this punnet\'s values', BRAND.loc, 'band']]), box, h('div', { class: 'kpis' }, kNow, kAvg));
+    const P = Plot(box, { x: [-4, 4], y: [0, 1], h: 260, xlabel: 'value, in units of the corpus spread', ylabel: 'density', grid: 'x', label: 'Global distribution and one punnet’s distribution' });
     const pdf = (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
     const xs = linspace(-4, 4, 241);
     function draw() {
@@ -167,14 +167,14 @@ window.FIG = window.FIG || {};
       P.clear();
       area(P, xs.map(x => [x, pdf(x, 0, 1)]), { color: 'var(--ink-3)', opacity: 0.18, line: true });
       area(P, xs.map(x => [x, pdf(x, mu, sw)]), { color: BRAND.loc, opacity: 0.22, line: true });
-      rule(P, { x: mu, label: 'block\'s typical value', color: BRAND.loc });
-      kNow.set(fmt(Math.max(0, kl), 2), 'bits per element, this block');
-      kAvg.set(fmt(avg, 2), 'bits per element, averaged over blocks');
+      rule(P, { x: mu, label: 'punnet\'s typical value', color: BRAND.loc });
+      kNow.set(fmt(Math.max(0, kl), 2), 'bits per element, this punnet');
+      kAvg.set(fmt(avg, 2), 'bits per element, averaged over punnets');
     }
     draw();
   };
 
-  // ================================================================== VI.3  the exchange rate, applied
+  // ================================================================== V.12  the exchange rate, applied
   FIG.hwaExchange = (host) => {
     let R2 = 0.75, base = 6.47;
     const saved = r => -0.5 * Math.log2(1 - r);
@@ -209,7 +209,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VI.4  the shape of every dictionary coder
+  // ================================================================== V.1  the shape of every dictionary compressor
   FIG.hwaShapeStepper = (host) => {
     const r = rng('hwa-shape-7');
     const N = 8, D = 640, C = 64, B = 4096;
@@ -221,22 +221,22 @@ window.FIG = window.FIG || {};
     const H = s => Math.log2(s) + 0.5 * Math.log2(2 * Math.PI * Math.E);    // Gaussian ideal rate, step 1
     const solo = H(32), resid = H(16), tax = Math.log2(C) / D, dict = 8 * C / B;
     const steps = [
-      { show: 1, bar: 0, label: `The entry: the first 8 of its ${D} elements, as INT8 codes. Coded alone (solo), each costs about ${fmt(solo, 2)} bits.` },
-      { show: 2, bar: 0, label: `The dictionary predicts every element. Here the prediction is prototype #37 of ${C}; the receiver must be told which one — that is the per-entry tax.` },
-      { show: 3, bar: 0, label: 'Subtract exactly: residual = entry − prediction, integer by integer. No rounding, so nothing can be lost.' },
+      { show: 1, bar: 0, label: `The cherry: the first 8 of its ${D} elements, as INT8 codes. Coded alone (solo), each costs about ${fmt(solo, 2)} bits.` },
+      { show: 2, bar: 0, label: `The dictionary predicts every element. Here the prediction is centroid #37 of ${C}; the receiver must be told which one — that is the per-cherry tax.` },
+      { show: 3, bar: 0, label: 'Subtract exactly: residual = cherry − prediction, integer by integer. No rounding, so nothing can be lost.' },
       { show: 3, bar: 1, label: `Code the residual. Its spread is 16 codes instead of 32, so each element costs one bit less: ${fmt(resid, 2)} bits.` },
-      { show: 3, bar: 2, label: `Pay the tax: ${Math.log2(C)} bits per entry to name the prototype, ${Math.log2(C)}/${D} = ${fmt(tax, 3)} bit per element.` },
-      { show: 3, bar: 3, label: `Pay for the dictionary: ${C} prototypes are ${C} entries' worth, shared by a block of ${B}: 8·${C}/${B} = ${fmt(dict, 3)} bit per element. Total ${fmt(resid + tax + dict, 2)}, i.e. ${fmt(solo - resid - tax - dict, 2)} below solo.` },
+      { show: 3, bar: 2, label: `Pay the tax: ${Math.log2(C)} bits per cherry to name the centroid, ${Math.log2(C)}/${D} = ${fmt(tax, 3)} bit per element.` },
+      { show: 3, bar: 3, label: `Pay for the dictionary: ${C} centroids are ${C} cherries' worth, shared by a punnet of ${B}: 8·${C}/${B} = ${fmt(dict, 3)} bit per element. Total ${fmt(resid + tax + dict, 2)}, i.e. ${fmt(solo - resid - tax - dict, 2)} below solo.` },
       { show: 4, bar: 3, label: 'Decoding runs backwards: prediction + residual gives every code back exactly.' },
     ];
-    const D_ = Diagram(host, { w: 640, h: 300, label: 'An entry, its prediction, its residual and the bill in bits', grow: 0.4 });
+    const D_ = Diagram(host, { w: 640, h: 300, label: 'A cherry, its prediction, its residual and the bill in bits', grow: 0.4 });
     const g = el('g', {}, D_.svg);
     const fs = D_.fs;
     stepper(host, {
       steps, label: s => s.label,
       render(i, s) {
         g.replaceChildren();
-        const rows = [['entry', ent, 'var(--paper)'], ['prediction', pre, `color-mix(in srgb, ${BRAND.vq} 18%, var(--paper))`], ['residual', res, `color-mix(in srgb, ${series(2)} 18%, var(--paper))`]];
+        const rows = [['cherry', ent, 'var(--paper)'], ['prediction', pre, `color-mix(in srgb, ${BRAND.vq} 18%, var(--paper))`], ['residual', res, `color-mix(in srgb, ${series(2)} 18%, var(--paper))`]];
         const x0 = 96, bw = 46, gap = 6, y0 = 26, rh = 54;
         rows.forEach(([name, vals, fill], k) => {
           const y = y0 + k * (rh + 22);
@@ -247,8 +247,8 @@ window.FIG = window.FIG || {};
             el('rect', { x, y, width: bw, height: rh - 14, rx: 6, style: `fill:${on ? fill : 'var(--paper-2)'};stroke:var(--rule);opacity:${on ? 1 : 0.35}` }, g);
             if (on) el('text', { x: x + bw / 2, y: y + (rh - 14) / 2 + 5 * fs, 'text-anchor': 'middle', class: 'val', text: (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v) }, g);
           });
-          if (k > 0 && on) el('text', { x: x0 + 4 * (bw + gap) - gap / 2, y: y - 6, 'text-anchor': 'middle', class: 'annot', text: k === 1 ? 'from the dictionary (prototype #37)' : 'entry − prediction, exactly' }, g);
-          if (k === 2 && s.show > 3) el('text', { x: x0 + 8 * (bw + gap) - gap / 2, y: y + rh + 2, 'text-anchor': 'end', class: 'annot', text: 'prediction + residual = entry ✓' }, g);
+          if (k > 0 && on) el('text', { x: x0 + 4 * (bw + gap) - gap / 2, y: y - 6, 'text-anchor': 'middle', class: 'annot', text: k === 1 ? 'from the dictionary (centroid #37)' : 'cherry − prediction, exactly' }, g);
+          if (k === 2 && s.show > 3) el('text', { x: x0 + 8 * (bw + gap) - gap / 2, y: y + rh + 2, 'text-anchor': 'end', class: 'annot', text: 'prediction + residual = cherry ✓' }, g);
         });
         // the bill
         const bx = 560, by0 = 262, sc = 27;           // 27 px per bit
@@ -266,10 +266,10 @@ window.FIG = window.FIG || {};
         el('text', { x: bx - 9, y: by0 - solo * sc - 6, 'text-anchor': 'middle', class: 'val', text: fmt(solo, 2) }, g);
       },
     });
-    host.append(legend([['solo', 'var(--slate)', 'box'], ['residual bits', series(2), 'box'], ['per-entry tax', BRAND.vq, 'box'], ['dictionary, amortized', series(4), 'box']]));
+    host.append(legend([['solo', 'var(--slate)', 'box'], ['residual bits', series(2), 'box'], ['per-cherry tax', BRAND.vq, 'box'], ['dictionary, amortized', series(4), 'box']]));
   };
 
-  // ================================================================== VI.5  loc: the Anchor
+  // ================================================================== V.3  furrow statistics: the Anchor
   FIG.hwaLocGain = (host) => {
     const NB = 8, PER = 48, r = rng('hwa-loc-3');
     // fixed draws, standardized so the drift share is exactly what the slider says (in the population)
@@ -281,13 +281,13 @@ window.FIG = window.FIG || {};
     const eps = noise.map(z => (z - nm) / ns);
     let R2 = 0.75;
     const box = h('div');
-    const kT = kpi(tex('\\vsigma^2_{\\text{total}}'), '', 'all blocks together', 'var(--ink-3)');
-    const kW = kpi(tex('\\vsigma^2_{\\text{within}}'), '', 'average inside a block', BRAND.loc);
+    const kT = kpi(tex('\\vsigma^2_{\\text{total}}'), '', 'all punnets together', 'var(--ink-3)');
+    const kW = kpi(tex('\\vsigma^2_{\\text{within}}'), '', 'inside a punnet', BRAND.loc);
     const kG = kpi('gain of loc', '', 'bits per element', BRAND.loc);
     host.append(controls(slider('drift share', 0, 0.95, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0))),
-      legend([['the Hermit: global mean ± 1 sd', 'var(--ink-3)', 'band'], ['the Anchor: block median ± 1 within-block sd', BRAND.loc, 'band'], ['values', 'var(--ink-2)', 'dot']]),
+      legend([['the Hermit: global mean ± 1 sd', 'var(--ink-3)', 'band'], ['the Anchor: punnet median ± 1 within-punnet sd', BRAND.loc, 'band'], ['values', 'var(--ink-2)', 'dot']]),
       box, h('div', { class: 'kpis' }, kT, kW, kG));
-    const P = Plot(box, { x: [0, NB * PER], y: [-3.6, 3.6], h: 300, xlabel: 'token position (8 blocks of 48)', ylabel: 'value (global sd = 1)', grid: 'y', label: 'One channel over eight blocks with block medians' });
+    const P = Plot(box, { x: [0, NB * PER], y: [-3.6, 3.6], h: 300, xlabel: 'token position (8 punnets of 48)', ylabel: 'value (global sd = 1)', grid: 'y', label: 'One furrow over eight punnets with punnet medians' });
     function draw() {
       const a = Math.sqrt(R2), b = Math.sqrt(1 - R2);
       const xs = range(NB * PER).map(i => a * off[Math.floor(i / PER)] + b * eps[i]);
@@ -304,14 +304,14 @@ window.FIG = window.FIG || {};
       });
       const g = el('g', {}, P.g.data);
       xs.forEach((v, i) => el('circle', { cx: P.x(i + 0.5), cy: P.y(v), r: 1.7 * P.fs, style: 'fill:var(--ink-2);opacity:.55' }, g));
-      kT.set(fmt(vt, 2), 'all blocks together');
-      kW.set(fmt(vw, 2), 'average inside a block');
+      kT.set(fmt(vt, 2), 'all punnets together');
+      kW.set(fmt(vw, 2), 'inside a punnet');
       kG.set(fmt(0.5 * Math.log2(vt / vw), 2), 'bits per element: ½ log₂(total / within)');
     }
     draw();
   };
 
-  // ================================================================== VI.6  KLT: the Compass
+  // ================================================================== V.4  KLT: the Compass
   FIG.hwaKltSpectrum = (host) => {
     const D = 64;
     let ns = 8, lgS = 1, lgW = 0;        // strong count, log10 strong variance, log10 weak variance
@@ -341,12 +341,12 @@ window.FIG = window.FIG || {};
       kG.set(fmt(gain, 2), 'bits per element: ½ log₂(AM/GM)');
       const be = n => (gain > 1e-6 ? fmtSI(8 * 2 * n / gain, 1) : '∞');
       kB.set(`b > ${be(D)}`, `d = ${D}: 8·(2d)/b below the gain`);
-      kB2.set(`b > ${be(640)}`, 'entries per block, basis w = 1280');
+      kB2.set(`b > ${be(640)}`, 'cherries per punnet, basis w = 1280 (d = 640); on the Bench d = 512, w = 1024');
     }
     draw();
   };
 
-  // ================================================================== VI.7  VQ: the Hive
+  // ================================================================== V.5  VQ: the Hive
   FIG.hwaVqCheck = async (host) => {
     const d = await data('homework-a-vq.json');
     let which = 'correlated';
@@ -372,18 +372,18 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VI.8  sib: the Twin
+  // ================================================================== V.6  sib: the Twin
   FIG.hwaSibTwins = (host) => {
     let f = 0.3, nu = 0.1;
     const D = 640, PTR = 12 / D, FLAG = 1 / D;
     const twin = v => 0.5 * Math.log2(1 / (2 * v));
     const box = h('div');
-    const kT = kpi('a twinned entry saves', '', 'bits per element vs the Anchor', BRAND.sib);
-    const kN = kpi('whole block, net', '', 'bits per element vs the Anchor', BRAND.sib);
+    const kT = kpi('a twinned cherry saves', '', 'bits per element vs the Anchor', BRAND.sib);
+    const kN = kpi('whole punnet, net', '', 'bits per element vs the Anchor', BRAND.sib);
     host.append(controls(
-      slider('entries with a twin', 0, 1, 0.01, f, v => { f = v; draw(); }, v => fmtPct(v, 0)),
+      slider('cherries with a twin', 0, 1, 0.01, f, v => { f = v; draw(); }, v => fmtPct(v, 0)),
       slider('noise share', 0.01, 1, 0.01, nu, v => { nu = v; draw(); }, v => fmtPct(v, 0)),
-    ), legend([['entry with a true twin', BRAND.sib], ['entry with no twin: random sibling', BRAND.sib, 'dash'], ['the Anchor (reference)', BRAND.loc]]), box, h('div', { class: 'kpis' }, kT, kN));
+    ), legend([['cherry with a true twin', BRAND.sib], ['cherry with no twin: random sibling', BRAND.sib, 'dash'], ['furrow locations (the Anchor, reference)', BRAND.loc]]), box, h('div', { class: 'kpis' }, kT, kN));
     const P = Plot(box, { x: [0, 1], y: [-0.8, 3], h: 290, xlabel: 'noise share σ²_noise / (σ²_own + σ²_noise)', ylabel: 'bits per element vs the Anchor', xfmt: v => fmtPct(v, 0), label: 'Bits saved by the Twin against the Anchor' });
     line(P, linspace(0.01, 1, 200).map(v => [v, twin(v)]), { color: BRAND.sib, width: 2.6 });
     line(P, [[0, -0.5], [1, -0.5]], { color: BRAND.sib, dash: '7 5' });
@@ -395,7 +395,7 @@ window.FIG = window.FIG || {};
       mark.replaceChildren();
       dot(mark, P.x(nu), P.y(twin(nu)), 6 * P.fs, 'var(--c)');
       kT.set(fmtS(twin(nu), 2), `before its 12-bit pointer (${fmt(PTR, 3)} per element)`);
-      kN.set(fmtS(f * g - FLAG, 2), `${fmtPct(f, 0)} twinned, the rest use the Anchor; 1 flag bit per entry`);
+      kN.set(fmtS(f * g - FLAG, 2), `${fmtPct(f, 0)} twinned, the rest use the Anchor; 1 flag bit per cherry`);
     }
     draw();
   };
@@ -407,7 +407,7 @@ window.FIG = window.FIG || {};
     const box = h('div');
     const tog = btn('add the pointer tax', (e, b) => { ptr = !ptr; b.setAttribute('aria-pressed', String(ptr)); draw(); }, { pressed: false });
     host.append(controls(tog), legend([...ds.map((v, i) => [`d = ${v}`, series(i)]), ['random sibling', 'var(--ink-3)', 'dash']]), box);
-    const P = Plot(box, { x: [16, 4096], xlog: 2, y: [-0.8, 1.0], h: 300, xlabel: 'block size b (siblings to choose from)', ylabel: 'bits per element vs the Anchor', label: 'Nearest-sibling penalty against block size, per entry length', xticks: [16, 64, 256, 1024, 4096] });
+    const P = Plot(box, { x: [16, 4096], xlog: 2, y: [-0.8, 1.0], h: 300, xlabel: 'punnet size b (siblings to choose from)', ylabel: 'bits per element vs the Anchor', label: 'Nearest-sibling penalty against punnet size, per cherry length', xticks: [16, 64, 256, 1024, 4096] });
     function draw() {
       P.clear();
       line(P, [[16, 0], [4096, 0]], { color: BRAND.loc, width: 1.4 });
@@ -423,14 +423,14 @@ window.FIG = window.FIG || {};
     crosshair(P, { xname: 'b =', xfmt: v => String(v), yfmt: v => fmtS(v, 3) });
   };
 
-  // ================================================================== VI.9  the four side by side
+  // ================================================================== (spare)  the four side by side
   FIG.hwaPortrait = async (host) => {
     const d = await data('homework-a-portrait.json');
     let shared = false;
     const worlds = [['drift', 'drift'], ['lowrank', 'low rank'], ['clusters', 'clusters'], ['twins', 'twins'], ['noise', 'noise']];
     const types = ['loc', 'klt', 'vq', 'sib'];
     const wrap = h('div', { class: 'hwa-heat-wrap' });
-    host.append(controls(seg([[false, 'KLT basis charged to the block'], [true, 'KLT basis shared (free here)']], shared, v => { shared = v; draw(); }, 'KLT basis')), wrap,
+    host.append(controls(seg([[false, 'KLT basis charged to the punnet'], [true, 'KLT basis shared (free here)']], shared, v => { shared = v; draw(); }, 'KLT basis')), wrap,
       legend([['net saving (pays for itself)', 'var(--good)', 'box'], ['net loss', 'var(--bad)', 'box']]));
     function draw() {
       wrap.replaceChildren();
@@ -458,7 +458,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VI.10  two rates
+  // ================================================================== V.11  two rates
   FIG.hwaTwoRates = (host) => {
     let lb = 3, eps = 0.005;                     // β = 2^lb
     const ESC = 8 + 12;
@@ -482,7 +482,7 @@ window.FIG = window.FIG || {};
     const kB = kpi('fixed-length, best width', '', '', series(3));
     const slB = slider(texify('Laplace scale $\\vbeta$'), -1, 5, 0.05, lb, v => { lb = v; draw(); }, v => fmt(2 ** v, 2 ** v < 4 ? 2 : 1));
     const slE = slider(texify('escape share $\\veps$'), 0.001, 0.05, 0.001, eps, v => { eps = v; redrawCurves(); draw(); }, v => fmtPct(v, 1));
-    host.append(controls(slB, slE), legend([['entropy (ideal coder)', series(0)], ['fixed-length: cover all but ε', series(1)], ['fixed-length: best width', series(3), 'dash']]), box, h('div', { class: 'kpis' }, kH, kC, kB));
+    host.append(controls(slB, slE), legend([['entropy (ideal entropy coder)', series(0)], ['fixed-length: cover all but ε', series(1)], ['fixed-length: best width', series(3), 'dash']]), box, h('div', { class: 'kpis' }, kH, kC, kB));
     const P = Plot(box, { x: [0.5, 32], xlog: 2, y: [0, 10], h: 300, xlabel: 'Laplace scale β of the residual (grid steps)', ylabel: 'bits per element', label: 'Entropy rate and fixed-length rates against the residual scale' });
     const curveG = el('g', {}, P.g.data), mark = el('g', {}, P.g.top);
     const betas = linspace(-1, 5, 121).map(v => 2 ** v);
@@ -506,7 +506,7 @@ window.FIG = window.FIG || {};
     crosshair(P, { xname: 'β =', xfmt: v => fmt(v, 2), yfmt: v => `${fmt(v, 2)} bits` });
   };
 
-  // ================================================================== VI.11  the grid
+  // ================================================================== V.10  the grid
   FIG.hwaGridLive = (host) => {
     const NB = 200, BL = 256, N = NB * BL, r = rng('hwa-grid-11');
     const zb = Float64Array.from({ length: NB }, () => r.normal());
@@ -516,7 +516,7 @@ window.FIG = window.FIG || {};
     const kE = kpi('E4M3: alone → predicted', '', '', series(0));
     const kI = kpi('INT8: alone → predicted', '', '', series(1));
     host.append(controls(
-      slider(texify('block means explain $\\vRsq$'), 0, 0.99, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0)),
+      slider(texify('punnet locations explain $\\vRsq$'), 0, 0.99, 0.01, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 0)),
       slider(texify('spread $\\vsigma$ (E4M3 units)'), 3, Math.log2(100), 0.05, lgS, v => { lgS = v; draw(); }, v => fmt(2 ** v, 0)),
     ), boxA, boxB, h('div', { class: 'kpis' }, kE, kI));
     const PA = Plot(boxA, { x: [-260, 260], y: [0, 1], h: 180, xlabel: 'E4M3 residual (grid steps)', ylabel: 'share', yfmt: v => fmtPct(v, 0), grid: 'y', label: 'Histogram of E4M3 residuals in index steps' });
@@ -536,7 +536,7 @@ window.FIG = window.FIG || {};
         let m = 0;
         const base = j * BL;
         for (let t = 0; t < BL; t++) m += a * zb[j] + b * ze[base + t];
-        m /= BL;                                    // block mean of the real values (units of σ)
+        m /= BL;                                    // punnet mean of the real values (units of σ)
         const pe = e4m3Index(m * s), pi = Math.max(-127, Math.min(127, Math.round(m * 32)));
         for (let t = 0; t < BL; t++) {
           const z = a * zb[j] + b * ze[base + t], i = base + t;
@@ -558,14 +558,14 @@ window.FIG = window.FIG || {};
     let panel = 'A';
     const box = h('div'), leg = h('div');
     host.append(controls(seg([['A', 'A · bits saved by the predictor'], ['B', 'B · total bits, solo included']], panel, v => { panel = v; draw(); }, 'panel')), leg, box);
-    const P = Plot(box, { x: [0, 1], y: [-1.8, 3.6], h: 320, xlabel: 'variance the block means explain (R²)', ylabel: 'bits saved per element', label: 'Bits saved by block-mean prediction on INT8 and E4M3' });
+    const P = Plot(box, { x: [0, 1], y: [-1.8, 3.6], h: 320, xlabel: 'variance the punnet locations explain (R²)', ylabel: 'bits saved per element', label: 'Bits saved by punnet-location prediction on INT8 and E4M3' });
     const rows = d.rows, sig = d.e4m3_sigmas.map(v => String(Math.round(v)));
     crosshair(P, { xname: 'R² =', xfmt: v => fmt(v, 2), yfmt: v => fmt(v, 2) });
     function draw() {
       P.clear(); P.series.length = 0;
       if (panel === 'A') {
         P.opts.ylabel = 'bits saved per element'; P.domain({ y: [-1.8, 3.6] });
-        leg.replaceChildren(legend([['formula ½ log₂ 1/(1−R²)', 'var(--ink-3)'], ['INT8, per-channel scale', series(1)], ...sig.map((s, i) => [`E4M3 index space, spread ${s}`, series(0), ['line', 'dash', 'dot'][i]])]));
+        leg.replaceChildren(legend([['formula ½ log₂ 1/(1−R²)', 'var(--ink-3)'], ['INT8, per-furrow scale', series(1)], ...sig.map((s, i) => [`E4M3 index space, spread ${s}`, series(0), ['line', 'dash', 'dot'][i]])]));
         line(P, linspace(0, 0.99, 100).map(r => [r, -0.5 * Math.log2(1 - r)]), { color: 'var(--ink-3)', width: 1.8, name: 'formula' });
         line(P, rows.map(r => [r.R2, r.int8.saved]), { color: series(1), markers: true, name: 'INT8' });
         sig.forEach((s, i) => line(P, rows.map(r => [r.R2, r.e4m3[s].float.saved]), { color: series(0), dash: i === 1 ? '7 4' : i === 2 ? '2 4' : false, markers: i === 0, name: `E4M3 (${s})` }));
@@ -582,13 +582,13 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VI.12  where the bits would come from
+  // ================================================================== (spare)  where the bits would come from
   FIG.hwaWhereBits = async (host) => {
     const d = await data('homework-a-budget.json');
     const IDEAL = d.ref.H_e4m3, FIXED = d.ref.fixed_length.top8.bits, HALF = 320;
     let solo = FIXED, sK = 1, sV = 0, nOut = 0, bOut = 3;
     const box = h('div');
-    const kB = kpi('entry', '', 'bits per element (bpe)');
+    const kB = kpi('whole cherry', '', 'bits per element (bpe)');
     const kR = kpi('delta ratio ρ', '', '≈ bpe / 8', series(2));
     const kX = kpi('vs raw 8 bits', '', '', series(3));
     host.append(
@@ -598,12 +598,12 @@ window.FIG = window.FIG || {};
         slider('values: bits saved', 0, 3.5, 0.05, sV, v => { sV = v; draw(); }, v => fmt(v, 2)),
       ),
       controls(
-        slider('outlier key channels', 0, 64, 1, nOut, v => { nOut = v; draw(); }, v => String(v)),
+        slider('outlier key furrows', 0, 64, 1, nOut, v => { nOut = v; draw(); }, v => String(v)),
         slider('extra bits each', 0, 5, 0.1, bOut, v => { bOut = v; draw(); }, v => fmt(v, 1)),
       ),
       box, h('div', { class: 'kpis' }, kB, kR, kX));
-    const cats = ['keys (320 el.)', 'values (320 el.)', 'whole entry'];
-    const P = Plot(box, { ycats: cats, x: [0, 9], xticks: [0, 2, 4, 6, 8], h: 210, xlabel: 'bits per element', grid: 'x', label: 'Bits per element of the key half, the value half and the entry' });
+    const cats = ['keys (320 el.)', 'values (320 el.)', 'whole cherry'];
+    const P = Plot(box, { ycats: cats, x: [0, 9], xticks: [0, 2, 4, 6, 8], h: 210, xlabel: 'bits per element', grid: 'x', label: 'Bits per element of the key half, the value half and the whole cherry' });
     function draw() {
       const k = Math.max(0, solo - sK - nOut * bOut / HALF), v = Math.max(0, solo - sV), e = (k + v) / 2;
       P.clear();
@@ -611,7 +611,7 @@ window.FIG = window.FIG || {};
         tip: (x, i) => `<b>${cats[i]}</b><br>${fmt(x, 2)} bits per element · ρ ≈ ${fmt(x / 8, 3)}` });
       rule(P, { x: solo, color: BRAND.solo });
       kB.set(fmt(e, 2), `bits per element; outliers add ${fmt(nOut * bOut / (2 * HALF), 3)}`);
-      kR.set(fmt(e / 8, 3), 'delta size / entry size');
+      kR.set(fmt(e / 8, 3), 'delta size / cherry bytes');
       kX.set(fmt(8 / e, 2) + '×', `solo alone: ${fmt(8 / solo, 2)}×`);
     }
     draw();

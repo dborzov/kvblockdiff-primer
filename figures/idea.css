@@ -11,7 +11,7 @@
 .ivm-heads, .ivm-row { display: grid; grid-template-columns: 1fr 2.2rem 1fr; gap: .35rem .5rem; align-items: stretch; }
 .ivm-h { font-family: var(--f-sc); font-size: .86rem; letter-spacing: .04em; color: var(--ink-2); text-align: center; padding-bottom: .2rem; border-bottom: 2px solid var(--rule); }
 .ivm-h-a { border-color: var(--lapis); }
-.ivm-h-b { border-color: var(--t-kv-blockdiff); }
+.ivm-h-b { border-color: var(--t-kvblockdiff); }
 .ivm-list { display: flex; flex-direction: column; gap: .45rem; }
 .ivm-row { cursor: pointer; border-radius: 10px; padding: .15rem; outline: none; }
 .ivm-row:hover, .ivm-row:focus-visible { background: color-mix(in srgb, var(--c) 8%, transparent); }
@@ -20,7 +20,7 @@
 .ivm-card b { font-family: var(--f-sc); font-weight: 600; letter-spacing: .02em; color: var(--ink); }
 .ivm-card span { color: var(--ink-2); font-size: .84rem; }
 .ivm-a { border: 1px solid color-mix(in srgb, var(--lapis) 55%, transparent); border-left: 4px solid var(--lapis); }
-.ivm-b { border: 1px solid color-mix(in srgb, var(--t-kv-blockdiff) 55%, transparent); border-left: 4px solid var(--t-kv-blockdiff); }
+.ivm-b { border: 1px solid color-mix(in srgb, var(--t-kvblockdiff) 55%, transparent); border-left: 4px solid var(--t-kvblockdiff); }
 .ivm-mid { display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--ink-3); }
 .ivm-note { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: .2rem 1rem; font-size: .86rem; line-height: 1.35; color: var(--ink); padding: .35rem .6rem .45rem; border-left: 3px solid var(--c); background: color-mix(in srgb, var(--c) 6%, transparent); border-radius: 0 8px 8px 0; }
 .ivm-note i { font-family: var(--f-sc); font-style: normal; color: var(--ink-2); letter-spacing: .03em; }
@@ -32,7 +32,7 @@
   .ivm-note { grid-template-columns: 1fr; }
 }
 
-/* ---- IV.3 blockBytes: stacked bars of one block's bytes */
+/* ---- VI.2 blockBytes: stacked bars of one punnet's bytes */
 .ivb-bars { display: flex; flex-direction: column; gap: .45rem; }
 .ivb-row { display: grid; grid-template-columns: 7.5rem 1fr 4.6rem; gap: .6rem; align-items: center; font-family: var(--f-sc); font-size: .9rem; }
 .ivb-name { color: var(--ink-2); }

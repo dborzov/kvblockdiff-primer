@@ -1,0 +1,13 @@
+# Figure notes: done
+
+One line per writer's note file, now deleted; the figure task (2026-11-02) handled them. Builder names stay unless listed.
+
+- `figure-notes-school-a.md` — done: `siArith` says "probability table" / "summer's table" / "year's table"; tiny.js had nothing to change.
+- `figure-notes-school.md` — done: every "channel" in `school-vectors.js` is "furrow" (plus the `R[:, j]` form in `svChannelTable`'s read-out) and every "request" of the cache toy is "ask"; builder names kept (`svChannelTable` not renamed).
+- `figure-notes-landscape.md` — done: all thirteen builders relabelled (row / pick / sequence / orchard / the Pin, `--t-orchard` for the old `--t-entry`), Qwen's row notes "values alone: 512 B"; new `FIG.refSettings` (both settings side by side, from `KV.settings`, ported from `rngSettings`) in `landscape.js` + `landscape.css` for III.11.
+- `figure-notes-toolbox.md` — done: homework-a / missed-a / missed-b / plan / measured labels in the site's words; `planDecodeAlone` columns `e0…e4`; `planBill` at d = 512 with "per-cherry tax" and centroids; `mbBoundsSpectrum` lines named "the first plan's trouble / pulse line", buttons "worked spectrum A/B"; the wishes (toy-punnet stepper, escape switch) not built.
+- `figure-notes-app.md` — done: `blockKnob` renamed `stretchKnob` (spare); all `--t-` ids remapped; idea / homework-b / range / missed-b labels in the site's words, Part numbers updated; `blockBytes` presets w = 2 / 86 / 2150; `SCEN` gained the two measured presets (light w = 86, reference tree w = 2150); `hwbLoads` gained the two measured weights.
+- `figure-notes-hypotheses.md` — done: kvAxes / appleCurve / floors / heavyBlocks / catLadder / ladderTheorem / varianceBudget / maWhichWhat / maMiBars / maSpread relabelled; new `FIG.hypStereo` and `FIG.hypEcho` in `idea.js` (data from `measured-splits.json` and `measured-time.json`); `--t-heavy-block` → `--t-heavy-stretch`.
+- `figure-notes-measured.md` — done: every builder of `measured.js` and the two of `range.js` relabelled (compressor, cherry, punnet, stretch, leash, code-length estimate, KV layer n (Lm), cherry shapes as tuples); JSON strings surfaced verbatim pass through a `words()` translator in both files (numbers untouched).
+- `figure-notes-papers.md` — done: papers-a / papers-b labels (DeepSeek-V4, positions, stretches, squeezed rows, furrow, element, compressor, KVFetcher, the orchard, reference tokens), headers say Part IX.
+- `figure-notes-plan.md` — done: `planSelections` and `planReplaySweep` relabelled; `\vgainreq`/`\vgainblk` → `\vgainseq`/`\vgainstr` everywhere; `planDecision`, `planRisks`, `planFrontier`, questions.js relabelled as spares; new `FIG.planQueue` (X.4) with inline data; `planBenchReplay` and `planDecisionTable` not built.

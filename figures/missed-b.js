@@ -1,4 +1,4 @@
-/* Figures for missed-b: Part VII, pages VII.9–VII.17 (fields & tools; design changes).
+/* Figures for missed-b: Parts V, VI and VII (stages, the victim tier, the stack distance, RoPE).
    Every builder is prefixed "mb" so it cannot collide with missed-a.js on the same pages.
    Numbers are computed live from seeded generators or closed forms; the prose quotes them. */
 window.FIG = window.FIG || {};
@@ -37,14 +37,14 @@ window.FIG = window.FIG || {};
   };
   const e4Value = i => E4.full[i + 126];
 
-  // reference setting (III.10) and HiSparse's measured miss rates (III.8)
+  // the Pin (III.11) and HiSparse's measured miss rates (III.10)
   const REF = { e: 640, NL: 78, k: 2048, tpot: 0.030, W: 50e9, M: 30e9, L: 100000, d: 640 };
   const missPow = Bsz => 0.134 * Math.pow(Bsz / 4096, -1.08);   // power law anchored at the measured B = 4096 point
 
   const accent = 'var(--c)';
   const faint = (c, pct = 25) => `color-mix(in srgb, ${c} ${pct}%, transparent)`;
 
-  // ================================================================== VII.9 — FLAC's fixed predictors
+  // ================================================================== (spare) — FLAC's fixed predictors
   FIG.mbFlacOrders = (host) => {
     const N = 1024, SHOW = 240;
     const r = rng('missed-b-flac');
@@ -103,7 +103,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.10 — a rotation as three integer shears
+  // ================================================================== V.9 — a rotation as three integer shears
   FIG.mbLiftingGrid = (host) => {
     let deg = 45, view = 'l3';
     const pts = [];
@@ -155,7 +155,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.11 — the E4M3 ruler: the same difference, two prices
+  // ================================================================== V.8 — the E4M3 ruler: the same difference, two prices
   FIG.mbGridRuler = (host) => {
     let xv = 5.5, xp = 4.5;
     const box = h('div'), ro = readout();
@@ -195,7 +195,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.11 — subtraction versus context, E4M3 versus INT8 (exact)
+  // ================================================================== V.8 — subtraction versus context, E4M3 versus INT8 (exact)
   function gridRates(R2, sigma = 16) {
     // x = μ + noise; μ ~ N(0, R²σ²) is the prediction both sides know; noise ~ N(0, (1−R²)σ²).
     const sm = Math.sqrt(R2) * sigma, sn = Math.sqrt(1 - R2) * sigma;
@@ -268,7 +268,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.12 — the stack behind every LRU size
+  // ================================================================== VII.13 — the stack behind every LRU size
   FIG.mbStackDistance = (host) => {
     const PRESETS = { anomaly: '1 2 3 4 1 2 5 1 2 3 4 5', loop: 'A B C D E A B C D E A B C D E', drift: 'A B C A B D B C D E C D E F D E F' };
     let text = PRESETS.anomaly, Bsel = 3;
@@ -282,28 +282,28 @@ window.FIG = window.FIG || {};
       const opt = B => { const c = new Set(); let m = 0; seq.forEach((x, i) => { if (c.has(x)) return; m++; if (c.size >= B) { let far = null, fd = -1; for (const y of c) { let n = seq.indexOf(y, i + 1); if (n < 0) n = 1e9; if (n > fd) { fd = n; far = y; } } c.delete(far); } c.add(x); }); return m; };
       return { states, dist, distinct, lru, fifo, opt };
     }
-    const inp = h('input', { type: 'text', value: text, 'aria-label': 'Request string', class: 'mb-seq', spellcheck: 'false' });
-    const pre = seg([['anomaly', 'Bélády’s string'], ['loop', 'a loop of 5'], ['drift', 'a drifting set']], 'anomaly', v => { text = PRESETS[v]; inp.value = text; draw(); }, 'Preset request strings');
+    const inp = h('input', { type: 'text', value: text, 'aria-label': 'String of asks', class: 'mb-seq', spellcheck: 'false' });
+    const pre = seg([['anomaly', 'Bélády’s string'], ['loop', 'a loop of 5'], ['drift', 'a drifting set']], 'anomaly', v => { text = PRESETS[v]; inp.value = text; draw(); }, 'Preset strings of asks');
     inp.addEventListener('input', () => { text = inp.value; pre.set(null); draw(); });
     const bSl = slider('cache size B', 1, 6, 1, Bsel, v => { Bsel = v; draw(); });
     const diagBox = h('div', { class: 'mb-stack-wrap' }), plotBox = h('div'), ro = readout();
-    host.append(controls(h('label', { class: 'mb-seq-l' }, 'requests ', inp)), controls(pre, bSl), diagBox,
+    host.append(controls(h('label', { class: 'mb-seq-l' }, 'asks ', inp)), controls(pre, bSl), diagBox,
       legend([['LRU, read off the stack', series(0)], ['FIFO, simulated', series(1), 'dot'], ['Bélády (clairvoyant), simulated', series(2), 'dot']]), plotBox, ro);
     const P = Plot(plotBox, { x: [0.5, 6.5], y: [0, 16], h: 250, xticks: [1, 2, 3, 4, 5, 6], xlabel: 'cache size B (slots)', ylabel: 'misses', label: 'Misses against cache size' });
 
     function draw() {
       const seq = parse(text);
-      if (!seq.length) { diagBox.replaceChildren(h('p', { class: 'fig-note', text: 'Type a few requests, separated by spaces.' })); return; }
+      if (!seq.length) { diagBox.replaceChildren(h('p', { class: 'fig-note', text: 'Type a few asks, separated by spaces.' })); return; }
       const A = analyse(seq), n = seq.length, rows = Math.min(A.distinct, 8);
       const maxB = Math.max(2, A.distinct + 1);
       bSl.input.max = maxB; if (Bsel > maxB) { Bsel = maxB; bSl.set(Bsel); }
-      // --- the stack diagram: one column per request, the stack after it, top = most recent
+      // --- the stack diagram: one column per ask, the stack after it, top = most recent
       const lw = 66, W = 640, cw = Math.min(44, (W - lw - 12) / n), top = 58, rh = 26, Hh = top + rows * rh + 14;
       const inner = h('div', { class: 'mb-stack-inner' });
       diagBox.replaceChildren(inner);              // inner keeps a minimum width, so phones scroll sideways instead of squeezing
-      const D = Diagram(inner, { w: W, h: Hh, label: 'The LRU stack after each request' });
+      const D = Diagram(inner, { w: W, h: Hh, label: 'The LRU stack after each ask' });
       const g = el('g', {}, D.svg);
-      el('text', { x: 4, y: 20, class: 'lbl', text: 'request' }, g);
+      el('text', { x: 4, y: 20, class: 'lbl', text: 'ask' }, g);
       el('text', { x: 4, y: 44, class: 'lbl', text: 'distance' }, g);
       for (let r = 0; r < rows; r++) el('text', { x: lw - 8, y: top + r * rh + 16, 'text-anchor': 'end', class: 'lbl', text: r === 0 ? 'top 0' : String(r) }, g);
       el('rect', { x: lw - 3, y: top - 2, width: n * cw + 4, height: Math.min(Bsel, rows) * rh + 2, rx: 5, style: `fill:${faint(series(0), 12)};stroke:${series(0)};stroke-dasharray:4 3` }, g);
@@ -337,7 +337,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.13 — the KLT gain read off a spectrum
+  // ================================================================== V.13 — the KLT gain read off a spectrum
   FIG.mbBoundsSpectrum = (host) => {
     const D = 64;
     let s = 8, f = 80 / 136;
@@ -347,8 +347,8 @@ window.FIG = window.FIG || {};
     const sS = slider('strong directions', 1, 32, 1, s, v => { s = v; draw(); });
     const sF = slider('share of variance they hold', 0.02, 0.995, 0.005, f, v => { f = v; draw(); }, v => fmtPct(v, 1));
     host.append(controls(sS, sF), controls(
-      btn('example A: 8 at 10, 56 at 1', () => { s = 8; f = 80 / 136; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' }),
-      btn('example B: 8 at 50, 56 at 0.1', () => { s = 8; f = 400 / 405.6; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' }),
+      btn('worked spectrum A: 8 at 10, 56 at 1', () => { s = 8; f = 80 / 136; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' }),
+      btn('worked spectrum B: 8 at 50, 56 at 0.1', () => { s = 8; f = 400 / 405.6; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' }),
       btn('flat', () => { s = 8; f = 8 / 64; sS.set(s); sF.set(f); draw(); }, { cls: 'sm' })),
     h('div', { class: 'fig-row' }, box1, box2), ro);
     const P1 = Plot(box1, { x: [0.5, D + 0.5], y: [0.002, 64], ylog: 10, h: 280, xlabel: 'direction (largest first)', ylabel: 'variance λ', label: 'The spectrum: variance along each KLT direction' });
@@ -361,8 +361,8 @@ window.FIG = window.FIG || {};
       rule(P1, { y: 1, label: 'average = 1' });
       P2.clear();
       line(P2, linspace(0.02, 0.995, 120).map(q => [q, gain(s, q)]), { color: series(4) });
-      rule(P2, { y: 0.3, label: '1a: below 0.3 bit, trouble' });
-      rule(P2, { y: 1, label: '1a: above 1 bit, a pulse' });
+      rule(P2, { y: 0.3, label: 'the first plan’s trouble line: 0.3 bit' });
+      rule(P2, { y: 1, label: 'the first plan’s pulse line: 1 bit' });
       dot(P2.g.top, P2.x(f), P2.y(Math.min(g, 4)), 6 * P2.fs, accent);
       ro.set([
         ['spectrum', `${s} directions at ${fmt(l[0], 2)}, ${D - s} at ${fmt(l[D - 1], 3)}`],
@@ -374,15 +374,15 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.14 — residency cost of every dictionary type
+  // ================================================================== (spare) — residency cost of every dictionary type
   FIG.mbResidency = (host) => {
-    const TYPES = [['none (HiSparse)', 0], ['loc', 2], ['rank-16 basis', 32], ['256-centroid codebook', 256], ['full basis (d = 640)', 2 * REF.d]];
+    const TYPES = [['none (HiSparse)', 0], ['furrow statistics', 2], ['rank-16 basis', 32], ['256-centroid codebook', 256], ['full basis (d = 640)', 2 * REF.d]];
     let lb = 11, rho = 0.75;
     const box = h('div'), tbl = h('div'), ro = readout();
     host.append(controls(
-      slider('block size b', 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtSI(pow2(v), 0)} tokens`),
+      slider('stretch length b', 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmtSI(pow2(v), 0)} tokens`),
       slider(texify('assumed $\\vrho$'), 0.5, 1, 0.01, rho, v => { rho = v; draw(); })), box, tbl, ro);
-    const P = Plot(box, { ycats: TYPES.map(t => t[0]), x: [0, 240], xticks: [0, 50, 100, 150, 200], h: 270, xlabel: 'requests per GPU, N = min(link bound, HBM bound)', grid: 'x', label: 'Requests per GPU for each dictionary type kept resident for every block' });
+    const P = Plot(box, { ycats: TYPES.map(t => t[0]), x: [0, 240], xticks: [0, 50, 100, 150, 200], h: 270, xlabel: 'sequences per GPU, N = min(link bound, HBM bound)', grid: 'x', label: 'Sequences per GPU for each dictionary type kept resident for every stretch' });
     function calc(w, isNone) {
       const b = pow2(lb), extra = isNone ? 0 : REF.L / b * w, B = 4096, m = 0.134;
       const Nl = REF.W * REF.tpot / (m * REF.k * REF.NL * REF.e * (isNone ? 1 : rho));
@@ -400,20 +400,20 @@ window.FIG = window.FIG || {};
         tip: (v, i) => `<b>${rows[i].name}</b><br>link bound ${fmt(rows[i].Nl, 0)} · HBM bound ${fmt(rows[i].Nh, 0)}`,
       });
       rule(P, { x: base });
-      tbl.replaceChildren(table(['type', 'w', 'per layer', '÷ hot cache', 'per request'],
+      tbl.replaceChildren(table(['type', 'w', 'per layer', '÷ hot cache', 'per sequence'],
         rows.map((r, i) => ({ cells: [r.name, i ? r.w : '—', i ? fmt(r.extra, 0) : '0', i ? fmtPct(r.extra / 4096, 1) : '0 %', i ? `${fmt(r.mb, 1)} MB` : '—'], cls: i === 1 ? 'hl' : null })), { left: [0] }));
-      ro.set([['block size', `${fmtSI(pow2(lb), 0)} tokens → ${fmt(REF.L / pow2(lb), 1)} blocks per layer`], ['hot cache', '4096 slots, miss rate 13.4 %'], ['every miss a δ-miss', `${tex('\\vfD = 1')}, no dictionary loads`]]);
+      ro.set([['stretch length', `${fmtSI(pow2(lb), 0)} tokens → ${fmt(REF.L / pow2(lb), 1)} stretches per layer`], ['hot cache', '4096 slots, miss rate 13.4 %'], ['every miss a δ-miss', `${tex('\\vfD = 1')}, no dictionary loads`]]);
     }
     draw();
   };
 
-  // ================================================================== VII.15 — RoPE smears a structured pair of channels
+  // ================================================================== VII.12 — RoPE smears a structured pair of elements
   FIG.mbRopeSmear = (host) => {
     const T = 2048, r = rng('missed-b-rope');
     const pre = range(T).map(() => [5 + 0.25 * r.normal(), 1 + 0.25 * r.normal()]);
     let lth = -3, lb = 6, show = 'both';
     const rot = (p, a) => [p[0] * Math.cos(a) - p[1] * Math.sin(a), p[0] * Math.sin(a) + p[1] * Math.cos(a)];
-    const spread = (pts, b) => {     // within-block spread: residual std after subtracting each block's own mean, per channel
+    const spread = (pts, b) => {     // within-stretch spread: residual std after subtracting each stretch's own mean, per furrow
       let ss = 0, n = 0;
       for (let j = 0; j + b <= pts.length; j += b) {
         const blk = pts.slice(j, j + b), m0 = mean(blk.map(p => p[0])), m1 = mean(blk.map(p => p[1]));
@@ -424,10 +424,10 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     host.append(controls(
       slider('speed θ (rad / token)', -4, 0, 0.05, lth, v => { lth = v; draw(); }, v => (Math.pow(10, v) < 0.01 ? Math.pow(10, v).toExponential(1) : fmt(Math.pow(10, v), 3))),
-      slider('block size b', 4, 10, 1, lb, v => { lb = v; draw(); }, v => `${pow2(v)} tokens`),
+      slider('stretch length b', 4, 10, 1, lb, v => { lb = v; draw(); }, v => `${pow2(v)} tokens`),
       seg([['both', 'both'], ['pre', 'before RoPE'], ['post', 'after RoPE']], show, v => { show = v; draw(); }, 'Which keys')),
-    legend([['before RoPE (one block)', 'var(--ink-3)', 'dot'], ['after RoPE (same block)', series(1), 'dot'], ['block mean = the loc prediction', series(0), 'dot'], ['after RoPE, all 2048 tokens', faint(series(1), 30), 'dot']]), box, ro);
-    const P = Plot(box, { x: [-6.5, 6.5], y: [-6.5, 6.5], equal: true, h: 420, xlabel: 'channel c (first of the pair)', ylabel: 'channel c + 1', label: 'A pair of key channels before and after RoPE' });
+    legend([['before RoPE (one stretch)', 'var(--ink-3)', 'dot'], ['after RoPE (same stretch)', series(1), 'dot'], ['stretch mean = the furrow-statistics prediction', series(0), 'dot'], ['after RoPE, all 2048 tokens', faint(series(1), 30), 'dot']]), box, ro);
+    const P = Plot(box, { x: [-6.5, 6.5], y: [-6.5, 6.5], equal: true, h: 420, xlabel: 'element c (first of the pair)', ylabel: 'element c + 1', label: 'A pair of key elements before and after RoPE' });
     function draw() {
       const th = Math.pow(10, lth), b = pow2(lb);
       const post = pre.map((p, t) => rot(p, t * th));
@@ -443,7 +443,7 @@ window.FIG = window.FIG || {};
       const sPre = spread(pre, b), sPost = spread(post, b);
       ro.set([
         ['one full turn every', `${fmtSI(2 * Math.PI / th, 1)} tokens`],
-        ['spread around the block mean, before', fmt(sPre, 2)],
+        ['spread around the stretch mean, before', fmt(sPre, 2)],
         ['after', fmt(sPost, 2)],
         ['extra bits per element (Gaussian estimate)', `<b>${fmt(Math.max(0, Math.log2(sPost / sPre)), 2)}</b>`],
       ]);
@@ -451,10 +451,10 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.16 — the victim tier on the reuse-distance curve
+  // ================================================================== VI.12 — the victim tier on the reuse-distance curve
   FIG.mbVictimTier = (host) => {
     let B = 2048, BV = 3200, rho = 0.65, l1 = false;
-    const DICT = REF.L / 2048 * 2;            // loc dictionaries for every block (b = 2048, w = 2): needed to rebuild deltas
+    const DICT = REF.L / 2048 * 2;            // furrow-statistics dictionaries for every stretch (b = 2048, w = 2): needed to rebuild deltas
     const MEAS = [[2048, 0.30], [4096, 0.134], [8192, 0.067]];
     function cfg(B, BV, rho, l1) {
       const d = BV > 0 || l1 ? DICT : 0, H = B + rho * BV + d, C = B + BV, m = missPow(C), c = l1 ? rho : 1;
@@ -465,7 +465,7 @@ window.FIG = window.FIG || {};
     }
     const rawBest = (() => { let best = 0; for (let x = 2048; x <= 16384; x += 32) best = Math.max(best, cfg(x, 0, 1, false).N); return best; })();
     const box1 = h('div'), box2 = h('div');
-    const tiles = { m: kpi('miss rate over the link', '', '', series(1)), H: kpi('GPU memory per request', '', '', series(3)), N: kpi('requests per GPU', '', ''), dec: kpi('decode on promotion', '', '', series(2)) };
+    const tiles = { m: kpi('miss rate over the link', '', '', series(1)), H: kpi('GPU memory per sequence', '', '', series(3)), N: kpi('sequences per GPU', '', ''), dec: kpi('decode on promotion', '', '', series(2)) };
     const bvS = slider(texify('victim tier $\\vBV$'), 0, 16384, 128, BV, v => { BV = v; draw(); }, v => `${fmtSI(v, 1)} deltas`);
     host.append(
       controls(seg([[2048, 'B = 2048 (= k)'], [4096, 'B = 4096'], [8192, 'B = 8192']], B, v => { B = v; draw(); }, 'Raw hot cache size'), bvS),
@@ -473,7 +473,7 @@ window.FIG = window.FIG || {};
       legend([['raw hot cache: hits', series(0), 'band'], ['victim tier: rebuilt on the GPU', 'var(--t-victim-tier)', 'band'], ['power law through HiSparse’s points', 'var(--ink-2)'], ['HiSparse, measured', series(1), 'dot'], ['Bélády at 4096', series(2), 'dot']]),
       h('div', { class: 'fig-row' }, box1, box2), h('div', { class: 'kpis' }, tiles.m, tiles.H, tiles.N, tiles.dec));
     const P1 = Plot(box1, { x: [1024, 32768], xlog: 2, y: [0.01, 0.6], ylog: 10, h: 300, xlabel: 'reuse distance = cache size (slots)', ylabel: 'miss rate m', xfmt: v => fmtSI(v, 0), yfmt: v => fmtPct(v, 0), yticks: [0.01, 0.02, 0.05, 0.1, 0.2, 0.5], label: 'Miss rate against cache size, with the raw cache and the victim tier marked' });
-    const P2 = Plot(box2, { x: [0, 16384], y: [0, 200], h: 300, xlabel: 'victim-tier deltas B_V', ylabel: 'requests per GPU N', xfmt: v => fmtSI(v, 0), label: 'Requests per GPU against victim-tier size' });
+    const P2 = Plot(box2, { x: [0, 16384], y: [0, 200], h: 300, xlabel: 'victim-tier deltas B_V', ylabel: 'sequences per GPU N', xfmt: v => fmtSI(v, 0), label: 'Sequences per GPU against victim-tier size' });
     function draw() {
       const c = cfg(B, BV, rho, l1);
       P1.clear();
@@ -500,20 +500,20 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================== VII.17 — the decision table as a map
+  // ================================================================== (spare: the old wave-1 decision table) — the decision table as a map
   FIG.mbDecisionMap = (host) => {
     let gx = 0.3, gy = 0.6;
     const ROWS = [
-      { id: 'neg', name: 'negative', color: 'var(--slate)', poly: [[0, 0], [0.25, 0], [0, 0.25]], reading: '8-bit KV has no usable conditional structure', next: 'publish the negative (shuffle control, BF16 column); pivot to a global fixed-length miss-path coder', paper: '“How much conditional structure is left in 8-bit KV caches? (Not much.)”' },
-      { id: 'marg', name: 'marginal', color: series(3), poly: [[0.25, 0], [0.75, 0], [0, 0.75], [0, 0.25]], reading: 'marginal: hinges on w, on the victim tier and on lever 2', next: 'run framework C; decide on the cost model', paper: 'the measurement plus the cost model, with the regime in which it pays' },
-      { id: 'req', name: 'requestdiff', color: series(2), poly: [[0.75, 0], [1.5, 0], [1.5, 0.15], [0.6, 0.15]], reading: 'real, but per-request scale', next: 'wave 2 with request scope; framework C optional', paper: 'per-request dictionaries: a simpler system, a clean negative on block scale' },
-      { id: 'hole', name: 'not in the table', color: 'var(--ink-3)', poly: [[0.6, 0.15], [1.5, 0.15], [1.5, 0.4], [0.35, 0.4]], reading: 'both scales contribute; the first draft’s table says nothing here', next: 'our proposal: treat as marginal — run C and let the cost model decide between request and block scope', paper: 'whichever scope the cost model picks' },
-      { id: 'go', name: 'blockdiff', color: series(5), poly: [[0.35, 0.4], [1.5, 0.4], [1.5, 1.5], [0, 1.5], [0, 0.75]], reading: 'fallen-apple similarity is real and block-scale', next: 'wave 2 with block scope', paper: '“Lossless, scope-aware dictionary coding of 8-bit KV caches”' },
+      { id: 'neg', name: 'negative', color: 'var(--slate)', poly: [[0, 0], [0.25, 0], [0, 0.25]], reading: '8-bit orchards have no usable conditional structure', next: 'publish the negative (shuffle control, BF16 column); pivot to a global fixed-length miss-path compressor', paper: '“How much conditional structure is left in 8-bit orchards? (Not much.)”' },
+      { id: 'marg', name: 'marginal', color: series(3), poly: [[0.25, 0], [0.75, 0], [0, 0.75], [0, 0.25]], reading: 'marginal: hinges on w, on the victim tier and on lever 2', next: 'run framework C; decide on the napkin', paper: 'the measurement plus the cost model, with the regime in which it pays' },
+      { id: 'req', name: 'sequence scope', color: series(2), poly: [[0.75, 0], [1.5, 0], [1.5, 0.15], [0.6, 0.15]], reading: 'real, but at sequence scale', next: 'wave 2 with sequence scope; framework C optional', paper: 'sequence-scope dictionaries: a simpler system, a clean negative at stretch scale' },
+      { id: 'hole', name: 'not in the table', color: 'var(--ink-3)', poly: [[0.6, 0.15], [1.5, 0.15], [1.5, 0.4], [0.35, 0.4]], reading: 'both scales contribute; the first draft’s table says nothing here', next: 'our proposal: treat as marginal — run C and let the napkin decide between sequence and stretch scope', paper: 'whichever scope the cost model picks' },
+      { id: 'go', name: 'stretch scope', color: series(5), poly: [[0.35, 0.4], [1.5, 0.4], [1.5, 1.5], [0, 1.5], [0, 0.75]], reading: 'fallen-apple similarity is real and at stretch scale', next: 'wave 2 with stretch scope', paper: '“Lossless, scope-aware dictionary coding of 8-bit orchards”' },
     ];
     const classify = (x, y) => { const s = x + y; if (s < 0.25) return ROWS[0]; if (s < 0.75) return ROWS[1]; if (y < 0.15) return ROWS[2]; if (y < 0.4) return ROWS[3]; return ROWS[4]; };
     const box = h('div'), ro = readout();
     host.append(legend(ROWS.map(r => [r.name, r.color, 'box'])), box, ro);
-    const P = Plot(box, { x: [0, 1.5], y: [0, 1.5], h: 420, xlabel: 'request-scope gain g_req (bits per element)', ylabel: 'block-scope gain g_blk', label: 'The decision table of wave 1 as regions of the plane of the two scope gains' });
+    const P = Plot(box, { x: [0, 1.5], y: [0, 1.5], h: 420, xlabel: 'sequence-scope gain g_seq (bits per element)', ylabel: 'stretch-scope gain g_str', label: 'The decision table of wave 1 as regions of the plane of the two scope gains' });
     ROWS.forEach(r => {
       const d = 'M' + r.poly.map(([x, y]) => `${P.x(x)} ${P.y(y)}`).join('L') + 'Z';
       el('path', { d, style: `fill:${faint(r.color, r.id === 'hole' ? 18 : 30)};stroke:${r.color};stroke-width:1` }, P.g.bg);
@@ -529,9 +529,9 @@ window.FIG = window.FIG || {};
       knob.setAttribute('cx', P.x(gx)); knob.setAttribute('cy', P.y(gy));
       const r = classify(gx, gy);
       ro.set([
-        [`${tex('\\vgainreq')} + ${tex('\\vgainblk')}`, `${fmt(gx, 2)} + ${fmt(gy, 2)} = ${fmt(gx + gy, 2)} bits`],
+        [`${tex('\\vgainseq')} + ${tex('\\vgainstr')}`, `${fmt(gx, 2)} + ${fmt(gy, 2)} = ${fmt(gx + gy, 2)} bits`],
         ['reading', r.reading], ['next', r.next], ['the paper', r.paper],
-        ...(gy < 0.1 ? [['caution', 'block gain below the shuffle floor: indistinguishable from fitting noise']] : []),
+        ...(gy < 0.1 ? [['caution', 'stretch-scope gain below the shuffle floor: indistinguishable from fitting noise']] : []),
       ]);
     }
     draw();

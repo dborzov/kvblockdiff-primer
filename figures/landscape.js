@@ -1,21 +1,21 @@
-/* Part III — Where things stand. Figures for the pages on decoding, attention, the KV cache,
+/* Part III — How an LLM reads its memory. Figures for the pages on decoding, attention, the orchard,
    sparse attention, HiSparse and the reference numbers. See docs/figures.md.
    All numbers are either toy numbers (marked illustrative in the captions) or the reference
-   setting of III.10, which is frozen in REF below. */
+   setting (the Pin, III.11), which is frozen in REF below. */
 window.FIG = window.FIG || {};
 
 (function () {
   'use strict';
 
-  // ------------------------------------------------------------ the reference setting (III.10)
+  // ------------------------------------------------------------ the reference setting (the Pin, III.11)
   // HiSparse's GLM-5.1 deployment converted to 8-bit storage. Every derived number on
-  // III.5, III.9 and III.11 is computed from these.
+  // III.6, III.10 and III.12 is computed from these.
   const REF = {
-    NL: 78,              // sparse layers
-    k: 2048,             // selections per layer per step
+    NL: 78,              // KV layers
+    k: 2048,             // picks per layer per step
     L: 100384,           // context length of the trace (tokens)
-    eBF16: 1280,         // bytes per entry in BF16 (100 KB per token / 78 layers, rounded)
-    e: 640,              // bytes per entry at 8 bits
+    eBF16: 1280,         // bytes per row (one token, one layer) in BF16 (100 KB per token / 78 layers, rounded)
+    e: 640,              // bytes per row (one token, one layer) at 8 bits
     tpot: 0.030,         // seconds per decode step
     Wlink: 50e9,         // practical PCIe Gen5 x16 bandwidth, bytes/s (64 nominal)
     WlinkNominal: 64e9,
@@ -30,7 +30,7 @@ window.FIG = window.FIG || {};
   const mix = (c, p) => `color-mix(in srgb, ${c} ${p}%, transparent)`;
 
   // =====================================================================
-  // III.1 — prefill and decode on a toy model: the grid of cells grows
+  // III.1 — prefill and decode on a toy LLM: the grid of cells grows
   // =====================================================================
   FIG.decodeGrid = (host) => {
     const TOK = ['The', ' weather', ' on', ' Gull', ' Rock', ' is', ' fog', 'gy', ',', ' and', ' cold'];
@@ -63,7 +63,7 @@ window.FIG = window.FIG || {};
           const stored = c < s.n, isNew = s.kind === 'decode' ? c === s.n - 1 : s.kind === 'prefill' && c < PROMPT;
           const looked = s.kind === 'decode' && c < s.n;
           for (let l = 0; l < LAYERS; l++) {
-            const fill = !stored ? 'var(--paper)' : looked ? mix('var(--c)', 30) : mix('var(--t-entry)', s.kind === 'prefill' ? 34 : 18);
+            const fill = !stored ? 'var(--paper)' : looked ? mix('var(--c)', 30) : mix('var(--t-orchard)', s.kind === 'prefill' ? 34 : 18);
             const r = el('rect', {
               x: cx(c) + 3, y: ry(l), width: cw - gap, height: ch, rx: 5,
               style: `fill:${fill};stroke:${isNew && s.kind === 'decode' ? 'var(--c)' : 'var(--rule)'};stroke-width:${isNew && s.kind === 'decode' ? 2.6 : 1};${stored ? '' : 'stroke-dasharray:3 3;opacity:.55'}`,
@@ -146,28 +146,28 @@ window.FIG = window.FIG || {};
   };
 
   // =====================================================================
-  // III.3 — what one entry holds, for three models
+  // III.3 — what one row of the orchard holds, for three LLMs
   // =====================================================================
   FIG.entryAnatomy = (host) => {
     const MODELS = {
-      toy: { name: 'the toy of III.2', layers: 4, parts: [['K, head 0', 16, 'k'], ['K, head 1', 16, 'k'], ['V, head 0', 16, 'v'], ['V, head 1', 16, 'v']], note: '2 KV heads × 16 numbers × (key and value)' },
-      qwen: { name: 'Qwen3.5-2B', layers: 6, parts: [['K, head 0', 256, 'k'], ['K, head 1', 256, 'k'], ['V, head 0', 256, 'v'], ['V, head 1', 256, 'v']], note: '2 KV heads × 256 numbers × (key and value); only its 6 full-attention layers keep entries' },
-      glm: { name: 'GLM-5.1-class (MLA)', layers: 78, parts: [['one compressed vector (keys and values are rebuilt from it)', 640, 'l']], note: 'one latent vector of ≈ 640 numbers per token per layer (≈ 100 KB per token in BF16 over 78 layers)' },
+      toy: { name: 'the toy of III.2', layers: 4, parts: [['K, head 0', 16, 'k'], ['K, head 1', 16, 'k'], ['V, head 0', 16, 'v'], ['V, head 1', 16, 'v']], note: '2 KV heads × 16 elements × (key and value)' },
+      qwen: { name: 'Qwen3.5-2B', layers: 6, parts: [['K, head 0', 256, 'k'], ['K, head 1', 256, 'k'], ['V, head 0', 256, 'v'], ['V, head 1', 256, 'v']], note: '2 KV heads × 256 elements × (key and value); values alone: 512 B at 8 bits; only its 6 KV layers keep rows' },
+      glm: { name: 'GLM-5.1-class (MLA)', layers: 78, parts: [['one compressed vector (keys and values are rebuilt from it)', 640, 'l']], note: 'one latent of ≈ 640 elements per token per layer (≈ 100 KB per token in BF16 over 78 layers)' },
     };
     let model = 'qwen', bits = 8;
     const strip = h('div', { class: 'ls-strip', role: 'img' });
     const note = h('div', { class: 'fig-note' });
-    const tiles = { d: kpi('numbers per entry', ''), e: kpi(`bytes per entry ${tex('\\ve')}`, '', '', 'var(--t-entry)'), n: kpi('entries per token', '', 'one per layer'), tok: kpi('bytes per token', '', 'all layers') };
+    const tiles = { d: kpi('elements per row', ''), e: kpi(`bytes per row ${tex('\\ve')}`, '', 'one token, one layer', 'var(--t-orchard)'), n: kpi('rows per token', '', 'one per KV layer'), tok: kpi('bytes per token', '', 'all KV layers') };
     host.append(controls(
-      seg([['toy', 'toy model'], ['qwen', 'Qwen3.5-2B'], ['glm', 'GLM-5.1-class']], model, v => { model = v; draw(); }, 'model'),
+      seg([['toy', 'the toy'], ['qwen', 'Qwen3.5-2B'], ['glm', 'GLM-5.1-class']], model, v => { model = v; draw(); }, 'the LLM'),
       seg([[16, 'BF16 (16 bits)'], [8, '8 bits']], bits, v => { bits = v; draw(); }, 'number format'),
     ), strip, note, h('div', { class: 'kpis' }, tiles.d, tiles.e, tiles.n, tiles.tok));
     function draw() {
       const M = MODELS[model], d = sum(M.parts.map(p => p[1])), e = d * bits / 8;
-      strip.setAttribute('aria-label', `One entry of ${M.name}: ${d} numbers`);
+      strip.setAttribute('aria-label', `One row of ${M.name}: ${d} elements`);
       strip.replaceChildren(...M.parts.map(([lab, n, kind]) => {
         const seg_ = h('span', { class: `ls-strip-seg is-${kind}`, style: `flex:${n} 1 0` }, h('span', { class: 'ls-strip-lbl', text: `${lab} · ${n}` }));
-        hover(seg_, () => `<b>${lab}</b><br>${n} numbers × ${bits} bits = ${fmtInt(n * bits / 8)} bytes`);
+        hover(seg_, () => `<b>${lab}</b><br>${n} elements × ${bits} bits = ${fmtInt(n * bits / 8)} bytes`);
         seg_.tabIndex = 0;
         return seg_;
       }));
@@ -181,7 +181,7 @@ window.FIG = window.FIG || {};
   };
 
   // =====================================================================
-  // III.3 — RoPE: one pair of key channels before and after the rotation
+  // III.4 — RoPE: one pair of key elements before and after the rotation
   // =====================================================================
   FIG.ropeSpin = (host) => {
     const N = 64, r = rng('landscape-rope');
@@ -191,7 +191,7 @@ window.FIG = window.FIG || {};
     const sw = seg([[false, 'before RoPE'], [true, 'after RoPE']], after, v => { after = v; draw(); }, 'which keys');
     const sl = slider('rotation per position', 0, 90, 1, deg, v => { deg = v; draw(); }, v => `${v}°`);
     host.append(controls(sw, sl), legend([['early positions', series(0), 'dot'], ['late positions', series(1), 'dot']]), box, ro);
-    const P = Plot(box, { x: [-2, 2], y: [-2, 2], equal: true, h: 340, xlabel: 'key channel 2c', ylabel: 'key channel 2c+1', label: 'One pair of key channels for 64 tokens' });
+    const P = Plot(box, { x: [-2, 2], y: [-2, 2], equal: true, h: 340, xlabel: 'key element 2c', ylabel: 'key element 2c+1', label: 'One pair of key elements for 64 tokens' });
     const g = el('g', {}, P.g.data);
     const pts = () => pre.map(([x, y], t) => {
       if (!after) return [x, y];
@@ -209,22 +209,22 @@ window.FIG = window.FIG || {};
       });
       const sd = i => Math.sqrt(variance(ps.map(p => p[i])));
       const sd0 = i => Math.sqrt(variance(pre.map(p => p[i])));
-      ro.set([['spread of channel 2c', `${fmt(sd(0), 2)} (before RoPE ${fmt(sd0(0), 2)})`], ['spread of channel 2c+1', `${fmt(sd(1), 2)} (before RoPE ${fmt(sd0(1), 2)})`]]);
+      ro.set([['spread of element 2c', `${fmt(sd(0), 2)} (before RoPE ${fmt(sd0(0), 2)})`], ['spread of element 2c+1', `${fmt(sd(1), 2)} (before RoPE ${fmt(sd0(1), 2)})`]]);
     }
     draw();
   };
 
   // =====================================================================
-  // III.4 — dense versus sparse reading: which entries one step reads
+  // III.5 — dense versus sparse reading: which rows one step reads
   // =====================================================================
-  // A toy selection generator shared by the reading grid and the Lucky Louis raster:
+  // A toy pick generator shared by the reading grid and the Lucky Louis raster:
   // each layer has a slowly moving "topic" bump over positions plus fixed per-position noise.
   function toySelector(seed, layers, maxPos, k, drift) {
     const r = rng(seed);
     const noise = range(layers).map(() => range(maxPos).map(() => r.normal(0, 1)));
     const phase = range(layers).map(() => r.uniform(0, 2 * Math.PI));
     const speed = range(layers).map(() => r.uniform(0.6, 1.4));
-    return (l, t) => {          // the k positions layer l selects at step t (positions 0..t stored)
+    return (l, t) => {          // the k positions layer l picks at step t (positions 0..t stored)
       const c1 = (0.5 + 0.42 * Math.sin(phase[l] + drift * speed[l] * t)) * t;
       const c2 = (0.5 + 0.42 * Math.cos(1.7 * phase[l] + 0.8 * drift * speed[l] * t)) * t;
       const sc = range(t + 1).map(p => 1.1 * noise[l][p] + 2.6 * Math.exp(-((p - c1) ** 2) / 18) + 2.2 * Math.exp(-((p - c2) ** 2) / 10) + (p >= t - 1 ? 1.5 : 0));
@@ -240,11 +240,11 @@ window.FIG = window.FIG || {};
     const sl = slider(texify('decode step $\\vt$'), 8, MAXP - 1, 1, t, v => { t = v; draw(); });
     const sw = seg([['dense', 'dense: read everything'], ['sparse', 'sparse: read the k picks']], mode, v => { mode = v; draw(); }, 'attention mode');
     host.append(controls(sw, sl));
-    const D = Diagram(host, { w: 640, h: 178, grow: 0.25, label: 'Stored and read entries, layers by positions' });
+    const D = Diagram(host, { w: 640, h: 178, grow: 0.25, label: 'Stored rows and picks read, layers by positions' });
     const g = el('g', {}, D.svg);
     const box = h('div');
-    host.append(legend([['entries stored (= read per step by dense attention)', series(0)], ['entries read per step by sparse attention', series(1)]]), box, ro);
-    const P = Plot(box, { x: [0, MAXP - 1], y: [0, LAYERS * MAXP], h: 230, xlabel: 'decode step t', ylabel: 'entries', label: 'Entries stored and read per step against the step' });
+    host.append(legend([['rows stored (= read per step by dense attention)', series(0)], ['picks read per step by sparse attention', series(1)]]), box, ro);
+    const P = Plot(box, { x: [0, MAXP - 1], y: [0, LAYERS * MAXP], h: 230, xlabel: 'decode step t', ylabel: 'rows', label: 'Stored rows and picks read per step against the step' });
     const x0 = 64, cw = (640 - x0 - 10) / MAXP, ch = 20, top = 22;
     const ry = l => top + (LAYERS - 1 - l) * (ch + 3);
     function draw() {
@@ -254,7 +254,7 @@ window.FIG = window.FIG || {};
         const sel = mode === 'dense' ? null : new Set(pick(l, t));
         for (let p = 0; p < MAXP; p++) {
           const stored = p <= t, read = stored && (!sel || sel.has(p));
-          const fill = !stored ? 'var(--paper)' : read ? 'var(--c)' : mix('var(--t-entry)', 22);
+          const fill = !stored ? 'var(--paper)' : read ? 'var(--c)' : mix('var(--t-orchard)', 22);
           const r = el('rect', { x: x0 + p * cw + 0.8, y: ry(l), width: cw - 1.6, height: ch, rx: 2, style: `fill:${fill};stroke:${stored ? 'none' : 'var(--rule)'};${stored ? '' : 'opacity:.5'}` }, g);
           if (stored) hover(r, () => `<b>layer ${l}, position ${p}</b><br>${read ? 'read at this step' : 'stored, not read at this step'}`);
         }
@@ -267,13 +267,13 @@ window.FIG = window.FIG || {};
       line(P, xs.map(s => [s, LAYERS * Math.min(K, s + 1)]), { color: series(1), name: 'sparse reads' });
       rule(P, { x: t, label: `step ${t}`, color: 'var(--c)' });
       const reads = mode === 'dense' ? LAYERS * (t + 1) : LAYERS * K;
-      ro.set([['stored', `${LAYERS} × ${t + 1} = ${LAYERS * (t + 1)} entries`], ['read at this step', `${reads} entries (${mode})`], ['share read', fmtPct(reads / (LAYERS * (t + 1)), 0)]]);
+      ro.set([['stored', `${LAYERS} × ${t + 1} = ${LAYERS * (t + 1)} rows`], ['read at this step', `${reads} rows (${mode})`], ['share read', fmtPct(reads / (LAYERS * (t + 1)), 0)]]);
     }
     draw();
   };
 
   // =====================================================================
-  // III.5 — the memory wall: keep everything on the GPU, or fetch everything each step?
+  // III.6 — the memory wall: keep everything on the GPU, or fetch everything each step?
   // =====================================================================
   // A horizontal meter (HTML): value against a limit line; red when the limit is crossed.
   function meter(label) {
@@ -296,16 +296,16 @@ window.FIG = window.FIG || {};
     const ctxName = n => (n === 100384 ? '100K (the trace)' : n >= 1048576 ? '1M' : `${n / 1024}K`);
     let ci = 6, reqs = 10, k = 2048, bytesPer = 2;   // BF16
     const d = 640;
-    const mMem = meter('GPU memory if every history stays on the GPU');
-    const mLink = meter('link traffic if every step fetches all selections');
-    const tiles = { kv: kpi('KV per request', ''), bw: kpi('traffic per request', ''), nm: kpi('requests that fit in 30 GB', '', '', 'var(--t-entry)'), nl: kpi('requests a 50 GB/s link feeds', '', '', 'var(--t-hisparse)') };
+    const mMem = meter('GPU memory if every orchard stays on the GPU');
+    const mLink = meter('link traffic if every step fetches every pick');
+    const tiles = { kv: kpi('orchard per sequence', ''), bw: kpi('traffic per sequence', ''), nm: kpi('sequences that fit in 30 GB', '', '', 'var(--t-orchard)'), nl: kpi('sequences a 50 GB/s link feeds', '', '', 'var(--t-hisparse)') };
     host.append(
       controls(
         slider('context length', 0, CTX.length - 1, 1, ci, v => { ci = v; draw(); }, v => ctxName(CTX[v])),
-        slider('requests per GPU', 1, 64, 1, reqs, v => { reqs = v; draw(); }),
+        slider('sequences per GPU', 1, 64, 1, reqs, v => { reqs = v; draw(); }),
       ),
       controls(
-        seg([[512, 'k = 512'], [1024, '1024'], [2048, '2048'], [4096, '4096']], k, v => { k = v; draw(); }, 'selections per layer per step'),
+        seg([[512, 'k = 512'], [1024, '1024'], [2048, '2048'], [4096, '4096']], k, v => { k = v; draw(); }, 'picks per layer per step (k)'),
         seg([[2, 'BF16'], [1, '8 bits']], bytesPer, v => { bytesPer = v; draw(); }, 'number format'),
       ),
       h('div', { class: 'ls-meters' }, mMem, mLink),
@@ -325,41 +325,41 @@ window.FIG = window.FIG || {};
   };
 
   // =====================================================================
-  // III.6 — HiSparse for one request at one layer: archive, lift, desk
+  // III.7 — HiSparse for one sequence at one layer: archive, lift, desk
   // =====================================================================
   FIG.hisparseSystem = (host) => {
     const tipped = (node, html) => { node.tabIndex = 0; hover(node, () => html); return node; };
     const SEL = new Set([2, 5, 9, 14]), HOT = [10, 13, 14, 2, 5, 9];
-    const hist = h('div', { class: 'ls-sys-hist', 'aria-label': 'the history: 16 entries' },
+    const hist = h('div', { class: 'ls-sys-hist', 'aria-label': 'the orchard: 16 rows' },
       range(16).map(p => tipped(h('span', { class: 'ls-sys-cell' + (SEL.has(p) ? ' is-sel' : ''), text: p }),
-        `<b>entry at position ${p}</b><br>raw, ${tex('\\ve')} bytes${SEL.has(p) ? '<br>selected at this step' : ''}`)));
+        `<b>row at position ${p}</b><br>raw, ${tex('\\ve')} bytes${SEL.has(p) ? '<br>picked at this step' : ''}`)));
     const hostTier = h('div', { class: 'ls-sys-tier is-host' },
       h('div', { class: 'ls-sys-head' }, h('b', { text: 'host DRAM' }), h('span', { text: 'the archive' })),
       hist,
-      h('p', { class: 'ls-sys-note', html: `every entry of the request, one per position, ${tex('\\ve')} bytes each` }));
+      h('p', { class: 'ls-sys-note', html: `every row of the sequence, one per position, ${tex('\\ve')} bytes each` }));
     const link = tipped(h('div', { class: 'ls-sys-link' },
       h('span', { class: 'ls-sys-arrow', 'aria-hidden': 'true' }),
       h('b', { text: 'PCIe link' }), h('span', { text: 'the lift' }),
       h('span', { class: 'ls-sys-miss', html: `each miss: ${tex('\\ve')} bytes` })),
-      '<b>the host-to-GPU link</b><br>about 50 GB/s in practice<br>carries one raw entry per miss');
+      '<b>the host-to-GPU link</b><br>about 50 GB/s in practice<br>carries one raw pick per miss');
     const slots = h('div', { class: 'ls-sys-slots' }, HOT.map(p => tipped(h('span', { class: 'ls-sys-slot' + (p === 14 ? ' is-miss' : SEL.has(p) ? ' is-hit' : ''), text: p }),
-      p === 14 ? '<b>position 14: a miss</b><br>just fetched over the link into the slot of evicted entry 1'
-        : SEL.has(p) ? `<b>position ${p}: a hit</b><br>already on the GPU, read in place` : `<b>position ${p}</b><br>resident, not selected now`)));
+      p === 14 ? '<b>position 14: a miss</b><br>just fetched over the link into the slot of evicted row 1'
+        : SEL.has(p) ? `<b>position ${p}: a hit</b><br>already on the GPU, read in place` : `<b>position ${p}</b><br>resident, not picked now`)));
     const gpuTier = h('div', { class: 'ls-sys-tier is-gpu' },
       h('div', { class: 'ls-sys-head' }, h('b', { text: 'GPU memory (HBM)' }), h('span', { text: 'the desk' })),
       tipped(h('div', { class: 'ls-sys-box is-indexer', html: `<b>indexer</b> names ${tex('\\vS_{\\vt}')}: here positions 2, 5, 9, 14` }),
-        '<b>the indexer</b><br>picks k positions per layer per step<br>(k = 2048 in the reference setting; 4 here)'),
+        '<b>the indexer</b><br>names k picks per layer per step<br>(k = 2048 on the Pin; 4 here)'),
       h('span', { class: 'ls-sys-down', 'aria-hidden': 'true' }),
       h('div', { class: 'ls-sys-box is-hot' }, h('div', { html: `<b>hot cache</b>: ${tex('\\vB')} slots, least recently used on the left` }), slots),
       h('span', { class: 'ls-sys-down', 'aria-hidden': 'true' }),
-      tipped(h('div', { class: 'ls-sys-box is-attn', html: '<b>attention</b> reads the selected entries in place' }),
-        '<b>attention</b><br>unchanged: it reads exactly the selected entries'));
+      tipped(h('div', { class: 'ls-sys-box is-attn', html: '<b>attention</b> reads the picks in place' }),
+        '<b>attention</b><br>unchanged: it reads exactly the picks'));
     host.append(h('div', { class: 'ls-sys' }, hostTier, link, gpuTier),
-      legend([['selected at this step', 'var(--t-indexer)', 'box'], ['hit (already in the hot cache)', 'var(--good)', 'box'], ['miss (just fetched)', 'var(--t-hot-cache)', 'box']]));
+      legend([['picked at this step', 'var(--t-indexer)', 'box'], ['hit (already in the hot cache)', 'var(--good)', 'box'], ['miss (just fetched)', 'var(--t-hot-cache)', 'box']]));
   };
 
   // =====================================================================
-  // III.7 — the toy trace, step by step (data shared with IV.5)
+  // III.8 — the toy trace, step by step (data shared with VI.4)
   // =====================================================================
   // HiSparse's resolve rule on one layer (cache: array of positions, oldest first).
   function resolveStep(cache, S, B) {
@@ -392,7 +392,7 @@ window.FIG = window.FIG || {};
       cache = r.cacheAfter;
       return out;
     });
-    // the stepper: the initial state, then for every step (a) the selection, (b) the resolve
+    // the stepper: the initial state, then for every step (a) the picks, (b) the resolve
     const frames = [{ kind: 'init', cache: T.initialCache }];
     runs.forEach((r, i) => { frames.push({ kind: 'select', i, r }); frames.push({ kind: 'resolve', i, r }); });
 
@@ -417,20 +417,20 @@ window.FIG = window.FIG || {};
       label: f => {
         if (f.kind === 'init') return `Before step 1. The hot cache holds ${T.initialCache.join(', ')} (least recently used first). ${T.B} slots, all full.`;
         const r = f.r;
-        if (f.kind === 'select') return `<b>Step ${f.i + 1}:</b> the indexer selects ${r.S.join(', ')}. ${r.hits.join(', ')} are on the desk already: hits. ${r.misses.join(', ')} is not: a miss.`;
-        return `<b>Step ${f.i + 1}, resolved:</b> ${r.evicted.join(', ')} (least recently used, not selected) is evicted; ${r.misses.join(', ')} is fetched over the link (${tex('\\ve')} bytes); the hits move to the newest end.`;
+        if (f.kind === 'select') return `<b>Step ${f.i + 1}:</b> the indexer picks ${r.S.join(', ')}. ${r.hits.join(', ')} are on the desk already: hits. ${r.misses.join(', ')} is not: a miss.`;
+        return `<b>Step ${f.i + 1}, resolved:</b> ${r.evicted.join(', ')} (least recently used, not picked) is evicted; ${r.misses.join(', ')} is fetched over the link (${tex('\\ve')} bytes); the hits move to the newest end.`;
       },
       render(i, f) {
         g.replaceChildren();
         const r = f.r, sel = new Set(r ? r.S : []);
         const shown = f.kind === 'resolve' ? r.cacheAfter : f.kind === 'select' ? r.before : f.cache;
         const resident = new Set(shown);
-        el('text', { x: hx0, y: hy - 12, class: 'lbl', text: 'history in host DRAM' }, g);
+        el('text', { x: hx0, y: hy - 12, class: 'lbl', text: 'orchard in host DRAM' }, g);
         for (let p = 0; p < T.n; p++) {
           const isSel = sel.has(p);
           const rr = el('rect', { x: hx0 + p * hw + 1.5, y: hy, width: hw - 3, height: ch, rx: 5,
             style: `fill:${resident.has(p) ? mix('var(--t-hisparse)', 16) : 'var(--paper)'};stroke:${isSel ? 'var(--t-indexer)' : 'var(--rule)'};stroke-width:${isSel ? 3 : 1}` }, g);
-          hover(rr, () => `<b>position ${p}</b><br>${resident.has(p) ? 'also in the hot cache' : 'only in host DRAM'}${isSel ? '<br>selected at this step' : ''}`);
+          hover(rr, () => `<b>position ${p}</b><br>${resident.has(p) ? 'also in the hot cache' : 'only in host DRAM'}${isSel ? '<br>picked at this step' : ''}`);
           el('text', { x: hcx(p), y: hy + ch / 2 + 4.5, class: 'val', 'text-anchor': 'middle', style: isSel ? 'font-weight:700' : '', text: p }, g);
         }
         el('text', { x: sx0, y: sy + ch + 26, class: 'lbl', text: 'hot cache in GPU memory · oldest → newest' }, g);
@@ -439,7 +439,7 @@ window.FIG = window.FIG || {};
           const fill = miss ? mix('var(--t-hot-cache)', 34) : hit ? mix('var(--good)', 30) : 'var(--paper)';
           const stroke = miss ? 'var(--t-hot-cache)' : hit ? 'var(--good)' : 'var(--rule)';
           const rr = el('rect', { x: scx(k) - sw / 2, y: sy, width: sw, height: ch + 4, rx: 7, style: `fill:${fill};stroke:${stroke};stroke-width:${hit || miss ? 2 : 1}` }, g);
-          hover(rr, () => `<b>slot ${k + 1}: position ${p}</b><br>${miss ? 'a miss, just fetched' : hit ? 'a hit, read in place' : 'resident, not selected'}`);
+          hover(rr, () => `<b>slot ${k + 1}: position ${p}</b><br>${miss ? 'a miss, just fetched' : hit ? 'a hit, read in place' : 'resident, not picked'}`);
           el('text', { x: scx(k), y: sy + ch / 2 + 6.5, class: 'val', 'text-anchor': 'middle', style: hit || miss ? 'font-weight:700' : '', text: p }, g);
         });
         if (f.kind === 'resolve') {
@@ -461,11 +461,11 @@ window.FIG = window.FIG || {};
       },
     });
     host.append(h('div', { class: 'kpis' }, tiles.hits, tiles.miss, tiles.link, tiles.hbm),
-      legend([['selected now', 'var(--t-indexer)', 'box'], ['in the hot cache', mix('var(--t-hisparse)', 40), 'box'], ['hit', 'var(--good)', 'box'], ['miss, fetched over the link', 'var(--t-hot-cache)', 'box']]));
+      legend([['picked now', 'var(--t-indexer)', 'box'], ['in the hot cache', mix('var(--t-hisparse)', 40), 'box'], ['hit', 'var(--good)', 'box'], ['miss, fetched over the link', 'var(--t-hot-cache)', 'box']]));
   };
 
   // =====================================================================
-  // III.8 — Lucky Louis: selections of one layer over many steps (toy)
+  // III.9 — Lucky Louis: the picks of one layer over many steps (toy)
   // =====================================================================
   FIG.louisRaster = (host) => {
     const N = 96, DIM = 12, K = 8, STEPS = 36, B = 2 * K;
@@ -486,7 +486,7 @@ window.FIG = window.FIG || {};
     }
     const DRIFTS = [0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.75, 1, 1.5];
     const sl = slider('query drift per step', 0, DRIFTS.length - 1, 1, DRIFTS.indexOf(drift), v => { drift = DRIFTS[v]; draw(); }, v => fmt(DRIFTS[v], 2));
-    host.append(controls(sl), legend([['re-selected from the step before', 'var(--t-lucky-louis)', 'box'], ['new pick', 'var(--t-hot-cache)', 'box']]));
+    host.append(controls(sl), legend([['re-picked from the step before', 'var(--t-lucky-louis)', 'box'], ['new pick', 'var(--t-hot-cache)', 'box']]));
     const x0 = 46, cw = (640 - x0 - 8) / N, rh = 7.4, top = 18;
     const D = Diagram(host, { w: 640, h: top + STEPS * rh + 30, grow: 0.15, label: 'Selected positions of one layer over 36 decode steps' });
     const g = el('g', {}, D.svg);
@@ -511,13 +511,13 @@ window.FIG = window.FIG || {};
       let cache = picks[0].slice(), hits = 0;
       for (let s = 1; s < STEPS; s++) { const r = resolveStep(cache, picks[s], B); hits += r.hits.length; cache = r.cacheAfter; }
       const tot = K * (STEPS - 1);
-      ro.set([['re-selected from the step before', fmtPct(over / tot, 0)], [`LRU hit rate, ${B} slots`, fmtPct(hits / tot, 0)], ['keys', 'independent random numbers']]);
+      ro.set([['re-picked from the step before', fmtPct(over / tot, 0)], [`LRU hit rate, ${B} slots`, fmtPct(hits / tot, 0)], ['keys', 'independent random numbers']]);
     }
     draw();
   };
 
   // =====================================================================
-  // III.9 — the reuse-distance curve: a power law through HiSparse's LRU points
+  // III.10 — the reuse-distance curve: a power law through HiSparse's LRU points
   // =====================================================================
   // least-squares fit of log m = log a + s log(B/2048) through the three LRU points
   const LRU_PTS = [[2048, REF.miss[2048]], [4096, REF.miss[4096]], [8192, REF.miss[8192]]];
@@ -540,7 +540,7 @@ window.FIG = window.FIG || {};
     const P = Plot(box, {
       x: [1024, 65536], xlog: 2, y: [0.004, 1], ylog: true, h: 380,
       xfmt: v => (v >= 1024 ? `${v / 1024}K` : v), yfmt: v => fmtPct(v, v < 0.01 ? 1 : 0),
-      xlabel: 'hot-cache slots B (per layer, per request)', ylabel: 'miss rate m', label: 'Miss rate against hot-cache size, log-log',
+      xlabel: 'hot-cache slots B (per layer, per sequence)', ylabel: 'miss rate m', label: 'Miss rate against hot-cache size, log-log',
     });
     // measured range vs extrapolation
     [[1024, 2048], [8192, 65536]].forEach(([a, b]) => el('rect', { x: P.x(a), y: P.y(1), width: P.x(b) - P.x(a), height: P.y(0.004) - P.y(1), style: `fill:${mix('var(--ink)', 5)}` }, P.g.bg));
@@ -573,41 +573,41 @@ window.FIG = window.FIG || {};
         [tex('\\vm'), `${fmtPct(mm, 1)}${measured != null ? ' (measured)' : ' (fit)'}`],
         ['misses per layer per step', fmtInt(missPer)],
         ['link bytes per step', fmtMB(link, 1)],
-        ['GPU memory per request', fmtMB(hbm, 0)],
+        ['GPU memory per sequence', fmtMB(hbm, 0)],
       ]);
     }
     draw();
   };
 
   // =====================================================================
-  // III.10 — the reference setting as a pinboard (8-bit vs BF16)
+  // III.11 — the Pin as a pinboard (8-bit vs BF16)
   // =====================================================================
   FIG.refSetting = (host) => {
     let bytesPer = 1;
     const fmtB = b => (b >= GB ? fmtGB(b, 1) : b >= MB ? fmtMB(b, b >= 100 * MB ? 0 : 1) : b >= 1000 ? `${fmt(b / 1000, b >= 10000 ? 0 : 2)} KB` : `${fmtInt(b)} B`);
     const e = () => 640 * bytesPer;
     const CARDS = [
-      ['the model', [
-        ['sparse layers', 'NL', () => '78', 'GLM-5.1, as in HiSparse’s trace'],
-        ['selections per layer per step', 'k', () => '2048', 'the top-k of DSA'],
+      ['the LLM', [
+        ['KV layers', 'NL', () => '78', 'GLM-5.1, as in HiSparse’s trace'],
+        ['picks per layer per step', 'k', () => '2048', 'the top-k of DSA'],
         ['context length', 'L', () => '100,384', 'HiSparse’s LongBench-V2 prompt'],
-        ['numbers per entry', 'd', () => '≈ 640', '100 KB of BF16 per token ÷ 78 layers ÷ 2 bytes'],
-        ['entry size', 'e', () => fmtB(e()), 'd numbers × bytes per number', true],
-        ['bytes per token, all layers', null, () => fmtB(e() * REF.NL), '78 × e', true],
+        ['elements per row (one token, one layer)', 'd', () => '≈ 640', '100 KB of BF16 per token ÷ 78 layers ÷ 2 bytes'],
+        ['bytes per row (one token, one layer)', 'e', () => fmtB(e()), 'd elements × bytes per element', true],
+        ['bytes per token, all KV layers', null, () => fmtB(e() * REF.NL), '78 × e', true],
       ]],
-      ['the cache', [
-        ['miss rate, top-k only (B = 2048)', 'm', () => '30 %', 'HiSparse’s trace'],
+      ['the hot cache', [
+        ['miss rate, current picks only (B = 2048)', 'm', () => '30 %', 'HiSparse’s trace'],
         ['miss rate, LRU, B = 4096', 'm', () => '13.4 %', 'HiSparse’s trace; Bélády 8.2 %'],
         ['miss rate, LRU, B = 8192', 'm', () => '6.7 %', 'HiSparse’s trace'],
       ]],
       ['the machine', [
         ['time per output token', 'tpot', () => '30 ms', 'HiSparse’s deployment'],
         ['host-to-GPU link', 'Wlink', () => '50 GB/s', 'PCIe Gen5 ×16, one direction, in practice (64 on paper)'],
-        ['GPU memory for KV, per GPU', 'Mhbm', () => '30 GB', 'about 240 GB left on 8 × H200 after the weights'],
+        ['GPU memory for orchards, per GPU', 'Mhbm', () => '30 GB', 'about 240 GB left on 8 × H200 after the weights'],
       ]],
       ['derived from the above', [
-        ['KV history of one 100K request', null, () => fmtB(REF.L * REF.NL * e()), 'L × N_L × e', true],
-        ['hot cache per request, B = 4096', null, () => fmtB(4096 * REF.NL * e()), '4096 × N_L × e', true],
+        ['orchard of one 100K-token sequence', null, () => fmtB(REF.L * REF.NL * e()), 'L × N_L × e', true],
+        ['hot cache per sequence, B = 4096', null, () => fmtB(4096 * REF.NL * e()), '4096 × N_L × e', true],
         ['miss traffic per step, B = 4096', null, () => fmtB(0.134 * 2048 * REF.NL * e()), '0.134 × 2048 × N_L × e', true],
       ]],
     ];
@@ -629,7 +629,7 @@ window.FIG = window.FIG || {};
   };
 
   // =====================================================================
-  // III.11 — which wall binds: link-bound versus memory-bound requests per GPU
+  // III.12 — which wall binds: link-bound versus memory-bound sequences per GPU
   // =====================================================================
   const linkBound = (B, m) => REF.Wlink * REF.tpot / (m * REF.k * REF.NL * REF.e);
   const memBound = B => REF.Mhbm / (B * REF.NL * REF.e);
@@ -643,17 +643,17 @@ window.FIG = window.FIG || {};
     const sl = slider(texify('hot-cache slots $\\vB$'), 11, 14, 0.01, lb, v => { lb = v; draw(); }, v => fmtInt(Math.round(2 ** v)));
     host.append(controls(sl),
       h('div', { class: 'ls-chains' }, h('div', { class: 'ls-chain-head', text: 'the link' }), chainL, h('div', { class: 'ls-chain-head', text: 'the memory' }), chainM),
-      legend([['requests the link can feed', series(0)], ['requests the GPU memory can hold', series(1)], ['reachable', mix('var(--c)', 30), 'band']]), box, ro);
-    const P = Plot(box, { x: [2048, 16384], xlog: 2, y: [0, 320], h: 340, xfmt: v => `${v / 1024}K`, xlabel: 'hot-cache slots B', ylabel: 'requests per GPU', label: 'Link-bound and memory-bound requests per GPU against hot-cache size' });
+      legend([['sequences the link can feed', series(0)], ['sequences the GPU memory can hold', series(1)], ['reachable', mix('var(--c)', 30), 'band']]), box, ro);
+    const P = Plot(box, { x: [2048, 16384], xlog: 2, y: [0, 320], h: 340, xfmt: v => `${v / 1024}K`, xlabel: 'hot-cache slots B', ylabel: 'sequences per GPU', label: 'Link-bound and memory-bound sequences per GPU against hot-cache size' });
     const Bs = linspace(11, 14, 121).map(l => 2 ** l);
     const lk = Bs.map(B => [B, linkBound(B, FIT.m(B))]), mm = Bs.map(B => [B, memBound(B)]);
     area(P, Bs.map((B, i) => [B, Math.min(lk[i][1], mm[i][1])]), { color: 'var(--c)', opacity: 0.16, base: 0 });
     line(P, lk, { color: series(0) });
     line(P, mm, { color: series(1) });
-    [2048, 4096, 8192].forEach(B => { const nB = linkBound(B, Math.round(REF.miss[B] * REF.k) / REF.k); const d = dot(P.g.data, P.x(B), P.y(nB), 5.5 * P.fs, series(0)); hover(d, () => `<b>${B} slots, measured miss rate ${fmtPct(REF.miss[B], 1)}</b><br>the link can feed ${fmt(nB, 0)} requests`); });
+    [2048, 4096, 8192].forEach(B => { const nB = linkBound(B, Math.round(REF.miss[B] * REF.k) / REF.k); const d = dot(P.g.data, P.x(B), P.y(nB), 5.5 * P.fs, series(0)); hover(d, () => `<b>${B} slots, measured miss rate ${fmtPct(REF.miss[B], 1)}</b><br>the link can feed ${fmt(nB, 0)} sequences`); });
     let best = Bs[0], bestN = 0;
     Bs.forEach(B => { const n = Math.min(linkBound(B, FIT.m(B)), memBound(B)); if (n > bestN) { bestN = n; best = B; } });
-    annotate(P, best, bestN, `best: ≈ ${fmt(bestN, 0)} requests\nat ≈ ${fmtInt(Math.round(best / 100) * 100)} slots`, { dx: 46, dy: -34 });
+    annotate(P, best, bestN, `best: ≈ ${fmt(bestN, 0)} sequences\nat ≈ ${fmtInt(Math.round(best / 100) * 100)} slots`, { dx: 46, dy: -34 });
     const guide = el('g', {}, P.g.top);
     const knob = el('circle', { class: 'handle', r: 8 * P.fs }, P.g.top);
     // misses per layer per step are rounded to whole misses before the chain continues, as in the prose
@@ -670,25 +670,25 @@ window.FIG = window.FIG || {};
         chip(`${tex('\\vk')} = 2048 × ${tex('\\vm')} = ${fmtPct(m, 1)}${measured ? '' : ' (fit)'}`), arrow(),
         chip(`${fmtInt(missPer)} misses per layer per step`), arrow(),
         chip(`× 78 layers × 640 B = ${fmtMB(stepBytes, 1)} per step`), arrow(),
-        chip(`÷ 30 ms = ${fmt(perReq / GB, 2)} GB/s per request`), arrow(),
-        chip(`50 GB/s ÷ that = <b>${fmt(nl, 0)}</b> requests`, nl <= nm ? 'is-bind' : ''));
+        chip(`÷ 30 ms = ${fmt(perReq / GB, 2)} GB/s per sequence`), arrow(),
+        chip(`50 GB/s ÷ that = <b>${fmt(nl, 0)}</b> sequences`, nl <= nm ? 'is-bind' : ''));
       chainM.replaceChildren(
         chip(`${tex('\\vB')} = ${fmtInt(B)} slots × 78 layers × 640 B`), arrow(),
-        chip(`${fmtMB(hot, 0)} per request`), arrow(),
-        chip(`30 GB ÷ that = <b>${fmt(nm, 0)}</b> requests`, nm < nl ? 'is-bind' : ''));
-      ro.set([['link can feed', `${fmt(nl, 0)}`], ['memory can hold', `${fmt(nm, 0)}`], ['requests per GPU', `<b>${fmt(n, 0)}</b> (${nl <= nm ? 'the link' : 'the memory'} binds)`]]);
+        chip(`${fmtMB(hot, 0)} per sequence`), arrow(),
+        chip(`30 GB ÷ that = <b>${fmt(nm, 0)}</b> sequences`, nm < nl ? 'is-bind' : ''));
+      ro.set([['link can feed', `${fmt(nl, 0)}`], ['memory can hold', `${fmt(nm, 0)}`], ['sequences per GPU', `<b>${fmt(n, 0)}</b> (${nl <= nm ? 'the link' : 'the memory'} binds)`]]);
     }
     draw();
   };
 
   // =====================================================================
-  // III.11 — the 0.38 ms window: link time versus decoder time
+  // III.12 — the 0.38 ms window: link time versus decoder time
   // =====================================================================
   FIG.deadlineWindow = (host) => {
     const SPEEDS = [25, 50, 100, 200, 500, 1000, 2000, 5000];
     let si = 4;
     const window_us = REF.tpot / REF.NL * 1e6;                       // ≈ 385 µs
-    const bytes = 110 * Math.round(REF.miss[4096] * REF.k) * REF.e;   // 110 requests × 274 misses × 640 B
+    const bytes = 110 * Math.round(REF.miss[4096] * REF.k) * REF.e;   // 110 sequences × 274 misses × 640 B
     const linkUs = bytes / REF.Wlink * 1e6;
     const box = h('div'), ro = readout();
     const sl = slider('decoder speed', 0, SPEEDS.length - 1, 1, si, v => { si = v; draw(); }, v => `${fmtInt(SPEEDS[v])} GB/s`);
@@ -705,6 +705,96 @@ window.FIG = window.FIG || {};
       rule(P, { x: window_us / 10, label: 'a tenth', color: 'var(--ink-3)' });
       ro.set([['bytes per layer slice', `${fmt(bytes / MB, 1)} MB`], ['link', `${fmt(linkUs, 0)} µs`], ['decoder', `${fmt(decUs, 0)} µs = ${fmtPct(decUs / window_us, 0)} of the window`]]);
     }
+    draw();
+  };
+
+  // =====================================================================
+  // III.11 — the two reference settings side by side (the Pin and the Bench), from data/settings.yaml
+  // =====================================================================
+  FIG.refSettings = (host) => {
+    /* The engine's settings (KV.settings, data/settings.yaml); a static copy of the two when the switch is not loaded. */
+    const FALLBACK = {
+      pin: { label: 'the Pin', name: 'GLM-5.1 on 8 × H200, as HiSparse serves it, at 8-bit storage',
+        values: { llm: 'GLM-5.1', NL: 78, heads: 1, headdim: 640, d: 640, e: 640, k: 2048, L: 100384, b: 4096, m2: 0.30, m4: 0.134, m8: 0.067, tpot: 30, Wlink: 50, Mhbm: 30, gpu: 'H200 (141 GB)', format: '8-bit (E4M3), one MLA latent per token per layer' } },
+      bench: { label: 'the Bench', name: 'Qwen3.5-2B on one RTX 5080, the campaigns’ data',
+        values: { llm: 'Qwen3.5-2B', NL: 6, heads: 2, headdim: 256, d: 512, e: 512, k: null, L: 225000, b: 4096, m2: null, m4: null, m8: null, tpot: null, Wlink: 50, Mhbm: 10, gpu: 'RTX 5080 (16 GB)', format: 'FP8 E4M3, values (keys the same shape)' } },
+    };
+    const KEYS = {
+      llm: ['the LLM', '', 'text'], NL: ['KV layers', 'layers', 'int'], heads: ['KV heads per layer', '', 'int'],
+      headdim: ['elements per head vector', '', 'int'], d: ['elements per cherry (one token, one layer)', 'elements', 'int'], e: ['cherry bytes (one token, one layer, 8-bit)', 'bytes', 'bytes'],
+      k: ['picks per layer per step', '', 'int'], L: ['context length', 'tokens', 'int'], b: ['stretch length used in examples', 'tokens', 'int'],
+      m2: ['miss rate at 2048 slots', '', 'pct'], m4: ['miss rate at 4096 slots', '', 'pct'], m8: ['miss rate at 8192 slots', '', 'pct'],
+      tpot: ['time per output token', 'ms', 'ms'], Wlink: ['link bandwidth', 'GB/s', 'gbps'], Mhbm: ['GPU memory for the orchards', 'GB', 'gb'],
+      gpu: ['GPU', '', 'text'], format: ['storage format', '', 'text'],
+    };
+    const hasSwitch = () => !!(window.KV && KV.settings && typeof KV.settings === 'object' && Object.keys(KV.settings).length);
+    const settings = () => (hasSwitch() ? KV.settings : FALLBACK);
+    function settingId() {
+      const S = settings();
+      if (hasSwitch() && KV.setting && S[KV.setting]) return KV.setting;
+      if (hasSwitch() && KV.settingDefault && S[KV.settingDefault]) return KV.settingDefault;
+      return S.pin ? 'pin' : Object.keys(S)[0];
+    }
+    function keyMeta(k) {
+      const sp = window.KV && KV.settingKeys && KV.settingKeys[k];
+      if (sp) return [sp.name || k, sp.unit || '', sp.fmt || 'text'];
+      return KEYS[k] || [k, '', 'text'];
+    }
+    function fmtVal(f, v) {
+      if (v == null) return null;
+      if (window.KV && KV.fmt && typeof KV.fmt.formatValue === 'function') return KV.fmt.formatValue(v, f);
+      if (f === 'int') return (+v).toLocaleString('en-GB');
+      if (f === 'bytes') return `${v} B`;
+      if (f === 'pct') return fmtPct(v, 1);
+      if (f === 'ms') return `${v} ms`;
+      if (f === 'gbps') return `${v} GB/s`;
+      if (f === 'gb') return `${v} GB`;
+      return String(v);
+    }
+    const fmtKey = (k, v) => fmtVal(keyMeta(k)[2], v);
+    /* rows computed from the frozen quantities: [name, unit, formula, fmt, inputs, f(values)]; "not measured" when an input is null */
+    const DERIVED = [
+      ['bytes per token, all KV layers', 'bytes', 'NL × e', 'bytes', ['NL', 'e'], v => v.NL * v.e],
+      ['bytes of one stretch of b tokens, one layer', 'bytes', 'b × e', 'bytes', ['b', 'e'], v => v.b * v.e],
+      ['bytes of one sequence’s orchard', 'bytes', 'L × NL × e', 'bytes', ['L', 'NL', 'e'], v => v.L * v.NL * v.e],
+      ['misses per layer per step at 4096 slots', '', 'm4 × k', 'int', ['m4', 'k'], v => Math.round(v.m4 * v.k)],
+    ];
+    const wrap = h('div', { class: 'ls-set-wrap' }), btns = h('div', { class: 'controls' }), note = h('p', { class: 'fig-note' });
+    host.append(btns, wrap, note);
+    const cell = (id, cur, v) => h('td', { class: (id === cur ? 'is-cur' : '') + (v == null ? ' is-null' : ''), text: v == null ? 'not measured' : v });
+    const differs = vals => new Set(vals.map(v => (v == null ? 'null' : String(v)))).size > 1;
+    function draw() {
+      const S = settings(), ids = Object.keys(S), cur = settingId();
+      const known = Object.keys((window.KV && KV.settingKeys) || KEYS);
+      const keys = known.filter(k => ids.some(id => k in (S[id].values || {})));
+      ids.forEach(id => Object.keys(S[id].values || {}).forEach(k => { if (!keys.includes(k)) keys.push(k); }));
+      const t = h('table', { class: 'ls-set' });
+      t.append(h('thead', {}, h('tr', {}, h('th', { class: 'l', text: 'quantity' }), ...ids.map(id => h('th', { class: 'ls-set-card' + (id === cur ? ' is-cur' : '') },
+        h('span', { class: 'ls-set-label', text: S[id].label || id }), h('span', { class: 'ls-set-name', text: S[id].name || '' }), id === cur ? h('span', { class: 'ls-set-cur', text: 'current' }) : null)))));
+      const tb = h('tbody');
+      keys.forEach(k => {
+        const meta = keyMeta(k);
+        const vals = ids.map(id => (S[id].values || {})[k]);
+        tb.append(h('tr', { class: differs(vals) ? 'is-diff' : null },
+          h('td', { class: 'l' }, h('span', { class: 'ls-set-key', text: meta[0] }), meta[1] ? h('span', { class: 'ls-set-unit', text: ` (${meta[1]})` }) : null, h('code', { class: 'ls-set-code', text: k })),
+          ...ids.map((id, i) => cell(id, cur, fmtKey(k, vals[i])))));
+      });
+      tb.append(h('tr', { class: 'ls-set-derived' }, h('td', { class: 'l', colspan: String(ids.length + 1) }, h('span', { class: 'ls-set-head', text: 'derived from the rows above' }))));
+      DERIVED.forEach(([name, unit, formula, f, inputs, fn]) => {
+        const vals = ids.map(id => { const v = S[id].values || {}; return inputs.every(k => v[k] != null) ? fn(v) : null; });
+        tb.append(h('tr', { class: differs(vals) ? 'is-diff' : null },
+          h('td', { class: 'l' }, h('span', { class: 'ls-set-key', text: name }), unit ? h('span', { class: 'ls-set-unit', text: ` (${unit})` }) : null, h('code', { class: 'ls-set-code', text: formula })),
+          ...ids.map((id, i) => cell(id, cur, fmtVal(f, vals[i])))));
+      });
+      t.append(tb);
+      wrap.replaceChildren(t);
+      btns.replaceChildren(...ids.filter(id => id !== cur).map(id => btn(`Switch to ${S[id].label || id}`, () => { if (window.KV && typeof KV.setSetting === 'function') KV.setSetting(id); }, { cls: 'sm' })));
+      btns.querySelectorAll('button').forEach(bq => { bq.disabled = !(window.KV && typeof KV.setSetting === 'function'); });
+      note.textContent = hasSwitch()
+        ? `The current setting is ${S[cur].label || cur}. Rows with an outline differ between the settings; "not measured" marks a quantity the Bench never ran (no indexer ran there), and a derived row that needs one. The last four rows are computed live from the rows above them. The button calls the site’s switch, so the hover reminders and the numbers in the prose change with it.`
+        : 'The reference-setting switch is not loaded on this page: the two settings shown are static copies and the button is disabled.';
+    }
+    document.addEventListener('kv:setting', draw);
     draw();
   };
 })();

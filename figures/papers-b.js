@@ -1,4 +1,4 @@
-/* Part V (papers-b) — figures for the pages on KIVI, KVQuant, KVTC, Lexico, CacheGen and KVComp.
+/* Part IX (papers-b) — figures for the pages on KIVI, KVQuant, KVTC, Lexico, CacheGen and KVComp.
    Every builder is prefixed "pb". Toy data are fixed tables or seeded generators, so the numbers
    quoted in the prose are exactly what the figures show. Uses the plot kit (docs/figures.md). */
 window.FIG = window.FIG || {};
@@ -25,8 +25,8 @@ window.FIG = window.FIG || {};
   const mixTo = (cv, share) => `color-mix(in srgb, ${cv} ${Math.round(100 * clamp(share, 0, 1))}%, var(--paper))`;
 
   /* ================================================================== KIVI
-     pbKiviAxis — which numbers share one quantization ruler: a column (per channel) or a row
-     (per token)? A fixed toy table of 12 tokens × 8 channels for keys and for values. */
+     pbKiviAxis — which numbers share one quantization ruler: a column (per furrow) or a row
+     (per cherry)? A fixed toy table of 12 tokens × 8 elements for keys and for values. */
   const KIVI_K = [
     [0.0, 1.4, 10.4, -0.5, -0.3, -8.4, 0.6, -0.1],
     [0.7, -1.8, 10.8, -0.1, 0.7, -8.8, -0.4, 0.5],
@@ -80,7 +80,7 @@ window.FIG = window.FIG || {};
     host.append(
       controls(
         seg([['K', 'keys'], ['V', 'values']], which, v => { which = v; draw(); }, 'which toy table'),
-        seg([['channel', 'one ruler per channel'], ['token', 'one ruler per token']], axis, v => { axis = v; draw(); }, 'which numbers share a ruler'),
+        seg([['channel', 'one ruler per furrow'], ['token', 'one ruler per cherry']], axis, v => { axis = v; draw(); }, 'which numbers share a ruler'),
         seg([[2, '2 bits'], [3, '3 bits'], [4, '4 bits']], bits, v => { bits = +v; draw(); }, 'bits per number'),
       ),
       box, ro,
@@ -89,7 +89,7 @@ window.FIG = window.FIG || {};
     const narrow = box.getBoundingClientRect().width < 520;
     const cw = 30, ch = 22, head = 58, panelH = head + T * ch + 34;
     const origins = narrow ? [[46, 0], [46, panelH]] : [[64, 0], [366, 0]];
-    const D = Diagram(box, { w: narrow ? 330 : 640, h: narrow ? 2 * panelH : panelH, label: 'A toy table of 12 tokens by 8 channels, before and after rounding, with the rounding error' });
+    const D = Diagram(box, { w: narrow ? 330 : 640, h: narrow ? 2 * panelH : panelH, label: 'A toy table of 12 tokens by 8 elements, before and after rounding, with the rounding error' });
     const g = el('g', {}, D.svg);
 
     function draw() {
@@ -100,7 +100,7 @@ window.FIG = window.FIG || {};
       origins.forEach(([x0, y0], p) => {
         const top = y0 + head;
         el('text', { x: x0, y: y0 + 18, class: 'lbl', text: titles[p] }, g);
-        el('text', { x: x0 + C * cw + 4, y: top - 6, class: 'lbl', 'text-anchor': 'start', text: 'c' }, g);
+        el('text', { x: x0 + C * cw + 4, y: top - 6, class: 'lbl', 'text-anchor': 'start', text: 'e' }, g);
         range(C).forEach(c => el('text', { x: x0 + c * cw + cw / 2, y: top - 6, 'text-anchor': 'middle', class: 'val', text: String(c) }, g));
         range(T).forEach(t => el('text', { x: x0 - 6, y: top + t * ch + ch * 0.7, 'text-anchor': 'end', class: 'val', text: `t${t}` }, g));
         range(T).forEach(t => range(C).forEach(c => {
@@ -109,7 +109,7 @@ window.FIG = window.FIG || {};
             ? mixTo(x >= 0 ? 'var(--vermilion)' : 'var(--lapis)', 0.08 + 0.8 * Math.pow(Math.min(1, Math.abs(x) / 12), 0.55))
             : mixTo('var(--amethyst)', 0.04 + 0.9 * Math.pow(Math.min(1, Math.abs(e) / 3), 0.6));
           const r = el('rect', { x: x0 + c * cw + 1, y: top + t * ch + 1, width: cw - 2, height: ch - 2, rx: 3, class: 'pb-cell' + (loud(t, c) ? ' pb-loud' : ''), style: `fill:${fill}` }, g);
-          hover(r, () => `<b>token t${t}, channel c${c}</b><br>number ${fmt(x, 1)}<br>after rounding ${fmt(out[t][c], 2)}<br>error ${fmtS(e, 2)}`);
+          hover(r, () => `<b>token t${t}, element e${c}</b><br>number ${fmt(x, 1)}<br>after rounding ${fmt(out[t][c], 2)}<br>error ${fmtS(e, 2)}`);
         }));
       });
       // outline the groups that share one ruler, on the first panel
@@ -119,7 +119,7 @@ window.FIG = window.FIG || {};
       // name the loud part
       if (which === 'K') [2, 5].forEach(c => el('text', { x: x0 + c * cw + cw / 2, y: top - 24, 'text-anchor': 'middle', class: 'annot', text: 'big' }, g));
       else [3, 8].forEach(t => el('text', { x: x0 + C * cw + 4, y: top + t * ch + ch * 0.7, class: 'annot', text: 'loud' }, g));
-      el('text', { x: x0, y: top + T * ch + 22, class: 'annot', text: axis === 'channel' ? 'outlines: each column shares one ruler' : 'outlines: each row shares one ruler' }, g);
+      el('text', { x: x0, y: top + T * ch + 22, class: 'annot', text: axis === 'channel' ? 'outlines: each furrow shares one ruler' : 'outlines: each cherry shares one ruler' }, g);
 
       const q = [], ql = [], eq = [], el2 = [];
       range(T).forEach(t => range(C).forEach(c => {
@@ -128,8 +128,8 @@ window.FIG = window.FIG || {};
       }));
       const relQ = rms(eq) / rms(q), relL = rms(el2) / rms(ql);
       ro.set([
-        [which === 'K' ? 'small channels' : 'quiet tokens', `typical error ${pct(relQ)} of their size`],
-        [which === 'K' ? 'big channels' : 'loud tokens', `typical error ${pct(relL)} of their size`],
+        [which === 'K' ? 'small furrows' : 'quiet tokens', `typical error ${pct(relQ)} of their size`],
+        [which === 'K' ? 'big furrows' : 'loud tokens', `typical error ${pct(relL)} of their size`],
         ['ruler steps', `${fmt(Math.min(...steps), 2)} to ${fmt(Math.max(...steps), 2)}`],
       ]);
     }
@@ -137,20 +137,20 @@ window.FIG = window.FIG || {};
   };
 
   /* ================================================================== KVQuant
-     pbKvqRope — one pair of key channels before and after RoPE, over a window of 64 tokens. */
+     pbKvqRope — one pair of key elements before and after RoPE, over a window of 64 tokens. */
   FIG.pbKvqRope = (host) => {
     const N = 64, DH = 128, r = rng('pb-kvq-rope');
     const na = range(N).map(() => r.normal()), nb = range(N).map(() => r.normal());
     const preA = na.map(z => 9 + 0.3 * z), preB = nb.map(z => 0.6 + 0.3 * z);
     let pair = 4, start = 1000;
     const box = h('div'), ro = readout();
-    const sl = slider('channel pair', 0, 63, 1, pair, v => { pair = v; draw(); }, v => `${v} of 0–63`);
+    const sl = slider('element pair', 0, 63, 1, pair, v => { pair = v; draw(); }, v => `${v} of 0–63`);
     host.append(
       controls(sl, seg([[0, '0'], [1000, '1K'], [10000, '10K'], [100000, '100K']], start, v => { start = +v; draw(); }, 'where the window starts')),
-      legend([['first channel of the pair, before RoPE', series(0)], ['the same channel after RoPE', series(1)], ['its partner channel after RoPE', series(1), 'dash'], ['range one ruler must cover', series(1), 'band']]),
+      legend([['first element of the pair, before RoPE', series(0)], ['the same element after RoPE', series(1)], ['its partner element after RoPE', series(1), 'dash'], ['range one ruler must cover', series(1), 'band']]),
       box, ro,
     );
-    const P = Plot(box, { x: [0, N - 1], y: [-11, 11], h: 300, xlabel: 'tokens into the window', ylabel: 'key value', label: 'One pair of key channels before and after RoPE' });
+    const P = Plot(box, { x: [0, N - 1], y: [-11, 11], h: 300, xlabel: 'tokens into the window', ylabel: 'key value', label: 'One pair of key elements before and after RoPE' });
     const sd = a => Math.sqrt(variance(a));
     function draw() {
       const om = Math.pow(10000, -2 * pair / DH);
@@ -241,7 +241,7 @@ window.FIG = window.FIG || {};
       legend([['gets bits (above the water)', series(0), 'box'], ['dropped: zero bits', 'color-mix(in srgb, var(--ink-3) 35%, transparent)', 'box'], ['water level', 'var(--c)'], ['noise floor of the stored grid', series(2), 'dash']]),
       box, h('div', { class: 'kpis' }, tiles.lossy, tiles.shadow),
     );
-    const P = Plot(box, { x: [0.3, d + 0.7], y: [1e-4, 100], ylog: true, h: 320, xlabel: 'component (KLT axis), largest spread first', ylabel: 'variance', label: 'Variances of the 64 KLT components, with the water level of a lossy coder', yfmt: v => (v >= 1 ? String(v) : '10' + sup(Math.round(Math.log10(v)))) });
+    const P = Plot(box, { x: [0.3, d + 0.7], y: [1e-4, 100], ylog: true, h: 320, xlabel: 'component (KLT axis), largest spread first', ylabel: 'variance', label: 'Variances of the 64 KLT components, with the water level of a lossy compressor', yfmt: v => (v >= 1 ? String(v) : '10' + sup(Math.round(Math.log10(v)))) });
     function draw() {
       const l = spec(alpha), Dm = Math.pow(10, logD), th = waterLevel(l, Dm);
       const R = mean(l.map(v => Math.max(0, 0.5 * lg2(v / th))));
@@ -342,8 +342,8 @@ window.FIG = window.FIG || {};
   };
 
   /* ================================================================== CacheGen
-     pbCachegenDelta — one channel over 60 tokens: a slow drift plus noise. How much smaller is a
-     difference to the previous token, or to the group's anchor, than the distance to the channel's
+     pbCachegenDelta — one furrow over 60 tokens: a slow drift plus noise. How much smaller is a
+     difference to the previous token, or to the group's reference token, than the distance to the furrow's
      own typical value? Variances are exact (stationary AR(1) drift), the series is one seeded sample. */
   FIG.pbCachegenDelta = (host) => {
     const N = 60, G = 10, MU = 2.0, r = rng('pb-cachegen');
@@ -368,12 +368,12 @@ window.FIG = window.FIG || {};
         slider('drift share', 0, 0.98, 0.01, f, v => { f = v; draw(); }, v => pct(v)),
         seg([[10, '10 tokens'], [100, '100 tokens'], [1000, '1000 tokens']], tau, v => { tau = +v; draw(); }, 'how slowly the drift moves'),
       ),
-      legend([['one channel, token by token', series(0)], ['group anchors (every 10th token)', series(1), 'dot'], ["the channel's typical value", 'var(--ink-3)', 'dash']]),
+      legend([['one furrow, token by token', series(0)], ['reference tokens (every 10th token)', series(1), 'dot'], ["the furrow's typical value", 'var(--ink-3)', 'dash']]),
       box1, box2, ro,
     );
-    const P1 = Plot(box1, { x: [0, N - 1], y: [-2, 6], h: 220, xlabel: 'token', ylabel: 'value', label: 'One channel of a toy KV cache over 60 tokens' });
-    const cats = ['vs typical value', 'vs previous token', 'vs group anchor'];
-    const P2 = Plot(box2, { ycats: cats, x: [0, 2.2], h: 170, xlabel: "variance ÷ the channel's own variance", grid: 'x', label: 'Variance of three kinds of residual' });
+    const P1 = Plot(box1, { x: [0, N - 1], y: [-2, 6], h: 220, xlabel: 'token', ylabel: 'value', label: 'One furrow of a toy orchard over 60 tokens' });
+    const cats = ['vs typical value', 'vs previous token', 'vs reference token'];
+    const P2 = Plot(box2, { ycats: cats, x: [0, 2.2], h: 170, xlabel: "variance ÷ the furrow's own variance", grid: 'x', label: 'Variance of three kinds of residual' });
     function draw() {
       const xs = series1(), v = vars();
       P1.clear();
@@ -385,9 +385,9 @@ window.FIG = window.FIG || {};
       bars(P2, [v.loc, v.adj, v.anc], { horizontal: true, colors: i => series(i === 2 ? 1 : i === 1 ? 2 : 0), labels: x => fmt(x, 2), tip: (x, i) => `<b>${cats[i]}</b><br>variance ${fmt(x, 3)}<br>${fmtS(0.5 * lg2(1 / x), 2)} bits per number vs the typical value` });
       rule(P2, { x: 1, dash: true });
       ro.set([
-        ['anchor residual', `${fmt(v.anc, 2)} of the variance`],
-        ['raw ÷ anchor residual', `${fmt(1 / v.anc, 2)}×`],
-        ['bits saved by the anchor', `${fmtS(0.5 * lg2(1 / v.anc), 2)} per number`],
+        ['reference-token residual', `${fmt(v.anc, 2)} of the variance`],
+        ['raw ÷ reference-token residual', `${fmt(1 / v.anc, 2)}×`],
+        ['bits saved by the reference token', `${fmtS(0.5 * lg2(1 / v.anc), 2)} per number`],
         ['… by the previous token', `${fmtS(0.5 * lg2(1 / v.adj), 2)} per number`],
       ]);
     }
@@ -426,7 +426,7 @@ window.FIG = window.FIG || {};
       legend([['no predictor (order-0)', series(0)], ['with the predictor', series(1)], ['bits saved', series(2)]]),
       box1, box2, ro,
     );
-    const common = { x: [0.25, 64], xlog: 2, xfmt: v => (v < 1 ? `1/${1 / v}` : String(v)), xlabel: 'spread of the channel σ, in grid steps' };
+    const common = { x: [0.25, 64], xlog: 2, xfmt: v => (v < 1 ? `1/${1 / v}` : String(v)), xlabel: 'spread of the furrow σ, in grid steps' };
     const P1 = Plot(box1, Object.assign({ y: [0, 8.5], h: 260, ylabel: 'bits per number', label: 'Bits per number with and without a predictor, against grid fineness' }, common));
     const P2 = Plot(box2, Object.assign({ y: [0, 60], h: 200, ylabel: 'share saved', yfmt: v => `${v} %`, label: 'Share of the bits a predictor saves, against grid fineness' }, common));
     function band(P, label) {

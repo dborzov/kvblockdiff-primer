@@ -1,8 +1,7 @@
-/* Part VIII — The questions. Figures for the question and framework pages.
+/* The old frameworks A–D (questions.js), kept as spares for Parts VII and X.
    Every figure here is SCHEMATIC: it shows the shapes an experiment could produce and how we
-   would read them, from toy models with stated parameters. None of it is KV-cache data.
-   Builders: qDecision (VIII.2), qBar (VIII.3), qDistance (VIII.5), qCurve (VIII.6),
-   qReplay (VIII.7), qFrontier (VIII.8), qParkedMap (VIII.9), qAxes (VIII.10), qProbe (VIII.11). */
+   would read them, from toy settings with stated parameters. None of it is orchard data.
+   Builders: qDecision, qBar, qDistance, qCurve, qReplay, qFrontier, qParkedMap, qAxes, qProbe. */
 window.FIG = window.FIG || {};
 
 (function () {
@@ -11,31 +10,31 @@ window.FIG = window.FIG || {};
   // ------------------------------------------------------------ shared bits
   const schem = (txt) => h('div', { class: 'q-schem', html: txt || 'Schematic · no data yet' });
   const mark = host => { host.classList.add('q-host'); return host; };
-  const SOLO_BITS = 6.24;          // solo coding, ideal coder: ≈ 0.78 × 8 bits (II/VI: order-0 entropy 6.2–6.5)
+  const SOLO_BITS = 6.24;          // solo coding, ideal entropy coder: ≈ 0.78 × 8 bits (II/V: order-0 entropy 6.2–6.5)
   const FIX = 1.13;                // fixed-length overhead over the ideal rate (assumed: middle of the 10–15 % gap)
 
-  // ================================================================ VIII.2 · the wave-1 decision rule
+  // ================================================================ (spare) · the wave-1 decision rule
   FIG.qDecision = (host) => {
     let gr = 0.3, gb = 0.55;
     const box = h('div'), ro = readout();
-    const sR = slider(texify('request gain $\\vgainreq$ (bit)'), 0, 1.5, 0.01, gr, v => { gr = v; draw(); }, v => fmt(v, 2));
-    const sB = slider(texify('block gain $\\vgainblk$ (bit)'), 0, 1.5, 0.01, gb, v => { gb = v; draw(); }, v => fmt(v, 2));
+    const sR = slider(texify('sequence-scope gain $\\vgainseq$ (bit)'), 0, 1.5, 0.01, gr, v => { gr = v; draw(); }, v => fmt(v, 2));
+    const sB = slider(texify('stretch-scope gain $\\vgainstr$ (bit)'), 0, 1.5, 0.01, gb, v => { gb = v; draw(); }, v => fmt(v, 2));
     mark(host).append(schem('Schematic · the decision rule, drawn before any data'), controls(sR, sB), box, ro);
     const P = Plot(box, {
-      x: [0, 1.5], y: [0, 1.5], h: 400, xlabel: 'gain of a per-request dictionary (bits per element)',
-      ylabel: 'extra gain of per-block dictionaries', label: 'Regions of the wave-1 decision rule over the two scope gains',
+      x: [0, 1.5], y: [0, 1.5], h: 400, xlabel: 'gain of a sequence-scope dictionary (bits per element)',
+      ylabel: 'extra gain of stretch-scope dictionaries', label: 'Regions of the wave-1 decision rule over the two scope gains',
     });
     const REG = [
-      { id: 'block', pts: [[0.35, 0.4], [1.5, 0.4], [1.5, 1.5], [0, 1.5], [0, 0.75]], color: 'var(--t-scope-block)', at: [0.95, 1.1], name: 'block scale',
-        read: 'fallen-apple similarity is real, and it lives at block scale', next: 'wave 2 with block-scope dictionaries (frameworks C and D)' },
-      { id: 'request', pts: [[0.75, 0], [1.5, 0], [1.5, 0.15], [0.6, 0.15]], color: 'var(--t-scope-request)', at: [1.08, 0.06], name: 'request scale',
-        read: 'real, but at the scale of a whole request', next: 'wave 2 with one dictionary per request; framework C optional; a simpler system, still a paper' },
+      { id: 'block', pts: [[0.35, 0.4], [1.5, 0.4], [1.5, 1.5], [0, 1.5], [0, 0.75]], color: 'var(--t-scope-stretch)', at: [0.95, 1.1], name: 'stretch scale',
+        read: 'fallen-apple similarity is real, and it lives at stretch scale', next: 'wave 2 with stretch-scope dictionaries (frameworks C and D)' },
+      { id: 'request', pts: [[0.75, 0], [1.5, 0], [1.5, 0.15], [0.6, 0.15]], color: 'var(--t-scope-sequence)', at: [1.08, 0.06], name: 'sequence scale',
+        read: 'real, but at the scale of a whole sequence', next: 'wave 2 with one dictionary per sequence; framework C optional; a simpler system, still a paper' },
       { id: 'grey', pts: [[0.6, 0.15], [1.5, 0.15], [1.5, 0.4], [0.35, 0.4]], color: 'var(--slate)', at: [1.05, 0.27], name: 'the rule is silent',
-        read: 'the rule as first written has no row for this corner', next: 'our reading: treat it as marginal — run framework C and let the cost model decide' },
+        read: 'the rule as first written has no row for this corner', next: 'our reading: treat it as marginal — run framework C and let the napkin decide' },
       { id: 'marginal', pts: [[0.25, 0], [0.75, 0], [0, 0.75], [0, 0.25]], color: 'var(--saffron)', at: [0.3, 0.2], name: 'marginal',
         read: 'marginal: the verdict hinges on dictionary weight, the victim tier and lever 2', next: 'run framework C; decide on the cost model (framework D)' },
       { id: 'none', pts: [[0, 0], [0.25, 0], [0, 0.25]], color: 'var(--ink-3)', at: [0.065, 0.06], name: 'none',
-        read: '8-bit KV has no usable conditional structure', next: 'publish the negative with its shuffle control; pivot to a global fixed-length coder for the miss path' },
+        read: '8-bit orchards have no usable conditional structure', next: 'publish the negative with its shuffle control; pivot to a global fixed-length compressor for the miss path' },
     ];
     const regG = el('g', {}, P.g.data);
     REG.forEach(R => {
@@ -63,13 +62,13 @@ window.FIG = window.FIG || {};
       ro.set([
         ['reading', R.read],
         ['next', R.next],
-        ['the two gains need', `${fmtPct(r2(gr + gb), 0)} of the variance a global dictionary leaves, explained (block alone: ${fmtPct(r2(gb), 0)} of what the request leaves)`],
+        ['the two gains need', `${fmtPct(r2(gr + gb), 0)} of the variance a global dictionary leaves, explained (stretch alone: ${fmtPct(r2(gb), 0)} of what the sequence leaves)`],
       ]);
     }
     draw();
   };
 
-  // ================================================================ VIII.3 · the bar to clear
+  // ================================================================ (spare) · the bar to clear
   FIG.qBar = (host) => {
     let mode = 'ideal', gain = 0.6, dict = 0.06;
     const box = h('div'), ro = readout();
@@ -84,7 +83,7 @@ window.FIG = window.FIG || {};
       box, ro,
     );
     const CATS = ['raw', 'solo', 'with dictionary'];
-    const P = Plot(box, { ycats: CATS, x: [0, 8.6], h: 240, m: { t: 30 }, xlabel: 'bits per element (raw = 8)', grid: 'x', label: 'Bits per element: raw, solo coding and a dictionary coder' });
+    const P = Plot(box, { ycats: CATS, x: [0, 8.6], h: 240, m: { t: 30 }, xlabel: 'bits per element (raw = 8)', grid: 'x', label: 'Bits per element: raw, solo coding and a dictionary compressor' });
     function rect(i, x0, x1, color, op) {
       const y0 = P.y(i - 0.27), y1 = P.y(i + 0.27);
       return el('rect', { x: P.x(x0), y: Math.min(y0, y1), width: Math.max(0, P.x(x1) - P.x(x0)), height: Math.abs(y1 - y0), rx: 3 * P.fs, style: `fill:${color};fill-opacity:${op || 1}` }, P.g.data);
@@ -115,13 +114,13 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.5 · bits versus distance
+  // ================================================================ (spare) · bits versus distance
   FIG.qDistance = (host) => {
-    // toy channel: x_t = request mean (share sReq) + local AR(1) part (share sLoc, decay length lam) + noise.
+    // toy furrow: x_t = sequence mean (share sReq) + local AR(1) part (share sLoc, decay length lam) + noise.
     // An affine predictor from one neighbour at distance Δ reaches R² = corr², corr = sReq + sLoc·exp(−Δ/λ).
     const PRE = {
       local: { name: 'fallen-apple world', sReq: 0.1, sLoc: 0.75, lam: 512 },
-      request: { name: 'per-request world', sReq: 0.6, sLoc: 0, lam: 512 },
+      request: { name: 'sequence-scope world', sReq: 0.6, sLoc: 0, lam: 512 },
       none: { name: 'nothing world', sReq: 0, sLoc: 0, lam: 512 },
     };
     let cur = Object.assign({}, PRE.local), world = 'local';
@@ -129,17 +128,17 @@ window.FIG = window.FIG || {};
     const xs = linspace(0, 15, 76).map(v => Math.pow(2, v));
     const box = h('div'), ro = readout();
     const pct = v => `${Math.round(100 * v)}%`;
-    const sQ = slider('request share', 0, 0.9, 0.01, cur.sReq, v => { cur.sReq = v; fix('q'); draw(); }, pct);
+    const sQ = slider('sequence share', 0, 0.9, 0.01, cur.sReq, v => { cur.sReq = v; fix('q'); draw(); }, pct);
     const sL = slider('local share', 0, 0.9, 0.01, cur.sLoc, v => { cur.sLoc = v; fix('l'); draw(); }, pct);
     const sT = slider('decay length', 1, 13, 0.25, log2(cur.lam), v => { cur.lam = Math.pow(2, v); draw(); }, v => fmt(Math.pow(2, v), 0));
-    const pick = seg([['local', 'fallen-apple'], ['request', 'per-request'], ['none', 'nothing']], world, v => {
+    const pick = seg([['local', 'fallen-apple'], ['request', 'sequence scope'], ['none', 'nothing']], world, v => {
       world = v; cur = Object.assign({}, PRE[v]); sQ.set(cur.sReq); sL.set(cur.sLoc); sT.set(log2(cur.lam)); draw();
     }, 'which world');
     function fix(which) {      // shares cannot exceed 98 % together; the rest is noise
       if (cur.sReq + cur.sLoc > 0.98) { if (which === 'q') { cur.sLoc = 0.98 - cur.sReq; sL.set(cur.sLoc); } else { cur.sReq = 0.98 - cur.sLoc; sQ.set(cur.sReq); } }
     }
-    mark(host).append(schem('Schematic · a toy channel model, no KV data'), controls(pick, sQ, sL, sT),
-      legend([['your world', 'var(--c)'], ['fallen-apple world', 'var(--t-fallen-apple)', 'dash'], ['per-request world', 'var(--t-scope-request)', 'dash'], ['nothing world', 'var(--ink-3)', 'dash'], ['after shuffling', 'var(--carmine)', 'dot']]),
+    mark(host).append(schem('Schematic · a toy furrow, no orchard data'), controls(pick, sQ, sL, sT),
+      legend([['your world', 'var(--c)'], ['fallen-apple world', 'var(--t-fallen-apple)', 'dash'], ['sequence-scope world', 'var(--t-scope-sequence)', 'dash'], ['nothing world', 'var(--ink-3)', 'dash'], ['after shuffling', 'var(--carmine)', 'dot']]),
       box, ro);
     const P = Plot(box, { x: [1, 32768], xlog: 2, y: [0, 1.6], h: 340, xticks: [1, 4, 16, 64, 256, 1024, 4096, 32768], xfmt: v => v >= 1024 ? `${v / 1024}K` : String(v),
       xlabel: 'token distance Δ to the neighbour', ylabel: 'bits saved per element', label: 'Bits saved by a neighbour against token distance' });
@@ -147,7 +146,7 @@ window.FIG = window.FIG || {};
     function draw() {
       P.clear();
       ['local', 'request', 'none'].forEach(k => line(P, xs.map(D => [D, bits(PRE[k], D)]), {
-        color: k === 'local' ? 'var(--t-fallen-apple)' : k === 'request' ? 'var(--t-scope-request)' : 'var(--ink-3)', dash: '5 5', width: 1.6, name: PRE[k].name,
+        color: k === 'local' ? 'var(--t-fallen-apple)' : k === 'request' ? 'var(--t-scope-sequence)' : 'var(--ink-3)', dash: '5 5', width: 1.6, name: PRE[k].name,
       }));
       line(P, xs.map(D => [D, 0]), { color: 'var(--carmine)', dash: '1.5 4', width: 2.4, name: 'after shuffling' });
       const pts = xs.map(D => [D, bits(cur, D)]);
@@ -159,20 +158,20 @@ window.FIG = window.FIG || {};
       let reading;
       if (near < 0.05) reading = 'flat near zero: neighbours do not help at this precision — a negative Q1';
       else if (near - far > 0.1) reading = far > 0.05
-        ? `decays to a positive floor: local (fallen-apple) similarity on top of per-request structure; natural block scale ≈ ${fmt(half, 0)} tokens`
-        : `decays to zero: fallen-apple similarity; natural block scale ≈ ${fmt(half, 0)} tokens`;
-      else reading = 'flat but positive: structure shared across the whole request, not local — per-request dictionaries, not block ones';
+        ? `decays to a positive floor: local (fallen-apple) similarity on top of sequence-scope structure; natural stretch length ≈ ${fmt(half, 0)} tokens`
+        : `decays to zero: fallen-apple similarity; natural stretch length ≈ ${fmt(half, 0)} tokens`;
+      else reading = 'flat but positive: structure shared across the whole sequence, not local — sequence-scope dictionaries, not stretch ones';
       ro.set([['at Δ = 1', `${fmt(near, 2)} bit`], ['at Δ = 32K', `${fmt(far, 2)} bit`], ['reading', reading]]);
     }
     draw();
   };
 
-  // ================================================================ VIII.6 · the compressibility curve and its roofline
+  // ================================================================ (spare) · the compressibility curve and its roofline
   FIG.qCurve = (host) => {
-    const D_EL = 640;                       // elements per entry (reference setting)
+    const D_EL = 640;                       // elements per cherry (the Pin)
     const ZERO = 1.6e-5;                    // where "no dictionary" (x = 0) is drawn on the log axis
     let world = 'corr', mode = 'ideal', lb = 12;   // b = 2^lb
-    // schematic gains in bits per element over solo, per world; loosely shaped after the VI.7 Monte Carlo
+    // schematic gains in bits per element over solo, per world; loosely shaped after the V.5 Monte Carlo
     const FAM = [
       { id: 'loc', name: 'loc', short: 'loc', color: 'var(--t-loc)', set: [
         { hp: 'location only', w: 1, g: { corr: 0.2, clus: 0.22, none: 0.01 } },
@@ -185,12 +184,12 @@ window.FIG = window.FIG || {};
     ];
     const WORLDS = { corr: 'correlated, bell-shaped', clus: 'clustered', none: 'no structure' };
     const box = h('div'), ro = readout();
-    const sB = slider(texify('block size $\\vb$'), 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmt(Math.pow(2, v), 0)} tokens`);
+    const sB = slider(texify('stretch length $\\vb$'), 9, 15, 1, lb, v => { lb = v; draw(); }, v => `${fmt(Math.pow(2, v), 0)} tokens`);
     mark(host).append(
       schem('Schematic · invented point clouds, no data yet'),
       controls(
         seg([['corr', 'correlated data'], ['clus', 'clustered data'], ['none', 'no structure']], world, v => { world = v; draw(); }, 'which world'),
-        seg([['ideal', 'ideal coder'], ['fixed', 'fixed-length']], mode, v => { mode = v; draw(); }, 'which rate'),
+        seg([['ideal', 'ideal entropy coder'], ['fixed', 'fixed-length']], mode, v => { mode = v; draw(); }, 'which rate'),
         sB),
       legend([
         ...FAM.map(f => [f.name, f.color, 'dot']),
@@ -201,21 +200,21 @@ window.FIG = window.FIG || {};
     const P = Plot(box, {
       x: [1e-5, 10], xlog: true, y: [0.55, 1.05], h: 400,
       xticks: [ZERO, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10], xfmt: v => (v === ZERO ? '0' : v >= 1 ? String(v) : String(+v.toPrecision(1))),
-      xlabel: 'dictionary cost per entry, w / b (entries’ worth)', ylabel: 'delta ratio ρ', label: 'The compressibility curve: delta size against dictionary cost',
+      xlabel: 'dictionary cost per cherry, w / b (cherries’ worth)', ylabel: 'delta share ρ', label: 'The compressibility curve: delta size against dictionary cost',
     });
     // axis break between "0" and the log part
     const bx = P.x(3.2e-5), by = P.H - P.m.b;
     el('path', { d: `M${bx - 5 * P.fs} ${by + 5 * P.fs}l${6 * P.fs} ${-10 * P.fs}M${bx} ${by + 5 * P.fs}l${6 * P.fs} ${-10 * P.fs}`, class: 'q-break' }, P.g.axes);
-    const tipFor = (f, s, x, y) => `<b>${f.short} · ${s.hp}</b><br>w = ${s.w} entries’ worth, b = ${Math.pow(2, lb)}<br>dictionary ${x === ZERO ? '0' : fmt(x, 4)} + delta ${fmt(y, 3)} = <b>${fmt((x === ZERO ? 0 : x) + y, 3)}</b> of an entry<br>= ${fmt(8 * ((x === ZERO ? 0 : x) + y), 2)} bits per element`;
+    const tipFor = (f, s, x, y) => `<b>${f.short} · ${s.hp}</b><br>w = ${s.w} cherries’ worth, b = ${Math.pow(2, lb)}<br>dictionary ${x === ZERO ? '0' : fmt(x, 4)} + delta ${fmt(y, 3)} = <b>${fmt((x === ZERO ? 0 : x) + y, 3)}</b> of a cherry<br>= ${fmt(8 * ((x === ZERO ? 0 : x) + y), 2)} bits per element`;
     function draw() {
       P.clear();
       const b = Math.pow(2, lb), f = mode === 'ideal' ? 1 : FIX;
       const solo = SOLO_BITS * f / 8;
-      const loc = 0.6 + 0.4 * 2048 / (2048 + b);       // smaller blocks fit a little better (schematic)
+      const loc = 0.6 + 0.4 * 2048 / (2048 + b);       // smaller punnets fit a little better (schematic)
       // break-even region: total = x + ρ < solo
       const xs = [ZERO, ...linspace(-5, log2(solo * 0.999) / log2(10), 80).map(v => Math.pow(10, v))];
       area(P, xs.map(x => [x, 0.55, Math.max(0.55, solo - (x === ZERO ? 0 : x))]), { color: 'var(--good)', opacity: 0.1 });
-      rule(P, { y: 1, label: 'raw entries (HiSparse)' });
+      rule(P, { y: 1, label: 'raw cherries (HiSparse)' });
       rule(P, { y: solo, label: `solo coding · ${fmt(solo, 2)}`, color: 'var(--t-solo)' });
       const pts = [];
       FAM.forEach(fm => fm.set.forEach(s => {
@@ -225,7 +224,7 @@ window.FIG = window.FIG || {};
         const x = s.w ? s.w / b : ZERO;
         pts.push({ f: fm, s, x, y });
       }));
-      // roofline: best ρ reachable at each dictionary budget (a staircase), starting from solo at x = 0
+      // roofline: best ρ reachable at each dictionary cost (a staircase), starting from solo at x = 0
       const sorted = [{ x: ZERO, y: solo }, ...pts].sort((a, c) => a.x - c.x);
       const roof = []; let best = Infinity;
       sorted.forEach(p => { if (p.y < best) { best = p.y; roof.push([p.x, p.y]); } });
@@ -248,7 +247,7 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.7 · trace replay toy
+  // ================================================================ (spare: X.6 uses planReplaySweep) · trace replay toy
   FIG.qReplay = (host) => {
     const L = 2048, K = 32, B = 64, T = 110, WARM = 30, SHOW = 48;
     let conc = 0.6, b = 256, nD = 4, seed = 7, trace = null, traceKey = '';
@@ -281,7 +280,7 @@ window.FIG = window.FIG || {};
           if (cache.size >= B) for (const v of cache.keys()) if (!Ss.has(v)) { cache.delete(v); break; }
           cache.set(p, 1);
         }
-        S.forEach(p => { cache.delete(p); cache.set(p, 1); });       // selected entries become the most recent
+        S.forEach(p => { cache.delete(p); cache.set(p, 1); });       // picked positions become the most recent
         const cnt = new Map();
         for (const p of cache.keys()) { const j = Math.floor(p / bb); cnt.set(j, (cnt.get(j) || 0) + 1); }
         const heavy = [...cnt.entries()].sort((a, q) => q[1] - a[1] || a[0] - q[0]).slice(0, nn).map(e => e[0]);
@@ -297,22 +296,22 @@ window.FIG = window.FIG || {};
     const tiles = {
       m: kpi('token miss rate ' + tex('\\vm'), '', 'hot cache of 2k slots', 'var(--t-hot-cache)'),
       fD: kpi('δ-miss fraction ' + tex('\\vfD'), '', '', 'var(--t-delta-miss)'),
-      nl: kpi('loads per step ' + tex('\\vnload'), '', 'dictionaries', 'var(--t-dictionary-cache)'),
+      nl: kpi('loads per step ' + tex('\\vnload'), '', 'dictionaries', 'var(--t-dictionary-shelf)'),
     };
     const verdict = h('div', { class: 'readout' });
     const sC = slider('concentration into hot spots', 0, 1, 0.05, conc, v => { conc = v; draw(); }, v => fmtPct(v, 0));
-    const sN = slider(texify('resident dictionaries $\\vnD$'), 1, 8, 1, nD, v => { nD = v; draw(); });
+    const sN = slider(texify('dictionaries on the shelf $\\vnD$'), 1, 8, 1, nD, v => { nD = v; draw(); });
     mark(host).append(
       schem('Toy trace · a made-up indexer, not a real one'),
-      controls(sC, seg([[64, 'b = 64'], [128, 'b = 128'], [256, 'b = 256']], b, v => { b = v; draw(); }, 'block size'), sN,
+      controls(sC, seg([[64, 'b = 64'], [128, 'b = 128'], [256, 'b = 256']], b, v => { b = v; draw(); }, 'stretch length'), sN,
         btn('New trace', () => { seed++; draw(); })),
-      legend([['hit', 'var(--ink-3)', 'box'], ['δ-miss', 'var(--t-delta-miss)', 'dot'], ['raw miss', 'var(--t-raw-miss)', 'dot'], ['dictionary resident', 'var(--t-dictionary-cache)', 'band']]),
+      legend([['hit', 'var(--ink-3)', 'box'], ['δ-miss', 'var(--t-delta-miss)', 'dot'], ['raw miss', 'var(--t-raw-miss)', 'dot'], ['dictionary on the shelf', 'var(--t-dictionary-shelf)', 'band']]),
       D, h('div', { class: 'kpis' }, tiles.m, tiles.fD, tiles.nl), verdict, small);
-    const DG = Diagram(D, { w: 640, h: 300, label: 'Selections of a toy indexer over 48 decode steps, by position, with misses and resident dictionaries' });
+    const DG = Diagram(D, { w: 640, h: 300, label: 'Picks of a toy indexer over 48 decode steps, by position, with misses and the dictionaries on the shelf' });
     const g = el('g', {}, DG.svg);
     const left = 46 * DG.fs, top = 10, bot = DG.H - 26 * DG.fs, right = DG.W - 8;
     const colW = (right - left) / SHOW, yOf = p => top + (bot - top) * p / L;
-    const SP = Plot(small, { x: [1, 8], y: [0, 1], h: 210, xticks: range(1, 9), xlabel: 'number of resident dictionaries per layer', ylabel: 'δ-miss fraction', label: 'δ-miss fraction against number of resident dictionaries' });
+    const SP = Plot(small, { x: [1, 8], y: [0, 1], h: 210, xticks: range(1, 9), xlabel: 'dictionaries on the shelf per layer', ylabel: 'δ-miss fraction', label: 'δ-miss fraction against the number of dictionaries on the shelf' });
     function draw() {
       const key = `${seed}|${conc}`;
       if (key !== traceKey) { trace = makeTrace(); traceKey = key; }
@@ -329,16 +328,16 @@ window.FIG = window.FIG || {};
       svgText(g, left - 6 * DG.fs, top + 10 * DG.fs, '0', { class: 'lbl', 'text-anchor': 'end' });
       svgText(g, left - 6 * DG.fs, bot, String(L), { class: 'lbl', 'text-anchor': 'end' });
       svgText(g, left - 30 * DG.fs, (top + bot) / 2, 'position', { class: 'lbl', 'text-anchor': 'middle', transform: `rotate(-90 ${left - 30 * DG.fs} ${(top + bot) / 2})` });
-      svgText(g, (left + right) / 2, DG.H - 6 * DG.fs, `decode step → (last ${SHOW} of ${T}; ${L / b} blocks of ${b})`, { class: 'lbl', 'text-anchor': 'middle' });
+      svgText(g, (left + right) / 2, DG.H - 6 * DG.fs, `decode step → (last ${SHOW} of ${T}; ${L / b} stretches of ${b})`, { class: 'lbl', 'text-anchor': 'middle' });
       tiles.m.set(fmtPct(res.m, 1));
-      tiles.fD.set(fmtPct(res.fD, 0), `with ${nD} of ${L / b} blocks`);
+      tiles.fD.set(fmtPct(res.fD, 0), `with ${nD} of ${L / b} stretches`);
       tiles.nl.set(fmt(res.nload, 2), 'dictionaries per step');
       let v;
-      if (nD >= L / b) v = 'there is a slot for every block: once touched, every dictionary stays resident — the "light, all-resident dictionaries" regime';
-      else if (res.fD >= 0.8 && res.nload <= 0.1) v = 'misses concentrate and blocks stay heavy: heavy dictionaries would be affordable';
-      else if (res.fD >= 0.8) v = 'misses concentrate, but the heavy blocks change often: affordable only for light dictionaries (loads cost w each)';
-      else if (res.fD < 0.5) v = 'misses are spread over many blocks: only light all-resident or per-request dictionaries remain viable';
-      else v = 'in between: the verdict depends on dictionary weight and the cost model';
+      if (nD >= L / b) v = 'there is a slot for every stretch: once touched, every dictionary stays on the shelf — the "light, all-resident dictionaries" regime';
+      else if (res.fD >= 0.8 && res.nload <= 0.1) v = 'misses concentrate and stretches stay heavy: heavy dictionaries would be affordable';
+      else if (res.fD >= 0.8) v = 'misses concentrate, but the heavy stretches change often: affordable only for light dictionaries (loads cost w each)';
+      else if (res.fD < 0.5) v = 'misses are spread over many stretches: only light all-resident or sequence-scope dictionaries remain viable';
+      else v = 'in between: the verdict depends on dictionary weight and the napkin';
       verdict.innerHTML = `<span><b>reading</b>${v}</span>`;
       SP.clear();
       const curve = range(1, 9).map(n => [n, replay(b, n, false).fD]);
@@ -351,11 +350,11 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.8 · requests per GPU
+  // ================================================================ (spare) · sequences per GPU
   FIG.qFrontier = (host) => {
     const k = 2048, NL = 78, e = 640, TPOT = 0.030;
     let W = 50, M = 30, rho = 0.75, fD = 0.85, showVictim = true;
-    const m = Bs => 0.134 * Math.pow(Bs / 4096, -1.08);          // HiSparse's three points, power-law fit (III.9)
+    const m = Bs => 0.134 * Math.pow(Bs / 4096, -1.08);          // HiSparse's three points, power-law fit (III.10)
     const Bgrid = linspace(log2(2048), log2(16384), 121).map(v => Math.pow(2, v));
     // best victim-tier size for a given B: the link limit rises with B_V, the memory limit falls; take the crossing
     function limits(Bs, BV) {
@@ -378,25 +377,25 @@ window.FIG = window.FIG || {};
     }
     const SYS = [
       { id: 'his', name: 'HiSparse', color: series(0), f: Bs => N(Bs, { rho: 1, fD: 1 }) },
-      { id: 'req', name: 'lever 1, per request', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
-      { id: 'blk', name: 'lever 1, per block', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
+      { id: 'req', name: 'lever 1, sequence scope', color: series(2), f: Bs => N(Bs, { rho, fD: 1, wres: 256 }) },
+      { id: 'blk', name: 'lever 1, stretch scope', color: series(3), f: Bs => N(Bs, { rho, fD, nload: 0.1, w: 32, wres: 128 }) },
       { id: 'vic', name: 'lever 1 + victim tier', color: series(4), f: Bs => bestVictim(Bs) },
       { id: 'lv2', name: 'levers 1 + 2', color: series(1), f: Bs => N(Bs, { rho, fD: 1, wres: 256, slot: rho }) },
     ];
     const box = h('div'), tbl = h('div');
     mark(host).append(
-      schem('Schematic · assumed ρ and f<sub>D</sub>, reference setting otherwise'),
+      schem('Schematic · assumed ρ and f<sub>D</sub>, the Pin otherwise'),
       controls(
         slider('link', 25, 450, 5, W, v => { W = v; draw(); }, v => `${v} GB/s`),
         slider('GPU memory', 10, 80, 1, M, v => { M = v; draw(); }, v => `${v} GB`),
-        slider(texify('delta ratio $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
-        slider(texify('$\\vfD$ (block scope)'), 0, 1, 0.01, fD, v => { fD = v; draw(); }),
+        slider(texify('delta share $\\vrho$'), 0.4, 1, 0.01, rho, v => { rho = v; draw(); }),
+        slider(texify('$\\vfD$ (stretch scope)'), 0, 1, 0.01, fD, v => { fD = v; draw(); }),
         btn('victim tier', (ev, b) => { showVictim = !showVictim; b.setAttribute('aria-pressed', String(showVictim)); draw(); }, { pressed: showVictim })),
       legend(SYS.map(s => [s.name, s.color])),
       box, tbl,
     );
     const P = Plot(box, { x: [2048, 16384], xlog: 2, y: [0, 320], h: 380, xticks: [2048, 4096, 8192, 16384], xfmt: v => `${v / 1024}K`,
-      xlabel: 'hot-cache slots per layer B', ylabel: 'requests per GPU N', label: 'Requests per GPU against hot-cache size for HiSparse and kv-blockdiff variants' });
+      xlabel: 'hot-cache slots per layer B', ylabel: 'sequences per GPU N', label: 'Sequences per GPU against hot-cache size for HiSparse and kvblockdiff variants' });
     crosshair(P, { xname: 'B =', xfmt: v => fmt(v, 0), yfmt: v => fmt(v, 0) });
     function draw() {
       P.clear();
@@ -423,12 +422,12 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.9 · the parked shelf at a glance
+  // ================================================================ (spare) · the parked questions at a glance
   FIG.qParkedMap = (host) => {
     // positions are our judgement (cost to test, odds of a useful answer), not data
     const Q = [
       { s: 'indexer keys', x: 0.72, y: 0.33, p: 0 },
-      { s: 'anchor entries', x: 0.15, y: 0.3, p: 0 },
+      { s: 'reference cherries', x: 0.15, y: 0.3, p: 0 },
       { s: 'shared prefixes', x: 0.82, y: 0.6, p: 0 },
       { s: 'rate allocation', x: 0.22, y: 0.78, p: 0 },
       { s: 'upstairs groups', x: 0.32, y: 0.4, p: 1 },
@@ -438,7 +437,7 @@ window.FIG = window.FIG || {};
       { s: 'automated search', x: 0.6, y: 0.17, p: 2 },
       { s: 'compressibility as a probe', x: 0.08, y: 0.68, p: 2 },
     ];
-    const PAGES = ['VIII.9 dictionaries', 'VIII.10 measurements', 'VIII.11 automation & probes'];
+    const PAGES = ['dictionaries', 'measurements', 'automation & probes'];
     const box = h('div');
     mark(host).append(schem('Our judgement · not data'), legend(PAGES.map((p, i) => [p, series(i), 'dot'])), box);
     const P = Plot(box, { x: [0, 1], y: [0, 1], h: 380, xticks: [0, 0.5, 1], yticks: [0, 0.5, 1], xfmt: v => (v === 0 ? 'cheap' : v === 1 ? 'costly' : ''), yfmt: v => (v === 0 ? 'long shot' : v === 1 ? 'likely' : ''),
@@ -453,7 +452,7 @@ window.FIG = window.FIG || {};
     });
   };
 
-  // ================================================================ VIII.10 · neighbours along the axes of the KV tensor
+  // ================================================================ (spare: VII.2 uses kvAxes) · neighbours along the axes of the orchard
   FIG.qAxes = (host) => {
     let mode = 'token';
     const NT = 12, NLY = 5;
@@ -461,14 +460,14 @@ window.FIG = window.FIG || {};
       token: 'Fallen-apple similarity: the same layer, a few tokens back (Δ = 1, 2, 4). Framework A measures exactly this.',
       layer: 'Upstairs similarity: the same token, one floor down. If strong, one dictionary could serve a group of layers.',
       head: 'A possible third neighbour: the same token and layer, another key/value head. Only exists where heads are stored separately (not in MLA).',
-      split: 'Not a neighbour but a split: prompt tokens (prefill) versus tokens the model wrote itself. Same curves, measured on each side.',
+      split: 'Not a neighbour but a split: prompt tokens (prefill) versus tokens the LLM wrote itself. Same curves, measured on each side.',
     };
     const cap = h('div', { class: 'readout' });
     const box = h('div');
-    mark(host).append(schem('Diagram · one request, a few tokens, layers and two heads'),
+    mark(host).append(schem('Diagram · one sequence, a few tokens, layers and two heads'),
       controls(seg([['token', 'token axis'], ['layer', 'layer axis'], ['head', 'head axis'], ['split', 'prefill vs generated']], mode, v => { mode = v; draw(); }, 'which neighbour')),
       box, cap);
-    const D = Diagram(box, { w: 640, h: 270, label: 'Grid of entries by token, layer and head with the neighbour of the selected question highlighted', grow: 0.5 });
+    const D = Diagram(box, { w: 640, h: 270, label: 'Grid of cherries by token, layer and head with the neighbour of the chosen question highlighted', grow: 0.5 });
     const g = el('g', {}, D.svg);
     const cw = 38, ch = 34, x0 = 92, y0 = 50, off = 16;
     const cell = (t, l, hd) => ({ x: x0 + t * cw + hd * off, y: y0 + (NLY - 1 - l) * ch - hd * off });
@@ -505,13 +504,13 @@ window.FIG = window.FIG || {};
     draw();
   };
 
-  // ================================================================ VIII.11 · compressibility as a probe
+  // ================================================================ (spare) · compressibility as a probe
   FIG.qProbe = (host) => {
     let pat = 'graded';
     const NLY = 12, DS = range(0, 16).map(v => Math.pow(2, v));
     const PAT = {
-      graded: { amp: l => 0.9, lam: l => Math.pow(2, 2 + 0.85 * l), read: 'Deeper layers keep their state for longer: their bits fade over thousands of tokens, early layers over a few. Long blocks would suit deep layers, short ones early layers.' },
-      uniform: { amp: l => 0.6, lam: l => 256, read: 'Every layer looks alike: one block size for the whole stack, and the probe says little about what layers store.' },
+      graded: { amp: l => 0.9, lam: l => Math.pow(2, 2 + 0.85 * l), read: 'Deeper layers keep their state for longer: their bits fade over thousands of tokens, early layers over a few. Long stretches would suit deep layers, short ones early layers.' },
+      uniform: { amp: l => 0.6, lam: l => 256, read: 'Every layer looks alike: one stretch length for the whole stack, and the probe says little about what layers store.' },
       few: { amp: l => ([3, 4, 9].includes(l) ? 1.1 : 0.12), lam: l => ([3, 4, 9].includes(l) ? 2048 : 16), read: 'A few layers carry slowly varying state; the rest are token-by-token detail. Dictionaries (and HBM) would go to those few layers.' },
     };
     const bits = (l, D) => PAT[pat].amp(l) * Math.exp(-D / PAT[pat].lam(l));

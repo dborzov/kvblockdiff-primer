@@ -7,12 +7,12 @@
 .ls-mix-seg { display: block; min-width: 0; transition: flex-grow .15s; }
 @media (max-width: 520px) { .ls-mix-wrap { grid-template-columns: 1fr; gap: .3rem; } }
 
-/* III.3 entry anatomy: one entry as a strip of numbers */
+/* III.3 row anatomy: one row of the orchard as a strip of elements */
 .ls-strip { display: flex; gap: 3px; min-height: 3.2rem; }
 .ls-strip-seg { display: flex; align-items: center; justify-content: center; min-width: 0; border-radius: 6px; padding: .2rem .3rem; border: 1px solid var(--rule); outline-offset: 2px; }
 .ls-strip-seg.is-k { background: color-mix(in srgb, var(--lapis) 22%, var(--paper)); }
 .ls-strip-seg.is-v { background: color-mix(in srgb, var(--vermilion) 18%, var(--paper)); }
-.ls-strip-seg.is-l { background: color-mix(in srgb, var(--t-entry) 22%, var(--paper)); }
+.ls-strip-seg.is-l { background: color-mix(in srgb, var(--t-orchard) 22%, var(--paper)); }
 .ls-strip-lbl { font-family: var(--f-sc); font-size: .82rem; color: var(--ink); text-align: center; line-height: 1.15; overflow-wrap: anywhere; }
 
 /* III.5 memory wall: value-against-limit meters */
@@ -39,7 +39,7 @@
 .ls-sys-head b { font-family: var(--f-sc); font-size: 1rem; color: var(--ink); }
 .ls-sys-head span { font-style: italic; font-size: .85rem; color: var(--ink-3); }
 .ls-sys-hist { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
-.ls-sys-cell, .ls-sys-slot { display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: .74rem; aspect-ratio: 1.15; border-radius: 5px; background: color-mix(in srgb, var(--t-entry) 16%, var(--paper)); border: 1px solid var(--rule); color: var(--ink); }
+.ls-sys-cell, .ls-sys-slot { display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: .74rem; aspect-ratio: 1.15; border-radius: 5px; background: color-mix(in srgb, var(--t-orchard) 16%, var(--paper)); border: 1px solid var(--rule); color: var(--ink); }
 .ls-sys-cell.is-sel { outline: 2.5px solid var(--t-indexer); outline-offset: -1px; font-weight: 700; }
 .ls-sys-note { margin: 0; font-size: .82rem; color: var(--ink-2); line-height: 1.3; }
 .ls-sys-link { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .15rem; line-height: 1.2; outline-offset: 3px; }
@@ -80,3 +80,29 @@
 .ls-chain-chip.is-bind { border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 10%, var(--paper-3)); }
 .ls-chain-arrow { color: var(--ink-3); font-size: .9rem; }
 @media (max-width: 560px) { .ls-chains { grid-template-columns: 1fr; } }
+
+/* the two settings side by side (III.11, refSettings) */
+.ls-set-wrap { width: 100%; overflow-x: auto; }
+.ls-set { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.ls-set th, .ls-set td { padding: .3rem .55rem; text-align: right; border-bottom: 1px solid color-mix(in srgb, var(--rule) 45%, transparent); vertical-align: top; }
+.ls-set th.l, .ls-set td.l { text-align: left; }
+.ls-set thead th { font-family: var(--f-sc); font-weight: 500; letter-spacing: .03em; color: var(--ink-2); border-bottom: 1.5px solid var(--rule); vertical-align: bottom; }
+.ls-set td { font-family: var(--f-mono); font-size: .84rem; color: var(--ink); }
+.ls-set td.is-null { color: var(--ink-3); font-style: italic; font-family: var(--f-body); }
+.ls-set td.is-cur, .ls-set th.is-cur { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.ls-set tr.is-diff td { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--c) 55%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--c) 55%, transparent); }
+.ls-set tr.is-diff td.l { box-shadow: inset 2px 0 0 var(--c), inset 0 1px 0 color-mix(in srgb, var(--c) 55%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--c) 55%, transparent); }
+.ls-set-key { font-family: var(--f-body); color: var(--ink); }
+.ls-set-unit { color: var(--ink-3); font-family: var(--f-body); }
+.ls-set-code { display: block; font-family: var(--f-mono); font-size: .72rem; color: var(--ink-3); }
+.ls-set-head { font-family: var(--f-sc); font-size: .88rem; letter-spacing: .03em; color: var(--ink-2); }
+.ls-set-card { min-width: 9rem; }
+.ls-set-card .ls-set-label { display: block; font-family: var(--f-display); font-size: 1.05rem; color: var(--ink); letter-spacing: .02em; }
+.ls-set-card .ls-set-name { display: block; font-family: var(--f-body); font-size: .8rem; color: var(--ink-3); font-weight: 400; letter-spacing: 0; white-space: normal; }
+.ls-set-card .ls-set-cur { display: inline-block; margin-top: .25rem; font-family: var(--f-sc); font-size: .72rem; letter-spacing: .05em; color: var(--paper-3); background: var(--c); border-radius: 999px; padding: .05rem .5rem; }
+@media (max-width: 520px) {
+  .ls-set { font-size: .84rem; }
+  .ls-set th, .ls-set td { padding: .25rem .35rem; }
+  .ls-set-card { min-width: 7rem; }
+  .ls-set-card .ls-set-name { display: none; }
+}

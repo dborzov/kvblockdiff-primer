@@ -1,15 +1,15 @@
 /* =====================================================================
-   figures/missed-a.js — Part VII, pages VII.2–VII.8 ("What Dima missed", the corrections).
+   figures/missed-a.js — Parts V and VII (the toolbox; the hypotheses).
    Builders (all prefixed "ma" so they never collide with missed-b.js on the same page):
-     maWhichWhat  VII.2  same selections, different bytes (hit rate vs bits, shuffle toggle)
-     maMiBars     VII.3  entropy / mutual-information bars for the cat-thread toy
-     maKnob       VII.4  a property (bits vs distance) and a knob (net bits vs block size)
+     maWhichWhat  VII.7  same picks, different bytes (hit rate vs bits, shuffle toggle)
+     maMiBars     VII.1  entropy / mutual-information bars for the cat-sequence toy
+     maKnob       (spare) a property (bits vs distance) and a knob (net bits vs stretch length)
      maVqLedger   VII.5  2-D toy: k-means codebook vs rotation, bit ledger
      maBudgetBar  VII.6  the bits a dictionary can still win after noise
-     maSpread     VII.6  same average R², spread evenly or concentrated in a few channels
+     maSpread     V.12   same average R², spread evenly or concentrated in a few furrows
      maBitFlips   VII.7  which bits a predictor cannot tell you, BF16 vs E4M3
      maGridLine   VII.7  the E4M3 grid vs the INT8 grid, residuals in grid steps
-     maAccess     VII.8  bulk stream chunks vs single reads: bytes per miss path
+     maAccess     (spare) bulk stream runs vs single reads: bytes per miss path
    Toy data comes from seeded generators, so the numbers quoted in the prose are reproducible.
    ===================================================================== */
 window.FIG = window.FIG || {};
@@ -34,14 +34,14 @@ window.FIG = window.FIG || {};
   const entropyOf = probs => probs.reduce((s, p) => (p > 0 ? s - p * L2(p) : s), 0);
 
   /* ==================================================================
-     VII.2  maWhichWhat — which entries are wanted vs what is inside them
+     VII.7  maWhichWhat — which picks are wanted vs what is inside them
      ================================================================== */
   FIG.maWhichWhat = (host) => {
     const N = 160, K = 8, B = 16, STEPS = 90, WARM = 10, SHOW = 26, DG = 16, CH = 8, A = 0.97;
-    // the indexer's own small keys: they decide WHICH positions are selected
+    // the indexer's own small keys: they decide WHICH positions are picked
     const rk = rng('ma-which-keys');
     const G = range(N).map(() => range(DG).map(() => rk.normal()));
-    // the stored bytes: CH channels per entry, drifting slowly along the tokens
+    // the stored bytes: CH furrows per cherry, drifting slowly along the tokens
     const rb = rng('ma-which-bytes');
     const ordered = range(CH).map(() => {
       let v = rb.normal();
@@ -74,23 +74,23 @@ window.FIG = window.FIG || {};
     let eta = 0.3, mode = 'ordered';
     const tiles = {
       hit: kpi('LRU hit rate', '', '<i>which</i>: a fact about the query', series(0)),
-      bits: kpi('bits saved per element', '', '<i>what</i>: given the previous entry', series(2)),
+      bits: kpi('bits saved per element', '', '<i>what</i>: given the previous cherry', series(2)),
     };
     const sl = slider(texify('query drift per step'), 0.05, 3, 0.05, eta, v => { eta = v; draw(); }, v => fmt(v, 2));
     const sw = seg([['ordered', 'bytes in token order'], ['shuffled', 'bytes shuffled']], mode, v => { mode = v; draw(); }, 'stored bytes');
     const box = h('div');
     host.append(controls(sl, sw),
-      legend([['selected, found in the cache (hit)', series(0), 'box'], ['selected, not in the cache (miss)', series(1), 'box'], ['stored value above zero', series(2), 'box'], ['below zero', series(3), 'box']]),
+      legend([['picked, found in the cache (hit)', series(0), 'box'], ['picked, not in the cache (miss)', series(1), 'box'], ['stored value above zero', series(2), 'box'], ['below zero', series(3), 'box']]),
       box, h('div', { class: 'kpis' }, tiles.hit, tiles.bits));
 
     const W = 640, x0 = 20, x1 = 620, cw = (x1 - x0) / N;
     const D = Diagram(box, { w: W, h: 330, label: 'Selections per step above, stored bytes below, same token positions', grow: 0.3 });
     const f = D.fs, rowH = 6.2, top = 24 * f;
     const gSel = el('g', {}, D.svg), gNow = el('g', {}, D.svg), gBytes = el('g', {}, D.svg);
-    svgText(D.svg, x0, 14 * f, 'selected positions, step by step ↓', { class: 'lbl' });
+    svgText(D.svg, x0, 14 * f, 'picked positions, step by step ↓', { class: 'lbl' });
     const yBytes = top + SHOW * rowH + 30 * f;
     const cellH = (D.H - yBytes - 22 * f) / CH;
-    svgText(D.svg, x0, yBytes - 8 * f, 'what they store: 8 channels', { class: 'lbl' });
+    svgText(D.svg, x0, yBytes - 8 * f, 'what they store: 8 furrows', { class: 'lbl' });
     svgText(D.svg, x0, D.H - 6 * f, 'token position 0', { class: 'lbl' });
     svgText(D.svg, x1, D.H - 6 * f, String(N - 1), { class: 'lbl', 'text-anchor': 'end' });
 
@@ -110,7 +110,7 @@ window.FIG = window.FIG || {};
         el('rect', { x: x0 + p * cw, y: top + s * rowH, width: Math.max(1.5, cw - 0.4), height: rowH - 1.2,
           style: `fill:${hit ? series(0) : series(1)}` }, gSel);
       }));
-      // the newest step's selections, carried down to the bytes they fetch
+      // the newest step's picks, carried down to the bytes they fetch
       sim.rows[sim.rows.length - 1].forEach(({ p }) => {
         el('line', { x1: x0 + (p + 0.5) * cw, x2: x0 + (p + 0.5) * cw, y1: top + SHOW * rowH, y2: yBytes - 2,
           style: 'stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 2' }, gNow);
@@ -124,10 +124,10 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.3  maMiBars — the cat-thread toy as bars that cannot be read backwards
+     VII.1  maMiBars — the cat-sequence toy as bars that cannot be read backwards
      ================================================================== */
   FIG.maMiBars = (host) => {
-    // X: one element's level (a, b, c, d); thread: cat / dog; breed: Maine Coon, Siamese (cat), beagle, poodle (dog).
+    // X: one element's level (a, b, c, d); sequence: cat / dog; breed: Maine Coon, Siamese (cat), beagle, poodle (dog).
     // Each breed favours one level with strength s: P(X | breed) = (1-s)/4 + s·[X = the breed's level].
     let s = 0.5;
     function model(s) {
@@ -153,7 +153,7 @@ window.FIG = window.FIG || {};
     function draw() {
       const m = model(s);
       g.replaceChildren();
-      const rows = [['nothing known', m.HX], ['thread known', m.Ht], ['breed known', m.Hz]];
+      const rows = [['nothing known', m.HX], ['sequence known', m.Ht], ['breed known', m.Hz]];
       const bh = 34 * f, gap = (D.H - 30 * f - 3 * bh) / 3;
       rows.forEach(([name, Hc], i) => {
         const y = 10 * f + i * (bh + gap);
@@ -168,10 +168,10 @@ window.FIG = window.FIG || {};
         el('line', { x1: X0 + v * sc, x2: X0 + v * sc, y1: ya - 12 * f, y2: ya - 16 * f, style: 'stroke:var(--ink-3)' }, g);
         svgText(g, X0 + v * sc, ya, `${v} bit${v === 1 ? '' : 's'}`, { class: 'lbl', 'text-anchor': 'middle' });
       });
-      // two single outcomes: a typical one and a rare one, both inside a Maine Coon block
+      // two single outcomes: a typical one and a rare one, both inside a Maine Coon stretch
       const sup = q => (q > 0 ? fmt(-L2(q), 2) + ' bits' : '∞');
       const typ = [0.25, m.thread[0][0], m.breed[0][0]], rare = [0.25, m.thread[0][3], m.breed[0][3]];
-      tbl.replaceChildren(window.PK.table(['one entry of a Maine Coon block', 'nothing known', 'thread known', 'breed known'], [
+      tbl.replaceChildren(window.PK.table(['one cherry of a Maine Coon stretch', 'nothing known', 'sequence known', 'breed known'], [
         ['typical value <b>a</b> (the breed’s own level)', ...typ.map(sup)],
         ['rare value <b>d</b> (a poodle’s level)', ...rare.map(sup)],
         { cells: ['average over all values: the entropy', ...[m.HX, m.Ht, m.Hz].map(v => `${fmt(v, 2)} bits`)], cls: 'sum' },
@@ -181,11 +181,11 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.4  maKnob — the property (a curve over distance) and the knob (block size)
+     (spare)  maKnob — the property (a curve over distance) and the knob (stretch length)
      ================================================================== */
   FIG.maKnob = (host) => {
-    const SD = 0.6, L = 100384;                       // drift share of the variance; a 100K-token request
-    const fOU = x => (x < 1e-6 ? 1 - x / 3 : (2 / (x * x)) * (x - 1 + Math.exp(-x)));   // variance of a block mean / variance of the drift
+    const SD = 0.6, L = 100384;                       // drift share of the variance; a 100K-token sequence
+    const fOU = x => (x < 1e-6 ? 1 - x / 3 : (2 / (x * x)) * (x - 1 + Math.exp(-x)));   // variance of a stretch mean / variance of the drift
     const gNeighbour = (D, ell) => bitsFromR2(Math.pow(SD * Math.exp(-D / ell), 2));
     const gBlock = (b, ell) => bitsFromR2(SD * fOU(b / ell));
     const tax = (b, w) => (8 * w) / b;
@@ -203,15 +203,15 @@ window.FIG = window.FIG || {};
     const boxA = h('div'), boxB = h('div'), ro = readout();
     host.append(controls(sl, sw),
       h('div', { class: 'ma-panel-t', text: 'A · the property: bits a single neighbour saves, against its token distance' }), boxA,
-      h('div', { class: 'ma-panel-t', text: 'B · the knob: net bits a per-block dictionary saves, against the block size we choose' }),
-      legend([['gain of the block dictionary', series(2), 'dash'], ['net = gain − dictionary cost 8w/b', series(0)], ['best block size (ring) · your choice (knob)', 'var(--ink)', 'dot']]),
+      h('div', { class: 'ma-panel-t', text: 'B · the knob: net bits a stretch-scope dictionary saves, against the stretch length we choose' }),
+      legend([['gain of the stretch dictionary', series(2), 'dash'], ['net = gain − dictionary cost 8w/b', series(0)], ['best stretch length (ring) · your choice (knob)', 'var(--ink)', 'dot']]),
       boxB, ro);
     const xfmt = v => kfmt(v);
     const PA = Plot(boxA, { x: [1, 131072], xlog: 2, y: [0, 0.4], h: 220, xticks: [1, 16, 256, 4096, 65536], xfmt, xlabel: 'token distance Δ to the neighbour', ylabel: 'bits saved', label: 'Bits saved by a neighbour against token distance' });
-    const PB = Plot(boxB, { x: [16, 131072], xlog: 2, y: [-0.4, 0.75], h: 280, xticks: [16, 64, 256, 1024, 4096, 16384, 65536], xfmt, xlabel: 'block size b (tokens)', ylabel: 'bits saved per element', label: 'Net bits saved against block size' });
+    const PB = Plot(boxB, { x: [16, 131072], xlog: 2, y: [-0.4, 0.75], h: 280, xticks: [16, 64, 256, 1024, 4096, 16384, 65536], xfmt, xlabel: 'stretch length b (tokens)', ylabel: 'bits saved per element', label: 'Net bits saved against stretch length' });
     const knob = el('circle', { class: 'handle', r: 7 * PB.fs }, PB.g.top);
     draggable(knob, PB, ([x]) => { b = clamp(Math.round(x), 16, 131072); draw(); }, null,
-      { get: () => [b, net(b)], step: [0, 0], label: 'block size b' });
+      { get: () => [b, net(b)], step: [0, 0], label: 'stretch length b' });
     knob.addEventListener('keydown', e => {           // arrow keys move the knob by a quarter octave
       const d = { ArrowLeft: -0.25, ArrowRight: 0.25 }[e.key];
       if (!d) return;
@@ -226,13 +226,13 @@ window.FIG = window.FIG || {};
       area(PA, ds.filter(d => d <= b).map(d => [d, gNeighbour(d, E)]), { color: 'var(--c)', opacity: 0.16 });
       line(PA, ds.map(d => [d, gNeighbour(d, E)]), { color: series(3) });
       rule(PA, { x: E, label: 'drift length' });
-      annotate(PA, Math.min(b, 65536), gNeighbour(Math.min(b, 65536), E), `distances inside\none block of ${kfmt(b)}`, { dx: 30, dy: -34 });
+      annotate(PA, Math.min(b, 65536), gNeighbour(Math.min(b, 65536), E), `distances inside\none stretch of ${kfmt(b)}`, { dx: 30, dy: -34 });
       const bs = linspace(4, 17, 200).map(e => Math.pow(2, e));
       area(PB, [[L, -0.4], [131072, -0.4]].map(([x, y]) => [x, y, 0.75]), { color: 'var(--ink-3)', opacity: 0.12 });
       rule(PB, { y: 0, dash: false, color: 'var(--ink-3)' });
       line(PB, bs.map(x => [x, gBlock(x, E)]), { color: series(2), dash: true });
       line(PB, bs.map(x => [x, net(x)]), { color: series(0) });
-      rule(PB, { x: L, label: '100K-token request' });
+      rule(PB, { x: L, label: '100K-token sequence' });
       if (bv > 0) el('circle', { cx: PB.x(bb), cy: PB.y(bv), r: 5.5 * PB.fs, style: 'fill:var(--paper-3);stroke:var(--ink);stroke-width:2' }, PB.g.top);
       knob.setAttribute('cx', PB.x(b)); knob.setAttribute('cy', PB.y(clamp(net(b), -0.4, 0.75)));
       ro.set([
@@ -247,7 +247,7 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.5  maVqLedger — codebook vs rotation on a smooth hill and on clumps
+     (spare)  maVqLedger — codebook vs rotation on a smooth hill and on clumps
      ================================================================== */
   FIG.maVqLedger = (host) => {
     const N = 4096, DRAW = 900, ITER = 30;
@@ -363,10 +363,10 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.6  maBudgetBar — the bits a dictionary can still win, after noise
+     (spare)  maBudgetBar — the bits a dictionary can still win, after noise
      ================================================================== */
   FIG.maBudgetBar = (host) => {
-    const RAW = 8, SOLO = 6.47;                        // E4M3, bell-shaped channel (VI.1)
+    const RAW = 8, SOLO = 6.47;                        // E4M3, bell-shaped furrow (V.1)
     let noise = 30, expl = 50;
     const sN = slider('noise share of the variance', 1, 60, 1, noise, v => { noise = v; if (expl > 100 - noise) { expl = 100 - noise; sE.set(expl); } draw(); }, v => `${v} %`);
     const sE = slider('variance the dictionary explains', 0, 99, 1, expl, v => { expl = Math.min(v, 100 - noise); if (expl !== v) sE.set(expl); draw(); }, v => `${v} %`);
@@ -406,7 +406,7 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.6  maSpread — the same average R², spread evenly or concentrated
+     V.12  maSpread — the same average R², spread evenly or concentrated
      ================================================================== */
   FIG.maSpread = (host) => {
     const NC = 16, CAP = 0.999;
@@ -418,8 +418,8 @@ window.FIG = window.FIG || {};
     let r2 = presets.even();
     const box = h('div');
     const tiles = {
-      avg: kpi('average R² over channels', '', 'what a single summary number would say', series(2)),
-      bits: kpi('bits saved per element', '', 'these channels, as they are', series(0)),
+      avg: kpi('average R² over furrows', '', 'what a single summary number would say', series(2)),
+      bits: kpi('bits saved per element', '', 'these furrows, as they are', series(0)),
       even: kpi('same average, spread evenly', '', 'bits saved per element', series(4)),
     };
     host.append(controls(
@@ -428,14 +428,14 @@ window.FIG = window.FIG || {};
       btn('one giant', () => { r2 = presets.one(); draw(); }, { cls: 'sm' }),
       h('span', { class: 'fig-note', text: 'Drag a bar top, or focus it and use the arrow keys.' })),
       box, h('div', { class: 'kpis' }, tiles.avg, tiles.bits, tiles.even));
-    const P = Plot(box, { xcats: range(NC).map(i => String(i + 1)), y: [0, 1], h: 280, xlabel: 'channel', ylabel: 'variance explained R²', grid: 'y', yfmt: v => fmtPct(v, 0), label: 'Variance explained in each of 16 channels' });
+    const P = Plot(box, { xcats: range(NC).map(i => String(i + 1)), y: [0, 1], h: 280, xlabel: 'furrow', ylabel: 'variance explained R²', grid: 'y', yfmt: v => fmtPct(v, 0), label: 'Variance explained in each of 16 furrows' });
     const gb = el('g', {}, P.g.data), gl = el('g', {}, P.g.top);
     const bw = Math.min(26 * P.fs, Math.abs(P.x(1) - P.x(0)) * 0.7);
     const knobs = range(NC).map(i => {
       const k = el('circle', { class: 'handle', r: 6.5 * P.fs }, P.g.top);
       draggable(k, P, ([, y]) => { r2[i] = clamp(+y.toFixed(3), 0, CAP); draw(); }, null,
-        { get: () => [i, r2[i]], step: [0, 0.01], label: `channel ${i + 1} variance explained` });
-      hover(k, () => `<b>channel ${i + 1}</b><br>R² = ${fmtPct(r2[i], 1)}<br>saves ${fmt(bitsFromR2(r2[i]), 2)} bits`);
+        { get: () => [i, r2[i]], step: [0, 0.01], label: `furrow ${i + 1} variance explained` });
+      hover(k, () => `<b>furrow ${i + 1}</b><br>R² = ${fmtPct(r2[i], 1)}<br>saves ${fmt(bitsFromR2(r2[i]), 2)} bits`);
       return k;
     });
     function draw() {
@@ -450,14 +450,14 @@ window.FIG = window.FIG || {};
       const bits = r2.reduce((a, v) => a + bitsFromR2(v), 0) / NC, even = bitsFromR2(avg);
       rule(P, { y: avg, parent: gl });
       tiles.avg.set(fmtPct(avg, 1));
-      tiles.bits.set(fmt(bits, 2), 'numbers above the bars: bits per channel');
+      tiles.bits.set(fmt(bits, 2), 'numbers above the bars: bits per furrow');
       tiles.even.set(fmt(even, 2), bits > even + 0.005 ? `concentration buys ${fmt(bits / even, 1)}×` : 'no concentration, no bonus');
     }
     draw();
   };
 
   /* ==================================================================
-     VII.7  maBitFlips — which bits a predictor of a given quality cannot tell you
+     V.10  maBitFlips — which bits a predictor of a given quality cannot tell you
      ================================================================== */
   FIG.maBitFlips = (host) => {
     const N = 20000;
@@ -476,7 +476,7 @@ window.FIG = window.FIG || {};
       else { const ee = Math.floor(Math.log2(v)); code = (ee + 7) * 8 + Math.round((v / Math.pow(2, ee) - 1) * 8); }
       return ((x < 0 && code > 0 ? 1 : 0) << 7) | code;
     };
-    const SC = 16;                                     // channel scale for E4M3 (any scale gives the same picture)
+    const SC = 16;                                     // furrow scale for E4M3 (any scale gives the same picture)
     let R2 = 0.9;
     const sl = slider('variance the prediction explains, R²', 0, 0.999, 0.001, R2, v => { R2 = v; draw(); }, v => fmtPct(v, 1));
     const box = h('div'), ro = readout();
@@ -528,7 +528,7 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.7  maGridLine — the E4M3 grid vs the INT8 grid, residuals counted in grid steps
+     (spare)  maGridLine — the E4M3 grid vs the INT8 grid, residuals counted in grid steps
      ================================================================== */
   FIG.maGridLine = (host) => {
     // non-negative E4M3 values in order: their position in this list is the index (and the 7-bit code)
@@ -543,10 +543,10 @@ window.FIG = window.FIG || {};
       const i = ax - GRID[lo] <= GRID[hi] - ax ? lo : hi;
       return x < 0 ? -i : i;
     };
-    const SCALE = 4 / 127;                             // INT8: one scale per channel, ±4 standard deviations
+    const SCALE = 4 / 127;                             // INT8: one scale per furrow, ±4 standard deviations
     const idxI = x => clamp(Math.round(x / SCALE), -127, 127);
     let v = 0.4, p = -0.1, zoom = 'wide';
-    const sZ = seg([['wide', 'whole channel: −4 … 4'], ['near', 'near zero: −0.6 … 0.6']], zoom, z => { zoom = z; build(); }, 'range');
+    const sZ = seg([['wide', 'whole furrow: −4 … 4'], ['near', 'near zero: −0.6 … 0.6']], zoom, z => { zoom = z; build(); }, 'range');
     const box = h('div'), ro = readout();
     host.append(controls(sZ, h('span', { class: 'fig-note', text: 'Drag the value and the prediction, or focus them and use the arrow keys.' })),
       legend([['the value', 'var(--c)', 'dot'], ['the prediction', series(4), 'dot']]), box, ro);
@@ -556,7 +556,7 @@ window.FIG = window.FIG || {};
       box.replaceChildren();
       const R = zoom === 'wide' ? 4 : 0.6;
       v = clamp(v, -R, R); p = clamp(p, -R, R);
-      P = Plot(box, { x: [-R, R], y: [0.2, 3.85], h: 300, yticks: [], grid: false, xlabel: 'value of one channel (its standard deviation = 1)', label: 'Grid points of E4M3 and INT8 on one number line' });
+      P = Plot(box, { x: [-R, R], y: [0.2, 3.85], h: 300, yticks: [], grid: false, xlabel: 'value of one furrow (its standard deviation = 1)', label: 'Grid points of E4M3 and INT8 on one number line' });
       const gE = el('g', {}, P.g.bg), gI = el('g', {}, P.g.bg);
       svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(3.62), 'E4M3 grid points', { class: 'lbl' });
       svgText(P.g.axes, P.m.l + 6 * P.fs, P.y(1.62), 'INT8 grid points', { class: 'lbl' });
@@ -599,7 +599,7 @@ window.FIG = window.FIG || {};
   };
 
   /* ==================================================================
-     VII.8  maAccess — bulk stream chunks vs single reads on the miss path
+     (spare)  maAccess — bulk stream runs vs single reads on the miss path
      ================================================================== */
   FIG.maAccess = (host) => {
     const NE = 100384, MISS = 274, E = 640, RHO_S = 0.70, RHO_F = 0.80, OFF = 2;   // ρ values illustrative
@@ -610,20 +610,20 @@ window.FIG = window.FIG || {};
     const streamBytes = c => (c <= 1 ? MISS * (RHO_S * E + OFF) : distinct(c) * c * RHO_S * E);
     const fixedBytes = MISS * RHO_F * E, rawBytes = MISS * E;
     const kb = b => (b >= 1e6 ? `${fmt(b / 1e6, 1)} MB` : `${fmt(b / 1e3, 0)} KB`);
-    const sC = slider('entries per stream chunk', 0, 12, 1, logc, v => { logc = v; draw(); }, v => fmt(Math.pow(2, v), 0));
-    const sW = seg([['scattered', 'misses scattered over 100K'], ['heavy', 'misses inside 8 heavy blocks']], where, v => { where = v; draw(); }, 'where misses land');
+    const sC = slider('cherries coded together', 0, 12, 1, logc, v => { logc = v; draw(); }, v => fmt(Math.pow(2, v), 0));
+    const sW = seg([['scattered', 'misses scattered over 100K'], ['heavy', 'misses inside 8 heavy stretches']], where, v => { where = v; draw(); }, 'where misses land');
     const box = h('div');
     const tiles = {
-      s: kpi('stream-coded chunks', '', '', series(1)),
+      s: kpi('stream-coded runs', '', '', series(1)),
       f: kpi('fixed-length deltas', '', '', series(0)),
-      t: kpi('link time, 110 requests', '', '', series(3)),
+      t: kpi('link time, 110 sequences', '', '', series(3)),
     };
-    host.append(controls(sC, sW), legend([['stream-coded chunks (ρ = 0.70, illustrative)', series(1)], ['fixed-length deltas, one read each (ρ = 0.80)', series(0)], ['raw entries (HiSparse today)', 'var(--ink-3)', 'dash']]), box, h('div', { class: 'kpis' }, tiles.s, tiles.f, tiles.t));
+    host.append(controls(sC, sW), legend([['stream-coded runs (ρ = 0.70, illustrative)', series(1)], ['fixed-length deltas, one read each (ρ = 0.80)', series(0)], ['raw picks (HiSparse today)', 'var(--ink-3)', 'dash']]), box, h('div', { class: 'kpis' }, tiles.s, tiles.f, tiles.t));
     const P = Plot(box, { x: [1, 4096], xlog: 2, y: [8e4, 1e8], ylog: true, h: 320, xticks: [1, 4, 16, 64, 256, 1024, 4096],
-      yfmt: v => (v >= 1e6 ? `${fmt(v / 1e6, 0)} MB` : `${fmt(v / 1e3, 0)} KB`), m: { l: 76 }, xlabel: 'entries coded together in one stream chunk', ylabel: 'bytes moved per layer per step', label: 'Bytes moved per request per layer and step against stream chunk size' });
+      yfmt: v => (v >= 1e6 ? `${fmt(v / 1e6, 0)} MB` : `${fmt(v / 1e3, 0)} KB`), m: { l: 76 }, xlabel: 'cherries coded together in one stream run', ylabel: 'bytes moved per layer per step', label: 'Bytes moved per sequence per layer and step against the run length' });
     const knob = el('circle', { class: 'handle', r: 7 * P.fs }, P.g.top);
     draggable(knob, P, ([x]) => { logc = clamp(Math.round(L2(Math.max(1, x))), 0, 12); sC.set(logc); draw(); }, null,
-      { get: () => [Math.pow(2, logc), streamBytes(Math.pow(2, logc))], step: [0, 0], label: 'stream chunk size' });
+      { get: () => [Math.pow(2, logc), streamBytes(Math.pow(2, logc))], step: [0, 0], label: 'stream run length' });
     knob.addEventListener('keydown', e => {
       const d = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
       if (!d) return;
@@ -636,11 +636,11 @@ window.FIG = window.FIG || {};
       rule(P, { y: rawBytes, label: 'raw', color: 'var(--ink-3)' });
       line(P, [[1, fixedBytes], [4096, fixedBytes]], { color: series(0) });
       line(P, cs.map(c => [c, streamBytes(c)]), { color: series(1) });
-      annotate(P, 1, streamBytes(1), `one entry per chunk: ${kb(streamBytes(1))},\nbut an offset table and a second read`, { dx: 26, dy: -58 });
+      annotate(P, 1, streamBytes(1), `one cherry per run: ${kb(streamBytes(1))},\nbut an offset table and a second read`, { dx: 26, dy: -58 });
       const c = Math.pow(2, logc), sb = streamBytes(c);
       knob.setAttribute('cx', P.x(c)); knob.setAttribute('cy', P.y(sb));
       const t = (REQ * sb) / LINK, tf = (REQ * fixedBytes) / LINK;
-      tiles.s.set(kb(sb), c <= 1 ? 'one entry per chunk, + 2-byte offsets' : `≈ ${fmt(distinct(c), 0)} chunks of ${c} decoded`);
+      tiles.s.set(kb(sb), c <= 1 ? 'one cherry per run, + 2-byte offsets' : `≈ ${fmt(distinct(c), 0)} runs of ${c} decoded`);
       tiles.f.set(kb(fixedBytes), `${MISS} reads of ${fmt(RHO_F * E, 0)} B`);
       tiles.t.set(`${fmt(t * 1e3, 2)} ms`, `window 0.38 ms · fixed-length: ${fmt(tf * 1e3, 2)} ms`);
     }
