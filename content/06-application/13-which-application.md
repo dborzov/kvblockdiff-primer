@@ -34,8 +34,8 @@ A [[pick]] is whatever the [[indexer]] names at one decode step ([[#landscape-sp
 
 | serving design | what one pick covers | the scenario it needs | what sits on the shelf | what a miss moves |
 |---|---|---|---|---|
-| **DeepSeek-V3.2 (DSA), per-layer picks** | one token at one layer | one-layer slice; `cherry (1, 640)`-style on an MLA latent, `cherry (2, 256)` on a GQA LLM; one dictionary per layer per stretch | $\vnD$ dictionaries per layer, 78 shelves per sequence on the Pin | one delta |
-| **GLM-5.1, shared picks** | one token for a group of layers, selected once | either multi-layer cherries `(n, 1, 640)` with one dictionary per group per stretch, or one-layer cherries served by a dictionary fit on the group's slice | $\vnD$ dictionaries per group, not per layer | one multi-layer delta, or $n$ one-layer deltas against one dictionary |
+| **DeepSeek-V3.2 (DSA), per-layer picks** | one token at one layer | one-layer slice; `cherry (640,)` on an MLA latent, `cherry (2, 256)` on a GQA LLM; one dictionary per layer per stretch | $\vnD$ dictionaries per layer, 78 shelves per sequence on the Pin | one delta |
+| **GLM-5.1, shared picks** | one token for a group of layers, selected once | either multi-layer cherries `(n, 640)` with one dictionary per group per stretch, or one-layer cherries served by a dictionary fit on the group's slice | $\vnD$ dictionaries per group, not per layer | one multi-layer delta, or $n$ one-layer deltas against one dictionary |
 | **DeepSeek-V4, squeezed picks** | four tokens squeezed into one row | the squeezed row is the cherry; the stretch counts rows, not tokens | per layer, as DSA | one delta of a squeezed row |
 | **keys and values moved together** (GQA, no MLA) | both halves of the orchard at one layer | a slice of `k` and `v`, as one `(2, 2, 256)` cherry or two scenarios whose deltas travel together | one dictionary serving both, or two | two deltas, or one |
 

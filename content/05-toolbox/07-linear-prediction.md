@@ -14,6 +14,11 @@ cards:
     wrong: ["Rotations cannot be stored in a dictionary", "Prediction uses more elements than a rotation", "The KLT needs the adjacent token"]
     why: The rounding tax is the cost the KLT page of the first plan missed; prediction pays no such tax because the stored values stay on their original grid.
     sec: rule
+  - q: 'At `stretch 512`, which linear-prediction rule scored best, and why?'
+    a: 'A rule the decoder learns from cherries it has already decoded (0.6894), because a punnet of 512 cannot pay for a fully stored table (0.6960)'
+    wrong: ["The fully stored rule, as at every stretch length", "No rule at all; prediction loses below 4096", "A rule fit on another sequence"]
+    why: 'The stored table costs $8\vw/\vb$ bits per element, and at $\vb = 512$ that is too much; at 4096 the paid rule leads again.'
+    sec: wins
   - q: Tokens were shuffled so that each punnet became a random sample of a layer's tokens. What happened to the two gains?
     a: The reference-tree compressor worsened from 0.6907 to 0.7520; the linear-prediction gain stayed within 0.002
     wrong: ["Both gains vanished", "Both gains survived unchanged", "The prediction gain vanished and the tree gain survived"]

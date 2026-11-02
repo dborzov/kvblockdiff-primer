@@ -64,11 +64,11 @@ A few slices come up again and again. Each is a different problem, with differen
 | `v[:, l, h, :]` | 256 | one head of one layer; campaign C1's slice |
 | `k[:, :, :, :]` | 3072 | keys, recovered before RoPE; a separate problem with its own statistics ([[#hypotheses-keys-and-values]]) |
 | `k` and `v` together | 6144 | what a hot-cache miss really moves; a slice of both halves |
-| `v[:, :, :, :3]` with the bit-field split | 3 mantissa bits of each element | not a slice of coordinates but of bits; Part V treats it as a stage ([[#toolbox-bit-fields]]) |
+| the mantissa bits of `v`, after a bit-field split | 3 of each element's 8 bits | not a slice of coordinates but of bits, so it has no `v[...]` form; Part V treats it as a stage ([[#toolbox-bit-fields]]) |
 
 Two consequences follow from writing the slice down.
 
-- **Keys and values are separate problems** unless a slice names both. Keys are turned by [[rope|RoPE]] before storage and have different statistics; the campaigns' one night on keys found them harder ([[#hypotheses-keys-and-values]]). "The orchard compresses by 0.64" is meaningless without the slice; "`v[:, :, :, :]` on Qwen3.5-2B compresses by 0.64" is a statement.
+- **Keys and values are separate problems** unless a slice names both. Keys are turned by [[rope|RoPE]] before storage and have different statistics; the campaigns' one night on keys found them alike in mechanism and different in detail, with slightly lower ratios ([[#hypotheses-keys-and-values]]). "The orchard compresses by 0.64" is meaningless without the slice; "`v[:, :, :, :]` on Qwen3.5-2B compresses by 0.64" is a statement.
 - **A slice is not an application yet.** A serving system that serves one-layer picks needs the per-layer slice's numbers; one that serves a group of layers at once needs the multi-layer slice's. [[#scenario-why-vary]] draws that map.
 
 ::: note warning The old plan's 1024

@@ -42,7 +42,7 @@ One line per page, and where each idea does its real work later. Hover a link fo
 | [[#school-bits]] | A [[bit]] is one yes/no answer; $n$ bits tell $2^n$ things apart. | everywhere; [[#toolbox-the-bill\|V.1 the bill]] |
 | [[#school-surprise]] | Rare outcomes carry more bits: [[surprisal]] $= -\log_2 \vp$. | [[#toolbox-the-bill\|V.1]] |
 | [[#school-entropy]] | [[entropy\|Entropy]] is the average surprise, the floor for any lossless code. | [[#toolbox-the-bill\|V.1]], [[#toolbox-solo\|V.2 solo]] |
-| [[#school-side-information]] | What the receiver already knows makes messages cheaper. | [[#scenario-the-contract\|IV.6 the contract]], [[#scenario-scope\|IV.9 scope]] |
+| [[#school-side-information]] | What the receiver already knows makes messages cheaper. | [[#scenario-the-contract\|IV.7 the contract]], [[#scenario-scope\|IV.10 scope]] |
 | [[#school-mutual-information]] | The bits saved by knowing something: $\vH(\vX) - \vH(\vX \mid \vY)$. | [[#hypotheses-bits-are-the-unit\|VII.1]], [[#measured-shared-across-the-stretch\|VIII.15]] |
 | [[#school-codes]] | Prefix codes; Huffman gives each symbol about its surprisal in whole bits. | [[#papers-kvcomp\|IX.12 KVComp]] |
 | [[#school-arithmetic]] | Arithmetic coding and rANS reach fractions of a bit; a wrong probability table costs cross-entropy. | [[#toolbox-two-rates\|V.11 two rates]] |
@@ -61,7 +61,7 @@ One line per page, and where each idea does its real work later. Hover a link fo
 | [[#school-caches]] | A cache keeps a few items close; LRU evicts the least recently used. | [[#landscape-hisparse\|III.7 HiSparse]], [[#landscape-toy-trace\|III.8]] |
 | [[#school-reuse-distance]] | Reuse distance $\ge \vB$ means an LRU miss; one histogram gives $\vm(\vB)$ for every size; Bélády bounds all policies. | [[#landscape-reuse-curve\|III.10]], [[#hypotheses-stack-distance\|VII.13]] |
 | [[#school-wires]] | Bandwidth vs latency; HBM is about 100× faster to reach than host DRAM over PCIe. | [[#landscape-memory-wall\|III.6]], [[#landscape-reference-settings\|III.11]] |
-| [[#school-amortization]] | A fixed cost per item is fixed ÷ items; a dictionary costs $8\vw/\vb$ bits per number. | [[#scenario-scope\|IV.9 scope]], [[#app-the-napkin\|VI.9 the napkin]] |
+| [[#school-amortization]] | A fixed cost per item is fixed ÷ items; a dictionary costs $8\vw/\vb$ bits per number. | [[#scenario-scope\|IV.10 scope]], [[#app-the-napkin\|VI.9 the napkin]] |
 
 ::: theme side-info
 Look down the middle column and the same move keeps coming back: something both ends agree on in advance, the order of a vector's elements, a table of furrow means, a rotation, a codebook, a grid, makes every later message shorter. That is side information, and the rest of the site is about which side information is worth keeping where.

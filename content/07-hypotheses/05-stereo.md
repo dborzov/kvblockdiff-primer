@@ -24,6 +24,11 @@ cards:
     wrong: ["Nothing, picks are about the indexer", "It saves more, because cherries are smaller", "It must use a cosine threshold"]
     why: The saving exists only inside a cherry or a dictionary that holds both views. The cherry shape decides who gets it.
     sec: in-bits
+  - q: Which stereo questions are still unmeasured?
+    a: 'Stereo on keys, their two heads joined under the frontier compressor, and stereo across layers, a map from one layer''s cherry into another''s'
+    wrong: ["Whether the two heads share anything at all", "Whether the join holds on more than one sequence", "Whether the cosine between the heads is really near zero"]
+    why: 'The join is 20 of 20 sequences and the cosine rests on 36 punnets; what is open is keys, whose heads were coded jointly for one night only, and the cross-layer map.'
+    sec: verdict
 ---
 
 In the `decode_step` listing of [[#landscape-attention]] one token's values at one layer are made in one line, `val = (x @ W.v[layer_id]).reshape(n_kv_heads, head_dim)`: one hidden state, one matrix, then cut into `n_kv_heads` pieces. On [[bench|the Bench]] that is two pieces of 256, [[~v-one-head|v[t, l, 0, :]]] and [[~v-one-head|v[t, l, 1, :]]]. They come from the same `x`. Do they share anything a compressor can use?
@@ -68,7 +73,7 @@ print(f"cosine per element {cos:.2f}  R² of copying {r2_copy:.2f}  distance cor
 
 It prints `cosine per element 0.01  R² of copying -0.98  distance correlation 0.80  R² of the map 0.91`. Same three symptoms as the data, and a cure: a map from all of head 0 to all of head 1 explains 91 % of head 1, worth $\tfrac12\log_2\frac{1}{1-0.91} \approx 1.7$ bits per element at the exchange rate of [[#school-exchange-rate]]. The toy's numbers are the toy's; the shape is the point.
 
-The real map is not a toy's. At KV layer 4 the campaign's reference tree, offered every element of a token as a possible predictor, kept 4 103 terms inside head 0 and 29 835 from head 0 into head 1: head 0 explains 73 % of head 1's residual variance there, and a map fit on *another* sequence recovers 91 to 96 % of the gain. The link between the heads is a property of `W.v[layer_id]`, not of the text.
+The real map is not a toy's. At KV layer 4 the campaign's linear prediction across elements ([[#toolbox-linear-prediction]]), offered every element of a token as a possible term, kept 4 103 terms inside head 0 and 29 835 from head 0 into head 1: head 0 explains 73 % of head 1's residual variance there, and a map fit on *another* sequence recovers 91 to 96 % of the gain. The link between the heads is a property of `W.v[layer_id]`, not of the text.
 
 ::: takeaway
 - Element for element the heads are strangers (cosine 0.05, copying worse than the mean); token for token they agree (distances correlate up to 0.92).

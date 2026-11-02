@@ -67,7 +67,7 @@ The frontier compressor's decode has three [[stage|stages]], and each has a know
 | [[linear-prediction]] | a sparse triangular table over 512 elements, applied in element order | a small matrix-vector per cherry; serial within the cherry | 512 dependent steps per cherry |
 | [[entropy-coder]] (rANS) | one stream per cherry, read symbol by symbol under a logistic over the FP8 cell | one GPU lane per cherry, strictly serial | 512 serial symbol decodes per cherry; the table lookups |
 
-The fixed-length variant (H5) keeps the first two stages and replaces the third with a fixed-width mantissa field and an escape list: a gather and an add per element, the shape [[#papers-splitzip]] decodes at 565 GB/s to 2.2 TB/s on an H200. The price is bytes: Part V's two rates are 10–15 % apart on a friendly grid ([[#toolbox-two-rates]]), and the FP8 grid may widen the gap.
+The fixed-length variant (H5) keeps the first two stages and replaces the third with a fixed-width mantissa field and an escape list: a gather and an add per element, the shape [[#papers-splitzip]] decodes at 565 GB/s to 2.2 TB/s on an H200. The price is bytes: Part V's two rates are about one bit per element apart, 15–22 % at the 5-to-7-bit rates that matter ([[#toolbox-two-rates]]), and the FP8 grid may widen the gap.
 
 The cheapest first version is a Triton kernel of the fixed-length variant (a day) and a CUDA kernel of the rANS stage (several days); the tree walk and the prediction are shared code.
 

@@ -86,7 +86,7 @@ Every helper on this site — a trained dictionary, a table of means, a rotation
 
 ## A preview: the 8w/b rule {#preview}
 
-Later Parts measure dictionaries not in bits but in *items' worth*: how many readings' worth of numbers the dictionary holds. Write $\vw$ for that weight and $\vb$ for the number of items that share it. Part IV names the items (it calls them cherries, [[#scenario-cherry]]), names a group of $\vb$ of them ([[#scenario-stretch]]) and gives the two letters their permanent jobs ([[#scenario-scope]]); here they keep their toy meaning.
+Later Parts measure dictionaries not in bits but in *items' worth*: how many readings' worth of numbers the dictionary holds. Write $\vw$ for that weight and $\vb$ for the number of items that share it. Part IV names the items (it calls them cherries, [[#scenario-cherry]]), names the run of $\vb$ positions whose cherries share it ([[#scenario-stretch]]) and gives the two letters their permanent jobs ([[#scenario-scope]]); here they keep their toy meaning.
 
 A dictionary of weight $\vw$, shared by $\vb$ items, costs $\vw/\vb$ items' worth per item. If every number is stored in 8 bits (II.19), an item's worth is 8 bits per number, so:
 

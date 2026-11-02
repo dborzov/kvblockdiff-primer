@@ -37,7 +37,7 @@ This page reports what that cost, what the dictionary share turned out to mean o
 
 ## What the leash cost {#the-leash-cost}
 
-| scenario (screen) | compressor | ratio | reads: mean / p99 / worst cherry |
+| scenario (V · all, screen) | compressor | ratio | reads: mean / p99 / worst cherry |
 |:--|:--|--:|:--|
 | cherry `(256,)` · stretch 4096 · leash 293 | 126 | 0.67408 | 68 / 123 / 171 |
 | cherry `(2, 256)` · 4096 · 293 | 121 | 0.63639 | 120 / 184 / 226 |

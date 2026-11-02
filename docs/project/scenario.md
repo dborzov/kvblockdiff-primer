@@ -111,8 +111,8 @@ is cheating.
    far repeats, how much a sequence-scope dictionary buys over stretch scope, whether keys are harder than
    values, where the exponent bits' information sits. The compressor is the instrument; its score is the
    reading. No application has to follow.
-2. **As a map of possible applications.** Each real serving design is a scenario: DeepSeek-V4 picks per
-   layer map to one-layer cherries with a dictionary per layer; GLM-5.1's shared selection across layers
+2. **As a map of possible applications.** Each real serving design is a scenario: DeepSeek-V3.2's per-layer picks
+   map to one-layer cherries with a dictionary per layer (V4 squeezes four tokens into one row first); GLM-5.1's shared selection across layers
    maps to multi-layer cherries, or one-layer cherries served by a dictionary shared across layers. Which
    scenario a design needs decides which measurements matter to it. Experiments run across scenarios first;
    the application is chosen afterwards, on the numbers.

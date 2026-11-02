@@ -73,7 +73,7 @@ next_token = sample(x @ W_out)                        # the top layer's x become
 ```
 
 ::: note intuition Floors of a building
-Picture a building with $\vNL$ floors. Each token is a visitor who enters at the ground floor and climbs. On every floor someone adds a note to the visitor's file. At the top the file is complete, and the LLM reads off its guess for the next token.
+Picture a building with one floor per layer. Each token is a visitor who enters at the ground floor and climbs. On every floor someone adds a note to the visitor's file. At the top the file is complete, and the LLM reads off its guess for the next token.
 :::
 
 The important part for us: **on every floor, a token leaves something behind.** Later tokens will come back to look at it (the next page says why and how). In most LLMs every layer does this. In *hybrid* LLMs only some layers do, and those are the [[=kv-layer|KV layers]]: the layers that keep a key and a value for every token. The other layers carry a fixed-size state and have nothing per token to store. The `layer_id` of the orchard counts KV layers only, and $\vNL$ is their number.

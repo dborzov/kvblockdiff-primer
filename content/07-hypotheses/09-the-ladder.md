@@ -104,7 +104,7 @@ The rungs, measured so far, on the values of Qwen3.5-2B, FP8, `(2, 256)` cherrie
 
 | rung | dictionary scope | reading | grade |
 |---|---|---|---|
-| bottom: the stretch | stretch 4096 | [[solo]] 0.778 (6.22 bits per element) to the best verified compressor 0.636 (5.09 bits): **1.14 bits per element** won by the punnet's own dictionary | verified, 5 sequences ([[#measured-scorecard]]) |
+| bottom: the stretch | stretch 4096 | [[solo]] 0.778 (6.22 bits per element) to the best verified compressor 0.636 (5.09 bits): **1.14 bits per element** won by the punnet's own dictionary | verified, every cherry, on the two-sequence screen; 0.630 on five sequences ([[#measured-scorecard]], [[#measured-signal-or-noise]]) |
 | middle: the sequence | stretch 16 384, and a whole sequence | 0.618 at 16 384 positions; a pool over the whole sequence is a bound 0.26 to 0.45 bit per element below that; the punnet floors sit near 0.60 and 0.57 | verified at 16K; the whole sequence is an optimistic bound ([[#measured-shared-across-the-stretch]]) |
 | top: everything | global, a calibration corpus | unmeasured: $\vgainseq$, what a sequence-scope dictionary saves over a global one, has never been run; the one hint is that the linear rule across elements carries over between sequences at 91 to 96 % | [[#plan-next-in-the-harness]] |
 

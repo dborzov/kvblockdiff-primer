@@ -5,7 +5,7 @@ group: Setting the stage
 lede: 'Every score in this Part was produced under the contract, the score and the leash of Part IV, on a scenario the campaigns called a track. Here are the campaigns'' scenarios written in the site''s words, the cheap test called a screen, and the hours of 30 October 2026 in which the rules were born.'
 cards:
   - q: 'The campaigns'' track `s-layer-b4k-r293`, in the site''s words, is which scenario?'
-    a: 'V · all six KV layers · cherry (2, 256) · stretch 4096 · leash 293, on a screen'
+    a: 'V · all · cherry (2, 256) · stretch 4096 · leash 293, on a screen'
     wrong: ["K · KV layer 0 · cherry (256,) · stretch 293", "V · all · cherry (6, 2, 256) · stretch 4096 · no leash", "V · head 0 · cherry (2, 256) · stretch 16 384 · leash 293"]
     why: '"layer" names the cherry shape (both heads of one KV layer), "b4k" the stretch length, "r293" the leash; the slice is always the values.'
     sec: the-scenarios
@@ -51,10 +51,10 @@ The campaigns did not have Part IV's words. They had *tracks*, named by a code: 
 | the campaigns' track | the scenario |
 |---|---|
 | C1's first track | V · KV layer 0 (the LLM's layer 3) · head 0 · cherry `(256,)` · stretch 4096 (and 512, 16 384, 32 768) · no leash until 11:20 UTC · FP8 (and BF16) |
-| the head screen | V · all six KV layers · cherry `(256,)` · stretch 4096 · leash 293 (screen) |
-| the layer screen | V · all six KV layers · cherry `(2, 256)` · stretch 4096 · leash 293 (screen) |
-| the token screen | V · all six KV layers · cherry `(6, 2, 256)` · stretch 4096 · leash 293 (screen) |
-| the pair and quad tracks | V · one KV layer · cherry = 2 or 4 adjacent tokens `(2, 2, 256)`, `(4, 2, 256)` · stretch 4096 |
+| the head screen | V · all · cherry `(256,)` · stretch 4096 · leash 293 (screen) |
+| the layer screen | V · all · cherry `(2, 256)` · stretch 4096 · leash 293 (screen) |
+| the token screen | V · all · cherry `(6, 2, 256)` · stretch 4096 · leash 293 (screen) |
+| the pair and quad tracks | V · all · cherry = 2 or 4 adjacent tokens of one KV layer, `(2, 2, 256)`, `(4, 2, 256)` · stretch 4096 |
 | the 137 and 1 103 tracks | the layer screen with the leash at 137; the 16 384 tracks with the leash at 1 103 |
 
 Three things change between rows and nothing else: the [[cherry-shape|cherry shape]], the [[stretch|stretch length]] and the leash. The [[slice]] is always the values; the LLM, the corpus and the format are fixed. That is what makes the rows comparable at all, and it is why a score always travels with its scenario line.

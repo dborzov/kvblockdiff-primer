@@ -19,8 +19,8 @@ this file is the index of receipts. The reader-facing version is `content/11-ref
 | GPU memory for orchards `Mhbm` | 30 GB | ≈ 10 GB (16 GB minus ≈ 4 GB weights, assumed) | assumption |
 
 Derived on the Pin (III.12, VI.9): misses per layer per step at 4096 slots ≈ 0.134 × 2048 ≈ 274; HiSparse
-link bytes per step per sequence ≈ 13.7 MB; GPU memory per sequence ≈ 205 MB; sequences per GPU N = 109
-(link-bound; memory would allow 147); tokens per second per GPU ≈ 3 630; cost per million output tokens
+link bytes per step per sequence ≈ 13.7 MB; GPU memory per sequence ≈ 205 MB; sequences per GPU N ≈ 110 (109.7, link-bound; the
+napkin pages round it to 109 or 110; memory would allow 147); tokens per second per GPU ≈ 3 630; cost per million output tokens
 ≈ USD 0.23 at an assumed USD 3 per H200-hour. Formulas: `figures/homework-b.js` `econ()`.
 
 ## 2. The campaigns (values of Qwen3.5-2B, FP8 E4M3, stretch 4096 unless stated)

@@ -76,7 +76,7 @@ Slice first (which half, which layers, which heads; elements only when not all),
 | `V · all · cherry = 2 or 4 adjacent tokens · stretch 4096` | run (C2, quick) | fallen-apple similarity at the cherry level |
 | `V · all · cherry (2, 256) · stretch 512 / 16 384 / 32 768` | run (C2, partly) | the stretch-length curve; the punnet floor |
 | `V · all · cherry (2, 256) · stretch 4096 · leash 137 / 1 103` | run (C2, partly) | what the leash costs |
-| `K · all · cherry (2, 256) · stretch 4096 · leash 293` | one night (C1) | keys as a separate problem |
+| `K · all · head 0 · cherry (256,) · stretch 4096 · no leash` | one night (C1) | keys as a separate problem ([[#hypotheses-keys-and-values]]) |
 | `K+V · all · cherry (2, 2, 256)` | not run | what a hot-cache miss really moves |
 | `V · all · cherry (2, 256) · stretch = sequence` | not run | sequence scope; $\vgainstr$ |
 | any slice · global scope on a calibration corpus | not run | $\vgainseq$; whether structure is global |

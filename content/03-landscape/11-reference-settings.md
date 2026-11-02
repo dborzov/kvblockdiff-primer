@@ -90,7 +90,7 @@ The LLM on the Bench is a [[=stand-in-llm|stand-in LLM]]: a small open LLM whose
 
 Two symbols come with the machine side. $\vWlink$ is the **link bandwidth**, the bytes per second the link actually carries. $\vMhbm$ is the **GPU memory available for orchards**, per GPU, after the LLM's weights have taken their share: hot caches, and later the dictionaries of Part VI, must fit in it.
 
-Three numbers fall out of the Bench's column the way [[#landscape-derived-numbers]] draws three from the Pin's. One token's values over the six layers are $6 \times 512 = 3\,072$ B, so a 225 000-token sequence holds about 691 MB of values, 1.38 GB with keys, and the 10 GB would hold about seven such orchards whole. A 4 096-token stretch of one layer's values is 2.1 MB. The fourth number, sequences per GPU, needs misses and a step time, and the Bench has neither.
+Three numbers fall out of the Bench's column the way [[#landscape-derived-numbers]] draws three from the Pin's. One token's values over the six layers are $6 \times 512 = 3\,072$ B, so a 225 000-token sequence holds about 691 MB of values, 1.38 GB with keys, and the 10 GB would hold about seven such orchards whole. One layer's values over a 4 096-token stretch are 2.1 MB. The fourth number, sequences per GPU, needs misses and a step time, and the Bench has neither.
 
 ::: figure fig-landscape-pin refSetting
 **The Pin as a pinboard.** Each card is one frozen number of the Pin: its symbol, its value, and (on hover or tap) where it comes from. Cards are grouped into the LLM, the cache and the machine; the last group holds three numbers derived from the others. The switch converts the rows between 8-bit storage (the Pin) and BF16 (what HiSparse actually serves); cards whose value changes are outlined. All values are from the table above; the derived ones are computed live. This board shows the Pin only, and its labels still say "entry", "request" and "KV" for row, sequence and orchard. <!-- old-words -->
@@ -101,7 +101,7 @@ Three numbers fall out of the Bench's column the way [[#landscape-derived-number
 2. Nothing about *which* positions are picked changes, so the miss rates stay put.
 :::
 
-Read the two columns as a division of labour. The Pin owns the miss side of the economics, everything that needs an indexer and a decode loop: $\vk$, $\vm$, $\vtpot$, and so the sequences per GPU. The Bench owns the byte side: what a row is, what a stretch weighs, what a compressor saves. A ratio of bytes to bytes may travel from the Bench to the Pin, with a flag; the miss rates cannot travel at all, since the Bench has none.
+Read the two columns as a division of labour. The Pin owns the miss side of the economics, everything that needs an indexer and a decode loop: $\vk$, $\vm$, $\vtpot$, and so the sequences per GPU. The Bench owns the byte side: what a row is, what a stretch's worth of values weighs, what a compressor saves. A ratio of bytes to bytes may travel from the Bench to the Pin, with a flag; the miss rates cannot travel at all, since the Bench has none.
 
 ::: aside source Receipts
 - Pin: HiSparse (Xie et al., 2026) as the first draft of this proposal recorded it: 78 sparse layers, top-2048, the 100,384-token LongBench-V2 prompt, 1,799 decode steps, miss rates 30 / 13.4 / 6.7 % (LRU), 17.2 % FIFO, 16.1 % random, 8.2 % Bélády at 4096; 30 ms per token; about 240 GB of KV memory left on 8 × H200; PCIe Gen5 ×16 at 64 GB/s nominal, 50 practical. The 640 B entry is 100 KB of BF16 per token ÷ 78 layers ÷ 2.

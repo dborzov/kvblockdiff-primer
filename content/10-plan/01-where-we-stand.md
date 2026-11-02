@@ -4,7 +4,7 @@ nav: Where we stand
 group: Where we stand
 lede: The plan on this site once asked for one weekend of measuring. What came back was two campaigns, 126 compressors and 387 ledger trials, all on one slice of one orchard. Before planning the next step, a ledger of what is known, what is not, and the three big questions in the new words.
 cards:
-  - q: Which of these did the campaigns answer with a verified number?
+  - q: Which of these did the campaigns answer with a measured number?
     a: How much joining the two KV heads of a layer into one cherry saves (0.032 of ratio on 20 of 20 sequences)
     wrong: ["How often a pick is a δ-miss on the Bench", "Whether keys and values share bits", "Whether prose compresses like coding transcripts"]
     why: Stereo similarity was measured by a same-window comparison of cherry shapes. The other three need a pick trace, a K+V scenario or a second corpus, none of which exists yet.
@@ -25,7 +25,7 @@ In October 2026 the plan on this site asked for "one weekend": dump a small LLM'
 
 ## What the campaigns answered {#answered}
 
-Five questions have a verified number next to them now. Every figure here traces to a ledger row or a same-window receipt in Part VIII.
+Five questions have a graded number next to them now. Every figure here traces to a ledger row or a same-window receipt in Part VIII.
 
 | question | reading on [[bench|the Bench]] | grade | where |
 |---|---|---|---|
@@ -42,7 +42,7 @@ Stereo and layers: same-window comparison on 20 sequences of target 02 (notes/03
 :::
 
 ::: takeaway
-- Five verified readings: stereo (0.032), echo (the tree's gain vanishes under the shuffle), the leash (293 is free, 137 costs 0.023), the solo floor (0.778 against a best of 0.636), the stretch-length curve.
+- Five graded readings: stereo (0.032, encoded bytes), echo (the tree's gain vanishes under the shuffle), the leash (293 is free, 137 costs 0.023), the solo floor (0.778 against a best of 0.636), the stretch-length curve.
 - All of them are about values, FP8, one text genre, one LLM.
 :::
 

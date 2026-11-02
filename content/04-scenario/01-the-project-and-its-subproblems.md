@@ -31,7 +31,7 @@ $$
 \vTstep \;=\; \underbrace{\text{misses}}_{\text{how many picks miss}} \times \ve \Big[\underbrace{\vfD\,\vrho}_{\text{δ-misses}} + \underbrace{(1-\vfD)}_{\text{raw misses}}\Big] \;+\; \underbrace{\vnload \, \vw \, \ve}_{\text{dictionaries loaded}},
 $$ {#eq-scn-the-bill}
 
-and it occupies in GPU memory the hot cache plus the shelf, $\vMreq = \vNL\,\ve\,(\vB + \vnD\,\vw)$ in cherries' worth. The number of sequences a GPU can serve, and the dollars per million tokens, follow from these two ([[#app-two-levers]], [[#app-bits-to-dollars]]).
+and it occupies in GPU memory the hot cache plus the shelf, $\vMreq = \vNL\,\ve\,(\vB + \vnD\,\vw)$ bytes, with $\vB$ and $\vw$ counted in cherries' worth. The number of sequences a GPU can serve, and the dollars per million tokens, follow from these two ([[#app-two-levers]], [[#app-bits-to-dollars]]).
 
 Look at where each factor comes from.
 

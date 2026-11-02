@@ -19,6 +19,11 @@ cards:
     wrong: ["About 0.01 bit", "About 4 bits", "Exactly the same"]
     why: A fixed width rounds up to whole bits and must cover the tail. SplitZip's BF16 numbers show a gap of the same size in bits (0.9 to 1.5); it reads as 10 to 15 % only because a BF16 element has 16 bits to divide by.
     sec: gap
+  - q: Which of the two rates did the campaigns measure on the Bench?
+    a: 'Only the entropy rate: every compressor is one rANS stream per cherry, and no fixed-length rate was measured'
+    wrong: ["Both, within 0.01 of each other", "Only the fixed-length rate, for the GPU decoder", "Neither; the campaigns measured reads only"]
+    why: 'The best numbers, 0.636 at 4096 and 0.618 at 16 384, are entropy rates; a one-bit gap would put the engineering number near 0.76.'
+    sec: measured
 ---
 
 Sixteen residuals of one furrow, after some stage did its best:

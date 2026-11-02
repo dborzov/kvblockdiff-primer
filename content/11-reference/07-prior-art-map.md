@@ -24,12 +24,12 @@ Every paper has its own page in Part IX, retold in this site's words with our do
 |---|---|---|---|---|
 | [[#papers-hisparse\|HiSparse]] (2026) | exact (no compression) | none | the sparse-decode miss path; GPU residency of raw picks | the system we sit under; the trace numbers; per-layer hot caches |
 | [[#papers-splitzip\|SplitZip]] (2026) | lossless | global: an exponent histogram | prefill-to-decode bulk transfer ([[disaggregation]]) | solo coding at 1.32× on BF16; the fixed-length-with-escapes decoder shape (only its escape list stands in the way of decoding one cherry alone); the 8-bit numbers |
-| [[#papers-float-coders\|ZipNN, DFloat11, Huff-LLM]] | lossless | global | weights, storage | exponent redundancy; the mantissa is close to noise <!-- old-words -->
+| [[#papers-float-coders\|ZipNN, DFloat11 and friends]] | lossless | global | weights, storage | exponent redundancy; the mantissa is close to noise <!-- old-words -->
 | [[#papers-kvcomp\|KVComp]] (2025) | lossy | global, per layer | GPU-resident orchards | GPU entropy decoding is feasible |
 | [[#papers-kvtc\|KVTC]] (2026) | lossy | global: a calibrated PCA basis | orchard storage and reuse | transform coding works on orchards; our KLT bound is its lossless shadow |
 | [[#papers-lexico\|Lexico]] (2024) | lossy | global: a universal dictionary, [[sparse-coding]] | GPU memory footprint | much orchard structure is global |
 | [[#papers-cachegen\|CacheGen]] (2024) | lossy | deltas against a reference per group of 10 tokens | network transfer | nearby tokens' values look close at quantized precision |
-| [[#papers-kv-codec\|KV-Codec]] (2026) | lossless video coding after rounding to integers | roughly per sequence | remote orchard reuse | a hint that slicing along the token axis helps, without the controls that would make it evidence <!-- old-words -->
+| [[#papers-kv-codec\|KVFetcher]] (2026; the first draft's KV-Codec) | lossless video coding after rounding to integers | roughly per sequence | remote orchard reuse | a hint that slicing along the token axis helps, without the controls that would make it evidence <!-- old-words -->
 | [[#papers-kivi\|KIVI]] / [[#papers-kvquant\|KVQuant]] (2024) | lossy | per [[scale-group\|scale group]] / per furrow | GPU memory | per-furrow key structure; keys before RoPE; outlier furrows |
 | **kvblockdiff** | **lossless at 8 bits** | **global / sequence / stretch scope, measured as a ladder with controls** | **the random-access miss path; dictionary residency; a victim tier** | |
 

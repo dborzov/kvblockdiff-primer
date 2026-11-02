@@ -2,10 +2,10 @@
 title: Next in the harness
 nav: Next in the harness
 group: Next experiments
-lede: Nine scenarios the harness can run as it stands, or one script away from it, ordered by hours to a first reading. Each one is a row of the catalogue of Part IV marked "not run", written on the six-line card of the principles page.
+lede: Nine scenarios the harness can run as it stands, or one script away from it, ordered by hours to a first reading. Most are rows of the catalogue of Part IV marked "not run" or "partly"; the rest are measurements the scorecard left open. Each is written on the six-line card of the principles page.
 cards:
   - q: Which scenario comes first in the queue, and why?
-    a: 'Keys, `K · all · cherry (2, 256) · stretch 4096 · leash 293`: the harness only needs to read `k` instead of `v`, and C1''s one-night keys result predicts the reading within 0.03'
+    a: 'Keys, `K · all · cherry (2, 256) · stretch 4096 · leash 293`: the harness only needs to read `k` instead of `v`, and C1''s one-night keys result predicts the reading within about 0.05'
     wrong: ["Sequence scope, because it promises the biggest gain", "A second LLM, because transfer is the biggest risk", "The GPU decode, because speed decides everything"]
     why: Speed first. Keys need no new data and almost no new code; the others need a corpus, a tree over 225K cherries, or a kernel.
     sec: queue
@@ -21,7 +21,7 @@ cards:
     sec: cards
 ---
 
-The catalogue on [[#scenario-why-vary/a-map]] ends with five rows marked "not run". Here they are, split into nine runnable scenarios and sorted by the only criterion of this Part: how soon a reading comes back. Every card names the hypothesis it reads, the line it runs on, what exists, the signal with its control, the decision it settles, and a cost.
+The catalogue on [[#scenario-why-vary/a-map]] ends with rows marked "not run" or "partly". Here they are, with the two measurements the scorecard left open ([[#measured-scorecard]]: a group dictionary, a fixed-length delta), split into nine runnable scenarios and sorted by the only criterion of this Part: how soon a reading comes back. Every card names the hypothesis it reads, the line it runs on, what exists, the signal with its control, the decision it settles, and a cost.
 
 ## The queue {#queue}
 
@@ -29,7 +29,7 @@ The catalogue on [[#scenario-why-vary/a-map]] ends with five rows marked "not ru
 |---|---|---|---|
 | H1 | `K · all · cherry (2, 256) · stretch 4096 · leash 293` | keys as a separate problem | ≈ 3 h |
 | H2 | `V · all · cherry (2, 256) · stretch 4096 · leash 137 / 293 / 1103`, frontier compressor | what the leash costs at the frontier | ≈ 4 h |
-| H3 | `V · layers {0, 4, 5} · cherry (2, 256) · stretch 4096 · leash 293`, one dictionary for the group | stereo across layers; the GLM-5.1 question | ≈ 5 h |
+| H3 | `V · layers 0,4,5 · cherry (2, 256) · stretch 4096 · leash 293`, one dictionary for the group | stereo across layers; the GLM-5.1 question | ≈ 5 h |
 | H4 | `K+V · all · cherry (2, 2, 256) · stretch 4096 · leash 293` | what a miss really moves | ≈ 6 h |
 | H5 | `V · all · cherry (2, 256) · stretch 4096 · leash 293`, the bit-field split as a stage | whether a fixed-length delta exists | ≈ 1 day |
 | H6 | `V · all · cherry (2, 256) · stretch 32 768 → sequence · leash 293` | sequence scope, $\vgainstr$ | ≈ 2 days |
@@ -37,7 +37,7 @@ The catalogue on [[#scenario-why-vary/a-map]] ends with five rows marked "not ru
 | H8 | the frontier line on Qwen3-1.7B | transfer across LLMs | 1 evening + ≈ 2 days |
 | H9 | a GPU decode of the frontier compressor | the 10× rule | ≈ 1 week ([[#plan-decoder-speed]]) |
 
-The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 · leash 293` with compressor 121, the best verified score of Part VIII, 0.636 ([[#measured-scorecard]]). Costs use the yardstick of [[#plan-principles/card]]: about 55 CPU seconds per punnet, 72 punnets per screen.
+The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 · leash 293` with compressor 121, the best verified score of Part VIII, 0.636 ([[#measured-scorecard]]). Costs use the yardstick of [[#plan-principles/card]]: about 55 CPU seconds per punnet, 72 punnets per screen. One catalogue row is missing on purpose: global scope on a calibration corpus is a [[shared-table]] by the ruling of [[#measured-where-the-bits-come-from]], and waits for the independent corpus that H7 or H8 would dump.
 
 ::: takeaway
 - Nine scenarios; the first four need no new data and less than a day each.
@@ -47,7 +47,7 @@ The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 �
 ## The cards {#cards}
 
 ::: note practice H1 · Keys under the leash
-- **Question.** Are keys a separate problem? [[#hypotheses-keys-and-values]]. C1 found pre-RoPE keys within 0.03 of values at every layer (K 0.660–0.701 against V 0.572–0.744 at 4K, head 0, no leash) and a lower solo floor (0.776–0.786); C2 never touched them.
+- **Question.** Are keys a separate problem? [[#hypotheses-keys-and-values]]. C1 found pre-RoPE keys within 0.05 of values at every KV layer but the last (K 0.660–0.701 against V 0.673–0.744 at 4K, head 0, no leash; at KV layer 5, 0.687 against 0.572, because that layer's values are unusually easy) and a lower solo floor (0.776–0.786); C2 never touched them.
 - **Scenario.** `K · all · cherry (2, 256) · stretch 4096 · leash 293`, FP8, same screen as the frontier line.
 - **Exists.** The dump holds `k` pre-RoPE; the FP8 scale rule exists for `v` and is one function call for `k`. The harness reads a tensor name: one line changes.
 - **Signal.** A ratio within 0.03 of 0.636 on the same punnets says one compressor family serves both halves. Control: the shuffle; the stereo check (cherry `(256,)` against `(2, 256)` on keys, same window).
@@ -66,7 +66,7 @@ The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 �
 
 ::: note practice H3 · One dictionary for a group of layers
 - **Question.** Can layers that select together ([[#app-which-application]], the GLM-5.1 shape) share one dictionary without losing what per-layer dictionaries give? [[#hypotheses-upstairs]]. Joining six layers into one cherry saved 0.004; grouping by kind (layers 0, 4, 5 and 1, 2, 3) beat grouping by nearness by 0.0015 on 7 of 7 sequences.
-- **Scenario.** `V · layers {0, 4, 5} · cherry (2, 256) · stretch 4096 · leash 293`: one punnet of 3 × 4096 cherries, one dictionary, each cherry still one layer's values of one token.
+- **Scenario.** `V · layers 0,4,5 · cherry (2, 256) · stretch 4096 · leash 293`: one punnet of 3 × 4096 cherries, one dictionary, each cherry still one layer's values of one token.
 - **Exists.** The harness takes a punnet; building one from three layers is a punnet constructor. The reference tree and the linear-prediction table work on any cherry set.
 - **Signal.** The paired difference against three per-layer dictionaries. The prediction table's share (0.013–0.021 per punnet) is paid once instead of three times, so a gain near 0.01 is expected from bookkeeping alone; a gain beyond it is upstairs structure. Control: a group of unrelated layers.
 - **Decision.** Whether a shelf keeps one dictionary per layer group (3× fewer on the GPU) or one per layer ([[#app-shelf-and-two-misses]]).
@@ -86,7 +86,7 @@ The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 �
 - **Question.** Does a delta exist that a fixed-length decoder can read? [[#toolbox-bit-fields]], [[#toolbox-two-rates]]. The frontier compressor models values and integrates over the FP8 cell; the campaigns found that modelling the code index instead reads the shared bits three times too low.
 - **Scenario.** The frontier line, with the sign and exponent routed through the reference tree and a fixed-length mantissa field with escapes in place of the entropy coder.
 - **Exists.** The stages exist separately; the routing is a new graph. An exponent-splitting solo stage (the SplitZip shape, [[#papers-splitzip]]) is the fair floor and does not exist yet.
-- **Signal.** The gap to 0.636: the campaigns' bound says 10–15 % at best; on the FP8 grid it may be twice that. Control: the exponent-splitting solo at the same scenario.
+- **Signal.** The gap to 0.636: Part V's two rates are about one bit per element apart, 15–22 % at the 5-to-7-bit rates that matter ([[#toolbox-two-rates]]); the campaigns measured no fixed-length rate, and on the FP8 grid the gap may be wider. Control: the exponent-splitting solo at the same scenario.
 - **Decision.** Which delta format H9 decodes: entropy-coded (small, serial per cherry) or fixed-length (larger, parallel).
 - **Cost.** 1 day to write, 2 h of CPU.
 :::

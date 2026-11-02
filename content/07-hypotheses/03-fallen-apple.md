@@ -14,6 +14,11 @@ cards:
     wrong: ["Because stretches are too short to measure", "Because curves are easier to plot", "Because the GPU cannot store stretches"]
     why: A threshold at the stretch length would bake a design choice into the hypothesis. The curve says which stretch length, if any, would pay.
     sec: curve
+  - q: Which three readings does a scenario use to measure fallen-apple similarity?
+    a: Joining adjacent tokens into one cherry, the length of the reference tree's links, and a filter along the token axis, each with a shuffle control
+    wrong: ["The cosine between adjacent cherries", "HiSparse's hit rate at two cache sizes", "The dictionary share of the best compressor"]
+    why: All three read the curve over Δ on the same slice; the shuffle destroys every neighbour relation, so a real fallen-apple gain must vanish under it.
+    sec: measuring
   - q: Like for like, what did joining two and four adjacent tokens into one cherry cost?
     a: +0.037 and +0.063 of ratio against one layer's (2, 256) cherry
     wrong: ["−0.037 and −0.063, a saving", "Nothing: adjacent tokens share 0.29 bit", "It could not be measured under a leash"]

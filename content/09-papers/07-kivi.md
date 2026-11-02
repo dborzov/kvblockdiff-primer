@@ -143,7 +143,7 @@ $\tfrac12\log_2 \dfrac{1}{1-\vRsq}$ bits per number, and KIVI reports no $\vRsq$
 - *"Values have no per-furrow structure."* On the Bench, per-furrow order-0 tables on values are the solo baseline at 0.778 (1.8 bits per element below raw), and about 10 % of the furrows at the last KV layer are one-signed offsets ([[#toolbox-solo]], [[#measured-night-one]]). Values have per-furrow histograms worth bits; what they lack is a per-furrow *level* that a location captures beyond the histogram. Both statements can be true; KIVI's is the coarser one.
 
 **Suggests.**
-- A keys scenario, `K · all · cherry (2, 256) · stretch 4096`, with per-furrow statistics measured within a stretch and across the text, which says whether KIVI's 32-token rulers would beat one global ruler per furrow for an exact copy ([[#plan-next-in-the-harness]]). C1's one night on pre-RoPE keys found them compressing like values at the same depth ([[#measured-the-data]]).
+- A keys scenario, `K · all · cherry (2, 256) · stretch 4096 · leash 293`, with per-furrow statistics measured within a stretch and across the text, which says whether KIVI's 32-token rulers would beat one global ruler per furrow for an exact copy ([[#plan-next-in-the-harness]]). C1's one night on pre-RoPE keys found them compressing like values at the same depth ([[#measured-the-data]]).
 
 ::: theme noise-floor
 KIVI keeps 2 bits of every number and drops the rest; the LLM barely notices. An exact copy drops nothing: whatever below the ruler's step no predictor can explain is paid in full. "Survives 2 bits" says almost nothing about lossless size.

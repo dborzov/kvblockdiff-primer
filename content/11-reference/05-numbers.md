@@ -73,18 +73,18 @@ Values of Qwen3.5-2B, FP8 E4M3, coding-agent transcripts, stretches of 4096 toke
 | the same on 5 sequences | 0.630 | verified | env-t0096; paired difference to compressor 102 of −0.0088, SD 0.0001 |
 | light no-tree compressor, `(2, 256)` | 0.686; dictionary share 0.021 | verified | compressor 129; r25-t0003 |
 | the same, `(6, 2, 256)` cherries | 0.662 | verified | r25-t0004 |
-| joining the two heads, `(256,)` → `(2, 256)` | saves 0.032 of ratio, spread 0.0009, 20 of 20 sequences | quick (same window) | §1.6 |
-| joining all six layers after that | saves a further 0.004, spread 0.0014, 20 of 20 | quick (same window) | §1.6 |
-| two / four adjacent tokens as one cherry | costs +0.037 / +0.063 | verified against its own `(2, 256)` score | r12-t0004 |
+| joining the two heads, `(256,)` → `(2, 256)` | saves 0.032 of ratio, spread 0.0009, 20 of 20 sequences | encoded bytes (same window) | §1.6 |
+| joining all six layers after that | saves a further 0.004, spread 0.0014, 20 of 20 | encoded bytes (same window) | §1.6 |
+| two / four adjacent tokens as one cherry | costs +0.037 / +0.063 | quick, against its own `(2, 256)` score | r12-t0004 |
 | stretch length 512 / 4096 / 16 384 | 0.689 / 0.636 / 0.618 | verified (different screens) | compressors 113 / 121 / 120 |
 | leash 137 on `(2, 256)` cherries | costs 0.023 (0.660 against 0.636) | verified | compressor 97; §1.9 |
 | worst cold decode, compressor 121 | 226 cherries' worth (mean 120, p99 184) | every cherry counted | §1.9 |
-| shuffle control, tree compressor | 0.691 → 0.752 | quick | r12 iter-1-2 |
-| shuffle control, linear-prediction gain | −0.034 → −0.034 | quick | r12 iter-1-2 |
+| shuffle control, tree compressor | 0.691 → 0.752 | encoded bytes | r12 iter-1-2 |
+| shuffle control, linear-prediction gain | −0.034 → −0.034 | encoded bytes | r12 iter-1-2 |
 | stereo: shared bits of the two heads | 0.85 bit per element | bound | r9 iter-1-2, 4 punnets |
 | fixed rotations (DCT, Hadamard, random) | lose 0.28–0.32 bit per element | code-length estimate | r11 iter-1-1 |
 | whole-sequence pool against a 16 384 pool | 0.26–0.45 bit per element lower | bound | r19, one window |
-| the memory table: intact LLM / attention cut past 16 384 tokens / state reset | 1.35 / 3.49 / 5.16 bits per value | code-length estimate, **one window** | §1.10 |
+| the memory table: intact LLM / attention cut past 16 384 tokens / state reset and attention inside 2 048 tokens | 1.35 / 3.49 / 5.16 bits per value | code-length estimate, **one window** | §1.10 |
 | scale of the campaigns | C1 218 trials, C2 169; 126 compressors; 5.3 M cherries decoded cold | counts | notes/00 |
 
 ::: aside source Receipts
@@ -134,7 +134,7 @@ Paper numbers are *their measurement*, collected for the first draft and re-chec
 | HiSparse's trace: a 100 384-token prompt, 1 799 decode steps, 78 sparse layers; LRU 13.4 % at 4096 slots, FIFO 17.2 %, random 16.1 %, Bélády 8.2 %; one trace, first 1 000 steps | HiSparse §4.3, Fig. 6 |
 | hot cache ≈ 0.4 GB per sequence at 4096 slots against 13.09 GB of orchard at 128K tokens in BF16; *not re-checked* | HiSparse §3.2–3.3 |
 | lossless exponent coding of BF16 orchards: 1.324× (ceiling of any 4-bit exponent code 1.333×); FP8 E5M2 up to 1.14×; decode ≈ 2.2 TB/s on H200 | SplitZip → [[#papers-splitzip]] |
-| other lossless float compressors on BF16: ZipNN 1.52×, DFloat11 1.42× (468 GB/s), Falcon 1.43×, nvCOMP ≤ 1.06× | SplitZip's table → [[#papers-float-coders]] <!-- old-words -->
+| other lossless float compressors on BF16: ZipNN 1.52×, DFloat11 1.42× (468 GB/s), Falcon 1.43×, nvCOMP LZ4 1.02× | SplitZip's table → [[#papers-float-coders]] <!-- old-words -->
 | Qwen3.5-2B: 24 layers, every fourth full attention, head dimension 256, 2 KV heads, partial RoPE on 64 of 256 elements | the configuration → [[#measured-the-data]] |
 | DeepSeek-V4: 4 tokens squeezed into one pick, top-512 picks = 2048 tokens | release notes → [[#papers-sparse-selectors]] |
 | order-0 entropy of one Gaussian furrow stored in E4M3 | ≈ 6.47 bits whatever its scale (≈ 7.05 on INT8 at σ = 32 codes) → [[#toolbox-the-bill]] |
