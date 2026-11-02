@@ -198,7 +198,7 @@ Every page follows the template in `docs/papers/template.md`. Ids kept.
 | IX.3 | `papers-sparse-selectors` | Sparse-attention selectors: DSA, NSA, Quest, CSA, DeepSeek-V4 |
 | IX.4 | `papers-splitzip` | SplitZip (2026) |
 | IX.5 | `papers-float-coders` | ZipNN, DFloat11 and friends |
-| IX.6 | `papers-kv-codec` | KV-Codec (2026) |
+| IX.6 | `papers-kv-codec` | KVFetcher (2026) (the system the first draft called KV-Codec; id kept) |
 | IX.7 | `papers-kivi` | KIVI (2024) |
 | IX.8 | `papers-kvquant` | KVQuant (2024) |
 | IX.9 | `papers-kvtc` | KVTC (2026) |
