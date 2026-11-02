@@ -13,6 +13,7 @@ truth; these documents are about *working on it*.
 | write or review prose | `style/voice.md`, then `site/dialect.md` |
 | quote a Python expression, a shape, an axis name | `project/notation.md` |
 | reason about the compression problem (contract, score, leash, scope) | `project/scenario.md` |
+| see how the project's bill splits into subproblems (scenario, pick trace, replay, decoder speed, economics) | `project/subproblems.md` |
 | find a page id, a page's scope, which page defines a term | `project/page-plan.md` |
 | quote a number (settings, campaign results, derived numbers) | `project/numbers.md` |
 | build, preview, run the checks, fix a linker error | `site/build.md` |
@@ -37,6 +38,7 @@ docs/
   project/
     overview.md             what the project is, the Parts, the status (one screen)
     scenario.md             the compression scenario: the dense statement every page must agree with
+    subproblems.md          the project's bill and its five subproblems, each stated densely
     notation.md             the Python forms: index names, the canonical listings
     page-plan.md            every page: id, title, scope, defines, source
     numbers.md              the pinned numbers and where each comes from
