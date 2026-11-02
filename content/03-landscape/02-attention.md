@@ -1,49 +1,49 @@
 ---
 title: 'Attention: looking back'
 nav: Attention
-group: How a model reads its memory
-lede: Before writing each token, the model consults what earlier tokens left behind. The consultation is a soft lookup — every stored item gets a weight, and the answer is a weighted mix. This page builds it from three numbers up.
+group: The LLM
+lede: Before writing each token, the LLM consults what earlier tokens left behind. The consultation is a soft lookup, and one decode step of it fits in twenty lines of numpy. Every shape in those lines is named here, for a toy and for the Bench.
 cards:
   - q: In attention, what is compared with what?
     a: The new token's query is compared with the key of every stored token
     wrong: ["The new token's value is compared with every stored value", "Each stored key is compared with every other stored key", "The query is compared with the values"]
-    why: 'The score of stored token $\vt$ is the dot product $\vq \cdot \text{key}_{\vt}$. The values are only used afterwards, mixed by the weights.'
+    why: 'The score of stored token $\vt$ is the dot product of the query and that token''s key. The values are only used afterwards, mixed by the weights.'
     sec: soft-lookup
   - q: Scores 1, 2 and 3 go into a softmax. Roughly what weights come out?
     a: 9 %, 24 % and 67 %
     wrong: ["17 %, 33 % and 50 %", "0 %, 0 % and 100 %", "33 %, 33 % and 33 %"]
     why: 'Softmax exponentiates and normalises: $e^1, e^2, e^3 = 2.7, 7.4, 20.1$, divided by their sum 30.2.'
     sec: soft-lookup
-  - q: You double the length of the query, keeping its direction. What happens to the attention weights?
-    a: They become more concentrated on the best-matching keys
-    wrong: ["They stay exactly the same", "They all double", "They become more even"]
-    why: All scores double, and softmax turns bigger score gaps into much bigger weight ratios. Scores 2, 4, 6 give 2 %, 12 %, 87 %.
-    sec: soft-lookup
-  - q: A layer has 8 query heads and 2 key/value heads (grouped-query attention). How many key vectors does one token store at that layer?
-    a: 2 — one per key/value head
-    wrong: ["8 — one per query head", "16 — one per query head and key/value head", "1 — one per layer"]
-    why: With GQA, groups of query heads share one key/value head. Only the key/value heads are stored, so the cache is 4× smaller than with 8 of them.
-    sec: heads
-  - q: In the decode loop, which line makes the stored memory grow with every step?
-    a: Appending the new token's key and value to the layer's lists
-    wrong: ["The softmax", "Adding the layer's answer to the hidden state", "Splitting the query into heads"]
-    why: Every step, at every layer, one more key and one more value are appended — and never removed.
-    sec: loop
+  - q: 'In `decode_step`, what is the shape of `key` on the Bench, and what is `K` after `np.stack`?'
+    a: '`(2, 256)`, one vector per KV head; `K` is `(pos+1, 2, 256)`, every stored key of the layer'
+    wrong: ["`(8, 256)` and `(pos+1, 8, 256)`", "`(256,)` and `(pos+1, 256)`", "`(2, 256)` and `(2, 256)`"]
+    why: 'Qwen3.5-2B keeps 2 KV heads of 256 elements per layer. `K` stacks the `pos+1` stored keys of the layer along a new first axis.'
+    sec: decode-step
+  - q: A layer has 8 query heads and 2 KV heads (grouped-query attention). How many key vectors does one token store at that layer?
+    a: 2, one per KV head
+    wrong: ["8, one per query head", "16, one per query head and KV head", "1, one per layer"]
+    why: 'With GQA, groups of query heads share one KV head: `head_id = qh // (n_q_heads // n_kv_heads)`. Only the KV heads are stored.'
+    sec: decode-step
+  - q: In the decode step, which line makes the stored memory grow with every step?
+    a: '`k[layer_id].append(key); v[layer_id].append(val)`'
+    wrong: ["`weights = softmax(scores)`", "`x = x + np.concatenate(out) @ W.o[layer_id]`", "`q = (x @ W.q[layer_id]).reshape(n_q_heads, head_dim)`"]
+    why: Every step, at every KV layer, one more key and one more value are appended, and never removed.
+    sec: decode-step
 ---
 
-The model is about to write the next word of *"The weather on Gull Rock is foggy, and the …"*. Which earlier words should it think about? *Weather* and *foggy*, surely; perhaps *Gull Rock*. Hardly *on* or *The*.
+The LLM is about to write the next word of *"The weather on Gull Rock is foggy, and the …"*. Which earlier words should it think about? *Weather* and *foggy*, surely; perhaps *Gull Rock*. Hardly *on* or *The*.
 
-[[=attention|Attention]] is the mechanism that decides, for every new token, which earlier tokens to consult and how much. It happens inside every [[layer]], at every step. It is also the reason the model must keep material from every earlier token around.
+[[=attention|Attention]] is the mechanism that decides, for every new token, which earlier tokens to consult and how much. It runs inside every [[kv-layer|KV layer]], at every step. It is also the reason the LLM must keep material from every earlier token around.
 
 ## A soft lookup {#soft-lookup}
 
-Think of an ordinary lookup first. A Python dictionary maps a key to a value: ask for `"fog"`, get exactly the value stored under `"fog"`. Attention softens this in three ways.
+Think of an ordinary lookup first. A Python dict maps a key to a value: ask for `"fog"`, get exactly the value stored under `"fog"`. Attention softens this in three ways.
 
 1. **Every stored token has a key and a value.** Both are [[vector|vectors]]. The key is a label that says *what this token is about*; the value is *what it has to contribute*.
 2. **The new token asks a question**, its query vector $\vq$. Every key gets a **score**: how well it matches the query, measured by the dot product (multiply element by element, add up).
 3. **The scores become weights, and the answer is a weighted mix of all values.** Nothing is picked outright; everything contributes a little, the good matches a lot.
 
-The function that turns scores into weights is the **softmax**: apply the exponential function to each score (raise Euler's number, 2.718…, to that power; the plain $e$ in these formulas is that number, not the entry size $\ve$), then divide by the total, so the weights are positive and add up to 1.
+The function that turns scores into weights is the **softmax**: apply the exponential function to each score (raise Euler's number 2.718… to that power; the plain $e$ in this formula is that number, never the byte count $\ve$ of later pages), then divide by the total, so the weights are positive and add up to 1.
 
 $$
 \begin{aligned}
@@ -53,7 +53,7 @@ $$
 \end{aligned}
 $$ {#eq-landscape-attention}
 
-The sums run over all stored positions $\vt'$ and $\vt$. (Real models also divide each score by the square root of the key's length, to keep scores in a sensible range. It changes nothing in the story.)
+The sums run over all stored positions. (Real LLMs also divide each score by the square root of the key's length, to keep scores in a sensible range. It changes nothing in the story.)
 
 ::: note example Three keys, by hand
 Three stored tokens have scores 1, 2 and 3 against the query, and values 10, 20 and 30 (one number each, to keep it small).
@@ -68,10 +68,10 @@ Three stored tokens have scores 1, 2 and 3 against the query, and values 10, 20 
 The answer, 25.8, is mostly C's value, with a little of B and a pinch of A. Double the query and the scores become 2, 4, 6: the weights sharpen to 2 %, 12 % and 87 %, and the answer moves to 28.5.
 :::
 
-Now do it with your hands. The figure has eight stored tokens, each with a two-number key.
+Now do it with your hands. The figure has eight stored tokens, each with a two-element key.
 
 ::: figure fig-landscape-attention attentionToy
-**Attention as a soft lookup, in two dimensions.** Top: each coloured dot is the key of one stored token (labelled with its token), drawn as a point in the plane; the accent knob is the query $\vq$, and the line from the centre shows its direction and length. Bottom left: the score of each key, the dot product of query and key. Bottom right: the softmax weights, which add up to 100 %. The stacked bar shows the output as a mix of the eight values, in the same colours. Keys and query are illustrative numbers; real keys have a few hundred elements.
+**Attention as a soft lookup, in two dimensions.** Top: each coloured dot is the key of one stored token (labelled with its token), drawn as a point in the plane of its two elements; the accent knob is the query $\vq$, and the line from the centre shows its direction and length. Bottom left: the score of each key, the dot product of query and key. Bottom right: the softmax weights, which add up to 100 %. The stacked bar shows the output as a mix of the eight values, in the same colours. Keys and query are illustrative numbers; real keys have a few hundred elements.
 :::
 
 ::: try
@@ -85,91 +85,89 @@ Now do it with your hands. The figure has eight stored tokens, each with a two-n
 - Every stored token gets *some* weight, so every stored key is read at every step.
 :::
 
-## Many heads at once {#heads}
+## The decode step in Python {#decode-step}
 
-One lookup per layer would be a narrow view. So each layer runs several lookups side by side, called [[=head|heads]]. Each head has its own query and works on its own slice of the keys and values. One head might follow the subject of the sentence; another, the last number mentioned. (Such stories about individual heads are mostly guesses; what matters here is that there are several.)
+Here is one decode step, written to show where memory is kept and read. It runs as printed, with the toy shapes of the sidebar, and it is the listing every later page quotes from.
 
-Keys and values are what the model keeps, so they are what costs memory. Modern models save memory by letting several query heads **share** one key/value head. This is **grouped-query attention (GQA)**. We number the key/value heads of a layer by $\vh$.
-
-:::: compare One key/value head per query head, versus shared ones
-::: col Classic: 8 query heads, 8 key/value heads
-- Each query head has its own keys and values.
-- Per token per layer: 8 keys and 8 values stored.
-:::
-::: col GQA: 8 query heads, 2 key/value heads
-- Query heads 0–3 read key/value head $\vh = 0$; heads 4–7 read $\vh = 1$.
-- Per token per layer: 2 keys and 2 values stored — **4× less memory**.
-:::
-::::
-
-Qwen3.5-2B, the small model this project plans to measure, uses exactly 2 key/value heads per layer, each 256 numbers wide.
-
-::: takeaway
-- A layer runs several attention heads in parallel; with GQA, groups of query heads share one key/value head $\vh$.
-- Only key/value heads are stored, so GQA shrinks the stored memory by the sharing factor.
-:::
-
-## The decode loop in Python {#loop}
-
-Here is one decode step of a toy model, written to show where memory is kept and read. It runs as printed (with the toy weights in the sidebar), using numpy.
-
-::: aside detail The toy model's weights
+::: aside detail The toy's weights
 ```python setup for the decode step below
 import numpy as np
+from types import SimpleNamespace
 rng = np.random.default_rng(0)
-# hidden width, layers, query heads, key/value heads, head width
-WIDTH, N_LAYERS, N_Q, N_KV, HEAD_W = 64, 4, 8, 2, 16
-Wq = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_Q * HEAD_W))
-Wk = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_KV * HEAD_W))
-Wv = rng.normal(0, WIDTH**-0.5, (N_LAYERS, WIDTH, N_KV * HEAD_W))
-Wo = rng.normal(0, (N_Q * HEAD_W)**-0.5, (N_LAYERS, N_Q * HEAD_W, WIDTH))
-
+# the toy's shapes: hidden width, KV layers, query heads, KV heads, elements per head vector
+d_model, n_kv_layers, n_q_heads, n_kv_heads, head_dim = 64, 4, 8, 2, 16
+W = SimpleNamespace(
+    q=rng.normal(0, d_model**-0.5, (n_kv_layers, d_model, n_q_heads * head_dim)),
+    k=rng.normal(0, d_model**-0.5, (n_kv_layers, d_model, n_kv_heads * head_dim)),
+    v=rng.normal(0, d_model**-0.5, (n_kv_layers, d_model, n_kv_heads * head_dim)),
+    o=rng.normal(0, (n_q_heads * head_dim)**-0.5, (n_kv_layers, n_q_heads * head_dim, d_model)),
+)
 def softmax(s):
     e = np.exp(s - s.max())
     return e / e.sum()
 ```
 :::
 
-```python one decode step of a toy GQA model, written to expose the stored keys and values
-def decode_step(x, keys, values):
-    """x: the new token's hidden state.
-    keys[l], values[l]: what earlier tokens left at layer l."""
-    for l in range(N_LAYERS):
-        # this token's queries (one per query head), key and value
-        q = (x @ Wq[l]).reshape(N_Q, HEAD_W)
-        key = (x @ Wk[l]).reshape(N_KV, HEAD_W)
-        val = (x @ Wv[l]).reshape(N_KV, HEAD_W)
-        # the stored memory grows by one token per layer
-        keys[l].append(key); values[l].append(val)
-        K, V = np.stack(keys[l]), np.stack(values[l])  # [tokens, N_KV, HEAD_W]
+```python one decode step of a GQA transformer, written to expose the orchard
+def decode_step(x, k, v, W, pos):
+    """One decode step of a GQA transformer, written to expose the orchard.
+    x: the new token's hidden state, shape (d_model,)
+    k, v: the orchard so far, lists per KV layer; k[l] has shape (pos, n_kv_heads, head_dim)
+    pos: this token's token_pos_id"""
+    for layer_id in range(n_kv_layers):
+        q   = (x @ W.q[layer_id]).reshape(n_q_heads,  head_dim)   # queries, one per query head
+        key = (x @ W.k[layer_id]).reshape(n_kv_heads, head_dim)   # this token's key, one per KV head
+        val = (x @ W.v[layer_id]).reshape(n_kv_heads, head_dim)   # this token's value
+        k[layer_id].append(key); v[layer_id].append(val)          # the orchard grows by one row
+        K = np.stack(k[layer_id])        # (pos+1, n_kv_heads, head_dim)
+        V = np.stack(v[layer_id])        # (pos+1, n_kv_heads, head_dim)
         out = []
-        for qh in range(N_Q):
-            h = qh // (N_Q // N_KV)  # GQA: heads 0-3 -> KV head 0, 4-7 -> 1
-            # one weight per stored token: this reads EVERY stored key
-            wts = softmax(K[:, h] @ q[qh] / np.sqrt(HEAD_W))
-            out.append(wts @ V[:, h])      # weighted mix of the stored values
-        # the layer's answer is added to the hidden state
-        x = x + np.concatenate(out) @ Wo[l]
-        # (a feed-forward block follows; it never looks back, so we skip it)
+        for qh in range(n_q_heads):
+            head_id = qh // (n_q_heads // n_kv_heads)            # GQA: which KV head this query head reads
+            scores  = K[:, head_id] @ q[qh] / np.sqrt(head_dim)   # one score per stored token
+            weights = softmax(scores)
+            out.append(weights @ V[:, head_id])                   # weighted mix of stored values
+        x = x + np.concatenate(out) @ W.o[layer_id]
     return x
 
-keys = [[] for _ in range(N_LAYERS)]
-values = [[] for _ in range(N_LAYERS)]
-for t in range(5):            # five steps; random vectors stand in for tokens
-    x = decode_step(rng.normal(size=WIDTH), keys, values)
-print(len(keys[0]), keys[0][0].shape)
-# 5 (2, 16): five tokens stored, each key 2 heads x 16 numbers
+k = [[] for _ in range(n_kv_layers)]
+v = [[] for _ in range(n_kv_layers)]
+for pos in range(5):                       # five decode steps; random vectors stand in for tokens
+    x = decode_step(rng.normal(size=d_model), k, v, W, pos)
+print(len(k[0]), k[0][0].shape, np.stack(v[0]).shape)
+# 5 (2, 16) (5, 2, 16): five tokens stored; each key is 2 KV heads × 16 elements
 ```
 
-Three lines carry the whole story of this site.
+Read it line by line, with the shapes.
 
-- **`keys[l].append(key); values[l].append(val)`** — at every layer, every step adds one more key and one more value, and nothing is ever removed.
-- **`K[:, h] @ q[qh]`** — the query is scored against *every* stored key of the layer. The work of a step grows with the number of tokens stored.
-- **`wts @ V[:, h]`** — every stored value is read too, if only to be multiplied by a tiny weight.
+- **`q = (x @ W.q[layer_id]).reshape(n_q_heads, head_dim)`.** The [[=query]] is the vector the current token scores every stored key with. There is one per *query head*, so `q.shape` is `(8, 16)` in the toy and `(8, 256)` on the Bench. Queries are computed, used and dropped; nothing stores them.
+- **`key = (x @ W.k[layer_id]).reshape(n_kv_heads, head_dim)`**, and `val` the same way. One layer runs several lookups side by side, and each is a [[=head|KV head]], `head_id`. A token leaves one key vector and one value vector *per KV head*: [[~new-key|key]] has shape `(2, 16)` in the toy and `(2, 256)` on the Bench. With **grouped-query attention (GQA)** several query heads share one KV head, and `head_id = qh // (n_q_heads // n_kv_heads)` says which: in the toy and on the Bench, query heads 0 … 3 read KV head 0 and 4 … 7 read KV head 1. Only KV heads are stored, so GQA shrinks the stored memory by the sharing factor, 4× here.
+- **`k[layer_id].append(key); v[layer_id].append(val)`.** At every KV layer, every step adds one more key and one more value, and nothing is ever removed. The next page names this growing store.
+- **`K = np.stack(k[layer_id])`.** Every stored key of the layer as one array: [[~k-stack]] has shape `(pos+1, 2, 16)` in the toy and `(pos+1, 2, 256)` on the Bench; `V` likewise. Then `K[:, head_id] @ q[qh]` scores the query against *every* stored key of its KV head, and `weights @ V[:, head_id]` reads *every* stored value, if only to multiply it by a tiny weight. The work of a step grows with the number of tokens stored.
 
-The next page gives this ever-growing store its name and looks inside one of its pieces.
+| in `decode_step` | the toy | the Bench (Qwen3.5-2B) |
+|---|---|---|
+| `x` | `(64,)` | `(d_model,)` |
+| `q` | `(8, 16)` | `(8, 256)` |
+| `key`, `val` | `(2, 16)` | `(2, 256)` |
+| `K`, `V` | `(pos+1, 2, 16)` | `(pos+1, 2, 256)` |
+| `K[:, head_id] @ q[qh]` | `(pos+1,)` | `(pos+1,)` |
+
+:::: compare One KV head per query head, versus shared ones
+::: col Classic: 8 query heads, 8 KV heads
+- Each query head has its own keys and values.
+- Per token per layer: 8 keys and 8 values stored.
+:::
+::: col GQA: 8 query heads, 2 KV heads
+- Query heads 0–3 read `head_id = 0`; heads 4–7 read `head_id = 1`.
+- Per token per layer: 2 keys and 2 values stored, **4× less memory**.
+:::
+::::
+
+The Pin's LLM, GLM-5.1, stores its keys and values differently (one latent vector per token per layer, [[#landscape-rope-and-mla]]); the listing still describes what its attention computes, with `K` and `V` rebuilt from the latent, and this site treats its row as `(1, 640)`.
 
 ::: takeaway
-- Each decode step, at each layer: compute this token's query, key and value; store the key and value; score the query against all stored keys; mix all stored values.
-- Storage grows by one key and one value per layer per token; the reading work grows with everything stored.
+- Each decode step, at each KV layer: compute this token's queries, key and value; append the key and value; score the query against all stored keys; mix all stored values.
+- `q` is `(n_q_heads, head_dim)`, `key` and `val` are `(n_kv_heads, head_dim)`, `K` and `V` are `(pos+1, n_kv_heads, head_dim)`: `(pos+1, 2, 256)` on the Bench.
+- Storage grows by one key and one value per KV layer per token; the reading work grows with everything stored.
 :::

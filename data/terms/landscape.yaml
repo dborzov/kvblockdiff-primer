@@ -1,0 +1,11 @@
+# Part III's own terms. Core terms (token, orchard, pick, HiSparse, the Pin, the Bench …) live in core.yaml
+# with home: on the landscape-* pages; only what core.yaml lacks is added here.
+
+reference-setting:
+  label: reference setting
+  name: reference setting (a frozen rig every number is quoted for)
+  cat: project
+  home: landscape-reference-settings
+  ref: "{NL} KV layers · {heads} × {headdim} per row · {e} per token per layer · {L}-token sequences"
+  short: >-
+    One fixed set of numbers (an LLM, its shapes, a machine, what was measured on it) that every estimate on the site is quoted for, so that pages can be compared. There are two: the Pin (GLM-5.1 on 8 × H200, the deployment side) and the Bench (Qwen3.5-2B on one RTX 5080, the data side). The pill in the top bar switches between them.

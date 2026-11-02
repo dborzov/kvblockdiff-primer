@@ -1,0 +1,64 @@
+# Part III's Python notation chips. Core entries (k, v, v[token_pos_id, layer_id, head_id, :], one furrow …)
+# are in core.yaml; these are the extra forms the Part III listings introduce.
+
+v-element:
+  code: "v[token_pos_id, layer_id, head_id, elem_id]"
+  name: one element of the orchard
+  short: >-
+    One stored number: the value at one token position, one KV layer, one KV head, one element position.
+  shape: "()"
+  bytes: "1 B at 8 bits"
+  home: landscape-orchard
+
+k-one-head:
+  code: "k[token_pos_id, layer_id, head_id, :]"
+  name: one K vector (one token, one layer, one KV head)
+  short: >-
+    All the elements of one KV head's key vector for one token at one layer; the thing a query is scored against.
+  shape: "({headdim},)"
+  bytes: "{headdim} B at 8 bits"
+  home: landscape-orchard
+
+v-one-token:
+  code: "v[token_pos_id]"
+  name: the values of one token at every KV layer
+  short: >-
+    Everything one token has grown on the value side: every KV layer, every head, stacked layer by layer.
+  shape: "({NL}, {heads}, {headdim})"
+  bytes: "{NL} × {heads} × {headdim} B at 8 bits"
+  home: landscape-orchard
+
+new-key:
+  code: "key = (x @ W.k[layer_id]).reshape(n_kv_heads, head_dim)"
+  name: this token's key at one layer, one vector per KV head
+  short: >-
+    The key the new token leaves at one layer, computed once from its hidden state `x` and appended to the orchard. `val` has the same shape.
+  shape: "({heads}, {headdim})"
+  bytes: "{heads} × {headdim} B at 8 bits"
+  home: landscape-attention
+
+k-stack:
+  code: "K = np.stack(k[layer_id])"
+  name: one layer's keys so far, stacked
+  short: >-
+    Every stored key of one KV layer up to the current position, as one array; `V` is built the same way from `v[layer_id]`.
+  shape: "(pos+1, {heads}, {headdim})"
+  bytes: "(pos+1) × {heads} × {headdim} B at 8 bits"
+  home: landscape-attention
+
+pick-tuple:
+  code: "(layer_id, token_pos_id)"
+  name: one pick
+  short: >-
+    One unit of demand as the [[indexer]] names it: one token position wanted at one KV layer at one decode step. The hot cache holds picks; a miss fetches one.
+  bytes: "{e} raw, when a pick is one token's values at one layer"
+  home: landscape-sparse-attention
+
+pick-set:
+  code: "S = indexer_topk(q_idx, K_idx, k)"
+  name: the pick set of one layer at one step
+  short: >-
+    The $\vk$ token positions the indexer names for one KV layer at one decode step, before any byte of the orchard is read.
+  shape: "({k},)"
+  bytes: "{k} picks of {e} each if every one were fetched raw"
+  home: landscape-sparse-attention
