@@ -158,7 +158,7 @@ so far with a link to Part VIII. Source: IV.7–14, VII.2–4, VII.6, VII.8, VII
 | VII.6 | `hypotheses-echo` | Echo similarity (repeats) | a far repeat of the same token predicts a cherry; reference trees live on echoes; hubs vs chains; verdict: the axis that mattered. New. | `echo` |
 | VII.7 | `hypotheses-two-localities` | Two localities, kept apart | which picks are wanted vs what is inside them. Source: VII.2, IV.10. | — |
 | VII.8 | `hypotheses-heavy-stretches` | Lucky Louis, stretch by stretch | do picks pile into few stretches for many steps? unmeasured on the Bench (no indexer ran); what a pick trace would show. Source: IV.10, VIII.4. | — |
-| VII.9 | `hypotheses-the-ladder` | The cat-thread ladder | the intuitive argument and what it gets right. Source: IV.11–12. | `cat-ladder` |
+| VII.9 | `hypotheses-the-ladder` | The cat-sequence ladder | the intuitive argument and what it gets right. Source: IV.11–12. | `cat-ladder` |
 | VII.10 | `hypotheses-the-leak` | The leak: hit rate is about queries | Monte Carlo with drifting queries and i.i.d. keys. Source: IV.13. | `leak` |
 | VII.11 | `hypotheses-the-trap` | The trap: the exchange rate is harsh | variance budget per rung. Source: IV.14. | `trap` |
 | VII.12 | `hypotheses-keys-and-values` | Keys before RoPE; keys and values apart | why keys are a separate problem; what C1 saw on keys. Source: VII.15, notes/04. | — |

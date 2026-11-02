@@ -95,7 +95,7 @@ Term ids in parentheses are the glossary ids (`[[id]]`). Nicknames in quotes are
 | **upstairs similarity** (`upstairs`, "the Staircase") | layer axis: cheaper given the same token one layer up |
 | **stereo similarity** (`stereo`, "the Stereo") | head axis: the two KV heads of a layer at one token are two views of one vector; joining them saves bits though their cosine is near zero |
 | **echo similarity** (`echo`, "the Echo") | an earlier repeat of the same token, however far away, predicts a cherry; the reference tree lives on echoes. The axis that mattered in the data: repetition, not distance |
-| **the leak** (`leak`), **the trap** (`trap`), **the cat-thread ladder** (`cat-ladder`) | hit rate is about queries, not bytes; the harsh exchange rate from variance explained to bits; the intuitive three-rung argument |
+| **the leak** (`leak`), **the trap** (`trap`), **the cat-sequence ladder** (`cat-ladder`) | hit rate is about queries, not bytes; the harsh exchange rate from variance explained to bits; the intuitive three-rung argument |
 
 ### 2.5 Compressor stages (Part V)
 

@@ -351,8 +351,8 @@ echo:
     An earlier occurrence of the same token, however far away, predicts a cherry far better than its neighbours do. Reference trees live on echoes; in the data the axis that mattered was repetition, not distance.
 
 cat-ladder:
-  label: cat-thread ladder
-  name: the cat-thread ladder (the intuitive argument)
+  label: cat-sequence ladder
+  name: the cat-sequence ladder (the intuitive argument)
   brand: true
   nick: the Ladder
   emblem: cat
