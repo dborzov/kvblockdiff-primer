@@ -27,7 +27,7 @@ This Part takes the costume off. What is left is the problem this whole project 
 
 ## The ask {#the-ask}
 
-Two parties. A **sender** has a big tensor in its memory, one [[orchard]] of one [[sequence]]: `v.shape == (225_000, 6, 2, 256)` on [[bench|the Bench]]. A **receiver** needs small pieces of it, one at a time, at positions it does not know in advance, in an order nobody can predict. Each piece is a [[cherry]]: a fixed-shape sub-array, say one token's values at one layer, `v[token_pos_id, layer_id]` of shape `(2, 256)`, 512 bytes.
+Two parties. A **sender** has a big tensor in its memory, one [[orchard]] of one [[sequence]]: `v.shape == (225_000, 6, 2, 256)` on [[bench|the Bench]]. A **receiver** needs small pieces of it, one at a time, at positions it does not know in advance, in an order nobody can predict. Each piece is a [[#scenario-cherry|cherry]]: a fixed-shape sub-array, say one token's values at one layer, `v[token_pos_id, layer_id]` of shape `(2, 256)`, 512 bytes.
 
 The naive protocol is the one HiSparse uses today: the receiver asks for cherry `i`, the sender sends its 512 raw bytes. The scenario asks whether it can be done with fewer bytes per ask, under one strict rule: **the receiver must rebuild the cherry bit for bit**, every time, and it may hold something in advance.
 
@@ -60,7 +60,7 @@ The serving system has a hot cache, an eviction policy, a link with a bandwidth,
 What remains is a question information theory can answer on data we already have: for one sequence's orchard, with a dictionary held in advance, **how many bytes per cherry must cross, if any cherry may be asked for next?**
 
 ::: define scenario
-- **What it is.** One fully specified instance of the problem: which part of the orchard is in play (the [[slice]]), how it is cut into cherries (the [[cherry-shape|cherry shape]]), how long a [[stretch]] is, how far a decode may reach into the dictionary (the [[leash]]), the number format, the LLM and the corpus. In Python, `Scenario(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)`.
+- **What it is.** One fully specified instance of the problem: which part of the orchard is in play (the [[#scenario-slice|slice]]), how it is cut into cherries (the [[#scenario-cherry|cherry shape]]), how long a [[#scenario-stretch|stretch]] is, how far a decode may reach into the dictionary (the [[#scenario-the-leash|leash]]), the number format, the LLM and the corpus. In Python, `Scenario(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)`.
 - **Example.** `V · layers 0–5 · heads 0,1 · cherry (2, 256) · stretch 4096 · leash 293 · fp8 · Qwen3.5-2B · agent transcripts` is the scenario behind most numbers of Part VIII.
 - **Easy to confuse with** a compressor. A scenario is the problem; a compressor is one attempt at it. Many compressors are scored on one scenario; one compressor may be scored on many scenarios.
 :::

@@ -28,7 +28,7 @@ Ask a compression engineer what a compressor is and you get a name: zstd, FLAC, 
 ::: define compressor
 - **What it is.** One concrete pair `compress(punnet) -> (deltas, dictionary)` and `decompress(delta, dictionary) -> cherry`, built as a dataflow graph of [[stage|stages]]. The raw bytes of a punnet enter; dictionary bytes and delta bytes leave.
 - **Example.** Compressor 121 of campaign C2: a bit-field split, a reference tree over the punnet, a linear prediction across elements, exact residuals, an entropy coder per furrow, and a layout that keeps each cherry's path through the dictionary short.
-- **Easy to confuse with** the [[harness]] (which scores compressors and codes nothing), with the [[scenario]] (the problem), and with a stage (one node of the graph).
+- **Easy to confuse with** the [[#scenario-the-harness|harness]] (which scores compressors and codes nothing), with the [[scenario]] (the problem), and with a stage (one node of the graph).
 :::
 
 ::: define stage
@@ -65,7 +65,7 @@ Three shapes recur in every compressor of this project, and Part V takes each ap
 2. **Split the bits before predicting.** The sign and exponent of an FP8 element are predictable; the low mantissa bits are close to noise. Routing them to different paths saves effort where there is nothing to predict ([[#toolbox-bit-fields]]).
 3. **End with a code that decodes alone.** An [[entropy-coder]] per cherry, or a [[fixed-length-code]] with [[escape|escapes]]; never a stream across cherries, because of the contract's cold decode ([[#toolbox-two-rates]]).
 
-The dictionary and the deltas are the two outputs, and every stage must say which of them it writes to. That is the [[bill]] of the next Part: residual bits, plus whatever each delta carries, plus the dictionary spread over the punnet.
+The dictionary and the deltas are the two outputs, and every stage must say which of them it writes to. That is the [[#toolbox-the-bill|bill]] of the next Part: residual bits, plus whatever each delta carries, plus the dictionary spread over the punnet.
 
 ::: theme predict-correct
 Every box in the middle of the graph is a predictor of some kind, and every compressor on this site has the same silhouette: guess, subtract, code the surprise.

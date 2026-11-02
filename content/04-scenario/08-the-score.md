@@ -54,12 +54,12 @@ $$ {#eq-scn-mdl-ratio}
 
 The two parts have names because they are read differently.
 
-- The [[=dictionary-share|dictionary share]] $\vxshare$ is the dictionary's bytes over the punnet's raw bytes; in cherries' worth it is the dictionary [[weight]] over the cherries it serves, $\vw/\vb$.
+- The [[=dictionary-share|dictionary share]] $\vxshare$ is the dictionary's bytes over the punnet's raw bytes; in cherries' worth it is the dictionary [[#scenario-scope|weight]] over the cherries it serves, $\vw/\vb$.
 - The [[=delta-share|delta share]] $\vrho$ is the mean delta over a raw cherry, averaged over *every* cherry of the punnet, empty deltas included. It is the number a miss on the link cares about: a δ-miss moves $\vrho\,\ve$ bytes ([[#app-shelf-and-two-misses]]).
 - [[=bpe|Bits per element]] is the same ratio in the unit of Part II: at 8-bit storage, 8 × ratio.
 
 ::: aside reminder Weight and stretch length
-A dictionary's [[weight]] $\vw$ is its size in cherries' worth, so $\vDsz = \vw\,\ve$; a punnet of one cherry per position has $\vb$ cherries ([[#scenario-scope]]). Then $\vxshare = \vw/\vb$.
+A dictionary's [[#scenario-scope|weight]] $\vw$ is its size in cherries' worth, so $\vDsz = \vw\,\ve$; a punnet of one cherry per position has $\vb$ cherries ([[#scenario-scope]]). Then $\vxshare = \vw/\vb$.
 :::
 
 ::: takeaway
@@ -77,7 +77,7 @@ The score draws a plane, and the campaigns filled it with real points.
 
 Three things the figure teaches about reading a score.
 
-**The dictionary share is bookkeeping.** The best compressors sit at $\vxshare$ between 0.43 and 0.54 because they store reference cherries in the dictionary ([[#toolbox-reference-cherries]]); the same cherries filed in deltas would cost the same bytes. Moving every cherry of a punnet into the dictionary changed one compressor's ratio by 0.00004. A big dictionary share says where the bytes were filed, not how much the cherries share. What measures sharing is the gain over [[solo]] coding, and that is about a fifth of the bits ([[#measured-what-the-half-means]]).
+**The dictionary share is bookkeeping.** The best compressors sit at $\vxshare$ between 0.43 and 0.54 because they store reference cherries in the dictionary ([[#toolbox-reference-cherries]]); the same cherries filed in deltas would cost the same bytes. Moving every cherry of a punnet into the dictionary changed one compressor's ratio by 0.00004. A big dictionary share says where the bytes were filed, not how much the cherries share. What measures sharing is the gain over [[#scenario-compressors-and-stages|solo]] coding, and that is about a fifth of the bits ([[#measured-what-the-half-means]]).
 
 **Compare on the same punnets.** Two screens read different punnets, and what makes a punnet hard is its text: one screen read 0.6449 and another 0.6461 for what turned out to be the better cherry shape by 0.0043 on identical elements ([[#measured-signal-or-noise]]). A score is a paired difference on the same punnets, per sequence, or it is nothing.
 

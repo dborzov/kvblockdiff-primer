@@ -33,7 +33,7 @@ Take one [[sequence]]. Its token positions run `token_pos_id = 0, 1, 2, …`. No
 ::: define stretch
 - **What it is.** `stretch_len` consecutive token positions of one sequence. We number stretches `stretch_id = 0, 1, 2, …` and `stretch_len` is a knob we set.
 - **Example.** With `stretch_len = 4`, stretch 3 holds positions 12, 13, 14 and 15. In the examples of this site `stretch_len = 4096`: a 225K-token sequence on [[bench|the Bench]] has 55 stretches; a 100K-token sequence on [[pin|the Pin]] has 25.
-- **Easy to confuse with** a property of the data. Nothing in an orchard says "a stretch ends here". And with a [[punnet]]: a stretch is a range of positions; a punnet is the set of cherries cut from it under a slice.
+- **Easy to confuse with** a property of the data. Nothing in an orchard says "a stretch ends here". And with a [[#scenario-punnet|punnet]]: a stretch is a range of positions; a punnet is the set of cherries cut from it under a slice.
 :::
 
 Which stretch does a position live in? Integer division answers it:
@@ -67,9 +67,9 @@ Why insist? Because the hypotheses this project tests ([[#hypotheses-fallen-appl
 
 A stretch is a range along one axis of the orchard, the token axis, and nothing more. Three things it does not decide:
 
-- **Which layers, heads or elements are in play.** That is the [[slice]] (next page). The same stretch can be in play for the values of one head, or for keys and values of every layer.
-- **What one cherry is.** That is the [[cherry-shape|cherry shape]] ([[#scenario-cherry]]). One stretch of 4096 positions can yield 4096 cherries, or 8192, or 24 576.
-- **What one dictionary serves.** That is the [[punnet]] ([[#scenario-punnet]]): the cherries that fall out of one stretch under one slice and one cherry shape.
+- **Which layers, heads or elements are in play.** That is the [[#scenario-slice|slice]] (next page). The same stretch can be in play for the values of one head, or for keys and values of every layer.
+- **What one cherry is.** That is the [[#scenario-cherry|cherry shape]] ([[#scenario-cherry]]). One stretch of 4096 positions can yield 4096 cherries, or 8192, or 24 576.
+- **What one dictionary serves.** That is the [[#scenario-punnet|punnet]] ([[#scenario-punnet]]): the cherries that fall out of one stretch under one slice and one cherry shape.
 
 The old site used one word, "block", for the stretch and for the punnet, and the two drifted apart as soon as only part of the orchard was compressed. Hence two words. <!-- old-words -->
 

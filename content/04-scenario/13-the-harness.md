@@ -55,7 +55,7 @@ Here is one row of the campaigns' ledger, abridged into plain words. Every field
  "reads": {"mean": 120.4, "p99": 184, "max": 225.8, "every_cherry": true}}
 ```
 
-- **The contract, per cherry, in a fresh process.** A score is a [[=verified-result|verified result]] only if every cherry of every punnet was rebuilt bit for bit by a separate decoder-only process from the stored bytes alone. A trial that skipped this pass is a *quick* trial and can never hold a record; a number computed from a probability table without building the compressor is a [[code-length-estimate]]; a bound is a bound.
+- **The contract, per cherry, in a fresh process.** A score is a [[=verified-result|verified result]] only if every cherry of every punnet was rebuilt bit for bit by a separate decoder-only process from the stored bytes alone. A trial that skipped this pass is a *quick* trial and can never hold a record; a number computed from a probability table without building the compressor is a [[#toolbox-bounds|code-length estimate]]; a bound is a bound.
 - **The leash, per cherry.** Each cold decode's distinct dictionary reads are recorded; a sample with every untouched byte scrambled must decode identically. Only rows with `every_cherry: true` prove a compressor keeps its leash ([[#scenario-the-leash]]).
 - **The bill, by one rule.** Dictionary bytes plus delta bytes over raw bytes, nothing else, for everyone ([[#scenario-the-score]]).
 - **Paired scores.** A trial is graded against the incumbent on exactly the same punnets, per sequence; a new record needs to win on all of them or pass a paired test on five or more sequences ([[#measured-signal-or-noise]]).

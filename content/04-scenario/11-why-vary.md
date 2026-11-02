@@ -27,8 +27,8 @@ If the only goal were one serving system, one scenario would do: the slice and c
 
 The first reason has nothing to do with any application. The [[orchard]] is a tensor of unknown statistics, and the question "how are its bits arranged?" has no direct instrument. Information theory offers an indirect one: **the best compressor you can find for a scenario is a measurement, and the difference between two scenarios is a measurement too.**
 
-- Run the same compressor on `cherry (256,)` and on `cherry (2, 256)` over the same elements. The second may use head 0 to predict head 1 for free; the first may not. The gap, 0.032 of ratio on 20 sequences of 20, is a lower bound on the bits the two heads share. That is how [[stereo|stereo similarity]] was found, under a cosine of 0.05 that said the heads had nothing in common ([[#measured-cutting-the-tensor]]).
-- Dice two adjacent tokens into one cherry and the ratio gets *worse* by 0.037: adjacent tokens share little once each has its own reference cherry, which is a reading on [[fallen-apple|fallen-apple similarity]].
+- Run the same compressor on `cherry (256,)` and on `cherry (2, 256)` over the same elements. The second may use head 0 to predict head 1 for free; the first may not. The gap, 0.032 of ratio on 20 sequences of 20, is a lower bound on the bits the two heads share. That is how [[#hypotheses-stereo|stereo similarity]] was found, under a cosine of 0.05 that said the heads had nothing in common ([[#measured-cutting-the-tensor]]).
+- Dice two adjacent tokens into one cherry and the ratio gets *worse* by 0.037: adjacent tokens share little once each has its own reference cherry, which is a reading on [[#hypotheses-fallen-apple|fallen-apple similarity]].
 - Compare keys and values as slices, FP8 and BF16 as formats, stretch 512 and 16 384, leash 137 and 1 103: each pair is a question about where the bits are, answered in bits.
 
 For this purpose nobody cares whether the winning compressor could ever run on a GPU. It is the instrument; its score is the reading; the interpretation is the result.

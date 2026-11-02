@@ -46,7 +46,7 @@ The word **cold** carries the access pattern. On the miss path one scattered che
 ::: define cold-decode
 - **What it is.** Rebuilding cherry `i` from its own delta, the dictionary and the scenario's constants, in a decoder that has decoded nothing else. The harness enforces it literally: a fresh process per cherry ([[#scenario-the-harness]]).
 - **Why it matters.** A stream compressor (zstd over the punnet, arithmetic coding front to back) decodes cherry 2000 only after cherries 0 to 1999. It cannot answer a cold ask for cherry 2000 without decoding 2000 cherries first, so it is out, however good its ratio.
-- **Easy to confuse with** "the dictionary is reloaded". The dictionary is held by the receiver throughout; cold refers to deltas, not to the dictionary. How much of the dictionary one cold decode may touch is the [[leash]] ([[#scenario-the-leash]]).
+- **Easy to confuse with** "the dictionary is reloaded". The dictionary is held by the receiver throughout; cold refers to deltas, not to the dictionary. How much of the dictionary one cold decode may touch is the [[#scenario-the-leash|leash]] ([[#scenario-the-leash]]).
 :::
 
 ::: figure fig-scn-contract scnContract
