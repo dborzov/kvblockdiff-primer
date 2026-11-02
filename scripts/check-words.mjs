@@ -58,6 +58,11 @@ function firstCell(line) {
   return (cells[0] || "").trim().toLowerCase();
 }
 
+// [[#page-id]], [[term]], [[~nota]] and [[@key]] targets are ids, not prose: keep only custom text after "|".
+function stripLinkTargets(s) {
+  return s.replace(/\[\[([^\]|]*)(\|([^\]]*))?\]\]/g, (m, key, bar, text) => (text != null ? text : ""));
+}
+
 // Lines of a file to scan, as [lineNumber, text]; the rules above decide what is left out.
 function scannable(file, src) {
   const lines = src.split(/\r?\n/);
@@ -76,6 +81,7 @@ function scannable(file, src) {
   }
   let fence = null;                               // { ch, len } of the open code fence
   let skip = null;                                // colon count of the open "source"/"literature" container
+  let theirTable = false;                         // inside a table whose header's first cell is "their word"
   for (; i < lines.length; i++) {
     const line = lines[i];
     if (fence) {
@@ -95,9 +101,10 @@ function scannable(file, src) {
     if (/<!--\s*old-words\s*-->\s*$/.test(line)) continue;
     if (/^\s*\|/.test(line)) {
       const cell = firstCell(line);
-      if (cell === "their word" || cell.includes("their words")) continue;
-    }
-    const t = stripCodeSpans(line);
+      if (cell === "their word" || cell.includes("their words")) { theirTable = true; continue; }
+      if (theirTable) continue;                   // the data rows of a "their word" table
+    } else if (!line.trim()) theirTable = false;  // a blank line ends the table
+    const t = stripLinkTargets(stripCodeSpans(line));
     if (t.trim()) out.push([i + 1, t]);
   }
   return out;
