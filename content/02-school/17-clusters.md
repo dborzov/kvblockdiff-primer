@@ -6,7 +6,7 @@ group: Vectors
 cards:
   - q: What is a centroid?
     a: The average point of a group of vectors
-    wrong: ["The vector closest to zero", "The first vector of a group", "The median of one channel"]
+    wrong: ["The vector closest to zero", "The first vector of a group", "The median of one furrow"]
     why: 'For the calm readings, the centroid is (7.7 kn, 69.9 %): the average wind and the average humidity of the calm group.'
     sec: regimes
   - q: What are the two steps that k-means repeats?
@@ -27,7 +27,7 @@ cards:
   - q: 'On the weather-regime data (wind and humidity, $\vd = 2$), what does a 3-centroid codebook net per element?'
     a: About 1.46 bits — 2.26 saved minus 0.79 of index tax
     wrong: ["About 2.26 bits — the tax is paid only once", "About 0.05 bits — the same as a rotation", "About −0.79 bits — the tax always wins"]
-    why: 'The residual spread shrinks to about 0.04 of the original per channel, saving 2.26 bits per element; the index costs log₂ 3 / 2 = 0.79.'
+    why: 'The residual spread shrinks to about 0.04 of the original per furrow, saving 2.26 bits per element; the index costs log₂ 3 / 2 = 0.79.'
     sec: index-tax
 ---
 
@@ -46,7 +46,7 @@ Rotations (II.15) cannot see this. The correlation matrix of these readings is n
 Call each island a cluster, and describe each cluster by its middle point.
 
 ::: define centroid
-- **What it is:** the average point of a group of vectors: the mean of each channel, taken over the group.
+- **What it is:** the average point of a group of vectors: the mean of each element, taken over the vectors of the group.
 - **Example:** the calm readings average 7.7 kn and 69.9 %, so the calm centroid is $(7.7,\ 69.9)$. The fog centroid is $(3.7,\ 97.0)$ and the storm centroid $(34.6,\ 89.9)$.
 - **Easy to confuse with:** a typical *member*. A centroid is usually not one of the readings; it is an average.
 :::
@@ -73,10 +73,10 @@ The letter $\vC$ counts the centroids. Nobody told us there were three moods, th
 - **Its weakness:** it can settle in a poor arrangement, depending on the start. In practice one runs it from several starts and keeps the best.
 :::
 
-Distances only make sense when both channels are on the same scale, so the figure [[standardize|standardizes]] wind and humidity first (II.13) and plots them back in their own units.
+Distances only make sense when both furrows are on the same scale, so the figure [[standardize|standardizes]] wind and humidity first (II.13) and plots them back in their own units.
 
 ::: figure fig-sv-kmeans svKmeans
-**k-means on 300 Gull Rock readings in the wind–humidity plane (synthetic: three weather regimes, 140 calm, 60 fog, 100 storm, from a fixed seed).** Each dot is a reading, coloured by the centroid it is currently assigned to; diamonds are the centroids. The centroids start on a small ring around the middle of the cloud. *One k-means step* does one assign-and-update round; *Run to the end* repeats until nothing moves; *New start* tries another set of starting centroids, picked among the readings. The slider sets the codebook size $\vC$ from 1 to 8. The tiles estimate, per element (two elements per reading), the bits saved by sending the residual from the centroid instead of the reading — the Gaussian rule of II.11 applied to each standardized channel, $\tfrac12\log_2(1/\text{residual variance})$ — the index tax $\log_2 \vC / 2$, and the net.
+**k-means on 300 Gull Rock readings in the wind–humidity plane (synthetic: three weather regimes, 140 calm, 60 fog, 100 storm, from a fixed seed).** Each dot is a reading, coloured by the centroid it is currently assigned to; diamonds are the centroids. The centroids start on a small ring around the middle of the cloud. *One k-means step* does one assign-and-update round; *Run to the end* repeats until nothing moves; *New start* tries another set of starting centroids, picked among the readings. The slider sets the codebook size $\vC$ from 1 to 8. The tiles estimate, per element (two elements per reading), the bits saved by sending the residual from the centroid instead of the reading — the Gaussian rule of II.11 applied to each standardized furrow, $\tfrac12\log_2(1/\text{residual variance})$ — the index tax $\log_2 \vC / 2$, and the net.
 :::
 
 ::: try
@@ -101,7 +101,7 @@ Now send readings over the radio with the codebook. For each reading:
 The receiver looks up the centroid in its copy of the codebook and adds the residual back. Nothing is lost.
 
 ::: define vq
-- **What it is:** vector quantization — describing each vector by the index of its nearest centroid in a codebook. Plain VQ stops there and accepts the error (it is [[lossy]]). **Lossless VQ** uses the centroid as a [[prediction]] of every element ($\vxhat$ in each channel) and also sends the exact residual $\vr = \vx - \vxhat$ of every element.
+- **What it is:** vector quantization — describing each vector by the index of its nearest centroid in a codebook. Plain VQ stops there and accepts the error (it is [[lossy]]). **Lossless VQ** uses the centroid as a [[prediction]] of every element ($\vxhat$ for each element) and also sends the exact residual $\vr = \vx - \vxhat$ of every element.
 - **Example:** a storm reading of (36 kn, 88 %) becomes "index: storm" plus the residual (+1.4 kn, −1.9 %).
 - **What it costs:** the codebook, sent once, and an index for every vector.
 :::
@@ -116,7 +116,7 @@ $$
 \text{net bits saved per element} = \underbrace{\tfrac12 \log_2 \frac{\text{spread}^2\ \text{before}}{\text{spread}^2\ \text{of the residual}}}_{\text{what the centroid explains}} \;-\; \underbrace{\frac{\log_2 \vC}{\vd}}_{\text{index tax}}
 $$ {#eq-sv-vq-net}
 
-On the regime data with $\vC = 3$, the residual keeps about 4 % of each channel's spread² (0.040 and 0.048), so the first term is 2.26 bits. The tax is 0.79. The net is **1.46 bits per element**, against 0.05 for the rotation.
+On the regime data with $\vC = 3$, the residual keeps about 4 % of each furrow's spread² (0.040 and 0.048), so the first term is 2.26 bits. The tax is 0.79. The net is **1.46 bits per element**, against 0.05 for the rotation.
 
 ::: theme every-tax
 The index is the codebook's tax collector: $\log_2 \vC$ bits on every single vector, whether its centroid helped much or not. Doubling $\vC$ costs exactly one more bit per vector, and only pays when it explains more than that.

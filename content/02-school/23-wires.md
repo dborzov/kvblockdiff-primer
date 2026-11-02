@@ -5,7 +5,7 @@ lede: The archive's lift is slow in two different ways — each trip takes two m
 group: Machines
 cards:
   - q: What is the difference between bandwidth and latency?
-    a: Bandwidth is how much a link moves per second once data flows; latency is how long one request takes to start arriving
+    a: Bandwidth is how much a link moves per second once data flows; latency is how long one ask takes to start arriving
     wrong: ["They are two names for the same speed", "Bandwidth is the size of a memory; latency is its price", "Latency is the bandwidth of a single wire"]
     why: The lift carries up to 50 logbooks per trip (bandwidth) and each trip takes 2 minutes however much it carries (latency).
     sec: bandwidth
@@ -45,8 +45,8 @@ Every way of moving data — a lift, a radio link, a wire inside a computer — 
 
 ::: define bandwidth
 - **Bandwidth** is how much a link moves per second once data is flowing: the lift carries at most 50 logbooks per trip, so at best 25 logbooks a minute.
-- **Latency** is how long one request takes before anything arrives: two minutes per trip, whether the cart holds one logbook or fifty.
-- **Together:** time to fetch ≈ latency + amount ÷ bandwidth. Small requests are dominated by latency, big ones by bandwidth.
+- **Latency** is how long one ask takes before anything arrives: two minutes per trip, whether the cart holds one logbook or fifty.
+- **Together:** time to fetch ≈ latency + amount ÷ bandwidth. Small asks are dominated by latency, big ones by bandwidth.
 :::
 
 | how the forecaster asks | logbooks | time | logbooks per minute |
@@ -62,12 +62,12 @@ The same lift delivers anything from half a logbook a minute to twenty-five. Wha
 
 ::: takeaway
 - Bandwidth: how much per second once flowing. Latency: how long until the first item arrives.
-- Many small requests, each waited for, are latency-bound; ordered together, they approach the bandwidth.
+- Many small asks, each waited for, are latency-bound; ordered together, they approach the bandwidth.
 :::
 
 ## The real names {#real}
 
-Now the harbour office becomes a computer that runs a language model. The arithmetic runs on a GPU — originally a graphics processor, now the chip that does nearly all of a language model's work. The GPU has a small memory of its own right beside it, and the computer it sits in has a much bigger one further away.
+Now the harbour office becomes a computer that runs an LLM. The arithmetic runs on a GPU, originally a graphics processor, now the chip that does nearly all of an LLM's work. The GPU has a small memory of its own right beside it, and the computer it sits in has a much bigger one further away.
 
 ::: define hbm
 - **What it is:** high-bandwidth memory — memory chips stacked right next to the GPU, inside the same package.
@@ -106,7 +106,7 @@ Divide the two speeds: $4.8\ \text{TB/s} \div 50\ \text{GB/s} \approx 96$. Data 
 The lift's lesson carries over directly. A read of a few hundred bytes from host memory takes on the order of a microsecond to come back across PCIe, whatever its size. If the GPU waited for each read before issuing the next, it would get a few hundred bytes per microsecond — a few hundred MB/s, a tiny fraction of the link. Real GPUs keep thousands of reads in flight at once, so their latencies overlap and the link stays busy.
 
 ::: figure fig-sv-wires svWires
-**How much a link delivers, against the size of each read.** A simple model: each read waits a fixed latency, then transfers at the link's bandwidth; with several reads in flight their waits overlap, so the delivered rate is $\min(\text{bandwidth},\ \text{reads in flight} \times \text{read size} / (\text{latency} + \text{read size}/\text{bandwidth}))$. Green: HBM of an H200 (4.8 TB/s; latency assumed 0.5 µs). Red: PCIe Gen5 ×16 in practice (50 GB/s; latency assumed 1 µs). The latencies are rough orders of magnitude, not measurements of any one machine. Both axes are logarithmic; the horizontal rules mark the peak bandwidths. *Slide* the number of reads in flight and the size of each read; the dots and the read-out show the delivered rates at that size and their ratio.
+**How much a link delivers, against the size of each read.** A simple formula: each read waits a fixed latency, then transfers at the link's bandwidth; with several reads in flight their waits overlap, so the delivered rate is $\min(\text{bandwidth},\ \text{reads in flight} \times \text{read size} / (\text{latency} + \text{read size}/\text{bandwidth}))$. Green: HBM of an H200 (4.8 TB/s; latency assumed 0.5 µs). Red: PCIe Gen5 ×16 in practice (50 GB/s; latency assumed 1 µs). The latencies are rough orders of magnitude, not measurements of any one machine. Both axes are logarithmic; the horizontal rules mark the peak bandwidths. *Slide* the number of reads in flight and the size of each read; the dots and the read-out show the delivered rates at that size and their ratio.
 :::
 
 ::: try
@@ -115,7 +115,7 @@ The lift's lesson carries over directly. A read of a few hundred bytes from host
 3. Shrink the read size at a fixed number in flight: the curves bend down. Small reads need more of them in flight to fill the same link.
 :::
 
-Two cautions keep this honest. The model leaves out the fixed overhead that real links add to every transfer (packet headers, minimum transfer sizes), which makes very small reads less efficient than the curve suggests. And it assumes the reads are independent, so that thousands can be issued at once.
+Two cautions keep this honest. The formula leaves out the fixed overhead that real links add to every transfer (packet headers, minimum transfer sizes), which makes very small reads less efficient than the curve suggests. And it assumes the reads are independent, so that thousands can be issued at once.
 
 ::: theme access-pattern
 How data is read decides what the machine can do with it. Thousands of independent small reads can fill a link; a chain where each read depends on the one before cannot. When the data is reached in small scattered pieces, anything stored or coded must keep each piece readable on its own.

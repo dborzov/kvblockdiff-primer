@@ -1,7 +1,7 @@
 ---
 title: Integers and floats
 nav: Integers and floats
-lede: An 8-bit chip has 256 patterns to give out. Spread them evenly and you get an integer grid, perfect for temperatures. Spread them so they are dense near zero and sparse far away and you get floating point, perfect for rainfall. Bigger floats, like the BF16 numbers of language models, carry low bits that look like pure noise.
+lede: An 8-bit chip has 256 patterns to give out. Spread them evenly and you get an integer grid, perfect for temperatures. Spread them so they are dense near zero and sparse far away and you get floating point, perfect for rainfall. Bigger floats, like the BF16 numbers of LLMs, carry low bits that look like pure noise.
 group: Numbers
 cards:
   - q: 'In INT8 with a scale of 0.25 °C, what values can be stored, and how far off can a temperature be?'
@@ -45,7 +45,7 @@ One quantity wants evenly spaced values, the other wants values that are dense n
 ::: define integer-grid
 - **What it is:** store a whole number $k$ between −127 and 127, and let it mean $k \times \text{scale}$. The representable values are evenly spaced, one scale apart.
 - **Example:** temperature with a scale of 0.25 °C covers −31.75 … +31.75 °C, and any temperature in that range is at most 0.125 °C off.
-- **The scale is per channel.** Each sensor gets its own (II.13): what suits a thermometer is useless for a barometer.
+- **The scale is per furrow.** Each sensor gets its own (II.13): what suits a thermometer is useless for a barometer.
 - **Easy to confuse with:** plain integers. Without the scale, INT8 could only hold whole numbers up to 127.
 :::
 
@@ -84,12 +84,12 @@ Put both grids on one number line and drag a value along it.
 3. Temperature, drag to 25 °C: INT8 stores 25.00 exactly; the float stores 24, a whole degree off, while it resolves values near 0 °C to a thousandth of a degree that nobody needs.
 :::
 
-Language models usually keep their numbers in a 16-bit float.
+LLMs usually keep their numbers in a 16-bit float.
 
 ::: define bf16
 - **What it is:** bfloat16, a 16-bit float with 1 sign bit, 8 exponent bits and 7 mantissa bits. It keeps the exponent of the common 32-bit float, so it covers the same enormous range, but only about 2–3 significant decimal digits.
 - **Example:** 11.4 °C becomes 11.375 in BF16: sign `0`, exponent `10000010` (the binade [8, 16)), mantissa `0110110`.
-- **Where it is used:** the usual working format of language models — their weights, activations and memory.
+- **Where it is used:** the usual working format of LLMs: their weights, activations and memory.
 :::
 
 ::: theme grid-matters
@@ -118,9 +118,11 @@ Three things stand out.
 
 - **The sign bit and six of the eight exponent bits never change.** All temperatures lie between 4 and 16 °C, so only two binades ever occur. Together the exponent field carries **0.22 bits**, out of 8 stored.
 - **The mantissa bits look like coin flips.** Each carries 0.88 to 1.00 bits, and the seven together carry 5.91. The lowest ones encode sixteenths of a degree — finer than the thermometer's own noise (about 0.15 °C).
-- **The whole 16-bit pattern carries 5.97 bits.** A coder could save 10 bits per value here, most of them in the sign and exponent.
+- **The whole 16-bit pattern carries 5.97 bits.** A lossless compressor could save 10 bits per value here, most of them in the sign and exponent.
 
-This pattern — predictable exponent, noisy mantissa — is what lossless coders of model numbers find too ([[#papers-float-coders]]). The exponent is easy to squeeze; the mantissa is not, because its low bits really are noise. That caps lossless compression of 16-bit model data at a modest ratio, and it is one reason this site works with 8-bit numbers, where the noisy bits have already been rounded away.
+This pattern, predictable exponent and noisy mantissa, is what lossless compressors of LLM weights find too
+([[#papers-float-coders]]). <!-- old-words -->
+The exponent is easy to squeeze; the mantissa is not, because its low bits really are noise. That caps lossless compression of 16-bit LLM data at a modest ratio, and it is one reason this site works with 8-bit numbers, where the noisy bits have already been rounded away.
 
 ::: theme noise-floor
 The mantissa's low bits are the noise floor made visible: about one bit of genuine randomness per bit stored. No predictor and no dictionary can remove it, because there is nothing there to predict. A lossless code has to pay for every one of them.
@@ -129,5 +131,5 @@ The mantissa's low bits are the noise floor made visible: about one bit of genui
 ::: takeaway
 - In BF16 temperatures, the 8 exponent bits carry 0.22 bits; the 7 mantissa bits carry 5.91.
 - The low mantissa bits are close to noise and cannot be compressed away.
-- Lossless coders of model numbers squeeze the exponent and pay in full for the mantissa.
+- Lossless compressors of LLM weights squeeze the exponent and pay in full for the mantissa.
 :::

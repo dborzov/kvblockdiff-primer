@@ -48,7 +48,7 @@ $$ {#eq-sv-amortization}
 A fixed cost is worth paying only if enough items share it.
 :::
 
-You have met this already, without the name. A zstd [[trained-dictionary]] is big compared with one message and tiny compared with a million ([[#tiny-files-three-lessons]]). The per-channel means of II.13 cost one reading's worth to send and saved 24 bits on every reading after. The codebook of II.17 had to cross the link once before any index meant anything.
+You have met this already, without the name. A zstd [[trained-dictionary]] is big compared with one message and tiny compared with a million ([[#tiny-files-three-lessons]]). The per-furrow means of II.13 cost one reading's worth to send and saved 24 bits on every reading after. The codebook of II.17 had to cross the link once before any index meant anything.
 
 ::: takeaway
 - Per-item cost of a shared fixed cost = fixed cost ÷ number of items.
@@ -60,13 +60,13 @@ You have met this already, without the name. A zstd [[trained-dictionary]] is bi
 On the Gull Rock radio link the "ticket" is a table both ends keep, and it is paid in bits. Plot the two numbers that matter against the number of readings that share the table: its cost per reading falls as $1/n$; its saving per reading stays flat. Where the lines cross is break-even.
 
 ::: figure fig-sv-amortize svAmortize
-**A fixed cost shared by more and more items.** Red: the fixed cost per item, fixed cost ÷ number of items — a straight line of slope −1 on these logarithmic axes. Green dashed: the saving per item. To the right of their crossing (the break-even point, marked) the shaded region is profit. *Choose* an example: the ferry season ticket (300 crowns, saving 12 per trip); the per-channel means of II.13 (45 bits once, saving 24 bits per reading); the weather-regime codebook of II.17 (3 centroids × 2 numbers × 16 bits = 96 bits once, saving 2.92 bits per reading after its index tax; illustrative). *Slide* the fixed cost and the saving to make your own; the read-out gives the break-even point and the net after 10 and after 1000 items.
+**A fixed cost shared by more and more items.** Red: the fixed cost per item, fixed cost ÷ number of items — a straight line of slope −1 on these logarithmic axes. Green dashed: the saving per item. To the right of their crossing (the break-even point, marked) the shaded region is profit. *Choose* an example: the ferry season ticket (300 crowns, saving 12 per trip); the per-furrow means of II.13 (45 bits once, saving 24 bits per reading); the weather-regime codebook of II.17 (3 centroids × 2 numbers × 16 bits = 96 bits once, saving 2.92 bits per reading after its index tax; illustrative). *Slide* the fixed cost and the saving to make your own; the read-out gives the break-even point and the net after 10 and after 1000 items.
 :::
 
 | shared thing | fixed cost | saving per item | break-even | per item, over a day of 48 readings |
 |---|---|---|---|---|
 | ferry season ticket | 300 crowns | 12 crowns | 25 trips | — |
-| channel means (II.13) | 45 bits | 24 bits | 2 readings | 0.9 bits |
+| furrow means (II.13) | 45 bits | 24 bits | 2 readings | 0.9 bits |
 | regime codebook (II.17) | 96 bits | 2.92 bits | 33 readings | 2.0 bits |
 
 Two things are easy to forget.
@@ -80,13 +80,13 @@ Every helper on this site — a trained dictionary, a table of means, a rotation
 
 ::: takeaway
 - Plot fixed cost per item (falling as $1/n$) against saving per item (flat): break-even is where they cross.
-- A small saving per item needs many items: the regime codebook needs 33 readings, the channel means 2.
+- A small saving per item needs many items: the regime codebook needs 33 readings, the furrow means 2.
 - Each refit is a new fixed cost to earn back.
 :::
 
 ## A preview: the 8w/b rule {#preview}
 
-Later Parts measure dictionaries not in bits but in *items' worth*: how many readings' worth of numbers the dictionary holds. Write $\vw$ for that weight and $\vb$ for the number of items that share it. Part IV gives these two letters their permanent jobs ([[#idea-dictionary-delta-block]]); here they keep their toy meaning.
+Later Parts measure dictionaries not in bits but in *items' worth*: how many readings' worth of numbers the dictionary holds. Write $\vw$ for that weight and $\vb$ for the number of items that share it. Part IV names the items (it calls them cherries, [[#scenario-cherry]]), names a group of $\vb$ of them ([[#scenario-stretch]]) and gives the two letters their permanent jobs ([[#scenario-scope]]); here they keep their toy meaning.
 
 A dictionary of weight $\vw$, shared by $\vb$ items, costs $\vw/\vb$ items' worth per item. If every number is stored in 8 bits (II.19), an item's worth is 8 bits per number, so:
 
@@ -96,10 +96,10 @@ $$ {#eq-sv-8wb}
 
 | dictionary | weight $\vw$ (readings' worth) | shared by a day, $\vb = 48$ | shared by an hour, $\vb = 2$ |
 |---|---|---|---|
-| per-channel means and spreads | 2 | 0.33 bit per number | 8 bits per number |
+| per-furrow means and spreads | 2 | 0.33 bit per number | 8 bits per number |
 | regime codebook, 3 centroids | 3 | 0.5 bit per number | 12 bits per number |
 
-A light dictionary is affordable at almost any sharing; a heavy one only when shared widely. Part VI turns this one line into the rule that limits how small a dictionary's group of items can be ([[#homework-amortization-rule]]). And it adds the tension this toy leaves out: a dictionary fitted to fewer items fits each of them better, so narrowing the group raises the saving while raising the cost ([[#homework-scope]]).
+A light dictionary is affordable at almost any sharing; a heavy one only when shared widely. Part IV turns this one line into the rule that limits how small a dictionary's group of items can be, and adds the tension this toy leaves out: a dictionary fitted to fewer items fits each of them better, so narrowing the group raises the saving while raising the cost ([[#scenario-scope]]).
 
 ::: takeaway
 - In items' worth: a dictionary of weight $\vw$ shared by $\vb$ items costs $\vw/\vb$ per item, or $8\vw/\vb$ bits per 8-bit number.

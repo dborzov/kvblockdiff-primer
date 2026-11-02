@@ -9,19 +9,19 @@ cards:
     wrong: ['$\log_2 \vlambda_1$, from the largest eigenvalue', '$\tfrac12 \log_2 \vd$', '$\tfrac12 \log_2 (\vlambda_1 / \vlambda_{\vd})$']
     why: 'Each coordinate costs about ½ log₂ of its variance. Before the rotation all variances are 1 (their average); after it they are the λ’s. The difference, averaged, is ½ log₂ AM/GM.'
     sec: gain
-  - q: 'Which spectrum gives the larger coding gain on 64 standardized channels?'
+  - q: 'Which spectrum gives the larger coding gain on vectors of 64 standardized elements?'
     a: 8 directions at variance 50 and 56 at 0.1 — about 2.4 bits per element
     wrong: ["8 directions at variance 10 and 56 at 1 — about 2.4 bits per element", "64 directions all at variance 1 — about 1 bit per element", "Both give the same gain, since both have 8 strong directions"]
     why: 'The geometric mean is dragged down by the small eigenvalues. 10 vs 1 gives only 0.34 bit; 50 vs 0.1 gives 2.43 bits.'
     sec: spectra
   - q: 'What does "low rank" mean for a cloud of vectors?'
     a: Its spread lives mostly in a few directions — a few large eigenvalues, the rest small
-    wrong: ["It has few vectors", "Its channels have small means", "It has been rounded to few bits"]
+    wrong: ["It has few vectors", "Its furrows have small means", "It has been rounded to few bits"]
     why: The sharper the drop from the large eigenvalues to the small ones, the more a KLT saves.
     sec: spectra
   - q: Why can a KLT computed in floating point not simply be rounded to make it lossless?
     a: Rotated whole numbers are generally not whole numbers; rounding them cannot always be undone exactly
-    wrong: ["Because a rotation changes the total spread", "Because floating point cannot store negative numbers", "Because the KLT is only defined for two channels"]
+    wrong: ["Because a rotation changes the total spread", "Because floating point cannot store negative numbers", "Because the KLT is only defined for two elements"]
     why: Lifting fixes this by splitting the rotation into steps that each change one number by a rounded function of the others — undone by subtracting the same rounded amount.
     sec: lifting
   - q: In the integer average-and-difference transform, how is the original foot reading recovered from s and d?
@@ -31,13 +31,13 @@ cards:
     sec: lifting
 ---
 
-On the last page, turning the thermometer axes saved 2.95 bits per reading. Turning all five Gull Rock channels at once gave a table of eigenvalues: 2.65, 1.63, 0.37, 0.35 and 0.008. How many bits is *that* worth? There is a one-line answer, and it explains when rotations are a big deal and when they are not.
+On the last page, turning the thermometer axes saved 2.95 bits per reading. Turning all five Gull Rock furrows at once gave a table of eigenvalues: 2.65, 1.63, 0.37, 0.35 and 0.008. How many bits is *that* worth? There is a one-line answer, and it explains when rotations are a big deal and when they are not.
 
 ## The coding gain {#gain}
 
 Follow the bits through a rotation, one step at a time.
 
-1. **[[standardize|Standardize]] every channel** (II.13). Each channel now has variance 1.
+1. **[[standardize|Standardize]] every furrow** (II.13). Each furrow now has variance 1.
 2. **Cost before rotating.** By the Gaussian rule ([[#school-residual-shapes]]), a number costs about $\tfrac12\log_2$ of its variance plus a constant. All variances are 1, so all cost the same.
 3. **Rotate to the KLT axes** (II.15). The variances become the eigenvalues $\vlambda_1, \dots, \vlambda_{\vd}$. A rotation keeps the total spread, so the eigenvalues still add up to $\vd$: their ordinary average (the arithmetic mean, AM) is still 1.
 4. **Cost after rotating.** Each axis costs $\tfrac12\log_2 \vlambda_i$ plus the same constant. On average that is $\tfrac12\log_2$ of the *geometric* mean of the eigenvalues (GM: multiply all $\vd$ of them, take the $\vd$-th root).
@@ -51,7 +51,7 @@ It is zero when all eigenvalues are equal and grows when a few dominate.
 :::
 
 ::: define transform-coding-gain
-- **What it is:** the bits per element saved by rotating data to its KLT axes and coding each coordinate on its own, compared with coding the original channels on their own.
+- **What it is:** the bits per element saved by rotating data to its KLT axes and coding each coordinate on its own, compared with coding the original furrows on their own.
 - **Example:** the two thermometers, standardized, have eigenvalues 1.9915 and 0.0085. AM = 1, GM = $\sqrt{1.9915 \times 0.0085} = 0.130$, gain $= \tfrac12 \log_2 (1/0.130) = 1.47$ bits per element — the 2.95 bits per reading of II.15.
 - **Fine print:** exact for bell-shaped ([[gaussian]]) data, a guide otherwise. It counts what the rotation saves, not the cost of telling the receiver which rotation was used.
 :::
@@ -61,11 +61,11 @@ It is zero when all eigenvalues are equal and grows when a few dominate.
 - **Why the geometric mean:** bits add up logarithms, and adding logarithms is multiplying. A single tiny eigenvalue drags the product, and so the GM, far down.
 :::
 
-Here is the same arithmetic for all five Gull Rock channels:
+Here is the same arithmetic for all five Gull Rock furrows:
 
-```python the transform coding gain of Gull Rock's five channels
+```python the transform coding gain of Gull Rock's five furrows
 import numpy as np
-lam = np.array([2.64553, 1.62947, 0.37158, 0.34498, 0.00844])   # eigenvalues, standardized channels
+lam = np.array([2.64553, 1.62947, 0.37158, 0.34498, 0.00844])   # eigenvalues, standardized furrows
 am, gm = lam.mean(), np.exp(np.log(lam).mean())                  # arithmetic and geometric mean
 print(round(am, 3), round(gm, 3), round(0.5 * np.log2(am / gm), 2))   # 1.0 0.342 0.77
 ```
@@ -75,7 +75,7 @@ print(round(am, 3), round(gm, 3), round(0.5 * np.log2(am / gm), 2))   # 1.0 0.34
 ::: takeaway
 - Transform coding gain $= \tfrac12 \log_2(\mathrm{AM}/\mathrm{GM})$ of the eigenvalues, per element.
 - On standardized data AM is 1, so the gain is decided by the geometric mean — by how small the small eigenvalues are.
-- Gull Rock: 1.47 bits per element for the two thermometers, 0.77 for all five channels.
+- Gull Rock: 1.47 bits per element for the two thermometers, 0.77 for all five furrows.
 :::
 
 ## Spiky and flat spectra {#spectra}
@@ -83,7 +83,7 @@ print(round(am, 3), round(gm, 3), round(0.5 * np.log2(am / gm), 2))   # 1.0 0.34
 The list of eigenvalues, sorted from largest to smallest, is called the **spectrum** of the data. Its shape decides everything.
 
 ::: figure fig-sv-spectrum svSpectrum
-**Eigenvalue spectra and the coding gain they allow.** Each bar is one KLT axis; its height is the eigenvalue $\vlambda$ (the variance along that axis) on a logarithmic scale, after rescaling so that the eigenvalues average 1, as standardized data would. The blue dashed line is their arithmetic mean (AM), the red dashed line their geometric mean (GM); the tiles give both, the gain $\tfrac12\log_2(\mathrm{AM}/\mathrm{GM})$ per element, and the total per vector. *Choose* a spectrum with the buttons: the Gull Rock data of the last two pages, a flat one, and the two 64-channel examples of the first draft. *Your own* builds a 64-channel spectrum from the two sliders: how many directions are strong, and how much stronger they are than the quiet ones.
+**Eigenvalue spectra and the coding gain they allow.** Each bar is one KLT axis; its height is the eigenvalue $\vlambda$ (the variance along that axis) on a logarithmic scale, after rescaling so that the eigenvalues average 1, as standardized data would. The blue dashed line is their arithmetic mean (AM), the red dashed line their geometric mean (GM); the tiles give both, the gain $\tfrac12\log_2(\mathrm{AM}/\mathrm{GM})$ per element, and the total per vector. *Choose* a spectrum with the buttons: the Gull Rock data of the last two pages, a flat one, and the two 64-element examples of the first draft. *Your own* builds a 64-element spectrum from the two sliders: how many directions are strong, and how much stronger they are than the quiet ones.
 :::
 
 ::: try
@@ -96,14 +96,14 @@ The list of eigenvalues, sorted from largest to smallest, is called the **spectr
 ::: define low-rank
 - **What it is:** data whose spread lives mostly in a few directions — a few large eigenvalues, the rest small. ("Rank" counts the directions that matter.)
 - **What matters for coding:** not *how few* the strong directions are but *how quiet* the rest are. "Low-rank-ish" data (example 2) gains little; sharply low-rank data (example 3) gains a lot.
-- **Easy to confuse with:** having few vectors, or few channels.
+- **Easy to confuse with:** having few vectors, or few elements.
 :::
 
 ::: note warning A small correction to the first draft
 The first draft of this proposal quoted the second example as "≈ 2.3 bits". The arithmetic gives 2.43 bits ($\mathrm{AM} = 6.34$, $\mathrm{GM} = 0.217$). The conclusion stands: only sharply low-rank data pays.
 :::
 
-The lesson has a sceptical edge. A plot of eigenvalues that "falls off nicely" proves little. What matters is how far the *small* eigenvalues fall, and a single noisy channel can keep them from falling far. The bits live in the quiet directions.
+The lesson has a sceptical edge. A plot of eigenvalues that "falls off nicely" proves little. What matters is how far the *small* eigenvalues fall, and a single noisy furrow can keep them from falling far. The bits live in the quiet directions.
 
 ::: takeaway
 - A flat spectrum gives no gain; a spiky one gives a lot.
@@ -140,7 +140,7 @@ The pair $(s, d)$ is "roughly the average, exactly the difference", and it takes
 - **The price:** each rounding adds a little noise to the transformed values, so the integer version saves slightly less than the ideal gain.
 :::
 
-Whether implementing a lifted KLT is worth the effort is a question the bound answers first: compute $\tfrac12 \log_2(\mathrm{AM}/\mathrm{GM})$ from the spectrum, and build only if it is big. Part VII returns to this ([[#missed-lifting]]).
+Whether implementing a lifted KLT is worth the effort is a question the bound answers first: compute $\tfrac12 \log_2(\mathrm{AM}/\mathrm{GM})$ from the spectrum, and build only if it is big. Part V returns to this ([[#toolbox-lifting]]).
 
 ::: takeaway
 - Rounding a rotated vector breaks losslessness; lifting repairs it by splitting the rotation into exactly reversible integer steps.

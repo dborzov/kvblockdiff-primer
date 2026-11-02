@@ -16,7 +16,7 @@ cards:
     sec: rate-distortion
   - q: On which kind of data can a VQ codebook beat a rotation (KLT)?
     a: Clustered data, where the vectors fall into separate lumps
-    wrong: ["Bell-shaped (Gaussian) data with strong correlation", "Data whose channels are all independent", "Any data, given a large enough codebook"]
+    wrong: ["Bell-shaped (Gaussian) data with strong correlation", "Data whose elements are all independent", "Any data, given a large enough codebook"]
     why: 'A rotation only sees straight-line structure. On the weather regimes VQ nets 1.46 bits per element; the KLT gets 0.05.'
     sec: two-ways
   - q: 'Product quantization splits a 64-element vector into $\vnsub = 8$ pieces with 256 centroids each. What is the index tax?'
@@ -41,7 +41,7 @@ So a codebook can do a rotation's job. Can it do it *better*? This page says whe
 :::: col KLT — the Compass
 - **Keeps:** one rotation (a $\vd \times \vd$ table), sent once.
 - **Per vector:** nothing extra. Every vector is rotated the same way.
-- **Sees:** straight-line structure — correlation between channels.
+- **Sees:** straight-line structure — correlation between furrows.
 - **Blind to:** clusters, curves, anything a covariance matrix does not record.
 ::::
 :::: col VQ — the Hive
@@ -55,7 +55,7 @@ So a codebook can do a rotation's job. Can it do it *better*? This page says whe
 The figure runs the contest on both clouds of this Part, for codebooks from 2 to 64 centroids.
 
 ::: figure fig-sv-vq-vs-klt svVqVsKlt
-**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both channels standardized).** For each codebook size $\vC$ (k-means, the best of five starts by total squared distance): teal, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each channel; red, the index tax $\log_2 \vC / 2$; green (or dark red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings) and the clustered weather regimes (300 readings). *Hover* a bar for its value.
+**Lossless VQ against the KLT on two clouds of Gull Rock readings ($\vd = 2$, both furrows standardized).** For each codebook size $\vC$ (k-means, the best of five starts by total squared distance): teal, the bits per element the residual saves, estimated with the Gaussian rule of II.11 from the residual variance of each furrow; red, the index tax $\log_2 \vC / 2$; green (or dark red when negative), the net. The purple dashed line is the KLT's transform coding gain, which pays no tax. Neither method is charged for sending its codebook or rotation once. *Switch* between the bell-shaped thermometer cloud (480 readings) and the clustered weather regimes (300 readings). *Hover* a bar for its value.
 :::
 
 What the bars say:
@@ -93,10 +93,10 @@ On Gaussian data the gain beyond what the rotation already gets is at most the t
 The index is computed from the reading, so it contains nothing the reading did not. Sending the index and then the residual therefore costs at least as many bits as the reading's own [[entropy]], $\vH(\vX)$. For bell-shaped data, a rotation followed by coding each axis on its own already gets down to $\vH(\vX)$. A codebook can at best tie. On clustered data a rotation stays well above $\vH(\vX)$, and that is the room a codebook can win.
 :::
 
-The first draft of this proposal checked the same thing by [[monte-carlo]] in a harder setting: 64 elements per vector, one block of 16,384 vectors, k-means codebooks charged for both the index and the codebook itself. On correlated Gaussian data, VQ netted +0.17 to +0.25 bit per element against +0.50 for the rotation. On data with 32 real clusters, VQ netted +1.5 bits against +0.68. The same verdict as our two-dimensional toy, in more dimensions.
+The first draft of this proposal checked the same thing by [[monte-carlo]] in a harder setting: 64 elements per vector, one set of 16,384 vectors, k-means codebooks charged for both the index and the codebook itself. On correlated Gaussian data, VQ netted +0.17 to +0.25 bit per element against +0.50 for the rotation. On data with 32 real clusters, VQ netted +1.5 bits against +0.68. The same verdict as our two-dimensional toy, in more dimensions.
 
 ::: note warning What this does *not* say
-It does not say codebooks are useless. It says they earn their keep only where the data is lumpy. Whether a particular kind of data is lumpy is a question for measurement, not for instinct. Part VII returns to the first draft's instinct "VQ, then entropy-code the error" ([[#missed-vq-then-code]]).
+It does not say codebooks are useless. It says they earn their keep only where the data is lumpy. Whether a particular kind of data is lumpy is a question for measurement, not for instinct. Part V returns to the first draft's instinct "VQ, then entropy-code the error" ([[#toolbox-vq]]).
 :::
 
 ::: takeaway

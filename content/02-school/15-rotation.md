@@ -16,7 +16,7 @@ cards:
     sec: turning
   - q: What is an eigenvalue of a covariance matrix?
     a: The variance of the data along one of its natural axes (an eigenvector)
-    wrong: ["The largest entry of the matrix", "The correlation between two channels", "The mean of one channel"]
+    wrong: ["The largest number in the matrix", "The correlation between two furrows", "The mean of one furrow"]
     why: 'Turned to the eigenvectors, the coordinates are uncorrelated, and the variance along each one is its eigenvalue $\vlambda$. For the thermometers: 5.91 and 0.025 °C².'
     sec: own-axes
   - q: How do the KLT and PCA differ?
@@ -44,7 +44,7 @@ So measure it *along the cigar* and *across the cigar*. Along: roughly the avera
 - **In two dimensions,** turning by an angle $\theta$ replaces $(\vx_0, \vx_1)$ by
   $\vx'_0 = \cos\theta\,\vx_0 + \sin\theta\,\vx_1$ and $\vx'_1 = -\sin\theta\,\vx_0 + \cos\theta\,\vx_1$.
 - **At 45°** this is $\vx'_0 = (\vx_0 + \vx_1)/\sqrt2$ and $\vx'_1 = (\vx_1 - \vx_0)/\sqrt2$: the average and the difference, each scaled by $\sqrt2$ so that lengths stay the same.
-- **Easy to confuse with:** any mixing of channels. A rotation keeps lengths and right angles; stretching or squashing is something else.
+- **Easy to confuse with:** any mixing of elements. A rotation keeps lengths and right angles; stretching or squashing is something else.
 :::
 
 Turn the axes yourself.
@@ -95,11 +95,11 @@ An eigenvector $v$ of $\vSigma$ satisfies $\vSigma v = \vlambda v$: multiplying 
 ::: define klt
 - **What it is:** the rotation that turns the axes onto the eigenvectors of the covariance matrix. After it, the coordinates are uncorrelated and the spread is packed into as few axes as possible.
 - **Example:** for the two thermometers, the KLT is the 44.8° turn: "average" and "difference".
-- **In $\vd$ dimensions:** the same recipe with the $\vd \times \vd$ matrix $\vSigma$. It works for any number of channels.
+- **In $\vd$ dimensions:** the same recipe with the $\vd \times \vd$ matrix $\vSigma$. It works for any number of elements.
 - **Easy to confuse with:** [[pca]] (same mathematics, below), and with dropping data. The KLT drops nothing.
 :::
 
-What does the KLT find in all five Gull Rock channels? We standardize the channels first (II.13), so that hectopascals and knots count the same, and turn to the eigenvectors of the correlation matrix. Each new axis is a recipe, a weighted mix of the old channels:
+What does the KLT find in all five Gull Rock furrows? We standardize the furrows first (II.13), so that hectopascals and knots count the same, and turn to the eigenvectors of the correlation matrix. Each new axis is a recipe, a weighted mix of the old elements:
 
 | axis | $\vlambda$ | recipe (foot, top, humidity, pressure, wind) | what it measures |
 |---|---|---|---|
@@ -109,7 +109,7 @@ What does the KLT find in all five Gull Rock channels? We standardize the channe
 | 4 | 0.35 | 0.36, 0.37, 0.81, 0.19, 0.21 | humidity that temperature does not explain |
 | 5 | 0.008 | 0.71, −0.71, 0.00, 0.01, 0.00 | foot thermometer minus top thermometer |
 
-The five eigenvalues add up to 5, the total spread of five standardized channels. The first two axes are the two blocks of II.14. The middle two are leftovers without a neat story. The last axis is the thermometers' disagreement, and its eigenvalue is almost zero. That one quiet direction will do most of the saving on the next page.
+The five eigenvalues add up to 5, the total spread of five standardized furrows. The first two axes are the two groups of II.14. The middle two are leftovers without a neat story. The last axis is the thermometers' disagreement, and its eigenvalue is almost zero. That one quiet direction will do most of the saving on the next page.
 
 ::::: compare The same rotation, two traditions
 :::: col KLT (coding)
