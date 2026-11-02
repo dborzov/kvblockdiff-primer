@@ -1,5 +1,5 @@
 /* =====================================================================
-   figures/plan.js — Part IX, "The plan". See docs/figures.md.
+   figures/plan.js — Part IX, "The plan". See docs/site/figures.md.
    Builders: planDecodeAlone (IX.1), planBill (IX.2), planControlsRun (IX.3),
    planGpuFit (IX.4), planE4m3 + planHumps (IX.5), planDistance (IX.6),
    planLadderGrid (IX.7), planTimeline (IX.8), planDecision (IX.9),

@@ -1,6 +1,6 @@
 /* Part V (papers-b) — figures for the pages on KIVI, KVQuant, KVTC, Lexico, CacheGen and KVComp.
    Every builder is prefixed "pb". Toy data are fixed tables or seeded generators, so the numbers
-   quoted in the prose are exactly what the figures show. Uses the plot kit (docs/figures.md). */
+   quoted in the prose are exactly what the figures show. Uses the plot kit (docs/site/figures.md). */
 window.FIG = window.FIG || {};
 
 (function () {

@@ -1,5 +1,5 @@
 /* Part III — Where things stand. Figures for the pages on decoding, attention, the KV cache,
-   sparse attention, HiSparse and the reference numbers. See docs/figures.md.
+   sparse attention, HiSparse and the reference numbers. See docs/site/figures.md.
    All numbers are either toy numbers (marked illustrative in the captions) or the reference
    setting of III.10, which is frozen in REF below. */
 window.FIG = window.FIG || {};

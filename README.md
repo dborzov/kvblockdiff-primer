@@ -19,7 +19,7 @@ interesting range of dictionary sizes, and connects bytes on the link to dollars
 
 Every estimate on the site is quoted for a frozen reference setting; a pill in the top bar switches between two of them
 (the Pin, a production deployment; the Bench, the campaigns' own rig), and hover reminders and `[[@key]]` numbers follow
-the choice (`data/settings.yaml`, `docs/AUTHORING.md` §3.4).
+the choice (`data/settings.yaml`, `docs/project/rigs.md`).
 
 ## How the site is built
 
@@ -33,7 +33,7 @@ analysis/     Python scripts that reproduce the numbers behind figures
 theme/        presentation — page layouts (Nunjucks), CSS, the client-side engine
 lib/          the Markdown dialect (math, [[terms]], ::: blocks) and the post-build linker
 scripts/      headless checker, preview server, data validator
-docs/         AUTHORING.md (how to write pages), figures.md, flashcards.md, PAGEPLAN.md
+docs/         the documentation tree: catalog in docs/README.md (project context, style, site mechanics, workflows)
 experiment_repos/  how to navigate the experiments repo behind Part XI; verified notes; the Part XI spec
 ```
 
@@ -47,7 +47,7 @@ The generator is [Eleventy](https://www.11ty.dev/) with a small Markdown dialect
 - `::: takeaway`, `::: note`, `::: aside`, `::: define`, `::: figure`, `::: theme`, `::: compare`, … — components.
 - Front-matter `cards:` — flashcards, collected in the browser and practised on `/practice/`.
 
-See [`docs/AUTHORING.md`](docs/AUTHORING.md) for the full guide.
+See [`docs/README.md`](docs/README.md) for the documentation catalog, and [`AGENTS.md`](AGENTS.md) if you are an AI agent (or a person) about to work on the site.
 
 ## Build and preview
 

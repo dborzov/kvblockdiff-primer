@@ -91,7 +91,7 @@ measured delta ratios: tree coder 0.636 (0.525 + 0.112), light coder 0.686 (0.02
 
 ## 2. The pages (content/12-range/)
 
-House style in full (docs/AUTHORING.md). 600–1100 words of prose each; takeaways after every section; cards per section;
+House style in full (docs/style/house-style.md). 600–1100 words of prose each; takeaways after every section; cards per section;
 figures explain themselves; `::: aside source Receipts` where numbers appear; our words (the Part XI translation table).
 
 | file | id | title | group | sections | figures | defines |
@@ -231,7 +231,7 @@ Rules: colours via CSS variables; `series(i)` by entity; legends; readouts; mark
 Files: `data/settings.yaml` (new), `lib/data.js` (load + validate), `lib/markdown.js` (the `[[@key]]` inline), `eleventy.config.js`
 (expose settings in `siteDataJs` as `KV.settings`, `KV.settingDefault`), `theme/layouts/base.njk` (the selector in the top bar, next to the
 theme button), `theme/assets/js/core.js` (state, event, live updates, the extra line in term and symbol reminders), `theme/assets/css/site.css`
-(selector and `.refv` styles, tokens only), `docs/AUTHORING.md` and `docs/figures.md` (how to use it), `scripts/validate-data.mjs` (validate settings).
+(selector and `.refv` styles, tokens only), `docs/style/house-style.md` and `docs/site/figures.md` (how to use it), `scripts/validate-data.mjs` (validate settings).
 
 `data/settings.yaml`:
 ```yaml
@@ -275,4 +275,4 @@ Behaviour:
 - Tests: `STRICT=1 npm run build` clean; `node scripts/validate-data.mjs` clean; `NODE_PATH=/attic/olde-llm-maths/tests/node_modules node scripts/check.mjs _site --pages landscape/reference-setting,landscape/kv-cache,homework/economics,reference/glossary,reference/notation,measured/the-data --shots --out .cache/shots-settings` clean at both widths and `--dark`; a tiny Playwright script of your own that switches the setting and asserts a `.refv` text changed and a popover shows the "In the Bench" line.
 
 ## 6. Site edits (orchestrator)
-- parts.yaml, `--part-XII`, "Twelve parts" (done). `content/index.md`: mention the switch in "How to read this site". `content/03-landscape/10-reference-setting.md`: a `::: note connection` to XII.7 and the switch. `content/10-reference/01-summary.md`: one bullet under "What was measured" pointing to XII.4/5. `docs/PAGEPLAN.md`: XII. README: the switch.
+- parts.yaml, `--part-XII`, "Twelve parts" (done). `content/index.md`: mention the switch in "How to read this site". `content/03-landscape/10-reference-setting.md`: a `::: note connection` to XII.7 and the switch. `content/10-reference/01-summary.md`: one bullet under "What was measured" pointing to XII.4/5. `docs/site/page-plan.md`: XII. README: the switch.

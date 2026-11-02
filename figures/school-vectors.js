@@ -1,6 +1,6 @@
 /* =====================================================================
    figures/school-vectors.js — Part II, pages II.13–II.25 (vectors, number
-   formats, machines). See docs/figures.md for the toolkit.
+   formats, machines). See docs/site/figures.md for the toolkit.
 
    All toy data comes from seeded generators below, so every number quoted
    in the prose is reproducible: `node analysis/school-vectors-numbers.mjs`

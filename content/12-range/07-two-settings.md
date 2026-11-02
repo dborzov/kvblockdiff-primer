@@ -122,7 +122,7 @@ For writers, one rule in two halves. A setting-dependent number in new prose goe
 - Model geometry, sequences, tool-output shares and the FP8 recipe: [[#measured-the-data]] and `targets/02-qwen3.5-2b-agent-long30/README.md` (Part XI's spec §1.1); block sizes 512 to 32,768: [[#measured-reading-one-entry]]; measured ratios 0.778 (r1-t0005), 0.636 (env-t0096), 0.686 (r25-t0003): Part XI's spec §1.3, §1.5, §1.7.
 - The machine: one RTX 5080 with 16 GB of GDDR7 in a PCIe 5.0 ×16 slot, Ryzen 7 9700X host. 50 GB/s and about 10 GB for KV are assumptions of this page: the link is the Pin's practical figure for the same slot generation; the memory is 16 GB less about 4 GB of BF16 weights for a 2B-parameter model, less headroom.
 - Derived: 6 × 512 = 3,072 B per token; 225,000 × 3,072 ≈ 691 MB; × 2 for keys ≈ 1.38 GB; 10 GB ÷ 1.38 GB ≈ 7; 4,096 × 512 B ≈ 2.1 MB; × 0.525 ≈ 1.1 MB.
-- The switch's keys and behaviour: `data/settings.yaml` and docs/AUTHORING.md.
+- The switch's keys and behaviour: `data/settings.yaml` and `docs/project/rigs.md`.
 :::
 
 ::: takeaway

@@ -3,7 +3,7 @@
    A multiple-choice quiz over the reader's deck with Leitner boxes,
    plus a catalogue of every card on the site. Deck state lives in
    window.KVCards (cards.js, which must load first).
-   Data format and storage schema: docs/flashcards.md
+   Data format and storage schema: docs/site/flashcards.md
    ===================================================================== */
 (() => {
   "use strict";

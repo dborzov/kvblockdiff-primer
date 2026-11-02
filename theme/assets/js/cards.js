@@ -5,7 +5,7 @@
    - #deck: the "Flashcards from this page" panel (+ "write your own").
    - .takeaway[data-sec]: an "add this section's cards" button.
    - #deck-count: the deck counter in the top bar.
-   Data format and storage schema: docs/flashcards.md
+   Data format and storage schema: docs/site/flashcards.md
    ===================================================================== */
 (() => {
   "use strict";

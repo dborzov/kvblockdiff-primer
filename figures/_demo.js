@@ -1,5 +1,5 @@
 /* =====================================================================
-   figures/_demo.js — a living example of the figure kit (docs/figures.md).
+   figures/_demo.js — a living example of the figure kit (docs/site/figures.md).
    Registers FIG.demoLine, FIG.demoDrag and FIG.demoBars. The numbers are
    illustrative, not measurements. Copy freely when writing a Part's figures.
    ===================================================================== */

@@ -6,7 +6,7 @@
 
    Classic script (no modules). Every public function is a global and also
    lives on window.PK. Load after KaTeX, before figs-loader.js and the
-   per-Part figure files. API reference: docs/figures.md.
+   per-Part figure files. API reference: docs/site/figures.md.
 
    Colours: SVG presentation attributes cannot take var(--x), so every
    colour goes through style="…" or a CSS class (see figures.css).

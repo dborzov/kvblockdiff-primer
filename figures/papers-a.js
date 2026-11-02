@@ -1,4 +1,4 @@
-/* Part V (Papers), pages V.1–V.6 and V.13 — figures of writer papers-a. See docs/figures.md.
+/* Part V (Papers), pages V.1–V.6 and V.13 — figures of writer papers-a. See docs/site/figures.md.
    Builders: paHisparsePoints (V.2), paSelectors (V.3), paEscapes (V.4), paFloatRatios (V.5),
    paVideoLayout (V.6), paSlepianWolf (V.13). All data are either numbers quoted from papers
    (marked as such in tooltips) or exact/seeded toy computations; nothing is sampled at random. */
