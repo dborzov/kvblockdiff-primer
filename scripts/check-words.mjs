@@ -12,7 +12,12 @@ import path from "node:path";
 import * as yaml from "js-yaml";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
-const LIST = path.join(ROOT, "data/banned-words.yaml");
+// `--rules <file>` swaps the list (e.g. data/writing-tropes.yaml, the advisory prose checker); `--advisory` never exits 1.
+const argv = process.argv.slice(2);
+const rulesArg = argv.indexOf("--rules");
+const LIST = path.join(ROOT, rulesArg >= 0 ? argv[rulesArg + 1] : "data/banned-words.yaml");
+const ADVISORY = argv.includes("--advisory");
+const ARGS = argv.filter((a, i) => a !== "--advisory" && a !== "--rules" && !(rulesArg >= 0 && i === rulesArg + 1));
 
 function loadRules() {
   let list;
@@ -113,7 +118,7 @@ function scannable(file, src) {
 
 function main() {
   const rules = loadRules();
-  const args = process.argv.slice(2);
+  const args = ARGS;
   const roots = (args.length ? args : ["content", "data"]).map(p => path.resolve(p));
   for (const r of roots) if (!fs.existsSync(r)) { console.error(`check-words: no such path ${r}`); process.exit(2); }
   const files = roots.flatMap(r => walk(r));
@@ -131,8 +136,8 @@ function main() {
       }
     }
   }
-  console.log(hits ? `${hits} hit(s) in ${filesHit.size} file(s) of ${files.length} scanned` : `no retired words in ${files.length} file(s)`);
-  process.exit(hits ? 1 : 0);
+  console.log(hits ? `${hits} hit(s) in ${filesHit.size} file(s) of ${files.length} scanned` : `no hits in ${files.length} file(s)`);
+  process.exit(hits && !ADVISORY ? 1 : 0);
 }
 
 try { main(); } catch (e) { console.error(`check-words: ${e.message}`); process.exit(2); }

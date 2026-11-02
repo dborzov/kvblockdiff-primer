@@ -10,6 +10,7 @@
     "serve": "eleventy --serve",
     "check": "node scripts/check.mjs _site",
     "check:words": "node scripts/check-words.mjs",
+    "check:tropes": "node scripts/check-words.mjs --advisory --rules data/writing-tropes.yaml",
     "clean": "rm -rf _site"
   },
   "engines": {
