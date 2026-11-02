@@ -9,7 +9,9 @@ truth; these documents are about *working on it*.
 | you want to | read |
 |---|---|
 | understand what kvblockdiff is, in one screen | `project/overview.md` |
+| understand the human's intent and reasoning behind all of this, and apply it where the rules run out | `style/philosophy.md` |
 | use or coin a term; know which words are banned and why | `style/terminology.md` |
+| avoid the confusions this project is prone to (the five objects, the score, the leash, the axes) | `style/pitfalls.md` |
 | write or review prose | `style/voice.md`, then `site/dialect.md` |
 | quote a Python expression, a shape, an axis name | `project/notation.md` |
 | reason about the compression problem (contract, score, leash, scope) | `project/scenario.md` |
@@ -44,7 +46,9 @@ docs/
     numbers.md              the pinned numbers and where each comes from
     writer-brief.md         the brief for writing or rewriting a Part
   style/
+    philosophy.md           why the site is built this way: the human's reasoning, as instructions
     terminology.md          the vocabulary (the rule), banned words, translation tables
+    pitfalls.md             the specific confusions to watch for, each with the sentence that resolves it
     voice.md                house style and the done-checklist
   site/
     build.md                commands, partial builds, the checks and what they report

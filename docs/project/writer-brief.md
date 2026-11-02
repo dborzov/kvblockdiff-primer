@@ -3,7 +3,8 @@
 You are rewriting one Part of this site. Everything you need is in the repository; read in this order
 before writing a word:
 
-1. `docs/style/terminology.md`: the vocabulary and the banned words. Non-negotiable.
+1. `docs/style/philosophy.md` and `docs/style/pitfalls.md`: the reasoning behind the rules and the confusions to avoid.
+2. `docs/style/terminology.md`: the vocabulary and the banned words. Non-negotiable.
 2. `docs/style/voice.md`: how a page reads, and the done-checklist.
 3. `docs/project/notation.md`: the Python forms; quote these listings, never invent an axis order.
 4. `docs/project/scenario.md`: the problem every page must agree with.

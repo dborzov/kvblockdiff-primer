@@ -14,7 +14,11 @@ application (VI), the hypotheses (VII), the measurements of two autonomous resea
 critical paper readings (IX), the research plan (X) and a reference (XI). One-screen overview:
 `docs/project/overview.md`.
 
-## The three things every task depends on
+## The four things every task depends on
+
+0. **The reasoning comes first.** `docs/style/philosophy.md` is the human's intent behind every rule
+   below, written so that an agent can act in cases the rules do not cover; `docs/style/pitfalls.md`
+   lists the confusions this project is prone to. Read both before any task that touches wording.
 
 1. **The vocabulary is a rule, not a style.** `docs/style/terminology.md` defines every project word
    (orchard, furrow, pick, stretch, slice, cherry, cherry shape, punnet, dictionary, delta, leash,
