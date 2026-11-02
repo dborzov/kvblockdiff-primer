@@ -63,7 +63,7 @@ Now run it the other way. The season, one of four equally likely, has $\vH(\vY) 
 The figure draws this as two overlapping bars, and lets you swap the season for other kinds of side information.
 
 ::: figure fig-mi-bars siInfoBars
-**Two overlapping bars.** Top bar: the entropy of the sky report $\vH(\vX)$, 1.75 bits. Bottom bar: the entropy of what the receiver knows, $\vH(\vY)$. Their overlap (violet) is the mutual information $\vI(\vX;\vY)$; the rest of the top bar is what must still be sent, $\vH(\vX \mid \vY)$; the rest of the bottom bar is $\vH(\vY \mid \vX)$. All lengths are drawn to one scale in bits. Choose what the receiver knows: the season (Gull Rock's almanac), the previous report (with a **stickiness** slider: the chance that the sky simply carries on from half an hour before; otherwise the next report is drawn afresh from the sky distribution — an illustrative model, not measured data), nothing, or the report itself.
+**Two overlapping bars.** Top bar: the entropy of the sky report $\vH(\vX)$, 1.75 bits. Bottom bar: the entropy of what the receiver knows, $\vH(\vY)$. Their overlap (violet) is the mutual information $\vI(\vX;\vY)$; the rest of the top bar is what must still be sent, $\vH(\vX \mid \vY)$; the rest of the bottom bar is $\vH(\vY \mid \vX)$. All lengths are drawn to one scale in bits. Choose what the receiver knows: the season (Gull Rock's almanac), the previous report (with a **stickiness** slider: the chance that the sky simply carries on from half an hour before; otherwise the next report is drawn afresh from the sky distribution — an illustrative assumption, not measured data), nothing, or the report itself.
 :::
 
 ::: try
@@ -113,7 +113,7 @@ Watch the direction of the arrows, because it is easy to get backwards:
 :::
 ::::
 
-The first draft of this project mixed up exactly these two columns (the story is told in [[#missed-mutual-information-direction]]).
+The first draft of this project mixed up exactly these two columns (the story is told in [[#hypotheses-bits-are-the-unit]]).
 
 ::: takeaway
 - Redundancy, similarity and predictability are mutual information under other names, and are measured in bits.
@@ -127,7 +127,7 @@ The first draft of this project mixed up exactly these two columns (the story is
 
 1. **On average, not every time.** In winter the almanac makes the sky harder to guess (1.98 bits against 1.75). Only the average over seasons is guaranteed to fall.
 2. **Only if the receiver really has $\vY$.** A summer-coded report is gibberish to an office without the almanac.
-3. **Only for the true probabilities.** A coder working with wrong numbers can lose bits; [[#school-arithmetic]] prices that mistake.
+3. **Only for the true probabilities.** An entropy coder working with wrong numbers can lose bits; [[#school-arithmetic]] prices that mistake.
 4. **Delivering $\vY$ is not free.** The almanac had to be printed, shipped and kept.
 
 ::: theme every-tax

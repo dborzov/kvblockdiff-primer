@@ -6,7 +6,7 @@ vendor: [pako.min.js]
 cards:
   - q: The same 48 messages cost 124 bytes each compressed one by one, but 13 bytes each compressed as one log. What explains the difference?
     a: Only how the data is cut up and read — one by one, or as one stream
-    wrong: ["The log is compressed with a stronger algorithm", "The log throws away repeated values", "Single messages contain more information than the log"]
+    wrong: ["The log is compressed with a stronger compressor", "The log throws away repeated values", "Single messages contain more information than the log"]
     why: Same bytes, same compressor. One by one, each message has nothing earlier to copy from; in the log, each finds its twin 149 bytes back.
     sec: always-there
   - q: A 3,522-byte dictionary saves about 103 bytes per message. After how many messages has it paid for itself?
@@ -31,7 +31,7 @@ cards:
     sec: must-have
 ---
 
-On the last page a 147-byte message became a 22-byte [[delta]]. It is tempting to call that a clever trick and move on. Slow down instead: three things happened there, and each comes back, much bigger, in a language model's memory.
+On the last page a 147-byte message became a 22-byte [[delta]]. It is tempting to call that a clever trick and move on. Slow down instead: three things happened there, and each comes back, much bigger, in an LLM's memory.
 
 ## Lesson 1: the redundancy was always there {#always-there}
 
@@ -63,7 +63,7 @@ The data is the same in every row. So is the compressor. The only thing that cha
 So the low compression on page [[#tiny-files-notice-anything]] was never a property of the data. The redundancy was there all along. The *access pattern* — tiny, independent pieces — hid it from the compressor.
 
 ::: theme access-pattern
-Here the same bytes and the same compressor land a factor of nine apart, only because the messages are read one at a time instead of as a stream. Later, a language model's memory is fetched in exactly this way: small pieces, scattered, each needed on its own ([[#idea-data-layout]]).
+Here the same bytes and the same compressor land a factor of nine apart, only because the messages are read one at a time instead of as a stream. Later, an LLM's memory is fetched in exactly this way: small pieces, scattered, each needed on its own ([[#app-data-layout]]).
 :::
 
 ::: takeaway
@@ -99,7 +99,7 @@ Compressing alone costs 124.7 bytes per message. The dictionary breaks even when
 3. Switch to **sent compressed**: the 24-message dictionary shrinks to 390 bytes and pays off after 4 messages. The mainland still has to *keep* all 3,522 bytes, though. Compression cheapens the trip, not the storage.
 :::
 
-So "how big should a dictionary be?" has no answer until you know how many items will share it. That question comes back later as a rule with numbers in it ([[#homework-amortization-rule]]).
+So "how big should a dictionary be?" has no answer until you know how many items will share it. That question comes back later as a rule with numbers in it ([[#scenario-scope]]).
 
 ::: theme amortize
 Here the dictionary's 3,522 bytes are paid once and divided among every message that uses it. Below about 34 messages the dictionary is a loss; over a year it costs a fifth of a byte per message.
@@ -131,7 +131,7 @@ It is free (both ends already have it) and it works: messages 2 to 96, each comp
 The catch is the chain: every message depends on the one before. Lose one radio message and the next cannot be decoded. Want the 15:30 reading from three weeks ago? Decode three weeks of messages first. A shared dictionary keeps every message independent: each needs only $\vD$.
 :::
 
-In the language-model version of this story, the "receiver" is the GPU, and it can keep only a few dictionaries close at hand at a time. Making sure the right one is there when a delta arrives becomes a part of the design ([[#idea-blockdiff-step-by-step]]).
+In the LLM version of this story, the "receiver" is the GPU, and it can keep only a few dictionaries close at hand at a time. Making sure the right one is there when a delta arrives becomes a part of the design ([[#app-shelf-and-two-misses]]).
 
 ::: theme side-info
 Here the dictionary is what the receiver already knows. The delta is cheap only because of it — and worthless, or quietly wrong, without exactly the right one.

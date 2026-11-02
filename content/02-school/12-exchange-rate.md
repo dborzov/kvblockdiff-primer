@@ -31,7 +31,7 @@ cards:
     sec: harsh
 ---
 
-“My predictor is 90 % right.” It sounds like a triumph. In bits, if “90 % right” means it explains 90 % of the variance, it saves 1.66 bits per value. A predictor that explains *half* the variance — still a respectable model by most standards — saves half a bit.
+“My predictor is 90 % right.” It sounds like a triumph. In bits, if “90 % right” means it explains 90 % of the variance, it saves 1.66 bits per value. A predictor that explains *half* the variance — still a respectable predictor by most standards — saves half a bit.
 
 This page derives that exchange rate in three lines, and explains why it is so stingy.
 
@@ -119,7 +119,7 @@ The flip side is just as important. A predictor that gets the gist right — the
 The last few percent are usually not available at any price. At Gull Rock the sensor's noise — about one tenth of a degree, assumed in this toy — makes up roughly 0.2 % of the readings' variance, and no predictor can explain it. So $\vRsq$ cannot pass about 99.8 %, and no predictor can save much more than 4.5 bits on these readings. Lossless coding must pay for the noise in full.
 :::
 
-When the language model arrives, the same question will come back in a far more expensive setting: how much of the variance of its stored numbers could a [[dictionary]] explain? [[#idea-the-trap]] and [[#homework-exchange-rate]] put numbers on it. Keep this curve in mind; it is the reason those numbers turn out modest.
+When the LLM arrives, the same question will come back in a far more expensive setting: how much of the variance of its stored numbers could a [[dictionary]] explain? [[#hypotheses-the-trap]] and [[#toolbox-exchange-rate]] put numbers on it. Keep this curve in mind; it is the reason those numbers turn out modest.
 
 ::: note warning What the formula assumes
 It assumes the residual keeps the same shape as it narrows (bell-shaped before and after) and stays several integer steps wide. For fat-tailed residuals, or residuals squeezed below one step, it is only a guide — measure instead, as [[#school-residual-shapes]] does with Monte Carlo.

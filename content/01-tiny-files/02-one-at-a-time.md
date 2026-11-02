@@ -11,7 +11,7 @@ cards:
     sec: copy
   - q: Compressed alone, why does one Gull Rock message barely shrink?
     a: Inside one message there are only a few short repeats to copy from
-    wrong: ["DEFLATE is a weak algorithm", "JSON text cannot be compressed", "The readings are random numbers"]
+    wrong: ["DEFLATE is a weak compressor", "JSON text cannot be compressed", "The readings are random numbers"]
     why: Alone, only about a fifth of the message is covered by copies, all three to five bytes long. The long repeats are in the other messages, which the compressor never sees.
     sec: copy
   - q: How is the 15:00 message written when it follows the 14:30 message in the same file?
@@ -31,7 +31,7 @@ cards:
     sec: together
 ---
 
-Take the 15:00 message from the last page and read it slowly, stopping at every stretch you already read in the 14:30 message. You barely get a word in. `{"station":"gull-rock","time":"2026-10-28T1` — seen it. `5:0` — new. `0Z","temp_c":11.` — seen it. Almost the whole message is a repeat.
+Take the 15:00 message from the last page and read it slowly, stopping at every run of characters you already read in the 14:30 message. You barely get a word in. `{"station":"gull-rock","time":"2026-10-28T1` — seen it. `5:0` — new. `0Z","temp_c":11.` — seen it. Almost the whole message is a repeat.
 
 A compressor reads the same way. The trouble is what it is allowed to read.
 
@@ -47,7 +47,7 @@ The receiver undoes both stages from the front. When it meets "copy 21 bytes fro
 The first stage is where most of the saving happens, and it has one need: there must be an earlier copy. The figure shows what it finds. It runs a simple LZ parse on the station's log — one message, then two, then three, one per line.
 
 ::: figure fig-tiny-lz lzCopies
-**What "copy from earlier" finds in the Gull Rock log.** The text is the first one, two or three messages, one per line (↵ marks a line break). **Bold** characters have to be written out (literals); shaded stretches are copies of something earlier. Hover or tap a copy to see its instruction ("copy n bytes from k bytes back") and to light up the earlier text it copies (green-blue). *What gets written* shows the same text as the compressor emits it. The parse is a simple greedy one (at each position, the longest earlier match of at least 3 bytes), close to but not identical with DEFLATE's; the DEFLATE size in the readout is real, computed live with pako at level 9.
+**What "copy from earlier" finds in the Gull Rock log.** The text is the first one, two or three messages, one per line (↵ marks a line break). **Bold** characters have to be written out (literals); shaded runs are copies of something earlier. Hover or tap a copy to see its instruction ("copy n bytes from k bytes back") and to light up the earlier text it copies (green-blue). *What gets written* shows the same text as the compressor emits it. The parse is a simple greedy one (at each position, the longest earlier match of at least 3 bytes), close to but not identical with DEFLATE's; the DEFLATE size in the readout is real, computed live with pako at level 9.
 :::
 
 ::: try

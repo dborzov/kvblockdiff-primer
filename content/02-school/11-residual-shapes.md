@@ -36,7 +36,7 @@ cards:
     sec: halve
 ---
 
-On the previous page, two residual histograms told the whole story. Without prediction, the temperatures spread over several degrees and cost 6.53 bits per reading. With the previous reading as the guess, the residuals huddled within a few tenths and cost 3.63 bits. Same readings, same coder; only the *width* changed.
+On the previous page, two residual histograms told the whole story. Without prediction, the temperatures spread over several degrees and cost 6.53 bits per reading. With the previous reading as the guess, the residuals huddled within a few tenths and cost 3.63 bits. Same readings, same entropy coder; only the *width* changed.
 
 This page measures that width, meets the two shapes residuals usually take, and finds the exchange rate between width and bits.
 

@@ -1,12 +1,12 @@
 ---
 title: Why go back to school?
 nav: Why go back to school?
-lede: The rest of this site speaks a small language of bits, predictions, vectors, number formats and caches. This Part teaches that language from scratch, with a weather station instead of a language model.
+lede: The rest of this site speaks a small language of bits, predictions, vectors, number formats and caches. This Part teaches that language from scratch, with a weather station instead of an LLM.
 cards:
-  - q: Why does the "Back to school" Part use a weather station instead of a language model?
-    a: So each idea can be learned on a toy whose behaviour is easy to picture, before it is applied to KV caches
-    wrong: ["Because the project is about weather data", "Because language models do not use bits", "Because KV caches cannot be described with these ideas"]
-    why: Every concept is introduced on a small, concrete toy first; the KV cache only arrives in Part III, when the vocabulary is ready.
+  - q: Why does the "Back to school" Part use a weather station instead of an LLM?
+    a: So each idea can be learned on a toy whose behaviour is easy to picture, before it is applied to an LLM's memory
+    wrong: ["Because the project is about weather data", "Because LLMs do not use bits", "Because an LLM's memory cannot be described with these ideas"]
+    why: Every concept is introduced on a small, concrete toy first; the LLM and its orchard only arrive in Part III, when the vocabulary is ready.
     sec: plan
   - q: In the toy world, what plays the role of an expensive, slow link?
     a: The radio link from Gull Rock to the mainland, paid per byte
@@ -20,9 +20,9 @@ cards:
     sec: map
 ---
 
-The first draft of this proposal was written in a hurry, in the dialect of the papers it had just read. Words like "channel", "codebook", "escape stream", "order-0 entropy" and "KLT" appeared without warning, each meaning whatever its source paper meant by it. If you had read those papers, the draft made sense. If you had not, it was a wall.
+The first draft of this proposal was written in a hurry, in the dialect of the papers it had just read. Words like "codebook", "escape stream", "order-0 entropy" and "KLT" appeared without warning, each meaning whatever its source paper meant by it. If you had read those papers, the draft made sense. If you had not, it was a wall.
 
-This Part is the cure. It is a short course — about twenty small pages — on every idea the rest of the site needs. There are no language models in it. Instead there is a weather station, a radio link, a harbour office and a few stubborn numbers, because ideas are easier to learn on things you can picture.
+This Part is the cure. It is a short course — about twenty small pages — on every idea the rest of the site needs. There is no LLM in it. Instead there is a weather station, a radio link, a harbour office and a few stubborn numbers, because ideas are easier to learn on things you can picture.
 
 ## The plan {#plan}
 
@@ -66,7 +66,7 @@ These three places will carry every idea of the course.
 - The **radio link** makes us count bits, and asks what the receiver already knows.
 - The **harbour office** makes us think about what to keep close at hand and what to fetch.
 
-When the language model arrives in Part III, each of them will have a counterpart. The station becomes the model producing its memory, the radio link becomes the wire between host memory and the GPU, and the harbour desk becomes the GPU's small, fast memory.
+When the LLM arrives in Part III, each of them will have a counterpart. The station becomes the LLM growing its memory, the orchard; the radio link becomes the wire between host memory and the GPU, and the harbour desk becomes the GPU's small, fast memory.
 
 ::: takeaway
 - Station = where data comes from. Radio link = where bits cost money. Harbour office = where fast-but-small meets big-but-slow.
@@ -93,8 +93,8 @@ nodes:
   - {id: amort, col: 2, row: 5, title: "Amortization", text: "Pay once, share widely.", link: school-amortization, term: amortization}
   - {id: shapes, col: 3, row: 1, title: "Residual shapes", text: "Bell curves and pointy curves.", link: school-residual-shapes, term: gaussian}
   - {id: rate, col: 3, row: 2, title: "The exchange rate", text: "Variance explained → bits saved.", link: school-exchange-rate, term: r-squared}
-  - {id: vectors, col: 3, row: 3, title: "Vectors & channels", text: "Readings as lists of numbers.", link: school-vectors, term: channel}
-  - {id: corr, col: 3, row: 4, title: "Correlation", text: "Channels that move together.", link: school-correlation, term: covariance}
+  - {id: vectors, col: 3, row: 3, title: "Vectors, elements & furrows", text: "Readings as lists of numbers, column by column.", link: school-vectors, term: furrow}
+  - {id: corr, col: 3, row: 4, title: "Correlation", text: "Furrows that move together.", link: school-correlation, term: covariance}
   - {id: klt, col: 3, row: 5, title: "Turning the axes (KLT)", text: "Rotate to the data's own axes.", link: school-rotation, term: klt}
   - {id: gain, col: 3, row: 6, title: "Transform coding gain", text: "What the rotation buys, in bits.", link: school-coding-gain, term: transform-coding-gain}
   - {id: vq, col: 3, row: 7, title: "Clusters & codebooks (VQ)", text: "Name the nearest prototype.", link: school-clusters, term: vq}
@@ -126,7 +126,7 @@ edges:
   - [side, amort]
 ```
 
-Three threads run through the whole map, and you will see them called out wherever they appear.
+Three themes run through the whole map, and you will see them called out wherever they appear.
 
 ::: theme predict-correct
 Most of the course is variations on one move: guess, then send only how wrong the guess was. Huffman codes, residuals, rotations and codebooks are all different ways of guessing.
@@ -142,6 +142,6 @@ We always measure in bits. A bit saved on every value of a stream is money saved
 
 ::: takeaway
 - Five families: information, coding, statistics & vectors, number formats, machines.
-- Three threads tie them together: predict-then-correct, side information, and counting everything in bits.
+- Three themes tie them together: predict-then-correct, side information, and counting everything in bits.
 - The next page starts at the very bottom: what a bit is.
 :::

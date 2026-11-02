@@ -115,7 +115,7 @@ The number we just computed has a name, because it ignores something important.
 
 ## Perplexity, and why we count in bits {#perplexity}
 
-Language-model papers often report [[=perplexity]] instead of entropy. It is the same number in different clothes: $2^{\vH}$.
+LLM papers often report [[=perplexity]] instead of entropy. It is the same number in different clothes: $2^{\vH}$.
 
 | source | entropy $\vH$ (bits) | perplexity $2^{\vH}$ |
 |---|---:|---:|

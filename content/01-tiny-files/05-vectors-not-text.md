@@ -45,12 +45,12 @@ The rows are obviously alike — anyone can see that. But they are alike in *val
 As text, numbers like `1012.58` and `1012.09` do share characters (`1012.`), and the keys and quotes repeat exactly. Stored as compact binary numbers, the shared part shrinks to a few bits inside a byte — and a byte-copying compressor cannot point at a few bits.
 :::
 
-This is the situation of a language model's memory, which Part III introduces properly ([[#landscape-kv-cache]]). It is made of long lists of numbers — hundreds to thousands per piece — stored in a compact 8-bit form, one byte per number. Neighbouring pieces may well be close in value; that is the hope this whole site examines. But we expect them to share almost no exact byte strings, just like the rows above.
+This is the situation of an LLM's memory, the orchard that Part III introduces properly ([[#landscape-orchard]]). It is made of long lists of numbers — hundreds to thousands per piece — stored in a compact 8-bit form, one byte per number. Neighbouring pieces may well be close in value; that is the hope this whole site examines. But we expect them to share almost no exact byte strings, just like the rows above.
 
 ::: takeaway
 - Rows of measured numbers are alike in value but rarely equal, so they share almost no byte strings.
 - LZ matching, the heart of zip and zstd, finds nothing to copy: 108 bytes in, 108 out.
-- A language model's memory is lists of numbers too, so byte matching is the wrong tool there.
+- An LLM's memory is lists of numbers too, so byte matching is the wrong tool there.
 :::
 
 ## Predict, then send the leftover {#predict}

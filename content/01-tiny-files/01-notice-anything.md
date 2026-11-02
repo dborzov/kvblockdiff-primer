@@ -114,12 +114,12 @@ There are two kinds of compression, and the difference matters for everything th
 - [[=lossless|Lossless compression]] rebuilds the original *exactly*, bit for bit. Zip files work like this. A weather service cannot accept "roughly 1011.8 hPa", so the station uses it.
 - [[=lossy|Lossy compression]] keeps only an approximation and throws the rest away for good. JPEG photos work like this.
 
-On this site we only ever consider **lossless** compression. Hold on to that; it will matter a great deal when we get to language models.
+On this site we only ever consider **lossless** compression. Hold on to that; it will matter a great deal when we get to LLMs, the large language models behind chatbots.
 
-You would expect a message that is almost entirely predictable to shrink a lot. Try it. The figure runs DEFLATE — the compression algorithm inside zip and gzip — right here in your browser, on one message at a time.
+You would expect a message that is almost entirely predictable to shrink a lot. Try it. The figure runs DEFLATE, the compressor inside zip and gzip, right here in your browser, on one message at a time.
 
 ::: figure fig-compress-one compressOne
-**One message, compressed by itself.** The selected message is compressed with DEFLATE (the algorithm of zip and gzip; here the pako library at its strongest setting, level 9), live in your browser. The bars show the size of the message before and after, in bytes. Choose another message from the list to try again.
+**One message, compressed by itself.** The selected message is compressed with DEFLATE (the compressor of zip and gzip; here the pako library at its strongest setting, level 9), live in your browser. The bars show the size of the message before and after, in bytes. Choose another message from the list to try again.
 :::
 
 About one sixth disappears. The rest stays. And it is the same for every message: every time, the compressor gives back almost all of the bytes we just agreed were predictable.
@@ -128,7 +128,7 @@ About one sixth disappears. The rest stays. And it is the same for every message
 The stream of messages is wildly redundant. Yet each message, compressed alone, barely shrinks.
 :::
 
-This contradiction is the whole subject of Part I. Once we swap weather messages for the working memory of a language model, it becomes the subject of the whole site. The next page explains where the missing compression went.
+This contradiction is the whole subject of Part I. Once we swap weather messages for the working memory of an LLM, it becomes the subject of the whole site. The next page explains where the missing compression went.
 
 ::: takeaway
 - Lossless compression rebuilds the original exactly. It is the only kind this site considers.

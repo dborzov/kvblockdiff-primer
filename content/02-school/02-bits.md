@@ -103,7 +103,7 @@ for k in [1, 2, 3, 6, 9]:
 # 9 30 3.333
 ```
 
-Three digits have 1,000 possibilities, and 1,000 fits under $2^{10} = 1024$. So three digits cost 10 bits, 3.33 bits each. **Fractions of a bit are real — on average, over many symbols.** Keep that in mind; [[#school-arithmetic]] builds a coder that does exactly this.
+Three digits have 1,000 possibilities, and 1,000 fits under $2^{10} = 1024$. So three digits cost 10 bits, 3.33 bits each. **Fractions of a bit are real — on average, over many symbols.** Keep that in mind; [[#school-arithmetic]] builds an entropy coder that does exactly this.
 
 ::: takeaway
 - $n$ bits tell $2^n$ equally likely things apart; one byte (8 bits) tells 256 apart.

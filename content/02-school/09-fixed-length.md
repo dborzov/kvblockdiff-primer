@@ -33,7 +33,7 @@ cards:
 
 A phone call reaches the harbour office: “What was the wind at three in the morning on the 12th?” The archive holds a whole month of half-hourly readings, compressed.
 
-If the month was coded with an [[entropy-coder]], the clerk must decode it from the first reading of the month, because the coder's state ([[#school-arithmetic]]) depends on everything before. If every reading has a slot of the same size, she can jump straight to it. This page is about the second way, and what it costs.
+If the month was coded with an [[entropy-coder]], the clerk must decode it from the first reading of the month, because its state ([[#school-arithmetic]]) depends on everything before. If every reading has a slot of the same size, she can jump straight to it. This page is about the second way, and what it costs.
 
 ## Every value in n bits {#fixed}
 
@@ -52,7 +52,7 @@ Because every slot has the same width, the position of any reading is known in a
 ::: define random-access
 - **What it is:** being able to decode any single item on its own, without decoding what comes before it.
 - **Example:** reading 500 of a 5-bit archive is bits 2,500 to 2,504.
-- **Easy to confuse with:** fast decoding in general. A stream coder can be fast and still lack random access; it is the *jump* that matters.
+- **Easy to confuse with:** fast decoding in general. A stream can be fast to decode and still lack random access; it is the *jump* that matters.
 :::
 
 ::: takeaway
@@ -136,10 +136,10 @@ Which one is right depends on how the archive will be read. A clerk who replays 
 Here the theme shows up before any statistics: the *way* the archive is read — one long replay, or many single readings scattered across the month — decides which code is even allowed.
 :::
 
-The choice is not all or nothing. An entropy-coded stream can be cut into chunks of, say, 256 readings, each restarting the coder. A single reading then costs decoding at most one chunk, and each restart costs a few bits. Many real formats sit somewhere on this line. Part V meets one that uses exactly this page's shape — fixed 4-bit slots plus escapes — on a modern problem: [[#papers-splitzip]].
+The choice is not all or nothing. An entropy-coded stream can be cut into runs of, say, 256 readings, each restarting the entropy coder. A single reading then costs decoding at most one run, and each restart costs a few bits. Many real formats sit somewhere on this line. Part IX meets one that uses exactly this page's shape — fixed 4-bit slots plus escapes — on a modern problem: [[#papers-splitzip]].
 
 ::: takeaway
 - An entropy coder gets 4.54 bits per wind reading; fixed slots with escapes get 5.54.
 - The extra bit buys random access and independent, parallel decoding.
-- How the data will be read decides which trade is right; chunked streams sit in between.
+- How the data will be read decides which trade is right; restarted streams sit in between.
 :::

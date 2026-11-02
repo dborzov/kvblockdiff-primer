@@ -27,7 +27,7 @@ cards:
   - q: What do DPCM, FLAC and PNG have in common?
     a: They predict each value from its neighbours and code the exact residual
     wrong: ["They all store values in fixed 8-bit slots", "They all throw away small details", "They all use a trained dictionary of byte strings"]
-    why: They are all lossless predictive coders — predict, take the exact integer residual, entropy-code it.
+    why: They all do lossless predictive coding — predict, take the exact integer residual, entropy-code it.
     sec: family
 ---
 
@@ -137,7 +137,7 @@ Sending differences instead of values is one of the oldest ideas in data compres
 ::: define predictive-coding
 - **What it is:** lossless predictive coding, also called DPCM: predict each value from what is already known, take the exact integer residual, entropy-code the residual.
 - **Example:** FLAC, PNG's filters, Gull Rock's temperatures.
-- **Easy to confuse with:** lossy prediction (in video or speech codecs), which also rounds the residual coarsely and so cannot rebuild the original exactly.
+- **Easy to confuse with:** lossy prediction (in video or speech compressors), which also rounds the residual coarsely and so cannot rebuild the original exactly.
 :::
 
 ```graph
@@ -158,10 +158,10 @@ edges:
 This is the theme in its purest form: guess from what both ends know, then send only how wrong the guess was. The better the guess, the narrower the residuals and the fewer bits they cost. What the guess saves is, in the language of [[#school-mutual-information]], the mutual information between a reading and its past.
 :::
 
-Two questions are still open. How exactly does the *width* of the residuals turn into bits? And how much better must a predictor be to save one more bit? The next two pages answer them. (Later, when the language model arrives, its stored numbers will be coded in exactly this shape: predict, exact residual, code the residual.)
+Two questions are still open. How exactly does the *width* of the residuals turn into bits? And how much better must a predictor be to save one more bit? The next two pages answer them. (Later, when the LLM arrives, its stored numbers will be coded in exactly this shape: predict, exact residual, code the residual.)
 
 ::: takeaway
 - Predict, take the exact residual, entropy-code it: that is lossless predictive coding (DPCM).
-- FLAC and PNG work this way; so does every coder in the rest of this site.
+- FLAC and PNG work this way; so does every compressor in the rest of this site.
 - What a predictor saves is the mutual information between a value and what both ends already know.
 :::
