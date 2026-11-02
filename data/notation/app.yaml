@@ -1,0 +1,23 @@
+# Python notation of Part VI (the application). Same fields as data/notation/core.yaml.
+cherries-of:
+  code: "cherries_of(p, scenario)"
+  name: the cherries that serve one pick
+  short: >-
+    The one or more cherries a pick `p = (layer_id, token_pos_id)` is rebuilt from, as the scenario's cherry shape decides: one cherry on the Pin (one MLA latent), one under `cherry (2, 256)` on the Bench, two under `(256,)`.
+  bytes: "{e} per cherry (one token, one layer)"
+  home: app-mapping
+
+shelf-lookup:
+  code: "sid in shelf"
+  name: is this stretch's dictionary on the shelf?
+  short: >-
+    The one question kvblockdiff adds per miss, with `sid = token_pos_id // stretch_len`. Yes makes the miss a [[delta-miss|δ-miss]]; no makes it a [[raw-miss|raw miss]].
+  home: app-shelf-and-two-misses
+
+fetch-delta:
+  code: "fetch_delta(cherry_id)"
+  name: what a δ-miss moves over the link
+  short: >-
+    One cherry's [[delta]], $\vrho\,\ve$ bytes on average, decoded on the GPU against the dictionary on the shelf.
+  bytes: "ρ × {e} on average"
+  home: app-shelf-and-two-misses

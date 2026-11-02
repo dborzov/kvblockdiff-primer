@@ -54,7 +54,7 @@ orchard:
   home: landscape-orchard
   ref: "{L} tokens × {NL} KV layers × {heads} heads × {headdim} elements, for keys and again for values"
   short: >-
-    Every key and every value of one sequence at every KV layer, kept in host memory: two arrays `k`, `v` of shape `(n_tokens, n_kv_layers, n_kv_heads, head_dim)`. It grows one row per token and is never pruned. A store, not a cache; the thing usually called the "KV cache".
+    Every key and every value of one sequence at every KV layer, kept in host memory: two arrays `k`, `v` of shape `(n_tokens, n_kv_layers, n_kv_heads, head_dim)`. It grows one row per token and is never pruned. A store, not a cache, whatever its usual name suggests.
 
 furrow:
   label: furrow
@@ -237,7 +237,7 @@ pin:
   color: ["#3b6e8f", "#8fc6ea"]
   cat: project
   home: landscape-reference-settings
-  ref: "{model} · {NL} KV layers · cherries of {e} · link {Wlink} · {Mhbm} of GPU memory for orchards"
+  ref: "{llm} · {NL} KV layers · cherries of {e} · link {Wlink} · {Mhbm} of GPU memory for orchards"
   short: >-
     One of the two frozen rigs every estimate is quoted for: HiSparse's GLM-5.1 deployment at 8-bit storage: 78 sparse layers, 2048 picks per layer per step, 100K-token context, 640-byte cherries, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory for orchards.
 
@@ -250,7 +250,7 @@ bench:
   color: ["#5f8a52", "#a5cf8f"]
   cat: project
   home: landscape-reference-settings
-  ref: "{model} · {NL} KV layers · {heads} heads × {headdim} · {L}-token sequences · {gpu}"
+  ref: "{llm} · {NL} KV layers · {heads} heads × {headdim} · {L}-token sequences · {gpu}"
   short: >-
     The second frozen rig: Qwen3.5-2B's six KV layers, 2 heads × 256, 512-byte cherries for one token's values at one layer, 225K-token coding-agent transcripts, FP8, on one RTX 5080 with a 50 GB/s link. No indexer ran on it, so picks, misses and step time are not measured there.
 
@@ -815,7 +815,7 @@ laplace:
   cat: stats
   home: school-residual-shapes
   short: >-
-    A sharper, pointier cousin of the bell curve (two exponential tails) with scale $\vbeta$. Prediction residuals usually look like this, so compressors model them with it.
+    A sharper, pointier cousin of the bell curve (two exponential tails) with scale $\vbeta$. Prediction residuals usually look like this, so compressors assume this shape for them.
 
 r-squared:
   label: R²
@@ -1075,7 +1075,7 @@ link:
   home: landscape-memory-wall
   ref: "{Wlink} in both settings"
   short: >-
-    The PCIe wire between the host memory that holds the orchards and the GPU; $\vWlink$ is its practical bandwidth. Every miss and every dictionary load crosses it. What the compression scenario calls "the channel" in textbooks is this wire.
+    The PCIe wire between the host memory that holds the orchards and the GPU; $\vWlink$ is its practical bandwidth. Every miss and every dictionary load crosses it. The wire a textbook compression problem puts between its sender and its receiver.
 
 # =============================================================== transformers & attention (Part III)
 token:
@@ -1100,9 +1100,9 @@ llm:
   name: the LLM (always named)
   cat: llm
   home: landscape-tokens-and-decoding
-  ref: "{model}"
+  ref: "{llm}"
   short: >-
-    The language model whose orchard we study, always named: GLM-5.1 on the Pin, Qwen3.5-2B on the Bench. A stand-in LLM is one measured in place of the real target. Never "the model".
+    The language model whose orchard we study, always named: GLM-5.1 on the Pin, Qwen3.5-2B on the Bench. A stand-in LLM is one measured in place of the real target. Never the bare word.
 
 stand-in-llm:
   label: stand-in LLM
@@ -1235,7 +1235,7 @@ cherry-shape:
   cat: project
   home: scenario-cherry
   short: >-
-    The dicing rule of a scenario: `cherry_shape == (256,)` makes one cherry per head vector, `(2, 256)` one per token across two layers or heads, `(6, 2, 256)` one per token across six layers. The other half, with the slice, of what used to be called an "entry split".
+    The dicing rule of a scenario: `cherry_shape == (256,)` makes one cherry per head vector, `(2, 256)` one per token across two layers or heads, `(6, 2, 256)` one per token across six layers. The other half, with the slice, of what the campaigns called a split.
 
 contract:
   label: the contract
@@ -1428,7 +1428,7 @@ code-length-estimate:
   cat: info
   home: toolbox-bounds
   short: >-
-    The code length a probability table would reach, computed exactly on the data without building the compressor; a lead, not a result. The campaigns' "exact model" numbers.
+    The code length a probability table would reach, computed exactly on the data without building the compressor; a lead, not a result. The campaigns' exact-computation numbers.
 
 # =============================================================== the application (Part VI)
 delta-miss-fraction:

@@ -124,7 +124,7 @@ The pill in the top bar shows the current setting with its emblem, a pin or a fl
 2. **Live numbers.** A number written with the macro `[[@key]]` renders as a small marked value and updates in place. Read the next paragraph, flip the pill, and read it again.
 3. **Figures that read the setting.** Where a setting has no value for what a figure needs, the figure says "not measured" instead of inventing one.
 
-In the setting selected now the LLM is [[@model]] on an [[@gpu]]. One token's row at one layer is [[@e]], over [[@NL]] KV layers, in sequences of [[@L]] tokens stored as [[@format]]. The link carries [[@Wlink]] and the GPU keeps [[@Mhbm]] for orchards. The indexer names [[@k]] picks per layer per step, misses [[@m4]] of them at 4096 slots, and a step takes [[@tpot]].
+In the setting selected now the LLM is [[@llm]] on an [[@gpu]]. One token's row at one layer is [[@e]], over [[@NL]] KV layers, in sequences of [[@L]] tokens stored as [[@format]]. The link carries [[@Wlink]] and the GPU keeps [[@Mhbm]] for orchards. The indexer names [[@k]] picks per layer per step, misses [[@m4]] of them at 4096 slots, and a step takes [[@tpot]].
 
 What does not follow the switch is every number typed into a sentence. The 274 misses of [[#landscape-derived-numbers]], the 13.7 MB and the 110 sequences were computed for the Pin and stay the Pin's whatever the pill says; the 0.636 of [[#measured-scorecard]] was measured on the Bench and stays the Bench's.
 

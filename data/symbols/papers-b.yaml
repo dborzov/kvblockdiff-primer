@@ -6,4 +6,4 @@ natoms: { tex: 'n_{\mathrm{atoms}}', fam: count, name: dictionary atoms, unit: a
 s:      { tex: 's', fam: count, name: atoms per vector, unit: atoms, home: papers-lexico,
           short: 'How many atoms sparse coding uses to describe one vector (its sparsity).' }
 nu:     { tex: '\nu', fam: stat, name: grid noise floor, unit: variance (standardized), home: papers-kvtc,
-          short: 'The rounding noise a stored number grid adds to every furrow, as a share of the average variance. A lossless coder must reproduce it.' }
+          short: 'The rounding noise a stored number grid adds to every furrow, as a share of the average variance. A lossless compressor must reproduce it.' }

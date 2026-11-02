@@ -35,7 +35,7 @@ A number without a source is a rumour. This page is the ledger: what each number
 
 ## The two settings {#settings}
 
-Both rigs are frozen in `data/settings.yaml` ([[#landscape-reference-settings]]). The pill in the top bar chooses one; in the setting selected now the LLM is [[@model]], one cherry of one token's values at one layer is [[@e]], [[@NL]] KV layers keep an orchard, and a sequence holds [[@L]] tokens. <!-- old-words -->
+Both rigs are frozen in `data/settings.yaml` ([[#landscape-reference-settings]]). The pill in the top bar chooses one; in the setting selected now the LLM is [[@llm]], one cherry of one token's values at one layer is [[@e]], [[@NL]] KV layers keep an orchard, and a sequence holds [[@L]] tokens. <!-- old-words -->
 
 | quantity | key | [[pin\|the Pin]] | [[bench\|the Bench]] | source |
 |---|---|---|---|---|

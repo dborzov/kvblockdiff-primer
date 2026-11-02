@@ -4,7 +4,7 @@
 # The optional `emblem` is a name from theme/layouts/partials/emblems.njk (default: map).
 default: pin
 keys:                      # key: {name, unit, fmt}
-  model: {name: the LLM, fmt: text}
+  llm: {name: the LLM, fmt: text}
   NL: {name: KV layers, unit: layers, fmt: int}
   heads: {name: KV heads per layer, fmt: int}
   headdim: {name: elements per head vector, fmt: int}
@@ -27,10 +27,10 @@ settings:
     name: GLM-5.1 on 8 × H200, as HiSparse serves it, at 8-bit storage
     home: landscape-reference-settings
     emblem: pin
-    values: {model: GLM-5.1, NL: 78, heads: 1, headdim: 640, d: 640, e: 640, k: 2048, L: 100384, b: 4096, m2: 0.30, m4: 0.134, m8: 0.067, tpot: 30, Wlink: 50, Mhbm: 30, gpu: "H200 (141 GB)", format: "8-bit (E4M3), one MLA latent per token per layer"}
+    values: {llm: GLM-5.1, NL: 78, heads: 1, headdim: 640, d: 640, e: 640, k: 2048, L: 100384, b: 4096, m2: 0.30, m4: 0.134, m8: 0.067, tpot: 30, Wlink: 50, Mhbm: 30, gpu: "H200 (141 GB)", format: "8-bit (E4M3), one MLA latent per token per layer"}
   bench:
     label: the Bench
     name: Qwen3.5-2B on one RTX 5080, the campaigns' data
     home: landscape-reference-settings
     emblem: flask
-    values: {model: Qwen3.5-2B, NL: 6, heads: 2, headdim: 256, d: 512, e: 512, k: null, L: 225000, b: 4096, m2: null, m4: null, m8: null, tpot: null, Wlink: 50, Mhbm: 10, gpu: "RTX 5080 (16 GB)", format: "FP8 E4M3, values (keys the same shape)"}
+    values: {llm: Qwen3.5-2B, NL: 6, heads: 2, headdim: 256, d: 512, e: 512, k: null, L: 225000, b: 4096, m2: null, m4: null, m8: null, tpot: null, Wlink: 50, Mhbm: 10, gpu: "RTX 5080 (16 GB)", format: "FP8 E4M3, values (keys the same shape)"}

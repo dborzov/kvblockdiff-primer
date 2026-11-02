@@ -200,7 +200,7 @@ A pill in the top bar switches between them; the choice is remembered in the bro
 - **`[[@key]]`** renders one setting-dependent number and keeps it live: `an entry is [[@e]]` → "an
   entry is 640 B" with the Pin, "512 B" with the Bench (build-time text is the default setting's; the
   client repaints every such span when the setting changes). The keys are those of `settings.yaml`:
-  `model`, `NL`, `heads`, `headdim`, `d`, `e`, `k`, `L`, `b`, `m2`, `m4`, `m8`, `tpot`, `Wlink`, `Mhbm`,
+  `llm`, `NL`, `heads`, `headdim`, `d`, `e`, `k`, `L`, `b`, `m2`, `m4`, `m8`, `tpot`, `Wlink`, `Mhbm`,
   `gpu`, `format`. An unknown key is a build error. A key that is `null` in a setting renders "not
   measured" there, so write the sentence so that it still reads (say what the number is of).
   Formats come from the key's `fmt`: `int` (thin-space thousands, 100 384), `bytes` (640 B, 1.5 KB,

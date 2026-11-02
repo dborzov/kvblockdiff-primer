@@ -1,0 +1,18 @@
+# Python notation of the toolbox (Part V): the arrays every stage's pseudocode handles.
+punnet-array:
+  code: "punnet"
+  name: a punnet as an array
+  short: >-
+    All cherries of one stretch under one slice and cherry shape, stacked: `punnet[i]` is cherry $\vi$. In the examples one cherry is one token's values at one layer.
+  shape: "({b}, {heads}, {headdim})"
+  bytes: "{b} × {e} B at 8 bits"
+  home: toolbox-the-bill
+
+residual-array:
+  code: "residual = cherry.astype(np.int16) - prediction"
+  name: the exact residual of one cherry
+  short: >-
+    Cherry minus prediction, element by element, as integers in [[index-space|index space]]; `int16` because the difference of two 8-bit codes needs nine bits.
+  shape: "({heads}, {headdim})"
+  bytes: "{d} residuals, what one delta codes"
+  home: toolbox-the-bill

@@ -2,7 +2,7 @@
 phat:
   tex: '\hat{p}'
   fam: frac
-  name: model probability
+  name: table probability
   unit: ""
   home: school-arithmetic
-  short: 'The probability a coder''s model assigns to an outcome. It may differ from the true probability $\vp$; the difference costs bits (cross-entropy).'
+  short: 'The probability a compressor''s probability table assigns to an outcome. It may differ from the true probability $\vp$; the difference costs bits (cross-entropy).'
