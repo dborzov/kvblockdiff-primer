@@ -92,8 +92,12 @@ Two symbols come with the machine side. $\vWlink$ is the **link bandwidth**, the
 
 Three numbers fall out of the Bench's column the way [[#landscape-derived-numbers]] draws three from the Pin's. One token's values over the six layers are $6 \times 512 = 3\,072$ B, so a 225 000-token sequence holds about 691 MB of values, 1.38 GB with keys, and the 10 GB would hold about seven such orchards whole. One layer's values over a 4 096-token stretch are 2.1 MB. The fourth number, sequences per GPU, needs misses and a step time, and the Bench has neither.
 
+::: figure fig-landscape-settings refSettings wide
+**The two settings, side by side.** Left card the Pin, right card the Bench, every key of `data/settings.yaml` on one row: the LLM, KV layers, heads and elements, cherry bytes, picks per step, context length, the stretch length of the examples, miss rates, TPOT, the link, the GPU memory for orchards, the GPU, the format. "Not measured" marks what the Bench never ran. The highlighted card is the setting the pill in the top bar has selected; switch it and the highlight follows.
+:::
+
 ::: figure fig-landscape-pin refSetting
-**The Pin as a pinboard.** Each card is one frozen number of the Pin: its symbol, its value, and (on hover or tap) where it comes from. Cards are grouped into the LLM, the cache and the machine; the last group holds three numbers derived from the others. The switch converts the rows between 8-bit storage (the Pin) and BF16 (what HiSparse actually serves); cards whose value changes are outlined. All values are from the table above; the derived ones are computed live. This board shows the Pin only, and its labels still say "entry", "request" and "KV" for row, sequence and orchard. <!-- old-words -->
+**The Pin as a pinboard.** Each card is one frozen number of the Pin: its symbol, its value, and (on hover or tap) where it comes from. Cards are grouped into the LLM, the cache and the machine; the last group holds three numbers derived from the others. The switch converts the rows between 8-bit storage (the Pin) and BF16 (what HiSparse actually serves); cards whose value changes are outlined. All values are from the table above; the derived ones are computed live.
 :::
 
 ::: try

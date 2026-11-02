@@ -118,7 +118,7 @@ The Pin follows HiSparse's trace of GLM-5.1 and counts $\vk = 2048$ picks per la
 The figure shows a toy LLM with 6 KV layers. Slide through the decode steps and switch between dense and sparse reading.
 
 ::: figure fig-landscape-reading readingGrid wide
-**Which rows one decode step reads.** Top: the stored rows of a toy LLM, one row per `layer_id` (6 layers, layer 0 at the bottom) and one column per position (up to 48). Pale cells are stored; dark cells are read at the current step. In *dense* mode every stored cell is read; in *sparse* mode each layer reads only the $\vk = 6$ picks its indexer named (illustrative picks from a seeded generator). Bottom: rows stored and rows read per step, against the step number; the accent line marks the current step. Use the slider to move through the steps and the switch to change mode. The figure's legend still says "entries" for what this page calls rows or picks. <!-- old-words -->
+**Which rows one decode step reads.** Top: the stored rows of a toy LLM, one row per `layer_id` (6 layers, layer 0 at the bottom) and one column per position (up to 48). Pale cells are stored; dark cells are read at the current step. In *dense* mode every stored cell is read; in *sparse* mode each layer reads only the $\vk = 6$ picks its indexer named (illustrative picks from a seeded generator). Bottom: rows stored and rows read per step, against the step number; the accent line marks the current step. Use the slider to move through the steps and the switch to change mode.
 :::
 
 ::: try

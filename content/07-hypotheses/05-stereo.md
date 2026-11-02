@@ -82,6 +82,10 @@ The real map is not a toy's. At KV layer 4 the campaign's linear prediction acro
 
 ## In bits {#in-bits}
 
+::: figure fig-hypotheses-stereo hypStereo wide
+**Two views of one vector.** Left: a seeded toy of the two heads' elements for one `elem_id` (slider), drawn as element against element: the cosine is near zero; and as token-to-token distances in head 0 against head 1, which line up. Right: the three code-length bounds on four punnets, bits per element shared by the two heads (0.85 raw; 0.54 after one reference cherry serves both; 0.21 with a reference per head), and the measured join on the same window of 20 sequences: cherry `(256,)` at 0.6604 against `(2, 256)` at 0.6281 ± 0.0009. Data: `figures/data/measured-splits.json`.
+:::
+
 Why does a cosine near zero hide bits? Because cosine compares element $\vc$ with element $\vc$, one furrow against one furrow, and the information runs *across* furrows: element 57 of head 1 is a weighted sum of many elements of head 0 ([[#hypotheses-bits-are-the-unit]]). A lossless compressor that may see head 0 while coding head 1 can use that sum; a cosine never looks for it.
 
 How a scenario measures it ([[#scenario-why-vary]]): the same slice, two cherry shapes, the same compressor, the same elements. With `cherry_shape = (256,)` the receiver may ask for head 1 without head 0, so head 1 must be coded alone. With `(2, 256)` the compressor codes head 0 first and may predict head 1 from it. A wider cherry can always run the narrower compressor inside, so the gap is a lower bound on what the heads share.

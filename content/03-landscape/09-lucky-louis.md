@@ -48,7 +48,7 @@ The figure shows the property on a toy. Each row is one decode step of one layer
 :::
 
 ::: try
-1. At the default drift (0.3) the picks form vertical streaks: the same positions, step after step. The read-out lands near HiSparse's numbers below, a coincidence of the toy's settings, not a model of GLM-5.1. <!-- old-words -->
+1. At the default drift (0.3) the picks form vertical streaks: the same positions, step after step. The read-out lands near HiSparse's numbers below, a coincidence of the toy's settings, not a simulation of GLM-5.1.
 2. Drag the drift down to 0.02, then up to 1.5. The streaks break into confetti and the hit rates collapse.
 3. Note that the LRU cache with twice the slots always beats "keep the last step's picks": some positions drop out for a step or two and come back.
 :::

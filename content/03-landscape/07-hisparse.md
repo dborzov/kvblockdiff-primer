@@ -54,7 +54,7 @@ The desk is the part that matters most to us.
 :::
 
 ::: figure fig-landscape-system hisparseSystem wide
-**HiSparse for one sequence at one layer.** Left: host DRAM holds the full orchard, one raw row of $\ve$ bytes per position. Right: GPU memory holds the indexer, the hot cache of $\vB$ slots, and attention. At each step the indexer names the pick set $\vS$; picks already in the hot cache are hits; each miss is fetched over the link (the arrow) into the slot of an evicted pick. The italic labels give the harbour-office counterpart of each part. Hover any box for details. The figure's hover text still says "entry" for a row or a pick. <!-- old-words -->
+**HiSparse for one sequence at one layer.** Left: host DRAM holds the full orchard, one raw row of $\ve$ bytes per position. Right: GPU memory holds the indexer, the hot cache of $\vB$ slots, and attention. At each step the indexer names the pick set $\vS$; picks already in the hot cache are hits; each miss is fetched over the link (the arrow) into the slot of an evicted pick. The italic labels give the harbour-office counterpart of each part. Hover any box for details.
 :::
 
 ::: takeaway

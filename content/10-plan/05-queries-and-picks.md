@@ -88,7 +88,7 @@ Per KV head, because that is the unit the orchard stores and a cherry covers; th
 :::
 
 ::: figure fig-plan-stand-in-raster planSelections
-**What a trace of an exact top-k looks like, on synthetic keys.** 4096 positions in 16 stretches of 256; each key is its stretch's topic vector (times the strength) plus noise, in 16 elements; four query heads drift by the chosen amount per step; each of 300 steps selects the top $\vk = 128$ positions by attention probability summed over the four heads. Horizontal axis: position; vertical axis: decode step; a cell shades how many picks fall into 64 positions × 5 steps (darker is more). Thin lines are stretch boundaries. The readout gives the share of a step's picks held by its heaviest 1, 2 and 4 stretches, and how long the heaviest stretch stays heaviest. Seeded synthetic data, the shape of the measurement, not its result; the figure's own labels still use the old word for stretch.
+**What a trace of an exact top-k looks like, on synthetic keys.** 4096 positions in 16 stretches of 256; each key is its stretch's topic vector (times the strength) plus noise, in 16 elements; four query heads drift by the chosen amount per step; each of 300 steps selects the top $\vk = 128$ positions by attention probability summed over the four heads. Horizontal axis: position; vertical axis: decode step; a cell shades how many picks fall into 64 positions × 5 steps (darker is more). Thin lines are stretch boundaries. The readout gives the share of a step's picks held by its heaviest 1, 2 and 4 stretches, and how long the heaviest stretch stays heaviest.
 :::
 
 ::: try

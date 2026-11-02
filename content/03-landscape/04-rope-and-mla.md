@@ -50,7 +50,7 @@ print(np.allclose(rope(stored, -pos, theta), key))   # True: the turn is exactly
 Since both query and key are turned, their dot product depends only on how far apart the two tokens are: `rope(q, 12, theta) @ rope(key, 7, theta)` equals `rope(q, 112, theta) @ rope(key, 107, theta)`. That is the whole trick. What matters here is the last line of the listing: **the key is turned before it is stored**, and the turn can be undone exactly because `token_pos_id` is known.
 
 ::: figure fig-landscape-rope ropeSpin
-**One pair of key elements for 64 tokens, before and after RoPE.** Each dot is one token's key, restricted to the two elements of one pair (horizontal and vertical axes, illustrative numbers); colour runs from early positions (blue) to late ones (red). Before RoPE the dots form one tight cluster. After RoPE, token `t` is turned by `t` times the angle on the slider, and the cluster smears around the dashed circle. The read-out gives the spread (standard deviation) of each of the two elements; the axis labels still call them "channels". <!-- old-words -->
+**One pair of key elements for 64 tokens, before and after RoPE.** Each dot is one token's key, restricted to the two elements of one pair (horizontal and vertical axes, illustrative numbers); colour runs from early positions (blue) to late ones (red). Before RoPE the dots form one tight cluster. After RoPE, token `t` is turned by `t` times the angle on the slider, and the cluster smears around the dashed circle. The read-out gives the spread (standard deviation) of each of the two elements.
 :::
 
 ::: try

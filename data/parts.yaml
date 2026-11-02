@@ -77,7 +77,7 @@
   title: Hypotheses about the orchard
   short: Hypotheses
   emblem: apple
-  figs: [idea, missed-a, missed-b, questions]
+  figs: [idea, missed-a, missed-b]
   lede: >
     Every property of the orchard the project has bet on, stated in bits, with the way a scenario
     measures it and the verdict so far.
@@ -110,7 +110,7 @@
   title: The research plan
   short: The plan
   emblem: map
-  figs: [plan, questions]
+  figs: [plan]
   lede: >
     What is answered, what is open, and the next experiments in order of how fast they return a
     result: more scenarios in the harness, queries and a stand-in indexer for the dataset we have,

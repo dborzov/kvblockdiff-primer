@@ -85,7 +85,7 @@ The link carries about 50 GB/s in practice (64 on paper). It is full at **about 
 Try it with other settings.
 
 ::: figure fig-landscape-wall memoryWall
-**Two walls, computed.** Top bar: GPU memory needed if every sequence kept its whole orchard on the GPU ($\vL \times \vNL \times \ve$ per sequence), against the 30 GB available per GPU (the line). Bottom bar: link traffic if every step fetched every pick from host memory ($\vk \times \vNL \times \ve \div \vtpot$ per sequence), against the 50 GB/s practical bandwidth of the link (the line; 64 GB/s nominal). A bar turns red when it crosses its line. Sliders set the context length, the number of sequences per GPU, and $\vk$; the switch sets the number format. Fixed: 78 KV layers, 640 elements per row, 30 ms per step (the Pin's numbers, [[#landscape-reference-settings]]). The figure's labels still say "requests" for sequences and "KV" for the orchard. <!-- old-words -->
+**Two walls, computed.** Top bar: GPU memory needed if every sequence kept its whole orchard on the GPU ($\vL \times \vNL \times \ve$ per sequence), against the 30 GB available per GPU (the line). Bottom bar: link traffic if every step fetched every pick from host memory ($\vk \times \vNL \times \ve \div \vtpot$ per sequence), against the 50 GB/s practical bandwidth of the link (the line; 64 GB/s nominal). A bar turns red when it crosses its line. Sliders set the context length, the number of sequences per GPU, and $\vk$; the switch sets the number format. Fixed: 78 KV layers, 640 elements per row, 30 ms per step (the Pin's numbers, [[#landscape-reference-settings]]).
 :::
 
 ::: try

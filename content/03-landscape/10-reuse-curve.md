@@ -59,7 +59,7 @@ $$
 $$ {#eq-landscape-power-law}
 
 ::: figure fig-landscape-reuse reuseCurve
-**HiSparse's miss rates on logarithmic axes.** Horizontal: hot-cache slots $\vB$ per layer per sequence (log scale, base 2). Vertical: miss rate $\vm$ (log scale). Dots: HiSparse's three LRU measurements on the GLM-5.1 trace. Line: the power law fitted through them, solid between the measurements and dashed outside, where it is extrapolation and nothing more. Diamond: Bélády's clairvoyant policy at 4096 slots; small squares: FIFO and random eviction at 4096. Drag the knob along the curve (or use the slider) to read off the miss rate and what that cache size costs per sequence on the Pin: misses per layer per step ($\vm \times 2048$), link bytes per step and GPU memory at 640 bytes per pick. The axis label still says "per request" for per sequence. <!-- old-words -->
+**HiSparse's miss rates on logarithmic axes.** Horizontal: hot-cache slots $\vB$ per layer per sequence (log scale, base 2). Vertical: miss rate $\vm$ (log scale). Dots: HiSparse's three LRU measurements on the GLM-5.1 trace. Line: the power law fitted through them, solid between the measurements and dashed outside, where it is extrapolation and nothing more. Diamond: Bélády's clairvoyant policy at 4096 slots; small squares: FIFO and random eviction at 4096. Drag the knob along the curve (or use the slider) to read off the miss rate and what that cache size costs per sequence on the Pin: misses per layer per step ($\vm \times 2048$), link bytes per step and GPU memory at 640 bytes per pick.
 :::
 
 ::: try

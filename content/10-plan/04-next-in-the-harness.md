@@ -25,6 +25,10 @@ The catalogue on [[#scenario-why-vary/a-map]] ends with rows marked "not run" or
 
 ## The queue {#queue}
 
+::: figure fig-plan-queue planQueue wide
+**Hours to a first reading, for the nine scenarios of the queue.** One bar per scenario H1 to H9, on a logarithmic hour axis; hatched bars need a script written first, solid bars can run today; colour says which big question the reading feeds. Hover a bar for the six lines of its card below. Hours are estimates from the measured 55 CPU seconds per 4096-token punnet and 72 punnets per screen; a day is eight hours.
+:::
+
 | # | scenario (what changes against the frontier line) | reads | first reading in |
 |---|---|---|---|
 | H1 | `K · all · cherry (2, 256) · stretch 4096 · leash 293` | keys as a separate problem | ≈ 3 h |

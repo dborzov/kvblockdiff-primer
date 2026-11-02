@@ -49,7 +49,9 @@ A reference tree links every cherry of a punnet to the cherry it is predicted fr
 
 Two kinds of layer. In the middle of the LLM a cherry's closest relative is usually nearby, and the tree runs along the text like a chain: the next token looks like this one. At the first and last KV layers the closest relative is a *repeat*, wherever it last occurred, and the tree is a set of **hubs**: one copy of a token with a dozen or two far-apart echoes hanging off it. A link in a hub layer costs about 10 bits to write down, because it points anywhere in the punnet; a link in a chain layer costs 7, because it mostly points next door.
 
-A figure for this page is still to be built; meanwhile the table is the figure ([[#measured-cutting-the-tensor]]).
+::: figure fig-hypotheses-echo hypEcho wide
+**Where the reference links point, by KV layer.** One row per KV layer: a histogram of the distance, in tokens, from each cherry to its reference cherry on the 24 punnets of [[#measured-cutting-the-tensor]], with the measured share of links within 8 tokens; the glyph at the right says whether the layer builds chains (nearby links) or hubs (many far links to one copy) and gives the largest degree and the bits per link. The "shuffle the tokens" switch shows what the reference tree is worth once neighbourhoods are destroyed: 0.6907 becomes 0.7520. Far-bin shapes beyond the measured shares are illustrative. Data: `figures/data/measured-time.json`, `measured-splits.json`.
+:::
 
 ::: takeaway
 - At KV layer 0 the nearest cherry is the same token again in 78 % of 4096-token punnets.

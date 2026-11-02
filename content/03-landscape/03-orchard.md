@@ -79,7 +79,7 @@ The four index names are fixed for the whole site, in this order:
 In equations the two halves are $\vK$ and $\vV$. Write `.shape` with the numbers of the setting a sentence is about; in the setting selected now the orchard of one sequence is [[@L]] tokens × [[@NL]] KV layers × [[@heads]] × [[@headdim]] elements, for keys and again for values.
 
 ::: note warning A store, not a cache
-In [[#school-caches]] a [[cache]] was a small, fast copy of a few items from a big, slow store, with [[hit-miss|hits and misses]]. The orchard is not that. It is the *complete* store of keys and values; nothing is ever evicted from it. The thing is usually called the "KV cache", and the name is a historical accident. On this site the orchard is the whole store, and the small, fast, real cache arrives with HiSparse on [[#landscape-hisparse]]. <!-- old-words -->
+In [[#school-caches]] a [[cache]] was a small, fast copy of a few items from a big, slow store, with [[hit-miss|hits and misses]]. The orchard is not that. It is the *complete* store of keys and values; nothing is ever evicted from it. The thing usually goes by a name with "cache" in it, and that name is a historical accident. On this site the orchard is the whole store, and the small, fast, real cache arrives with HiSparse on [[#landscape-hisparse]].
 :::
 
 ::: takeaway
@@ -115,7 +115,7 @@ A [[vector]] is an ordered list of $\vd$ numbers; each number is an [[element]] 
 :::
 
 ::: figure fig-landscape-row entryAnatomy
-**What one token leaves at one layer.** The strip is one row of the orchard, `k[token_pos_id, layer_id]` and `v[token_pos_id, layer_id]` side by side, split into its parts and drawn to scale (blue: keys; red: values; brown: an MLA latent). Choose an LLM and a number format; the tiles count the elements in the row, its bytes, the rows one token leaves (one per KV layer) and the bytes per token. The toy and Qwen3.5-2B sizes follow from their shapes; the GLM-5.1-class size (≈ 640 elements, 640 B at 8 bits) is the Pin's. The figure's labels still say "entry" for what this page calls a row; the Bench's row of 1 024 elements counts keys and values together, so its value half is the 512 B of the table above. <!-- old-words -->
+**What one token leaves at one layer.** The strip is one row of the orchard, `k[token_pos_id, layer_id]` and `v[token_pos_id, layer_id]` side by side, split into its parts and drawn to scale (blue: keys; red: values; brown: an MLA latent). Choose an LLM and a number format; the tiles count the elements in the row, its bytes, the rows one token leaves (one per KV layer) and the bytes per token. The toy and Qwen3.5-2B sizes follow from their shapes; the GLM-5.1-class size (≈ 640 elements, 640 B at 8 bits) is the Pin's.
 :::
 
 ::: try
