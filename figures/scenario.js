@@ -27,15 +27,15 @@ window.FIG = window.FIG || {};
   const STRETCH = 4096;
   // the three cherry shapes of the campaigns; `split` is the experiment repository's name for each
   const SHAPES = {
-    head: { code: '(256,)', bytes: 256, perTok: 12, name: 'one head’s vector' },
-    layer: { code: '(2, 256)', bytes: 512, perTok: 6, name: 'one layer, both heads' },
-    token: { code: '(6, 2, 256)', bytes: 3072, perTok: 1, name: 'every KV layer' },
+    head: { code: 'v[t, l, h, :]', bytes: 256, perTok: 12, name: 'one head’s vector' },
+    layer: { code: 'v[t, l, :, :]', bytes: 512, perTok: 6, name: 'one layer, both heads' },
+    token: { code: 'v[t, :, :, :]', bytes: 3072, perTok: 1, name: 'every KV layer' },
   };
   const SHAPE_IDX = { head: 0, layer: 1, token: 2, other: 3 };
   const shapeKey = s => (s in SHAPES ? s : 'other');
   const shapeColor = s => series(SHAPE_IDX[shapeKey(s)]);
   const shapeCode = s => (s in SHAPES ? SHAPES[s].code : s);
-  const SHAPE_LABEL = { head: 'cherry (256,) · 256 B', layer: 'cherry (2, 256) · 512 B', token: 'cherry (6, 2, 256) · 3072 B', other: 'other shapes (pair, triple, regime, column, tok8)' };
+  const SHAPE_LABEL = { head: 'cherry v[t, l, h, :] · 256 B', layer: 'cherry v[t, l, :, :] · 512 B', token: 'cherry v[t, :, :, :] · 3072 B', other: 'other shapes (pair, triple, regime, column, tok8)' };
   const shapeLegend = (keys = ['head', 'layer', 'token', 'other'], shape = 'dot') => keys.map(k => [SHAPE_LABEL[k], shapeColor(k), shape]);
 
   function rect(g, x, y, w, hh, o = {}) {
@@ -95,7 +95,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     const askBtn = btn('Ask for another cherry', () => ask());
     host.append(controls(askBtn, btn('Reset', () => { r = rng('scn-ask'); asks = []; draw(); }, { cls: 'sm' })), box, ro,
-      sub('Click the sender’s box or the button to ask. Illustrative sizes: a 512-byte cherry <code>(2, 256)</code> and a delta assumed at 0.11 of it, the campaigns’ best delta share.'));
+      sub('Click the sender’s box or the button to ask. Illustrative sizes: a 512-byte cherry <code>v[t, l, :, :]</code> and a delta assumed at 0.11 of it, the campaigns’ best delta share.'));
     const narrow = isNarrow(host);
     const W = narrow ? 380 : 640, H = narrow ? 600 : 334;
     const D = Diagram(box, { w: W, h: H, label: 'A sender holding the orchard answers a receiver’s ask with one delta' });

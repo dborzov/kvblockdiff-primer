@@ -7,7 +7,7 @@ cards:
   - q: 'Compressor 121 scores 0.636 = dictionary share 0.525 + delta share 0.112. Why does the 0.525 look like a measure of shared information?'
     a: 'The score''s square drew the dictionary as the shared summary and the delta as the private remainder, so a big dictionary reads as a lot shared'
     wrong: ["Because 0.525 is close to one half", "Because the delta share is the mutual information", "Because the dictionary was trained on other sequences"]
-    why: 'The square''s axes are dictionary share and delta share, a bookkeeping of bytes. The page shows that the bookkeeping does not track information.'
+    why: 'The square''s axes are the dictionary share and the delta share, two byte counts that sum to the score. The page shows that the dictionary share does not track information.'
     sec: the-conjecture
   - q: Moving every cherry of a tree compressor into its dictionary, so that every delta was empty, did what to the ratio?
     a: 'It moved by +0.00004'
@@ -39,15 +39,15 @@ The reading comes straight from how the scenario draws its score. The square of 
 
 Information theory seems to agree. [[side-information|Side information]] that both ends hold makes a message cheaper by exactly the [[mutual-information]] between them ([[#school-mutual-information]]), and a punnet dictionary is side information for every cherry in the punnet. So it is natural to read the dictionary share as that mutual information, scaled to a raw cherry. Half the bytes shared, about half the information shared.
 
-The instinct behind the sentence is sound, and this Part keeps it. There is a quantity of information behind the [[curve|compressibility curve]], and the [[roofline]] is its lower envelope. What does not survive is the number, and the reason is what a tree compressor's dictionary is made of.
+The instinct behind the sentence is sound, and this Part keeps it. There is a quantity of information behind the [[curve|compressibility curve]], and the [[roofline]], the lowest MDL ratio any compressor has reached on the scenario, approaches it from above. What does not survive is the number, and the reason is what a tree compressor's dictionary is made of.
 
 ::: takeaway
 - The square drew the dictionary as the shared summary and the delta as the private remainder, so a 0.525 dictionary share reads as "half shared".
 - Side information saves exactly the mutual information, which is why the reading sounds like information theory.
-- The instinct is right (an information quantity behind the curve, the roofline as its envelope); the number needs checking.
+- The instinct is right (an information quantity behind the curve, which the roofline approaches from above); the number needs checking.
 :::
 
-## Bookkeeping {#bookkeeping}
+## Where the bytes are filed {#bookkeeping}
 
 A tree compressor's dictionary is made of cherries. Its inner nodes are [[reference-cherry|reference cherries]], whole cherries of the punnet stored once so that other cherries can be coded as differences from them ([[#measured-night-one]]). When the campaign moved every cherry of one such compressor into the dictionary, so that every stored byte was filed as dictionary and every delta was empty, the ratio moved by **+0.00004** ([[#measured-reading-one-cherry/x-stopped-mattering]]). A reference cherry costs 5.84 bits per element inside the dictionary and 5.85 outside. The share records where the bytes were filed, and filing is free.
 
@@ -99,7 +99,7 @@ Nobody can compute the joint entropy of 4096 cherries of 512 elements directly. 
 | best verified tree compressor (121, stretch 4096) | 5.09 | 1.13 (18 %) | verified |
 | punnet floor (stretch 16 384) | ≈4.80 | ≈1.4 (23 %) | [[code-length-estimate]], 4 punnets |
 
-So the punnet redundancy of these values is at least 1.13 bits per element and probably about 1.4, out of 6.22. About a fifth of the bits, where the sentence said half. The deeper point the sentence reached for stands: the quantity is real, the compressors are climbing towards it, and the roofline of [[#scenario-the-score]] is the lower envelope of their attempts.
+So the punnet redundancy of these values is at least 1.13 bits per element and probably about 1.4, out of 6.22. About a fifth of the bits, where the sentence said half. The deeper point the sentence reached for stands: the quantity is real, the compressors are climbing towards it, and the roofline of [[#scenario-the-score]] is the lowest MDL ratio their attempts have reached.
 
 ::: note warning What "shared" counts here
 Solo codes each element from its own furrow's histogram, so the gap between solo and a punnet compressor also holds the fixed relations among a cherry's elements, which a per-punnet [[linear-prediction]] rule learns and the LLM's weights own ([[#measured-where-the-bits-come-from]]). This Part measured the split ([[#measured-two-kinds-of-structure]]): the [[reference-tree]] saves 0.064 to 0.142 of ratio, prediction 0.055 to 0.095, overlap 0.024 to 0.042. Strictly between cherries, the shared part is 0.5 to 1.1 bit per element by KV layer; counted as what a punnet lets a compressor save, it is a fifth.
@@ -119,5 +119,5 @@ Punnet redundancy is in bits per element, so it converts to bytes on the link th
 ::: takeaway
 - Punnet redundancy is the sum of the cherries' solo entropies minus their joint entropy, per element: the most any per-punnet compressor can save over solo.
 - The campaigns measured lower bounds on it: 1.13 bits (18 %) from a verified compressor, about 1.4 bits (23 %) from a code-length floor. About a fifth of the bits, inside a punnet.
-- The conjecture's instinct was right. There is an information quantity behind the curve, and the roofline is its lower envelope.
+- The conjecture's instinct was right. There is an information quantity behind the curve, and the roofline, the lowest MDL ratio reached, approaches it from above.
 :::

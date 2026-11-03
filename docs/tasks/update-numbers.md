@@ -9,14 +9,17 @@ one JSON line per trial into per-agent ledgers. The site quotes only numbers tha
    `dict_reads.every_entry`), or the article / page that states its grade. Trust order and `jq` recipes:
    `experiment_repos/kv-compress-roofline/notes/00-navigation.md` §3, §9, §10.
 2. Translate the track name into a scenario line (`docs/style/terminology.md` §4.2; e.g.
-   `s-layer-b4k-r293` → `V · all · cherry (2, 256) · stretch 4096 · leash 293 (screen)`), the coder number
-   into "compressor NN", the split into a cherry shape, x/y into dictionary/delta share.
+   `s-layer-b4k-r293` → `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293 (screen)`), the coder
+   number into "compressor NN", the split into a cherry shape written as an index expression with its
+   element count (never a tuple), `dict_cost` and `delta_ratio` into dictionary share and delta share
+   (written out; not x and y), the sequence set into dev or holdout sequences.
 3. If a figure shows the number: regenerate `figures/data/measured-*.json` with
    `KVCR_REPO=<path> python3 analysis/measured_extract.py` (ledger-derived), or add the page-only number with
    its receipt to `analysis/measured_pages.json`. JSON wins over prose when they disagree.
 4. Update `docs/project/numbers.md` and `content/11-reference/05-numbers.md`; update the page that
-   quotes it, with the receipt in its `::: aside source`; keep the grade word (verified, quick,
-   code-length estimate, bound).
+   quotes it, with the receipt in its `::: aside source`; keep the grade word (verified on holdout
+   sequences, measured in process on dev screens, quick, code-length estimate, bound) and, for a holdout
+   measurement, the sample count and the confidence interval.
 5. If the number changes a verdict, update the hypothesis page's `## Verdict` (Part VII) and, if it
    changes what to do next, Part X.
 6. Checks: `check:words`, partial builds of the touched Parts, `check.mjs` on the touched pages.

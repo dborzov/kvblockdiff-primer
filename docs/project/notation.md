@@ -90,36 +90,48 @@ for p in misses:
 ```python
 Scenario(
     slice        = "v[:, [1, 3], 0, :]",   # which coordinates of the orchard are in play
-    cherry_shape = (2, 256),               # how the slice is diced: one cherry = both layers' V vectors of one token
-    stretch_len  = 4096,                   # token positions per stretch
-    leash        = 137,                    # dictionary bytes one cold decode may touch, in cherry_bytes
-    fmt          = "fp8_e4m3",             # the number format the orchard is stored in
+    cherry       = "v[t, [1, 3], 0, :]",   # the cherry shape, as the index expression of position t's cherry: 512 elements
+    stretch_len  = 4096,                   # token positions per stretch: 512, 4096, 16 384 or n_tokens
+    leash        = 293,                    # distinct dictionary bytes one cold decode may read, in cherry_bytes; 293 is the leash of stretch 4096
+    fmt          = "fp8_e4m3",             # the number format the orchard is stored in; the only one in scope
     llm          = "Qwen3.5-2B",
     corpus       = "agent-long30",
 )
 
-stretch_id   = token_pos_id // stretch_len
-punnet       = cherries(stretch_id, scenario)       # all cherries of one stretch: punnet_size of them
-cherry_bytes = np.prod(cherry_shape)                # at 8 bits per element
+stretch      = range(stretch_id * stretch_len, (stretch_id + 1) * stretch_len)
+cherry       = lambda t: v[t, [1, 3], 0, :]        # every cherry holds the vectors of one position
+punnet       = [cherry(t) for t in stretch]         # all cherries of one stretch, in position order
+cherry_bytes = cherry(stretch[0]).size              # 512 here, at 8 bits per element
 punnet_size  = len(punnet)                          # 4096 here: one cherry per token
 
-deltas, dictionary = compress(punnet)               # once, on the sender's side, as slowly as it likes
+deltas, dictionary = compress(punnet, side_info)    # once, on the sender's side, within the compress time limit
 for i in range(punnet_size):
-    assert decompress(deltas[i], dictionary) == punnet[i]        # bit for bit, from cold
-    assert dict_reads(deltas[i], dictionary) <= leash * cherry_bytes
+    assert decompress(deltas[i], dictionary, side_info) == punnet[i]   # bit for bit, from cold
+    assert dict_reads(deltas[i], dictionary) <= leash * cherry_bytes   # for every cherry, the worst one decides
 
-mdl_ratio = (len(dictionary) + sum(map(len, deltas))) / (punnet_size * cherry_bytes)
-dictionary_share = len(dictionary) / (punnet_size * cherry_bytes)      # x
-delta_share      = sum(map(len, deltas)) / (punnet_size * cherry_bytes)  # y;  x + y == mdl_ratio
+raw              = punnet_size * cherry_bytes
+mdl_ratio        = (len(dictionary) + sum(map(len, deltas))) / raw     # every delta summed, never averaged
+delta_share      = sum(map(len, deltas)) / raw
+dictionary_share = len(dictionary) / raw            # delta_share + dictionary_share == mdl_ratio
 ```
 
 The same slice with a different cherry shape is a different scenario:
 
 ```python
 # slice: values of KV layers 1 and 3, head 0, for one stretch
-# cherry_shape (256,)    -> two cherries per token, punnet_size = 2 * 4096, cherry_bytes = 256
-# cherry_shape (2, 256)  -> one cherry per token,  punnet_size = 4096,     cherry_bytes = 512
+# cherry(t) = v[t, 1, 0, :] and v[t, 3, 0, :]  -> two cherries of 256 elements per token, punnet_size = 2 * 4096, cherry_bytes = 256
+# cherry(t) = v[t, [1, 3], 0, :]               -> one cherry of 512 elements per token,   punnet_size = 4096,     cherry_bytes = 512
 ```
+
+The three cherry shapes in scope, each the vectors of one position:
+
+```python
+cherry(t) = v[t, :, :, :]                       # all V of position t: 6 KV layers x 2 heads x 256 elements = 3072
+cherry(t) = v[t, 0, 0, :]                       # one V vector, KV layer 0 (the LLM's layer 3), head 0: 256 elements
+cherry(t) = (k[t, :, :, :], v[t, :, :, :])      # all K and V of position t: 6144 elements
+```
+
+A bare shape tuple such as `(2, 256)` is not a cherry shape: it does not say which axes it spans.
 
 ## 5. The serving application (Part VI quotes this)
 
@@ -136,7 +148,8 @@ for p in misses:                                       # p is a pick (layer_id, 
 ## 6. Naming in prose
 
 - Write the index names in code font when they name an axis: "along `token_pos_id`", "a fixed `elem_id`".
-- Write a scenario as `V · layers 1,3 · head 0 · cherry (2, 256) · stretch 4096 · leash 137`.
+- Write a scenario as `V of one token, v[t, :, :, :] · stretch 4096 · leash 293 · fp8 · target 02`, the
+  cherry as its index expression (with the element count the first time on a page), never as a tuple.
 - Write sizes with units: `cherry_bytes = 512 B`, `stretch_len = 4096 tokens`, `punnet_size = 4096 cherries`.
 - Say "the orchard of one sequence" for the tensors, "the orchard" for the concept.
 - Never write `K[l, h, t, c]`: the old axis order and the letter `c` are retired.

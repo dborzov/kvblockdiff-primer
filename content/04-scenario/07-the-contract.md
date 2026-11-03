@@ -22,7 +22,7 @@ cards:
   - q: Which of these is charged by the scenario?
     a: The bytes of the dictionary
     wrong: ["How the sender stores and catalogues the deltas", "The length field of each delta", "The shape of a cherry"]
-    why: Sender-side bookkeeping is free (host memory is not the bottleneck), delta lengths are not counted by ruling, and the scenario's constants are known to both sides in advance.
+    why: How the sender stores and catalogues its deltas is not charged (host memory is not the bottleneck), delta lengths are not counted by ruling, and the scenario's constants are known to both sides in advance.
     sec: known-in-advance
 ---
 
@@ -37,7 +37,7 @@ decompress(deltas[i], dictionary) == punnet[i]        # for every i, bit for bit
 
 ::: define contract
 - **What it is.** `compress` takes one [[punnet]] and returns one [[dictionary]] (bytes) and one [[delta]] per [[cherry]] (bytes). `decompress` takes one delta and the dictionary and must return that cherry exactly. Both outputs are opaque bytes; the scenario never looks inside them.
-- **Example.** Compressor 121 of campaign C2 on a punnet of 4096 cherries of 512 bytes: a dictionary of 1.1 MB and 4096 deltas averaging 57 bytes, about 80 % of them empty. Every one of the 294 912 cherries of its screen came back bit for bit from a separate process ([[#measured-rules-of-the-game]]).
+- **Example.** Compressor 121 of campaign C2 on a punnet of 4096 cherries of 512 bytes: a dictionary of 1.1 MB and 4096 deltas whose sizes sum to about 0.23 MB (57 bytes on average, about 80 % of them empty). Every one of the 294 912 cherries of its screen came back bit for bit from a separate process ([[#measured-rules-of-the-game]]).
 - **Easy to confuse with** "almost exact". A single element off by one grid step, once, breaks the contract; the compressor is [[lossy]] and its score is not a result.
 :::
 
@@ -86,7 +86,15 @@ On [[#tiny-files-trained-dictionary]] a [[dictionary]] was side information shar
 
 ## Known in advance, and not charged {#known-in-advance}
 
-Both sides know the scenario before the first ask, so none of this costs bytes: the stretch length, the slice, the cherry shape, `cherry_bytes`, `punnet_size`, the number format, and which cherry is being asked for. The compressor's own code, and any fixed table that depends on no data, are known too.
+Both sides know the scenario before the first ask, so none of this costs bytes: the stretch length, the slice, the cherry shape, `cherry_bytes`, `punnet_size`, the number format and its per-layer scales, and which cherry is being asked for.
+
+Three more things are [[side-information|side information]]: held by both sides before any sequence is seen, and never charged.
+
+1. The compressor's own code and its configuration: its parameters, each with a type and a range, chosen per scenario on the dev sequences ([[#scenario-the-score]]).
+2. A shared table: any data structure specific to the LLM and the scenario but to no sequence, of any size (a codebook, a basis, a rule computed from the LLM's weights, the weights of a small network), fitted on dev sequences or on a separate training corpus and never on a holdout sequence.
+3. The token ids and token kinds of the stretch's positions; the receiver knows the text.
+
+Shared tables and token ids are allowed by the human's ruling of 2026-11-03 and deferred to a later step: the compressors of the current step use neither ([[#measured-where-the-bits-come-from]]).
 
 Three more things are not charged, by decision:
 
@@ -94,11 +102,11 @@ Three more things are not charged, by decision:
 |---|---|
 | how the sender stores, indexes and catalogues its deltas | host memory is plentiful and is not the bottleneck under study; only what crosses to the receiver counts |
 | each delta's own length field | ruled out by the human on 30 October 2026; worth 0.0003 to 0.0024 of ratio and no change of winner |
-| the time `compress` takes | it runs once, offline; only `decompress` is on the miss path, and its speed is measured separately ([[#plan-decoder-speed]]) |
+| the time `compress` takes | it runs once, offline; only `decompress` is on the miss path, and its speed is measured separately ([[#plan-decoder-speed]]). Practical limits apply outside the score: `compress` may use 10 CPU-seconds per MB of raw punnet and `decompress` 2 ms per 256 raw bytes of a cherry; a result over a limit is reported with its time and is not an incumbent |
 
-One thing that looks free and is not: a dictionary fit on data it is later scored on, in global scope. That is a peek at the answer, and [[#scenario-scope]] says who pays for it.
+One thing that looks free and is not: a shared table, or a configuration, fitted on a holdout sequence it is later scored on. That is a hidden dictionary, and [[#scenario-scope]] says who pays for it.
 
 ::: takeaway
 - The scenario's constants and the identity of the asked cherry are free; the dictionary's bytes and every delta's bytes are charged.
-- Sender-side bookkeeping, delta length fields and compression time are not charged.
+- How the sender stores its deltas, delta length fields and compression time are not charged; side information (code, configuration, a shared table, token ids) is free.
 :::

@@ -74,7 +74,7 @@ A stretch is a range along one axis of the orchard, the token axis, and nothing 
 The old site used one word, "block", for the stretch and for the punnet, and the two drifted apart as soon as only part of the orchard was compressed. Hence two words. <!-- old-words -->
 
 ::: note warning The campaigns' stretch lengths
-The campaigns of Part VIII cut their sequences at 512, 4096, 16 384 and 32 768 positions and found 4096 a good compromise between a dictionary's reach and its cost ([[#measured-reading-one-cherry]]). The site's examples use 4096. Nothing about the data makes it special.
+The campaigns of Part VIII cut their sequences at 512, 4096, 16 384 and 32 768 positions and found 4096 a good compromise between a dictionary's reach and its cost ([[#measured-reading-one-cherry]]). The site's examples use 4096. Nothing about the data makes it special. The scenarios in scope since 2026-11-03 use 512, 4096, 16 384 and the whole sequence, each stretch length with its own leash ([[#scenario-the-leash]]); the positions at the end of a sequence that do not fill a stretch are dropped, so every punnet of a scenario has the same number of cherries.
 :::
 
 ::: takeaway

@@ -10,7 +10,7 @@ cards:
     why: The LLM is a hybrid. A linear-attention layer carries one fixed-size summary forward instead of a memory of every token, so it has nothing per token to store or compress.
     sec: the-llm
   - q: How big is one token's values at one KV layer, at 8 bits?
-    a: '512 bytes: 2 KV heads × 256 elements, the cherry `(2, 256)`'
+    a: '512 bytes: 2 KV heads × 256 elements, the cherry `v[t, l, :, :]`'
     wrong: ["256 bytes", "1024 bytes", "3072 bytes"]
     why: 'One head is 256 elements; a layer has two KV heads. Across the six KV layers a token''s values are 3072 bytes.'
     sec: the-llm
@@ -48,8 +48,8 @@ Each KV layer has 2 KV [[head|heads]] of 256 elements (8 query heads share them)
 |---|---|
 | layers | 24, of which 6 are KV layers: the LLM's 3, 7, 11, 15, 19, 23 = `layer_id` 0 … 5 |
 | KV heads per layer | 2, of 256 elements each (8 query heads, grouped-query attention) |
-| values of one token at one KV layer | 512 elements, 512 bytes at 8 bits: the cherry `(2, 256)` |
-| values of one token, all six KV layers | 3072 bytes: the cherry `(6, 2, 256)` |
+| values of one token at one KV layer | 512 elements, 512 bytes at 8 bits: the cherry `v[t, l, :, :]` |
+| values of one token, all six KV layers | 3072 bytes: the cherry `v[t, :, :, :]` |
 | keys | same shape; recovered before RoPE (below) |
 
 One note on the Pin's arithmetic. The Pin's cherry is one token's MLA latent at one layer, 640 bytes, keys and values in one ([[#landscape-orchard]]). The campaigns coded values alone on the Bench, so the natural cherry is one token's values at one KV layer, 512 bytes, and C1 began with one head of 256. Which elements make one cherry deserves a page of its own ([[#measured-cutting-the-tensor]]).
@@ -65,7 +65,7 @@ The plan asked for genre diversity: books, code, transcripts, benchmark prompts.
 
 These are not conversations in the usual sense. Tool output (files the agent read, commands it ran) makes up 26–89 % of a sequence and the agent's tool calls another 4–63 %; human and agent prose is the small remainder. The same file paths, JSON envelopes and error messages come round again and again.
 
-Two sets were cut from this material. **Target 03**, the smoke test: 3 sequences, two for development and one held out; nearly every number in this Part comes from its two development sequences. **Target 02**, the full set: 30 sequences, 10 for development, 5 held out, the rest untouched; the best compressors were re-run on five of them at the very end.
+Two sets were cut from this material. **Target 03**, the smoke test: 3 sequences, two for development and one held out; nearly every number in this Part comes from its two development sequences. **Target 02**, the full set: 30 sequences, 10 for development, 5 held out, the rest untouched; the best compressors were re-run on five of them at the very end. Since 2026-11-03 the split is fixed for every scenario and compressor: dev sequences `0000` to `0009` of target 02 and the three of target 03; holdout sequences `0010` to `0029` of target 02, read only for the reported measurement ([[#scenario-the-score]]).
 
 ::: note warning One kind of text
 Whatever this Part says about repeats was found in text that repeats itself unusually often. A later page shows that a punnet's difficulty is set by its share of repeated tokens ([[#measured-signal-or-noise]]). A novel, a legal brief or a chat without tool calls would have a different share; nobody has measured them. The geometry findings ([[#measured-two-kinds-of-structure]]) have a reason to transfer; the repeat findings carry this caveat.
@@ -99,10 +99,10 @@ v[:, 1, 0, 32]                            # one furrow: element 32 of KV layer 1
 v.nbytes                                  # 700,858,368: about 700 MB per sequence; 30 sequences, 20.9 GB
 ```
 
-The middle three lines are the three [[cherry-shape|cherry shapes]] the campaigns cut from this orchard: `(256,)`, one head, [[~v-one-head]]; `(2, 256)`, one KV layer with both heads, [[~v-one-token-layer]]; `(6, 2, 256)`, one token across all six KV layers. The [[slice]] is always the values, `v[:, layers, :, :]`; only the dicing changes ([[#scenario-cherry]]). [[#measured-rules-of-the-game]] writes each campaign scenario out in full; [[#measured-cutting-the-tensor]] measures which shape is right.
+The middle three lines are the three [[cherry-shape|cherry shapes]] the campaigns cut from this orchard: `v[t, l, h, :]`, one head, [[~v-one-head]]; `v[t, l, :, :]`, one KV layer with both heads, [[~v-one-token-layer]]; `v[t, :, :, :]`, one token across all six KV layers. The [[slice]] is always the values, `v[:, layers, :, :]`; only the dicing changes ([[#scenario-cherry]]). [[#measured-rules-of-the-game]] writes each campaign scenario out in full; [[#measured-cutting-the-tensor]] measures which shape is right.
 
 ::: figure fig-measured-tensor msrTensor
-**One sequence's values, and the three cherry shapes.** The box is the value orchard of one sequence: about 228K token positions along the long axis, six KV layers, two heads, 256 elements deep. Highlighted: one head of one token at one KV layer, cherry `(256,)`, 256 bytes; both heads of one KV layer, cherry `(2, 256)`, 512 bytes; all six KV layers of one token, cherry `(6, 2, 256)`, 3072 bytes. Readouts: bytes per cherry under each shape, cherries per punnet at a stretch of 4096 tokens, bytes of one sequence and of all thirty. Click a shape to highlight it. Real sizes; the FP8 copy has one byte per element.
+**One sequence's values, and the three cherry shapes.** The box is the value orchard of one sequence: about 228K token positions along the long axis, six KV layers, two heads, 256 elements deep. Highlighted: one head of one token at one KV layer, cherry `v[t, l, h, :]`, 256 bytes; both heads of one KV layer, cherry `v[t, l, :, :]`, 512 bytes; all six KV layers of one token, cherry `v[t, :, :, :]`, 3072 bytes. Readouts: bytes per cherry under each shape, cherries per punnet at a stretch of 4096 tokens, bytes of one sequence and of all thirty. Click a shape to highlight it. Real sizes; the FP8 copy has one byte per element.
 :::
 
 ::: takeaway

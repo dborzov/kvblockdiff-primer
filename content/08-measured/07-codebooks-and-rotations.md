@@ -43,7 +43,7 @@ This page is the story of why, and of a cousin result: three rotations that lost
 
 The measurement came in. Campaign C2 first computed bounds for this branch. Then the human ruled that here a bound is only a lead and a real compressor answers, so the whole family was built for real: VQ, [[product-quantization|PQ]], RQ (a codebook, then a second one for what the first leaves), OPQ (PQ after a learned rotation), binary codes and LSH (a few bits per cherry, taken from signs).
 
-Each quantiser was stacked on linear prediction with no tree, on the layer [[screen]] (`V · all · cherry (2, 256) · stretch 4096 · leash 293`). RQ saved 0.0029 of [[mdl-ratio]] on all 14 parts of the screen and passed the separate decoder; PQ saved 0.0017 (quick). Both stayed about 0.05 behind a tree compressor on the same screen. Stacked on tree *and* prediction, the encoder chose no codebook on 72 of 72 punnets (quick). Why? Put the two things a cherry can be predicted from side by side.
+Each quantiser was stacked on linear prediction with no tree, on the layer [[screen]] (`V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293`). RQ saved 0.0029 of [[mdl-ratio]] on all 14 parts of the screen and passed the separate decoder; PQ saved 0.0017 (quick). Both stayed about 0.05 behind a tree compressor on the same screen. Stacked on tree *and* prediction, the encoder chose no codebook on 72 of 72 punnets (quick). Why? Put the two things a cherry can be predicted from side by side.
 
 :::: compare A codeword versus a reference cherry
 ::: col A codeword
@@ -101,17 +101,17 @@ What does this branch look like done well, with no tree at all? Compressor 129: 
 
 | cherry shape | compressor 129 | dictionary share |
 |:--|--:|--:|
-| one head, `(256,)` | 0.7348 | 0.010 |
-| one KV layer, `(2, 256)` | 0.6863 | 0.021 |
+| one head, `v[t, l, h, :]` | 0.7348 | 0.010 |
+| one KV layer, `v[t, l, :, :]` | 0.6863 | 0.021 |
 | two KV layers | 0.6696 | |
 | three KV layers by kind (0+4+5, 1+2+3) | 0.6667 | |
 | three adjacent KV layers | 0.6652 | |
-| one token, `(6, 2, 256)` | 0.6622 | 0.042 |
+| one token, `v[t, :, :, :]` | 0.6622 | 0.042 |
 
 (Different screens, so read the shape; the campaign itself calls the comparison good to ±0.005.)
 
 ::: figure fig-measured-cast msrCast wide
-**The cast on one screen.** Horizontal bars of [[mdl-ratio]] on the layer screen (cherry `(2, 256)`, 512 bytes, stretch 4096, leash 293); lower is better. The solo ideal, 0.778 (per-furrow entropy, tables uncharged); compressor 129, linear prediction alone, 0.6863; 129 with RQ stacked, 0.0029 lower; the tree compressor 102, 0.6449; tree with prediction, compressor 121, 0.6364. The hatched bar above 129 is the penalty a fixed rotation would add, +0.28 to +0.32 bit per element (+0.035 to +0.040 of ratio), a [[code-length-estimate]] on two heads and not a compressor. Hover a bar for the trial id and the grade. Data: `measured-splits.json`, `measured-ladders.json`.
+**The cast on one screen.** Horizontal bars of [[mdl-ratio]] on the layer screen (cherry `v[t, l, :, :]`, 512 bytes, stretch 4096, leash 293); lower is better. The solo ideal, 0.778 (per-furrow entropy, tables uncharged); compressor 129, linear prediction alone, 0.6863; 129 with RQ stacked, 0.0029 lower; the tree compressor 102, 0.6449; tree with prediction, compressor 121, 0.6364. The hatched bar above 129 is the penalty a fixed rotation would add, +0.28 to +0.32 bit per element (+0.035 to +0.040 of ratio), a [[code-length-estimate]] on two heads and not a compressor. Hover a bar for the trial id and the grade. Data: `measured-splits.json`, `measured-ladders.json`.
 :::
 
 Against 102's 0.6449 on the same layer screen, 129 is **0.041 worse on all 14 parts of the screen**. That gap is what the text's repeats are worth once prediction has taken the geometry. Two trends sit behind the table. The tree adds less as cherries widen, because other parts of a wide cherry do the job a reference would. Stretch length runs the other way: from 4096 to 16 384 tokens the light compressor stops improving while the tree keeps going.
@@ -119,7 +119,7 @@ Against 102's 0.6449 on the same layer screen, 129 is **0.041 worse on all 14 pa
 For [[kvblockdiff]]'s miss path, 129 is the compressor that matches the application's own picture ([[#app-sizes]]): a tiny [[dictionary]], and every miss a [[delta]] of about 0.66–0.69 of a raw cherry. The tree compressors look nothing like it; [[#measured-reading-one-cherry]] shows what they look like instead.
 
 ::: note warning The branch is not closed
-Of the close-enough family's 62 techniques, 21 now have a real compressor, 18 only a bound, 16 are untried and 7 do not apply. Most quantiser rows are quick (only RQ without a tree passed the separate decoder), none exists at a stretch of 16 384 or on `(6, 2, 256)` cherries, where a codebook is cheaper per cherry, and all were stacked on one prediction design.
+Of the close-enough family's 62 techniques, 21 now have a real compressor, 18 only a bound, 16 are untried and 7 do not apply. Most quantiser rows are quick (only RQ without a tree passed the separate decoder), none exists at a stretch of 16 384 or on `v[t, :, :, :]` cherries, where a codebook is cheaper per cherry, and all were stacked on one prediction design.
 :::
 
 ::: aside source Receipts
@@ -131,7 +131,7 @@ Of the close-enough family's 62 techniques, 21 now have a real compressor, 18 on
 :::
 
 ::: takeaway
-- Compressor 129, with no tree, runs from 0.7348 on `(256,)` to 0.6622 on `(6, 2, 256)` with a 1–4 % dictionary; it sits 0.041 behind the tree compressor on `(2, 256)` cherries.
+- Compressor 129, with no tree, runs from 0.7348 on `v[t, l, h, :]` to 0.6622 on `v[t, :, :, :]` with a 1–4 % dictionary; it sits 0.041 behind the tree compressor on `v[t, l, :, :]` cherries.
 - The tree matters less as cherries widen and more as stretches grow.
 - 21 of 62 techniques have a real compressor; the rest are bounds or untried.
 :::

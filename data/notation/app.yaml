@@ -3,7 +3,7 @@ cherries-of:
   code: "cherries_of(p, scenario)"
   name: the cherries that serve one pick
   short: >-
-    The one or more cherries a pick `p = (layer_id, token_pos_id)` is rebuilt from, as the scenario's cherry shape decides: one cherry on the Pin (one MLA latent), one under `cherry (2, 256)` on the Bench, two under `(256,)`.
+    The one or more cherries a pick `p = (layer_id, token_pos_id)` is rebuilt from, as the scenario's cherry shape decides: one cherry on the Pin (one MLA latent), one under `v[t, l, :, :]` cherries on the Bench, two under `v[t, l, h, :]`.
   bytes: "{e} per cherry (one token, one layer)"
   home: app-mapping
 

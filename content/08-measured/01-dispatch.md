@@ -75,10 +75,10 @@ Throughout this Part, "notes" and "spec" name the verification notes and the pin
 :::
 
 ::: figure fig-measured-headline msrHeadline
-**From 8 bits to 5.** Horizontal bars in bits per element of one value (8 is raw; the MDL ratio in brackets). Raw 8. Solo ideal 6.22 (0.778): a punnet's per-furrow statistics, nothing shared between cherries, all six KV layers. C1's ladder top 5.38 (0.6731): KV layer 0 (the LLM's layer 3), head 0 only, cherry `(256,)`, stretch 4096, no leash, two sequences. C2 at stretch 4096: 5.09 (0.6364) on two sequences, 5.04 (0.6297) on five sequences of the larger set, cherry `(2, 256)`. C2 at stretch 16 384: 4.94 (0.6177), two sequences. Dashed: the punnet floor ≈4.8 bits (≈0.60), a [[code-length-estimate]], not a compressor. Thin rule: solo minus 0.75 bit, the go line of the old decision rule. Hover a bar for compressor, screen and trial id; every solid bar is verified.
+**From 8 bits to 5.** Horizontal bars in bits per element of one value (8 is raw; the MDL ratio in brackets). Raw 8. Solo ideal 6.22 (0.778): a punnet's per-furrow statistics, nothing shared between cherries, all six KV layers. C1's ladder top 5.38 (0.6731): KV layer 0 (the LLM's layer 3), head 0 only, cherry `v[t, 0, 0, :]`, stretch 4096, no leash, two sequences. C2 at stretch 4096: 5.09 (0.6364) on two sequences, 5.04 (0.6297) on five sequences of the larger set, cherry `v[t, l, :, :]`. C2 at stretch 16 384: 4.94 (0.6177), two sequences. Dashed: the punnet floor ≈4.8 bits (≈0.60), a [[code-length-estimate]], not a compressor. Thin rule: solo minus 0.75 bit, the go line of the old decision rule. Hover a bar for compressor, screen and trial id; every solid bar is verified.
 :::
 
-In the scenario's words: the score is the [[mdl-ratio]], [[dictionary-share|dictionary share]] plus [[delta-share|delta share]] ([[#scenario-the-score]]). The napkin of Part V expected values to end near a delta share of 0.75–0.85, with any gain coming from keys. The sum came in at 0.636 for values: 1.1 to 1.3 bits below solo. How it splits between dictionary and delta turned out to be mostly bookkeeping; [[#measured-reading-one-cherry]] explains why.
+In the scenario's words: the score is the [[mdl-ratio]], [[dictionary-share|dictionary share]] plus [[delta-share|delta share]] ([[#scenario-the-score]]). The napkin of Part V expected values to end near a delta share of 0.75–0.85, with any gain coming from keys. The sum came in at 0.636 for values: 1.1 to 1.3 bits below solo. How it splits between dictionary share and delta share turned out to say where the bytes were filed rather than how much the cherries share; [[#measured-reading-one-cherry]] explains why.
 
 Where did the bits go? Three places, each with its own page. **Repeats:** in a stretch of 4096 tokens many value cherries are near-copies of an earlier cherry, usually the same token appearing again, and the best compressors store the earlier one and point at it ([[#measured-night-one]]). **Geometry:** within one cherry the elements predict each other through a rule fixed by the LLM's own weights, a rule that transfers from one text to another ([[#measured-two-kinds-of-structure]]). **A remainder** that no per-punnet compressor reaches, because it is the text's long memory, what the LLM was attending to thousands of tokens back ([[#measured-where-the-bits-come-from]]).
 
@@ -112,7 +112,7 @@ nodes:
   - {id: noise, col: 4, row: 1, title: "Signal or noise", text: "Pairing; the trap; how the day ran.", link: measured-signal-or-noise, cat: stats}
   - {id: score, col: 4, row: 2, title: "The scorecard", text: "The hypotheses, graded.", link: measured-scorecard, cat: project}
   - {id: means, col: 4, row: 3, title: "What it means", text: "Two kinds of compressor; next.", link: measured-what-it-means, cat: project}
-  - {id: half, col: 5, row: 1, title: "What the half means", text: "Dictionary share is bookkeeping.", link: measured-what-the-half-means, term: punnet-redundancy}
+  - {id: half, col: 5, row: 1, title: "What the half means", text: "The dictionary share does not measure sharing.", link: measured-what-the-half-means, term: punnet-redundancy}
   - {id: ladder, col: 5, row: 2, title: "Shared across the stretch", text: "The entropy ladder.", link: measured-shared-across-the-stretch, cat: info}
 edges:
   - [data, rules]

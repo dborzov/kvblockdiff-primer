@@ -5,8 +5,8 @@ group: Setting the stage
 lede: 'Every score in this Part was produced under the contract, the score and the leash of Part IV, on a scenario the campaigns called a track. Here are the campaigns'' scenarios written in the site''s words, the cheap test called a screen, and the hours of 30 October 2026 in which the rules were born.'
 cards:
   - q: 'The campaigns'' track `s-layer-b4k-r293`, in the site''s words, is which scenario?'
-    a: 'V · all · cherry (2, 256) · stretch 4096 · leash 293, on a screen'
-    wrong: ["K · KV layer 0 · cherry (256,) · stretch 293", "V · all · cherry (6, 2, 256) · stretch 4096 · no leash", "V · head 0 · cherry (2, 256) · stretch 16 384 · leash 293"]
+    a: 'V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293, on a screen'
+    wrong: ["K · KV layer 0 · cherry v[t, l, h, :] · stretch 293", "V · all · cherry v[t, :, :, :] · stretch 4096 · no leash", "V · head 0 · cherry v[t, l, :, :] · stretch 16 384 · leash 293"]
     why: '"layer" names the cherry shape (both heads of one KV layer), "b4k" the stretch length, "r293" the leash; the slice is always the values.'
     sec: the-scenarios
   - q: What is a screen?
@@ -17,7 +17,7 @@ cards:
   - q: Why can the scores of two screens not be subtracted?
     a: They read different punnets; the token screen happened to sample punnets about 0.005 harder for every compressor than the layer screen did
     wrong: ["Because one is in bits and the other in bytes", "Because screens use different number formats", "They can, as long as both are verified"]
-    why: The layer screen read 0.6449 and the token screen 0.6461, yet on the same elements `(6, 2, 256)` cherries beat `(2, 256)` cherries by 0.0043 on 20 of 20 sequences. Only a same-window comparison ranks cherry shapes.
+    why: The layer screen read 0.6449 and the token screen 0.6461, yet on the same elements `v[t, :, :, :]` cherries beat `v[t, l, :, :]` cherries by 0.0043 on 20 of 20 sequences. Only a same-window comparison ranks cherry shapes.
     sec: the-scenarios
   - q: 'A ledger row says `verification: {isolated: true}` and `reads: {every_cherry: true}`. What has been proved?'
     a: Every cherry of every punnet came back bit for bit from a separate decoder-only process, and the leash was checked on every cherry, not a sample
@@ -35,7 +35,7 @@ Here is one row of the campaigns' ledger, abridged into the site's words. Every 
 
 ```json one trial, as the ledger recorded it (env-t0096, 31 October 2026, 06:12 UTC)
 {"id": "env-t0096", "compressor": "121-stack-rows",
- "scenario": "V · all · cherry (2, 256) · stretch 4096 · leash 293 (screen)",
+ "scenario": "V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293 (screen)",
  "mdl_ratio": 0.63639, "dictionary_share": 0.5247, "delta_share": 0.1116,
  "punnets": 72, "cherries": 294912,
  "verification": {"isolated": true},
@@ -50,11 +50,11 @@ The campaigns did not have Part IV's words. They had *tracks*, named by a code: 
 
 | the campaigns' track | the scenario |
 |---|---|
-| C1's first track | V · KV layer 0 (the LLM's layer 3) · head 0 · cherry `(256,)` · stretch 4096 (and 512, 16 384, 32 768) · no leash until 11:20 UTC · FP8 (and BF16) |
-| the head screen | V · all · cherry `(256,)` · stretch 4096 · leash 293 (screen) |
-| the layer screen | V · all · cherry `(2, 256)` · stretch 4096 · leash 293 (screen) |
-| the token screen | V · all · cherry `(6, 2, 256)` · stretch 4096 · leash 293 (screen) |
-| the pair and quad tracks | V · all · cherry = 2 or 4 adjacent tokens of one KV layer, `(2, 2, 256)`, `(4, 2, 256)` · stretch 4096 |
+| C1's first track | V · KV layer 0 (the LLM's layer 3) · head 0 · cherry `v[t, 0, 0, :]` (256 elements) · stretch 4096 (and 512, 16 384, 32 768) · no leash until 11:20 UTC · FP8 (and BF16) |
+| the head screen | V · all · cherry `v[t, l, h, :]` · stretch 4096 · leash 293 (screen) |
+| the layer screen | V · all · cherry `v[t, l, :, :]` · stretch 4096 · leash 293 (screen) |
+| the token screen | V · all · cherry `v[t, :, :, :]` · stretch 4096 · leash 293 (screen) |
+| the pair and quad tracks | V · all · cherry = 2 or 4 adjacent tokens of one KV layer, `v[t:t+2, l, :, :]`, `v[t:t+4, l, :, :]` · stretch 4096 |
 | the 137 and 1 103 tracks | the layer screen with the leash at 137; the 16 384 tracks with the leash at 1 103 |
 
 Three things change between rows and nothing else: the [[cherry-shape|cherry shape]], the [[stretch|stretch length]] and the leash. The [[slice]] is always the values; the LLM, the corpus and the format are fixed. That is what makes the rows comparable at all, and it is why a score always travels with its scenario line.
@@ -66,11 +66,11 @@ Three things change between rows and nothing else: the [[cherry-shape|cherry sha
 :::
 
 ::: note warning Two screens read different punnets
-The layer screen read 0.6449 and the token screen 0.6461, so `(2, 256)` cherries looked better; on exactly the same elements, `(6, 2, 256)` cherries win by 0.0043 on 20 of 20 sequences, because the token screen had drawn punnets about 0.005 harder for every compressor. Compare scores within one screen only. [[#measured-signal-or-noise]] tells the story; [[#measured-cutting-the-tensor]] ranks the shapes properly.
+The layer screen read 0.6449 and the token screen 0.6461, so `v[t, l, :, :]` cherries looked better; on exactly the same elements, `v[t, :, :, :]` cherries win by 0.0043 on 20 of 20 sequences, because the token screen had drawn punnets about 0.005 harder for every compressor. Compare scores within one screen only. [[#measured-signal-or-noise]] tells the story; [[#measured-cutting-the-tensor]] ranks the shapes properly.
 :::
 
 ::: figure fig-measured-square msrCurve wide
-**Every verified record of both campaigns, placed on the score's square.** Horizontal axis: [[dictionary-share|dictionary share]] $\vxshare$, the dictionary's bytes over the punnet's raw bytes. Vertical axis: [[delta-share|delta share]] $\vrho$, the mean delta over a raw cherry. Their sum is the MDL ratio, so the grey diagonals are lines of constant ratio: solid at 1.0 (no compression), dashed at 0.778 (solo coding on the Bench's values). Dots: one per verified record, coloured by cherry shape, `(256,)`, `(2, 256)`, `(6, 2, 256)` and the rest; hover for compressor, scenario line, ratio and worst-cherry reads. Ringed: compressor 129, no reference cherries and a dictionary share of 0.01–0.04 (0.6863 on the layer screen), and compressor 109, every cherry in the dictionary and empty deltas (0.7188 at a stretch of 512 on the head screen). Toggle C1 and C2; C1's points are KV layer 0, head 0 only. Data: `figures/data/measured-points.json`.
+**Every verified record of both campaigns, placed on the score's square.** Horizontal axis: [[dictionary-share|dictionary share]] $\vxshare$, the dictionary's bytes over the punnet's raw bytes. Vertical axis: [[delta-share|delta share]] $\vrho$, the mean delta over a raw cherry. Their sum is the MDL ratio, so the grey diagonals are lines of constant ratio: solid at 1.0 (no compression), dashed at 0.778 (solo coding on the Bench's values). Dots: one per verified record, coloured by cherry shape, `v[t, l, h, :]`, `v[t, l, :, :]`, `v[t, :, :, :]` and the rest; hover for compressor, scenario line, ratio and worst-cherry reads. Ringed: compressor 129, no reference cherries and a dictionary share of 0.01–0.04 (0.6863 on the layer screen), and compressor 109, every cherry in the dictionary and empty deltas (0.7188 at a stretch of 512 on the head screen). Toggle C1 and C2; C1's points are KV layer 0, head 0 only. Data: `figures/data/measured-points.json`.
 :::
 
 ::: takeaway
@@ -105,7 +105,7 @@ Part IV states the rules as if they had always existed. They were written in a m
 - **The contract and the score** existed before the first night: `compress` and `decompress`, every cherry back bit for bit, bytes out over bytes in.
 - **10:15 UTC.** The human clarified the goal: deployment is out of scope; explore the whole range of dictionary-versus-delta splits and find where the ratio is lowest. The agents pushed cherries into the dictionary and the ratio kept falling, to the corner where *every* cherry is in the dictionary and every delta is empty: 0.6705 at a stretch of 4096, the best number of the night ([[#measured-night-one]]).
 - **11:00 UTC.** The human called that corner what it was: ordinary stream compression of the punnet, valid under the contract and useless for one-cherry-at-a-time asks. The frontier compressors already read half their dictionary for one cold cherry; the all-dictionary one read about 1 490 cherries' worth.
-- **11:20 UTC.** The third rule existed: the leash, at 137, 293 or 1 103 cherries' worth per cold decode, primes chosen by the human, the same at every stretch length. C2 started again under it.
+- **11:20 UTC.** The third rule existed: the leash, at 137, 293 or 1 103 cherries' worth per cold decode, primes chosen by the human, applied at whatever stretch length a track ran. C2 started again under it. (Since 2026-11-03 each stretch length has its own leash: 137 at 512, 293 at 4096, 1 103 at 16 384, 14 503 for the whole sequence; [[#scenario-the-leash]].)
 - **31 October.** The leash was first stated on the mean over a sample; the human then set it on every single cherry, and the supervisor re-decoded 5.3 million cherries cold to check ([[#measured-reading-one-cherry]]).
 
 ::: aside source Receipts

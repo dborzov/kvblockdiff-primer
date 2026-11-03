@@ -48,17 +48,17 @@ Here is one row of the campaigns' ledger, abridged into plain words. Every field
 
 ```json one trial, as the ledger recorded it (env-t0096, 31 October 2026, 06:12 UTC)
 {"id": "env-t0096", "compressor": "121-stack-rows",
- "scenario": "V · all · cherry (2, 256) · stretch 4096 · leash 293 (screen)",
+ "scenario": "V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293 (screen)",
  "mdl_ratio": 0.63639, "dictionary_share": 0.5247, "delta_share": 0.1116,
  "punnets": 72, "cherries": 294912,
  "verification": {"isolated": true},
  "reads": {"mean": 120.4, "p99": 184, "max": 225.8, "every_cherry": true}}
 ```
 
-- **The contract, per cherry, in a fresh process.** A score is a [[=verified-result|verified result]] only if every cherry of every punnet was rebuilt bit for bit by a separate decoder-only process from the stored bytes alone. A trial that skipped this pass is a *quick* trial and can never hold a record; a number computed from a probability table without building the compressor is a [[#toolbox-bounds|code-length estimate]]; a bound is a bound.
+- **The contract, per cherry, in a fresh process.** A score is a [[=verified-result|verified result]] only if every cherry of every punnet was rebuilt bit for bit by a separate decoder-only process from the stored bytes alone. A trial that skipped this pass is a *quick* trial and can never hold a record; a number computed from a probability table without building the compressor is a [[#toolbox-bounds|code-length estimate]]; a bound is a bound. Since 2026-11-03 the reported number is this check run on the holdout sequences; a dev screen counts its reads in process and its number is a lead.
 - **The leash, per cherry.** Each cold decode's distinct dictionary reads are recorded; a sample with every untouched byte scrambled must decode identically. Only rows with `every_cherry: true` prove a compressor keeps its leash ([[#scenario-the-leash]]).
 - **The bill, by one rule.** Dictionary bytes plus delta bytes over raw bytes, nothing else, for everyone ([[#scenario-the-score]]).
-- **Paired scores.** A trial is graded against the incumbent on exactly the same punnets, per sequence; a new record needs to win on all of them or pass a paired test on five or more sequences ([[#measured-signal-or-noise]]).
+- **Paired scores.** A trial is graded against the incumbent on exactly the same punnets. The campaigns' harness asked for a win on every sequence or a paired test on five or more sequences; the protocol of 2026-11-03 compares the per-punnet paired difference with its Student-t confidence interval and quotes the per-sequence spread as the check ([[#measured-signal-or-noise]]).
 - **The ledger.** One append-only line per trial, machine-written. Everything in Part VIII traces to a ledger row or says what grade it has instead.
 
 The first plan of this project sketched a harness of three methods (`fit`, `encode`, `decode`) that let the harness choose the fitting set to control scope ([[#scenario-scope]]). The real harness has one contract, `compress` and `decompress`, with scope fixed at the stretch and the dictionary opaque; sequence scope is a stretch as long as the sequence, and global scope is a separate calibration run. The sketch survives as `analysis/plan_harness.py`, a few hundred lines of numpy that Part V quotes.

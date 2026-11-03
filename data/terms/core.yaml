@@ -117,7 +117,7 @@ cherry:
   home: scenario-cherry
   ref: "{e} per cherry when a cherry is one token's values at one layer"
   short: >-
-    The unit the receiver asks for and the sender answers with one delta: a fixed-shape sub-array of the slice, e.g. `cherry.shape == (2, 256)`, `cherry_bytes == 512`. Every cherry of a scenario has the same shape, known to both sides in advance.
+    The unit the receiver asks for and the sender answers with one delta: the chosen vectors of one token position of the slice, written as an index expression with its element count, e.g. `cherry(t) = v[t, l, :, :]`, 512 elements, `cherry_bytes == 512`. Every cherry of a scenario has the same size, known to both sides in advance; cherries that stack several positions are out of scope.
 
 punnet:
   label: punnet
@@ -141,7 +141,7 @@ leash:
   cat: project
   home: scenario-the-leash
   short: >-
-    Rebuilding any one cherry from cold may read at most `leash × cherry_bytes` distinct bytes of the dictionary: 137 cherries' worth in the baseline scenario (293 and 1103 in variants). It keeps "compress the whole punnet as one stream" out of the game.
+    Rebuilding any one cherry from cold may read at most `leash × cherry_bytes` distinct bytes of the dictionary, counted in the scenario's own cherry and checked for every cherry. One leash per stretch length: 137 at 512 positions, 293 at 4096, 1103 at 16 384, 14 503 for the whole sequence. It keeps "compress the whole punnet as one stream" out of the game.
 
 compressor:
   label: compressor
@@ -468,7 +468,7 @@ curve:
   cat: project
   home: scenario-the-score
   short: >-
-    For one compressor family at one stretch length, the points (dictionary share, delta share) it reaches as its settings vary. The lower envelope over all compressors is the roofline the data allows.
+    For one compressor on one scenario, the points (delta share, dictionary share) of its configurations. What is read off it is the point of lowest MDL ratio and the split it falls at; the lowest ratio over all compressors is the roofline.
 
 # =============================================================== information theory (Back to school)
 bit:
@@ -1227,7 +1227,7 @@ scenario:
   cat: project
   home: scenario-one-cherry-at-a-time
   short: >-
-    The tuple `(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)`. Written in prose as `V · layers 1,3 · head 0 · cherry (2, 256) · stretch 4096 · leash 137`. Two scenarios with the same slice and different cherry shapes are different problems.
+    The tuple `(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)`. Written in prose as `V of one token, v[t, :, :, :] · stretch 4096 · leash 293 · fp8 · target 02`. Twelve are in scope: three cherry shapes of one position crossed with four stretch-and-leash pairs. Two scenarios with the same slice and different cherry shapes are different problems.
 
 cherry-shape:
   label: cherry shape
@@ -1235,7 +1235,7 @@ cherry-shape:
   cat: project
   home: scenario-cherry
   short: >-
-    The dicing rule of a scenario: `cherry_shape == (256,)` makes one cherry per head vector, `(2, 256)` one per token across two layers or heads, `(6, 2, 256)` one per token across six layers. The other half, with the slice, of what the campaigns called a split.
+    The dicing rule of a scenario, written as the index expression of one position's cherry with its element count: `v[t, l, h, :]` makes one cherry per head vector (256 elements), `v[t, l, :, :]` one per token at one layer (512), `v[t, :, :, :]` one per token across six layers (3072). Never a bare shape tuple. The other half, with the slice, of what the campaigns called a split.
 
 contract:
   label: the contract
@@ -1259,23 +1259,23 @@ mdl-ratio:
   cat: info
   home: scenario-the-score
   short: >-
-    (dictionary bytes + all delta bytes) ÷ raw bytes of the punnet, so $\vxshare + \vrho$ in units of a raw cherry. 1.0 means no compression; 8 × the ratio is bits per element.
+    (dictionary bytes + every delta's bytes, summed) ÷ raw bytes of the punnet, so the dictionary share plus the delta share, $\vxshare + \vrho$. 1.0 means no compression; 8 × the ratio is bits per element. The only score; neither share is one on its own.
 
 dictionary-share:
   label: dictionary share
-  name: dictionary share x
+  name: dictionary share
   cat: info
   home: scenario-the-score
   short: >-
-    The dictionary's bytes over the punnet's raw bytes, $\vxshare = \vw/\vb$. Bookkeeping, not a measure of shared information: a compressor may file reference cherries in the dictionary or in deltas and the ratio barely moves.
+    The dictionary's bytes over the punnet's raw bytes, $\vxshare = \vw/\vb$; one of the two terms of the MDL ratio and not a score on its own. It does not measure shared information: a compressor may file reference cherries in the dictionary or in deltas and the ratio barely moves.
 
 delta-share:
   label: delta share
-  name: delta share ρ
+  name: delta share
   cat: info
   home: scenario-the-score
   short: >-
-    The mean delta over a raw cherry, $\vrho$, averaged over every cherry of the punnet, empty deltas included. For 8-bit storage it is the bits per element of the deltas alone, divided by 8. The number a miss on the link cares about.
+    The bytes of every delta of the punnet, summed, over the punnet's raw bytes, $\vrho$, empty deltas included; one of the two terms of the MDL ratio and not a score on its own. For 8-bit storage it is the bits per element of the deltas alone, divided by 8. The number a miss on the link cares about.
 
 bpe:
   label: bits per element
@@ -1453,7 +1453,7 @@ roofline:
   cat: project
   home: scenario-the-score
   short: >-
-    The lower envelope of the compressibility curves of all compressors tried: the best trade-off between dictionary share and delta share that the data allows.
+    The lowest MDL ratio reached on a scenario by any compressor at any configuration, with its confidence interval. Not a lower envelope over the two shares: the shares are not scores, only their sum is.
 
 interesting-range:
   label: the interesting range
@@ -1543,7 +1543,7 @@ shared-table:
   cat: project
   home: measured-where-the-bits-come-from
   short: >-
-    A large data structure specific to no sequence and no punnet, prepared in advance and held by both sides, trained on an independent dataset; legitimate by the human's ruling, used by no compressor yet.
+    Any data structure specific to the LLM and the scenario but to no sequence, of any size, held by both sides before any sequence is seen and never charged: side information. Fitted on dev sequences or on a separate training corpus, never on a holdout sequence. Allowed by the human's ruling, deferred to a later step, used by no compressor yet.
 
 paired-difference:
   label: paired difference
@@ -1551,7 +1551,7 @@ paired-difference:
   cat: stats
   home: measured-signal-or-noise
   short: >-
-    One compressor's score minus another's on exactly the same punnets, per sequence; its spread over sequences is the noise that matters.
+    One compressor's score minus another's on exactly the same punnets. The campaign computed it per sequence with its spread over sequences; the protocol of 2026-11-03 computes it per punnet with its Student-t confidence interval and quotes the per-sequence spread as the check.
 
 punnet-redundancy:
   label: punnet redundancy

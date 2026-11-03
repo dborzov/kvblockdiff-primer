@@ -68,16 +68,16 @@ Values of Qwen3.5-2B, FP8 E4M3, coding-agent transcripts, stretches of 4096 toke
 |---|---|---|---|
 | raw | 1.0 (8 bits) | definition | |
 | solo, ideal, all six layers | 0.778 (6.22 bits) | code-length estimate | per-furrow order-0 entropy; §1.3 |
-| best real solo compressor | 0.804 | verified | compressor 09, `(256,)` cherries, KV layer 0; r1-t0005 |
-| best stretch-scope compressor, `(2, 256)` | **0.636** (5.09 bits); dictionary share 0.525, delta share 0.112 | verified | compressor 121, leash 293, 2 sequences; env-t0096 |
+| best real solo compressor | 0.804 | verified | compressor 09, `v[t, 0, 0, :]` cherries (KV layer 0, head 0); r1-t0005 |
+| best stretch-scope compressor, `v[t, l, :, :]` | **0.636** (5.09 bits); dictionary share 0.525, delta share 0.112 | verified | compressor 121, leash 293, 2 sequences; env-t0096 |
 | the same on 5 sequences | 0.630 | verified | env-t0096; paired difference to compressor 102 of −0.0088, SD 0.0001 |
-| light no-tree compressor, `(2, 256)` | 0.686; dictionary share 0.021 | verified | compressor 129; r25-t0003 |
-| the same, `(6, 2, 256)` cherries | 0.662 | verified | r25-t0004 |
-| joining the two heads, `(256,)` → `(2, 256)` | saves 0.032 of ratio, spread 0.0009, 20 of 20 sequences | encoded bytes (same window) | §1.6 |
+| light no-tree compressor, `v[t, l, :, :]` | 0.686; dictionary share 0.021 | verified | compressor 129; r25-t0003 |
+| the same, `v[t, :, :, :]` cherries | 0.662 | verified | r25-t0004 |
+| joining the two heads, `v[t, l, h, :]` → `v[t, l, :, :]` | saves 0.032 of ratio, spread 0.0009, 20 of 20 sequences | encoded bytes (same window) | §1.6 |
 | joining all six layers after that | saves a further 0.004, spread 0.0014, 20 of 20 | encoded bytes (same window) | §1.6 |
-| two / four adjacent tokens as one cherry | costs +0.037 / +0.063 | quick, against its own `(2, 256)` score | r12-t0004 |
+| two / four adjacent tokens as one cherry | costs +0.037 / +0.063 | quick, against its own `v[t, l, :, :]` score | r12-t0004 |
 | stretch length 512 / 4096 / 16 384 | 0.689 / 0.636 / 0.618 | verified (different screens) | compressors 113 / 121 / 120 |
-| leash 137 on `(2, 256)` cherries | costs 0.023 (0.660 against 0.636) | verified | compressor 97; §1.9 |
+| leash 137 on `v[t, l, :, :]` cherries | costs 0.023 (0.660 against 0.636) | verified | compressor 97; §1.9 |
 | worst cold decode, compressor 121 | 226 cherries' worth (mean 120, p99 184) | every cherry counted | §1.9 |
 | shuffle control, tree compressor | 0.691 → 0.752 | encoded bytes | r12 iter-1-2 |
 | shuffle control, linear-prediction gain | −0.034 → −0.034 | encoded bytes | r12 iter-1-2 |
@@ -117,7 +117,7 @@ Nothing here is new information; it is the settings table multiplied out, on the
 | the same as lever 2 | ≈ 120 (1.1×) at $\vnD = 1$, $\vfD = 0.3$, $\vnload = 0.01$ | $\vNL\,\ve\,[(1-\vfD)\vB + \vnD\vw]$ ≈ 250 MB |
 | Bench: one token's values at all six layers | 3 072 B | 6 × 512 |
 | Bench: one sequence's values | ≈ 691 MB (1.38 GB with keys) | 225 000 × 3 072 B |
-| Bench: one punnet of one layer's values, `(2, 256)` cherries | 2.1 MB; its tree dictionary 1.1 MB | 4096 × 512 B; × 0.525 |
+| Bench: one punnet of one layer's values, `v[t, l, :, :]` cherries | 2.1 MB; its tree dictionary 1.1 MB | 4096 × 512 B; × 0.525 |
 
 ::: takeaway
 - On the Pin at 4096 slots: 274 misses per layer per step, 13.7 MB per step, 109–110 sequences by the link, 147 by memory, 0.38 ms per layer.

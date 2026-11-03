@@ -15,9 +15,9 @@ cards:
     why: What a pick covers decides what one ask must return, hence the cherry shape and what a dictionary must serve.
     sec: a-map
   - q: How is a scenario written on this site?
-    a: 'As a line like `V · layers 0–5 · heads 0,1 · cherry (2, 256) · stretch 4096 · leash 293`'
+    a: 'As a line like `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293`'
     wrong: ["By the name of the compressor", "By the campaign's track id alone", "By the MDL ratio"]
-    why: The line names slice, cherry shape, stretch length and leash; format, LLM and corpus are stated once per page when they do not vary.
+    why: The line names the cherry as an index expression (which fixes the slice), the stretch length and the leash; format, LLM and corpus are stated once per page when they do not vary.
     sec: a-map
 ---
 
@@ -27,9 +27,9 @@ If the only goal were one serving system, one scenario would do: the slice and c
 
 The first reason has nothing to do with any application. The [[orchard]] is a tensor of unknown statistics, and the question "how are its bits arranged?" has no direct instrument. Information theory offers an indirect one: **the best compressor you can find for a scenario is a measurement, and the difference between two scenarios is a measurement too.**
 
-- Run the same compressor on `cherry (256,)` and on `cherry (2, 256)` over the same elements. The second may use head 0 to predict head 1 for free; the first may not. The gap, 0.032 of ratio on 20 sequences of 20, is a lower bound on the bits the two heads share. That is how [[#hypotheses-stereo|stereo similarity]] was found, under a cosine of 0.05 that said the heads had nothing in common ([[#measured-cutting-the-tensor]]).
-- Dice two adjacent tokens into one cherry and the ratio gets *worse* by 0.037: adjacent tokens share little once each has its own reference cherry, which is a reading on [[#hypotheses-fallen-apple|fallen-apple similarity]].
-- Compare keys and values as slices, FP8 and BF16 as formats, stretch 512 and 16 384, leash 137 and 1 103: each pair is a question about where the bits are, answered in bits.
+- Run the same compressor on cherries `v[t, l, h, :]` (256 elements) and on cherries `v[t, l, :, :]` (512) over the same elements. The second may use head 0 to predict head 1 for free; the first may not. The gap, 0.032 of ratio on 20 sequences of 20, is a lower bound on the bits the two heads share. That is how [[#hypotheses-stereo|stereo similarity]] was found, under a cosine of 0.05 that said the heads had nothing in common ([[#measured-cutting-the-tensor]]).
+- Dice two adjacent tokens into one cherry, `v[t:t+2, l, :, :]`, and the ratio gets *worse* by 0.037: adjacent tokens share little once each has its own reference cherry, which is a reading on [[#hypotheses-fallen-apple|fallen-apple similarity]]. (Cherries that stack positions are out of scope since 2026-11-03; the reading stands as history.)
+- Compare `v[t, :, :, :]` with `(k[t, :, :, :], v[t, :, :, :])` on the same stretches (what the keys add), `v[t, 0, 0, :]` with the layer-0, head-0 part of `v[t, :, :, :]` (what the other eleven vectors of a position add), stretch 512 with 16 384 and the whole sequence, each with its own leash: each pair is a question about where the bits are, answered in bits. Every scenario in scope is fp8; bf16 is out of scope for now.
 
 For this purpose nobody cares whether the winning compressor could ever run on a GPU. It is the instrument; its score is the reading; the interpretation is the result.
 
@@ -48,10 +48,10 @@ The second reason is that every real serving design *is* a scenario, and differe
 
 | serving design | what one pick covers | the scenario it needs |
 |---|---|---|
-| DeepSeek-V3.2 / V4 (DSA) | one token at one layer | one-layer slices, `cherry (2, 256)`-style; one dictionary per layer per stretch |
-| GLM-5.1 | one token for a group of layers, selected once | multi-layer cherries `(n, 2, 256)`, or one-layer cherries served by one dictionary shared across the group |
+| DeepSeek-V3.2 / V4 (DSA) | one token at one layer | one-layer cherries, `v[t, l, :, :]` (512 elements); one dictionary per layer per stretch |
+| GLM-5.1 | one token for a group of layers, selected once | cherries of several layers, `v[t, layers, :, :]` (up to `v[t, :, :, :]`, 3072 elements), or one-layer cherries served by one dictionary shared across the group |
 | DeepSeek-V4's squeezed picks | four tokens squeezed into one row | cherries of the squeezed row; the stretch counts rows |
-| keys and values moved together | both halves of the orchard | a slice of `k` and `v`, or two scenarios whose deltas travel together |
+| keys and values moved together | both halves of the orchard | cherries of `k` and `v`, `(k[t, :, :, :], v[t, :, :, :])` (6144 elements), or two scenarios whose deltas travel together |
 
 Which scenario a design needs decides which measurements matter to it: a GLM-style design wants to know whether a dictionary shared across six layers beats six separate ones ([[#hypotheses-upstairs]]); a DSA-style design wants the per-layer numbers and nothing else. The experiments run across scenarios first; the application is chosen afterwards, on the numbers ([[#app-which-application]]).
 
@@ -63,28 +63,38 @@ The probe and the map read the same table. Joining the heads saved 0.032: to the
 
 Every number on the measurement pages names its scenario as one line, in a fixed order:
 
-`V · layers 0–5 · heads 0,1 · cherry (2, 256) · stretch 4096 · leash 293`
+`V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293`
 
-Slice first (which half, which layers, which heads; elements only when not all), then cherry shape, stretch length, leash. The number format, the LLM and the corpus are stated once per page when they do not vary (on the measurement pages: FP8 E4M3, Qwen3.5-2B, the agent transcripts). A screen's name from the campaigns' ledger (`s-layer-b4k-r293`) appears only inside a `::: aside source` as a receipt.
+The cherry first, as the index expression of one position's cherry (its element count the first time on a page: here 512), with a few words saying what it is; the index expression fixes the slice, so the slice is named separately only where it is narrower than the expression shows. Then the stretch length and the leash. The number format, the LLM and the corpus are stated once per page when they do not vary (on the measurement pages: FP8 E4M3, Qwen3.5-2B, the agent transcripts). A bare shape tuple is never written. A screen's name from the campaigns' ledger (`s-layer-b4k-r293`) appears only inside a `::: aside source` as a receipt.
 
 ### The catalogue
 
-| scenario | status | what it measures |
+Since 2026-11-03 the scenarios in scope are three cherry shapes, each the vectors of one position, crossed with four stretch-and-leash pairs, all at fp8 on the Bench's dump: twelve cells.
+
+| cherry (elements) | what one cherry holds | stretch · leash |
 |---|---|---|
-| `V · layer 0 · head 0 · cherry (256,) · stretch 4096 · no leash` | run (C1) | the first ladder; where the trivial corner is |
-| `V · all · cherry (256,) / (2, 256) / (6, 2, 256) · stretch 4096 · leash 293` | run (C2) | stereo and upstairs similarity, by cherry shape |
-| `V · all · cherry = 2 or 4 adjacent tokens · stretch 4096` | run (C2, quick) | fallen-apple similarity at the cherry level |
-| `V · all · cherry (2, 256) · stretch 512 / 16 384 / 32 768` | run (C2, partly) | the stretch-length curve; the punnet floor |
-| `V · all · cherry (2, 256) · stretch 4096 · leash 137 / 1 103` | run (C2, partly) | what the leash costs |
-| `K · all · head 0 · cherry (256,) · stretch 4096 · no leash` | one night (C1) | keys as a separate problem ([[#hypotheses-keys-and-values]]) |
-| `K+V · all · cherry (2, 2, 256)` | not run | what a hot-cache miss really moves |
-| `V · all · cherry (2, 256) · stretch = sequence` | not run | sequence scope; $\vgainstr$ |
-| any slice · global scope on a calibration corpus | not run | $\vgainseq$; whether structure is global |
-| `V · all · cherry (2, 256)` on prose, on a second LLM | not run | whether the repeat-driven findings transfer |
+| `v[t, :, :, :]` (3072) | all V vectors of position `t`, 6 KV layers × 2 heads | 512 · 137; 4096 · 293; 16 384 · 1 103; whole sequence · 14 503 |
+| `v[t, 0, 0, :]` (256) | one V vector, KV layer 0 (the LLM's layer 3), head 0 | the same four pairs |
+| `(k[t, :, :, :], v[t, :, :, :])` (6144) | all K (before RoPE) and V vectors of position `t` | the same four pairs |
+
+Comparing the first with the third on the same stretches measures what the keys add; comparing the second with the layer-0, head-0 part of the first measures what the other eleven vectors of a position add; the four pairs give the stretch-length curve, the last one being sequence scope. Under the measurement protocol every cell is empty today ([[#scenario-the-score]]); the campaigns' runs below are leads for choosing configurations.
+
+| scenario, as the campaigns ran it | status | what it measured |
+|---|---|---|
+| `V · cherry v[t, 0, 0, :] (KV layer 0, head 0) · stretch 4096 · no leash` | run (C1) | the first ladder; where the trivial corner is |
+| `V · cherry v[t, l, h, :] / v[t, l, :, :] / v[t, :, :, :] · stretch 4096 · leash 293` | run (C2) | stereo and upstairs similarity, by cherry shape |
+| `V · cherry v[t:t+2, l, :, :] / v[t:t+4, l, :, :] · stretch 4096` (stacked positions, out of scope) | run (C2, quick) | fallen-apple similarity at the cherry level |
+| `V · cherry v[t, l, :, :] · stretch 512 / 16 384 / 32 768 · leash 293` | run (C2, partly) | the stretch-length curve; the punnet floor |
+| `V · cherry v[t, l, :, :] · stretch 4096 · leash 137 / 1 103` | run (C2, partly) | what the leash costs |
+| `K · cherry k[t, 0, 0, :] · stretch 4096 · no leash` | one night (C1) | keys as a separate problem ([[#hypotheses-keys-and-values]]) |
+| `(k[t, :, :, :], v[t, :, :, :])` at any stretch | not run; in scope | what a hot-cache miss really moves |
+| `v[t, :, :, :] · stretch = sequence · leash 14 503` | not run; in scope | sequence scope; $\vgainstr$ |
+| any cherry with a shared table fitted on dev sequences or a separate training corpus | not run; deferred | $\vgainseq$; whether structure is global |
+| `v[t, :, :, :]` on prose, on a second LLM | not run | whether the repeat-driven findings transfer |
 
 Part X orders the unrun rows by how fast they return a result ([[#plan-next-in-the-harness]]).
 
 ::: takeaway
 - Every serving design is a scenario; what a pick covers decides the cherry shape and what a dictionary must serve.
-- A scenario is written as one line: slice · cherry shape · stretch · leash. The catalogue says what has been run and what has not.
+- A scenario is written as one line: the cherry as an index expression · stretch · leash. Twelve scenarios are in scope; the catalogue says what has been run and what has not.
 :::

@@ -31,7 +31,7 @@ cards:
     sec: the-corner
 ---
 
-In the small hours of 30 October 2026, four researcher agents and a supervisor sat down with one slice of a real [[orchard]]: the values of KV layer 0 (the LLM's layer 3), head 0, of Qwen3.5-2B over two long coding-agent transcripts. The scenario, in the site's words: `V · KV layer 0 · head 0 · cherry (256,) · stretch 4096 · no leash · FP8`. One [[cherry]] is one V vector, [[~v-one-head]], 256 bytes; one [[punnet]] is the 4096 cherries of one [[stretch]]. The instrument was the [[harness]]: a compressor hands back a [[dictionary]] and one [[delta]] per cherry, every cherry must come back bit for bit, and the score is the [[mdl-ratio]], bytes out over bytes in. Here is what came back.
+In the small hours of 30 October 2026, four researcher agents and a supervisor sat down with one slice of a real [[orchard]]: the values of KV layer 0 (the LLM's layer 3), head 0, of Qwen3.5-2B over two long coding-agent transcripts. The scenario, in the site's words: `V · cherry v[t, 0, 0, :] (KV layer 0, head 0; 256 elements) · stretch 4096 · no leash · FP8`. One [[cherry]] is one V vector, [[~v-one-head]], 256 bytes; one [[punnet]] is the 4096 cherries of one [[stretch]]. The instrument was the [[harness]]: a compressor hands back a [[dictionary]] and one [[delta]] per cherry, every cherry must come back bit for bit, and the score is the [[mdl-ratio]], bytes out over bytes in. Here is what came back.
 
 ## The floor {#the-floor}
 
@@ -54,7 +54,7 @@ The toolbox had guessed 0.78 with an ideal entropy coder and 0.88 with a fixed-l
 The first real step: predict each cherry from the cherry nearest to it in the punnet, by plain Euclidean distance, and store the exact difference. Every fourth cherry went into the dictionary whole; the rest were coded as a bell curve centred on their nearest dictionary cherry: **0.7698**. This is the [[sib|sibling]] of [[#toolbox-reference-cherries]] with a dictionary of real cherries, and the night never left it. The stored cherry is a [[reference-cherry]]: a real cherry of the punnet, not an invented average.
 
 ::: figure fig-measured-ladder-c1 msrLadderC1 wide
-**The twin ladder of Night one.** Bars: MDL ratio at a stretch of 4096 tokens of each compressor in the ladder (values of KV layer 0, head 0, cherry `(256,)`, FP8, two dev sequences), with rules at the solo ideal 0.7999 and at 1.0; hover for the trial id. Toggle: the same family at stretches of 512 to 32 768 tokens, 0.7237 / 0.6731 / 0.6416 / 0.6294. All verified ledger rows; data from `figures/data/measured-ladders.json`.
+**The twin ladder of Night one.** Bars: MDL ratio at a stretch of 4096 tokens of each compressor in the ladder (values of KV layer 0, head 0, cherry `v[t, 0, 0, :]`, FP8, two dev sequences), with rules at the solo ideal 0.7999 and at 1.0; hover for the trial id. Toggle: the same family at stretches of 512 to 32 768 tokens, 0.7237 / 0.6731 / 0.6416 / 0.6294. All verified ledger rows; data from `figures/data/measured-ladders.json`.
 :::
 
 | step, in our words | compressor | ratio |

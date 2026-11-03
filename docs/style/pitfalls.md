@@ -8,35 +8,47 @@ general philosophy is in `philosophy.md`; the vocabulary in `terminology.md`.
 
 1. **A stretch is positions; a punnet is cherries.** "The block" used to mean both. A stretch of 4096
    token positions yields a punnet of 4096 cherries only when the cherry is one token's worth of the
-   slice; with `(256,)` cherries over two layers the same stretch yields 8192. Never say "the stretch's
-   bytes" or "compress the stretch"; a stretch has no bytes.
+   slice; with `v[t, l, 0, :]` cherries (256 elements) over two layers the same stretch yields 8192.
+   Never say "the stretch's bytes" or "compress the stretch"; a stretch has no bytes.
 2. **A punnet is not the whole stretch's values.** It contains what the slice puts in play, which can
    be one head of one layer. "The dictionary serves the block" used to hide this.
 3. **The slice says what is in play; the cherry shape says how it is diced.** Both together replaced
    "entry split". The same slice with two cherry shapes is two scenarios with different scores, because
    what one ask returns and what a decode may use for free both change.
 4. **A cherry is what the receiver asks for; a pick is what the indexer names.** They coincide in one
-   scenario (`V · layer l · cherry (2, 256)`) and not in others; a pick is served with one or more
-   cherries. "Entry" used to mean both, and also the compressed thing, and also one token's keys plus
-   values (1024 elements), which the campaigns never compressed.
+   scenario (V at one KV layer, cherry `v[t, l, :, :]`, 512 elements) and not in others; a pick is
+   served with one or more cherries. "Entry" used to mean both, and also the compressed thing, and also
+   one token's keys plus values (1024 elements), which the campaigns never compressed.
+4b. **A cherry is written as an index expression, never as a shape tuple.** `(2, 256)` meant two layers
+   of one head in the first draft of this site and two heads of one layer in the campaigns; `(2, 2, 256)`
+   was read as two adjacent positions by one and two adjacent layers by the other. Write `v[t, l, :, :]`
+   and the element count. Every cherry in scope holds the vectors of one position; cherries that stack
+   positions are out of scope.
 5. **A dictionary is the shared bytes, not the punnet, not the codebook.** Any bytes the receiver holds
    before asking: statistics, a basis, a codebook, tables, reference cherries, weights. "Codebook" means
    only VQ's centroid list. A Python `dict` is never called a dictionary on the site.
 
 ## B. The score and its parts
 
-6. **The dictionary share is bookkeeping, not a measure of sharing.** A reference-tree compressor
-   files half the punnet in the dictionary; moving every cherry there changed one ratio by 0.00004.
-   "Half the bits are in the dictionary, so half the information is shared" is the specific wrong
-   inference the site had to retract. What measures sharing is the gain over solo.
+6. **Neither share is a score, and the dictionary share does not measure sharing.** A reference-tree
+   compressor files half the punnet in the dictionary; moving every cherry there changed one ratio by
+   0.00004. "Half the bits are in the dictionary, so half the information is shared" is the specific
+   wrong inference the site had to retract. What measures sharing is the gain over solo. Only the sum
+   of the two shares is the score; a point with a larger dictionary share and a smaller delta share is
+   not better or worse for that reason. Where a compressor's lowest ratio falls, and at what split, is
+   a finding. The two shares are written out in words; the letters x and y are not their names, and
+   "bookkeeping" is not a description of either.
 7. **MDL ratio = dictionary share + delta share; bits per element = 8 × ratio; the delta share alone
-   is what a miss moves.** Do not call the ratio a "compression ratio" (its inverse) and do not quote a
-   delta share as if it were the whole bill.
+   is what a miss moves.** The delta share is every delta of the punnet summed over the punnet's raw
+   bytes, never a mean delta. Do not call the ratio a "compression ratio" (its inverse) and do not quote
+   a delta share as if it were the whole bill.
 8. **Scores from different screens are never subtracted.** What makes a punnet hard is its text; two
    screens sample different punnets. The one reversal in the campaigns' history came from exactly this.
-   Compare paired, on the same punnets, per sequence.
-9. **Solo is the baseline, not raw bytes.** Solo already compresses by 1.1 to 1.3×; a dictionary earns
-   its keep only against 0.778, not against 1.0.
+   Compare paired, on the same punnets: the per-punnet difference with its Student-t confidence interval,
+   and the per-sequence spread quoted beside it as the check (the experiment repository's
+   `docs/concepts/measurement-protocol.md`).
+9. **Solo is the baseline, not raw bytes.** Solo already compresses by 1.1 to 1.3×; a dictionary is
+   useful only where the ratio falls below 0.778, not below 1.0.
 10. **Verified has one meaning.** Every cherry rebuilt bit for bit in a separate process, reads
     counted for every cherry. "Encoded bytes on a window", "quick trial", "code-length estimate" and
     "bound" are other grades and must be named as such.
@@ -46,6 +58,11 @@ general philosophy is in `philosophy.md`; the vocabulary in `terminology.md`.
 11. **The leash caps what one cold decode may touch, not what the dictionary may be.** A dictionary of
     half the punnet is fine under a leash of 293 if no single decode walks through more than 293 cherries'
     worth. The leash is not a GPU memory budget and not a bandwidth; residency is Part VI's question.
+11b. **Each stretch length has its own leash.** 137 at 512 positions, 293 at 4096, 1103 at 16 384,
+    14 503 for the whole sequence: how strict a leash is depends on how many cherries the punnet holds
+    (26.8 %, 7.2 %, 6.7 %, 6.3–6.7 % of the punnet), so the pair is one scenario axis. The leash is
+    counted in the scenario's own cherry bytes (293 cherries' worth is 75 008 bytes for `v[t, 0, 0, :]`
+    and 900 096 for `v[t, :, :, :]`) and holds for every cherry, not on average.
 12. **"Cold" is about deltas, not the dictionary.** The receiver holds the dictionary throughout; cold
     means no other cherry was decoded first. A stream compressor violates cold decode however good its
     ratio; the unfenced optimum of the first campaign was that stream compressor in disguise.
@@ -67,8 +84,12 @@ general philosophy is in `philosophy.md`; the vocabulary in `terminology.md`.
 18. **Keys and values are separate problems unless a slice names both.** Keys are turned by RoPE
     before storage; the campaigns compressed values; the old plan's 1024-element "entry" counted both.
 19. **The Pin and the Bench have different shapes.** One MLA latent of ≈ 640 treated as `(1, 640)` on
-    the Pin; `(2, 256)` GQA heads on the Bench; a one-token-one-layer cherry is 640 B or 512 B. Use
+    the Pin; 2 GQA heads × 256 elements on the Bench; a one-token-one-layer cherry is 640 B or 512 B. Use
     `[[@key]]` only where a sentence is true for both.
+19b. **Sequences were the samples; now punnets are.** Under the measurement protocol of 2026-11-03 one
+    full-stretch punnet of a holdout sequence is one sample (an approximation the human accepts), the
+    reported number is the mean with its Student-t interval, and the per-sequence spread is the check.
+    Only fp8 is in scope; bf16 numbers are history.
 
 ## E. Hypotheses and their verdicts
 

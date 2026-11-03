@@ -23,6 +23,16 @@ no others for these things. `npm run check:words` flags the retired words. The g
    *entry*, *block* (for data), *cache* (bare), *coder*, *codec*, *algorithm*, *request*, *thread*, *chunk*,
    *segment*, *entry split*, *read budget*, *proxy model*, *dictionary cache*, *kv-blockdiff* with a hyphen.
    The one allowed compound is *entropy coder* (a stage type with a standard name).
+6. **Retired since the rulings of 2026-11-03** (the experiment repository's
+   `docs/concepts/what-the-human-clarified.md`): *x* and *y* as names of the two shares (write *delta
+   share* and *dictionary share*); "x is bookkeeping" and any statement that a share is bookkeeping;
+   a bare shape tuple such as `(2, 256)` for a cherry (write the index expression and the element
+   count, `v[t, l, :, :]`, 512 elements); *multi-token cherry* and any cherry that stacks several
+   positions (out of scope); *Pareto front* for the roofline (the roofline is the lowest MDL ratio);
+   *hyperparameter*, *slider* and *knob* for a compressor's setting (write *configuration parameter*);
+   *training set* and *test set*, *training sequences* and *test sequences* (write *dev sequences* and
+   *holdout sequences*). The human's rulings decide the scenario; this file records them and never
+   overrides them.
 
 ## 2. The vocabulary
 
@@ -56,21 +66,27 @@ Term ids in parentheses are the glossary ids (`[[id]]`). Nicknames in quotes are
 | term | Python | definition | retires |
 |---|---|---|---|
 | **sender / receiver** (`sender-receiver`) | — | the host-memory side that holds the orchard and prepares deltas; the GPU side that asks for one cherry at a time | encoder/decoder side |
-| **stretch** (`stretch`), `stretch_len` | `stretch_id = token_pos_id // stretch_len` | `stretch_len` consecutive token positions of one sequence. A knob of ours, not a fact of the data. Says nothing about which tensor coordinates are in play | block (the token-range sense), chunk, segment, window |
+| **sequence** (`sequence`), `sequence_id` | `"0000"`, `"0001"`, … | one recorded run of the LLM over one long text (target 02 has 30, target 03 has 3). The unit the dev/holdout split is made of | thread, request, conversation |
+| **stretch** (`stretch`), `stretch_len` | `stretch_id = token_pos_id // stretch_len` | `stretch_len` consecutive token positions of one sequence. A knob of ours, not a fact of the data, with four values in scope: 512, 4096, 16 384 and `n_tokens` (the whole sequence). Says nothing about which tensor coordinates are in play. Positions that do not fill a stretch are dropped | block (the token-range sense), chunk, segment, window |
 | **slice** (`slice`) | `v[stretch, [4, 6], 0, :]` | the rule naming which coordinates of the orchard are in play in a scenario: K or V or both, which layers, which heads, which elements. Written as the Python slice it is | entry split (half of it), "which K/V we take" |
-| **cherry** (`cherry`), `cherry.shape`, `cherry_bytes` | `cherry[i]` | one unit of request-and-delivery: the receiver asks for one cherry; the sender answers with one delta. A fixed-shape sub-array of the slice, for example `(256,)`, `(2, 256)` or `(6, 2, 256)`. Every cherry of a scenario has the same shape and size, known to both sides in advance | entry (the compressed thing), item, vector (when it means this) |
-| **cherry shape** (`cherry-shape`) | `cherry_shape=(2, 256)` | the dicing rule: how the slice is cut into cherries. The other half of the old "entry split". Two scenarios can share a slice and differ only here | entry split |
-| **punnet** (`punnet`), `punnet_size` | `punnet = cherries(stretch, slice, cherry_shape)` | the set of all cherries of one stretch under one slice and cherry shape: what one `compress` call sees and what one dictionary serves. `punnet_size` cherries | block (the data sense), entry set, the block's entries |
-| **scenario** (`scenario`) | `Scenario(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)` | the full specification of one compression problem. Written in prose as `V · layers 4,6 · head 0 · cherry (2, 256) · stretch 4096 · leash 137` | split, track, test |
+| **cherry** (`cherry`), `cherry(t)`, `cherry_bytes` | `cherry(t) = v[t, :, :, :]` | one unit of request-and-delivery: the receiver asks for one cherry; the sender answers with one delta. The chosen K and V vectors of **one** token position, written as the index expression of that position's cherry with its element count: `v[t, :, :, :]` (3072 elements), `v[t, 0, 0, :]` (256), `(k[t, :, :, :], v[t, :, :, :])` (6144). Every cherry of a scenario has the same size, known to both sides in advance | entry (the compressed thing), item, vector (when it means this); a bare shape tuple `(2, 256)`; multi-token cherry |
+| **cherry shape** (`cherry-shape`) | `cherry(t) = v[t, [1, 3], 0, :]` | the dicing rule: how the slice is cut into cherries, written as the index expression of one cherry and its element count. The other half of the old "entry split". Two scenarios can share a slice and differ only here. Cherries that stack several positions are out of scope | entry split; `cherry_shape=(2, 256)` |
+| **punnet** (`punnet`), `punnet_size` | `punnet = [cherry(t) for t in stretch]` | the set of all cherries of one stretch under one slice and cherry shape, in position order: what one `compress` call sees, what one dictionary serves, and the dataset over which one MDL ratio is computed. `punnet_size` cherries | block (the data sense), entry set, the block's entries, box of cherries |
+| **scenario** (`scenario`) | `Scenario(slice, cherry_shape, stretch_len, leash, fmt, llm, corpus)` | the full specification of one compression problem. Written in prose as `V of one token, v[t, :, :, :] · stretch 4096 · leash 293 · fp8 · Qwen3.5-2B · target 02`. Twelve are in scope: the three cherry shapes above crossed with the four stretch-and-leash pairs, all `fp8_e4m3` | split, track, test |
 | **dictionary** (`dictionary`, "the Almanac") | `deltas, dictionary = compress(punnet)` | any bytes the compressor shares across a punnet and the receiver holds before asking: furrow statistics, a basis, a codebook, an entropy-coder table, reference cherries, even the weights of a small network. Opaque to the scenario. Its **weight** `w` is its size in cherries' worth | side-information structure, codebook (when it means this) |
-| **delta** (`delta`, "the Remainder") | `delta[i]` | the bytes sent for cherry `i`; with the dictionary they rebuild it exactly. Its size over `cherry_bytes` is the **delta share** | residual bytes, payload |
-| **the contract** (`contract`) | `cherry[i] == decompress(delta[i], dictionary)` for every `i`, bit for bit, decoded cold | what makes a compression valid | verified (as the rule), round trip |
-| **MDL ratio** (`mdl-ratio`) | `(dict_bytes + sum(delta_bytes)) / (punnet_size * cherry_bytes)` | the score of a compressor on a punnet; 1.0 is no compression. **dictionary share** `x` (`dictionary-share`) and **delta share** `y` (`delta-share`) are its two terms; **bits per element** = 8 × ratio at 8-bit storage | compression ratio (inverse), rate (bare) |
-| **the leash** (`leash`) | `leash = 137 * cherry_bytes` | the cap on dictionary bytes one cold decode of one cherry may touch; it keeps bulk stream compression of a punnet out of the game. Variants use other primes (293, 1103). Measured per cherry as its **reads** (`reads`) | read budget, dictionary budget, random-access rule |
+| **delta** (`delta`, "the Remainder") | `deltas[i]` | the bytes sent for cherry `i`; with the dictionary they rebuild it exactly. Opaque; sizes may differ from cherry to cherry and are the compressor's choice; a delta may be empty | residual bytes, payload |
+| **the contract** (`contract`) | `decompress(deltas[i], dictionary, side_info) == punnet[i]` for every `i`, bit for bit, decoded cold | what makes a compression valid | verified (as the rule), round trip |
+| **MDL ratio** (`mdl-ratio`) | `(len(dictionary) + sum(len(d) for d in deltas)) / (punnet_size * cherry_bytes)` | the score of a compressor on one punnet: every byte needed to rebuild the punnet over its raw bytes, the sum running over every delta. 1.0 is no compression; **bits per element** = 8 × ratio at 8-bit storage | compression ratio (inverse), rate (bare) |
+| **delta share** (`delta-share`), **dictionary share** (`dictionary-share`) | `sum(len(d) for d in deltas) / raw`, `len(dictionary) / raw` | the two terms of the MDL ratio, `delta share + dictionary share == MDL ratio`, and the axes of the curve plot. Always written out; the letters x and y are not names. Neither share is a score on its own: only the sum is | x, y; "x is bookkeeping" |
+| **the leash** (`leash`), **reads** (`reads`) | `dict_reads(deltas[i], dictionary) <= leash * cherry_bytes` | the cap on the distinct dictionary bytes one cold decode of one cherry may read, counted in the scenario's own cherries' worth, for **every** cherry. One value per stretch length: 137 at 512, 293 at 4096, 1103 at 16 384, 14 503 for the whole sequence (primes). It keeps bulk stream compression of a punnet out of the game. The reads are the measured quantity | read budget, dictionary budget, random-access rule, read limit |
+| **side information** (`side-information`), **shared table** (`shared-table`) | `decompress(delta, dictionary, side_info)` | what both sides hold before any sequence is seen, never charged: the scenario's constants, the compressor's code and configuration, the token ids and kinds, and a shared table (any data structure specific to the LLM and the scenario, of any size, fitted on dev sequences or a separate training corpus, never on a holdout sequence). Shared tables and token ids are allowed and deferred to a later step | global dictionary (when it means this), calibration data (for the table) |
+| **configuration**, **configuration parameter** (no glossary id yet) | `params` | a compressor's settings, each with a type and a range, chosen per scenario on the dev sequences. A compressor at several configurations gives several points on its curve | hyperparameter, slider, knob (of a compressor), settings (bare) |
+| **dev sequences**, **holdout sequences** (no glossary id yet) | `dev`, `holdout` | the sequences on which configurations are chosen and shared tables fitted (target 02 `0000`–`0009` and target 03's three); the sequences on which the reported number is measured, never read before the configuration is frozen (target 02 `0010`–`0029`). One full-stretch punnet of a holdout sequence is one sample; the reported number is the mean with its Student-t confidence interval | training set, test set, training/test sequences, tuning set, calibration set (for this) |
 | **compressor** (`compressor`) | `compress`, `decompress` | one concrete pair of functions: a dataflow graph of stages from raw cherries to dictionary bytes and delta bytes | coder, codec, algorithm, method, scheme |
-| **stage** (`stage`) | — | one node of a compressor's graph: a transform, a predictor, a bit-field split, a quantiser, an entropy coder | component, step, module |
-| **solo** (`solo`, "the Hermit") | `dictionary = b""` | the compressor family with an empty dictionary: each cherry coded on its own with a fixed table | per-entry coding, context-free coding |
-| **the harness** (`harness`) | — | the referee program that runs every compressor through the contract, counts bytes, checks the leash and records every trial | the framework, the test bench |
+| **stage** (`stage`) | — | one node of a compressor's graph: a transform, a predictor, a quantiser, an entropy coder (a bit-field split is a diagnostic at most) | component, step, module |
+| **solo** (`solo`, "the Hermit") | `dictionary = b""` | the compressor family with an empty dictionary: each cherry coded on its own with a fixed table. A reference line, not a research target | per-entry coding, context-free coding |
+| **the harness** (`harness`) | — | the referee program that runs every compressor through the contract, counts bytes, checks the leash for every cherry and records every trial | the framework, the test bench |
+| **the curve**, **the roofline** (`curve`, `roofline`) | — | a compressor's configurations placed by (delta share, dictionary share), with its point of lowest MDL ratio and the split it falls at; the lowest MDL ratio reached on a scenario by any compressor at any configuration, with its confidence interval | Pareto front, lower envelope over the shares |
 
 ### 2.3 The application: kvblockdiff on HiSparse
 
@@ -104,10 +120,11 @@ Stage names are standard and stay: **furrow statistics** (`loc`, "the Anchor": a
 ## 3. Symbols
 
 Single letters stay for equations (`data/symbols/*.yaml`) with renamed meanings: `b` stretch length,
-`e` cherry bytes, `d` elements per cherry, `w` dictionary weight in cherries' worth, `ρ` delta share,
-`x`/`y` dictionary/delta share (when both are named), `Δ` token distance, `k` picks per layer per step,
+`e` cherry bytes, `d` elements per cherry, `w` dictionary weight in cherries' worth, `ρ` the delta share
+and `x_D` the dictionary share inside KaTeX only, `Δ` token distance, `k` picks per layer per step,
 `B` hot-cache slots, `S` the pick set. The Python names are the prose names; letters appear inside
-equations and in symbol reminders.
+equations and in symbol reminders. In prose the two shares are always written out as *delta share* and
+*dictionary share*; the bare letters x and y are not names of them.
 
 ## 4. Translation tables
 
@@ -136,16 +153,19 @@ equations and in symbol reminders.
 |---|---|
 | entry, entry set | cherry, punnet |
 | block (positions) / block (data) | stretch / punnet |
-| entry split: head / layer / token / tok2 … | cherry shape `(256,)` / `(2, 256)` / `(6, 2, 256)` / two adjacent tokens … |
+| entry split: head / layer / token / tok2 … | cherry shape `v[t, l, h, :]` (256 elements) / `v[t, l, :, :]` (512) / `v[t, :, :, :]` (3072) / `v[t:t+2, l, :, :]` (stacked positions, out of scope) … |
 | channel, elephant line | element, furrow |
 | sequence, thread | sequence |
-| read budget `r137` | leash 137 |
+| read budget `r137`, `dict_read_max`, read limit | leash 137; the reads |
 | coder, algorithm `NN-slug` | compressor `NN-slug` |
 | map, linear prediction | linear prediction |
 | anchor, exemplar, reference | reference cherry |
 | tree, reference tree | reference tree |
-| track `s-layer-b4k-r293` | scenario: screen · cherry `(2, 256)` · stretch 4096 · leash 293 |
-| x, y, w | dictionary share, delta share, dictionary weight |
+| track `s-layer-b4k-r293` | scenario on a screen: V at one KV layer, `v[t, l, :, :]` · stretch 4096 · leash 293 · fp8 · target 03 (2 dev sequences) |
+| `dict_cost`, `delta_ratio`, `total_ratio`; x, y, w in older pages | dictionary share, delta share, MDL ratio; dictionary share, delta share, dictionary weight |
+| `params`, sliders, hyperparameters | configuration, configuration parameters |
+| `[splits] dev` / `holdout`; training / test sequences | dev sequences / holdout sequences |
+| Pareto front (older rooflines) | the roofline: the lowest MDL ratio of the scenario |
 | solo | solo |
 
 ### 4.3 The papers' words → ours

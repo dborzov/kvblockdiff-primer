@@ -73,7 +73,7 @@ Inside a punnet the floor near 4.8 bits looks like noise: no predictor built fro
 
 The human's second question was about the shape. If one cherry were several adjacent KV layers' values of the same token instead of one layer's, would more become shared? That is the [[upstairs]] bet of [[#hypotheses-upstairs]], and the second campaign measured it directly by dicing the same values different ways ([[#measured-cutting-the-tensor]]).
 
-On one 4096-token window of each of 20 sequences, joining the two [[head|heads]] of a KV layer into one cherry, `(256,)` to `(2, 256)`, saves 0.0322 of ratio, about 0.26 bit per element; joining all six KV layers after that, `(2, 256)` to `(6, 2, 256)`, saves a further 0.0043, about 0.03 bit. Given everything else a compressor knows, adjacent KV layers share 0.03 to 0.08 bit per element, distant layers about 0.01, the two heads 0.19 to 1.19 bits.
+On one 4096-token window of each of 20 sequences, joining the two [[head|heads]] of a KV layer into one cherry, `v[t, l, h, :]` to `v[t, l, :, :]`, saves 0.0322 of ratio, about 0.26 bit per element; joining all six KV layers after that, `v[t, l, :, :]` to `v[t, :, :, :]`, saves a further 0.0043, about 0.03 bit. Given everything else a compressor knows, adjacent KV layers share 0.03 to 0.08 bit per element, distant layers about 0.01, the two heads 0.19 to 1.19 bits.
 
 :::: compare What joining buys
 ::: col The two heads of a KV layer
@@ -88,7 +88,7 @@ On one 4096-token window of each of 20 sequences, joining the two [[head|heads]]
 :::
 ::::
 
-In plain words, a tower of adjacent KV layers as the cherry buys almost nothing beyond the heads, because what a layer's cherry needs most is a good reference, a reference is a repeat of the text, and every layer sees the same repeat. The heads differ because they are two readings of one vector made at the same instant, and one reference lines them both up. The natural cherry is one KV layer with both heads, `(2, 256)`, 512 bytes, where the campaign's best compressors already stood; which cherry shape an application needs is a separate question ([[#app-which-application]]).
+In plain words, a tower of adjacent KV layers as the cherry buys almost nothing beyond the heads, because what a layer's cherry needs most is a good reference, a reference is a repeat of the text, and every layer sees the same repeat. The heads differ because they are two readings of one vector made at the same instant, and one reference lines them both up. The natural cherry is one KV layer with both heads, `v[t, l, :, :]`, 512 bytes, where the campaign's best compressors already stood; which cherry shape an application needs is a separate question ([[#app-which-application]]).
 
 ::: takeaway
 - Joining the two heads saves 0.0322 (0.26 bit per element); joining all six KV layers a further 0.0043 (0.03 bit). Adjacent layers share 0.03 to 0.08 bit given the rest, the heads 0.19 to 1.19.

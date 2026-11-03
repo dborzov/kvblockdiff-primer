@@ -13,8 +13,9 @@ define it once with `[[=id]]` or `::: define id`, mention it afterwards with `[[
 before the page that defines it (the linker warns; the Parts are in dependency order). If you need an idea
 from a later Part, explain it in one plain sentence instead.
 
-A term that has a Python form gets it on the same line the first time: "one cherry, `cherry[i]`, of shape
-`(2, 256)`". Use a notation chip `[[~id]]` where the reader would want the shape or the bytes on hover.
+A term that has a Python form gets it on the same line the first time: "one cherry, `cherry(t) = v[t, l, :, :]`,
+512 elements" (an index expression with its element count, never a bare shape tuple). Use a notation chip
+`[[~id]]` where the reader would want the shape or the bytes on hover.
 Introduce the thing inside the listing that uses it, then name it: show `k[layer_id].append(key)` growing,
 then say "this growing store is the orchard".
 

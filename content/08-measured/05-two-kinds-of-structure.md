@@ -52,7 +52,7 @@ The stage is [[linear-prediction]] across elements, the one [[#toolbox-linear-pr
 The [[predictive-coding]] of [[#school-prediction]] turned sideways: FLAC predicts a sample from earlier samples in time; here an element is predicted from earlier elements of the same cherry.
 :::
 
-The ladder below is one [[screen]]: `V · all · cherry (2, 256) · stretch 4096 · leash 293 (screen)`, two dev sequences, 72 punnets. Every row is a [[verified-result]].
+The ladder below is one [[screen]]: `V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293 (screen)`, two dev sequences, 72 punnets. Every row is a [[verified-result]].
 
 | compressor | what changed | ratio |
 |---|---|---:|
@@ -69,7 +69,7 @@ The ladder below is one [[screen]]: `V · all · cherry (2, 256) · stretch 4096
 | 121 | 115 with slopes and tree refit together | **0.6364** |
 
 ::: figure fig-measured-ladder-c2 msrLadderC2
-**From 0.690 to 0.636 on one screen.** Bars: MDL ratio of each compressor on the layer screen (cherry `(2, 256)`, stretch 4096, leash 293, two dev sequences), every bar verified by a separate decoder process. Right: 121 against 102 on five sequences as five paired points, −0.0088 on each; the sequences themselves differ by ten times as much. Hover for trial ids; data from `figures/data/measured-ladders.json`.
+**From 0.690 to 0.636 on one screen.** Bars: MDL ratio of each compressor on the layer screen (cherry `v[t, l, :, :]`, stretch 4096, leash 293, two dev sequences), every bar verified by a separate decoder process. Right: 121 against 102 on five sequences as five paired points, −0.0088 on each; the sequences themselves differ by ten times as much. Hover for trial ids; data from `figures/data/measured-ladders.json`.
 :::
 
 The last rung held up best. On five sequences of the larger dataset, 121 scores 0.62970 against 102's 0.63848: −0.0088 on every sequence (−0.00883, −0.00887, −0.00861, −0.00874, −0.00886), a spread of 0.0001. Its price is [[reads]], 120 against 103 cherries' worth per cold decode.

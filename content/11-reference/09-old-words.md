@@ -10,8 +10,8 @@ cards:
     why: A pick is one unit of demand, (layer_id, token_pos_id); it is served with one or more cherries, by the scenario's cherry shape.
     sec: old-site
   - q: 'The ledger names a screen `s-layer-b4k-r293`. Written as a scenario, that is…'
-    a: 'V · all · cherry (2, 256) · stretch 4096 · leash 293, on the screen''s sample of punnets'
-    wrong: ["K · layer 4 · cherry (256,) · stretch 4096 · leash 293", "V · cherry (6, 2, 256) · stretch 293 · leash 4096", "V · one head · stretch 4096 · no leash"]
+    a: 'V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293, on the screen''s sample of punnets'
+    wrong: ["K · layer 4 · cherry v[t, l, h, :] · stretch 4096 · leash 293", "V · cherry v[t, :, :, :] · stretch 293 · leash 4096", "V · one head · stretch 4096 · no leash"]
     why: '"layer" is the ledger''s name for the cherry shape that stacks both heads of one layer; "b4k" is the stretch length; "r293" is the leash.'
     sec: repo
   - q: 'KIVI rounds keys with one scale per position in the head vector, and values with one scale per token. In this site''s words?'
@@ -67,7 +67,7 @@ The ledgers, the notes and the researcher agents' pages of `kv-compress-roofline
 |---|---|
 | entry, entry set | [[cherry]], [[punnet]] <!-- old-words -->
 | block (positions) / block (data) | [[stretch]] / [[punnet]] <!-- old-words -->
-| entry split: head / layer / token / tok2, tok4 | [[cherry-shape\|cherry shape]] `(256,)` / `(2, 256)` / `(6, 2, 256)` / two or four adjacent tokens of one layer <!-- old-words -->
+| entry split: head / layer / token / tok2, tok4 | [[cherry-shape\|cherry shape]] `v[t, l, h, :]` / `v[t, l, :, :]` / `v[t, :, :, :]` / two or four adjacent tokens of one layer <!-- old-words -->
 | channel, elephant line | [[element]], [[furrow]] <!-- old-words -->
 | sequence, thread | [[sequence]] <!-- old-words -->
 | read budget `r137`, `r293`, `r1103` | [[leash\|leash 137, 293, 1103]] <!-- old-words -->
@@ -75,7 +75,7 @@ The ledgers, the notes and the researcher agents' pages of `kv-compress-roofline
 | map, linear prediction | [[linear-prediction\|linear prediction]] <!-- old-words -->
 | anchor, exemplar, reference | [[reference-cherry\|reference cherry]] <!-- old-words -->
 | tree, MST, reference tree | [[reference-tree\|reference tree]] <!-- old-words -->
-| track `s-layer-b4k-r293`, screen `st02n5-…` | [[scenario]] on a [[screen]]: V · all · cherry `(2, 256)` · stretch 4096 · leash 293 <!-- old-words -->
+| track `s-layer-b4k-r293`, screen `st02n5-…` | [[scenario]] on a [[screen]]: V · all · cherry `v[t, l, :, :]` · stretch 4096 · leash 293 <!-- old-words -->
 | x, y, w | [[dictionary-share\|dictionary share]], [[delta-share\|delta share]], [[weight\|dictionary weight]] <!-- old-words -->
 | MDL ratio | [[mdl-ratio\|MDL ratio]] <!-- old-words -->
 | isolated verification, `verification.isolated: true` | [[verified-result\|verified]] <!-- old-words -->

@@ -10,13 +10,13 @@ cards:
     why: Two compressors rise and fall together on the same punnets, so their difference is ten to a hundred times steadier than either score.
     sec: pairing
   - q: Why is "35 of 35 parts of a screen agree" weaker evidence than "5 of 5 sequences agree"?
-    a: Punnets of one sequence are correlated; sequences are the independent samples
+    a: Punnets of one sequence are correlated; the campaign took sequences as its independent samples
     wrong: ["Parts of a screen are measured with a worse compressor", "It is stronger, since 35 is more than 5", "Parts of a screen are always shuffled"]
     why: Parts of the same text share its hardness. Only separate conversations are separate draws.
     sec: pairing
   - q: The layer screen read 0.6449 and the token screen 0.6461. What did the same-window comparison say?
-    a: '`(6, 2, 256)` cherries are better by 0.0043, on 20 of 20 sequences; the token screen simply held harder punnets'
-    wrong: ["(2, 256) cherries are better by 0.0012", "The two are equal", "Neither can be ranked"]
+    a: '`v[t, :, :, :]` cherries are better by 0.0043, on 20 of 20 sequences; the token screen simply held harder punnets'
+    wrong: ["v[t, l, :, :] cherries are better by 0.0012", "The two are equal", "Neither can be ranked"]
     why: The token screen sampled punnets 0.0046 harder for every compressor. Scores from two different screens can never be subtracted.
     sec: the-trap
   - q: What single thing explains 97 % of how hard a punnet is to compress?
@@ -46,19 +46,19 @@ The campaign escalated in steps. Two sequences of target 03 on a [[screen]] (a t
 | 100 against 89 | +0.0017 | +0.0019 | 0.00014 |
 | 121 against 102 | −0.0086 | −0.0088 | 0.0001 |
 
-Two lessons follow. First, sequences are the independent samples. Punnets of one sequence share its text, so they are correlated, and "35 of 35 parts of a screen agree" is weaker evidence than it sounds while "5 of 5 sequences agree" is stronger. Second, a fixed detection limit is the wrong tool. C1 graded any difference under 0.002 as nothing; paired, that limit is 5–30 times the noise, and it hid real effects (a term worth −0.0006 with a spread of 0.00007 was recorded as indistinguishable). C2 dropped the number and compares each difference with its own spread, as the human asked.
+First, punnets of one sequence share its text, so they are correlated: the campaign took sequences as its independent samples, and "35 of 35 parts of a screen agree" is weaker evidence than it sounds while "5 of 5 sequences agree" is stronger. The measurement protocol of 2026-11-03 takes every full-stretch punnet of a holdout sequence as one sample, an approximation the human accepts, reports the mean with its Student-t confidence interval, and quotes the spread per sequence beside it as the check ([[#scenario-the-score]]). Second, a fixed detection limit is the wrong tool. C1 graded any difference under 0.002 as nothing; paired, that limit is 5–30 times the noise, and it hid real effects (a term worth −0.0006 with a spread of 0.00007 was recorded as indistinguishable). C2 dropped the number and compares each difference with its own spread, as the human asked.
 
 The trick has limits the campaign names. The paired spread was measured for a few pairs of compressors, a change of mechanism may spread more than a refinement, and two of the newest compressors (115 and 126) have only two sequences behind them.
 
 ::: takeaway
 - A score moves by about 0.012 between sequences; the paired difference of two compressors on the same punnets by 0.0001–0.001.
 - Every two-sequence ranking of refinements held at five sequences, within 0.001.
-- Sequences are the samples; punnets are correlated. A fixed detection limit hid real effects and was dropped.
+- Punnets of one sequence are correlated; the campaign took sequences as its samples, the current protocol takes punnets with the per-sequence spread as the check. A fixed detection limit hid real effects and was dropped.
 :::
 
 ## The trap {#the-trap}
 
-On the afternoon of 30 October the layer screen read 0.6449 (compressor 102) and the token screen 0.6461 (compressor 94). A [[cherry-shape|cherry]] of one KV layer, `(2, 256)`, 512 bytes, looked better than one of a whole token, `(6, 2, 256)`, 3072 bytes. Then a [[same-window|same-window comparison]] ran both on the same values of 20 sequences, and token cherries won by 0.0043, on 20 of 20. The token screen had happened to sample punnets 0.0046 harder than the layer screen, for every compressor, within 0.0001. Each screen reads different punnets and carries its own offset, so **scores from two screens can never be subtracted.** [[#measured-cutting-the-tensor]] ranks the cherry shapes with same-window comparisons only, for this reason.
+On the afternoon of 30 October the layer screen read 0.6449 (compressor 102) and the token screen 0.6461 (compressor 94). A [[cherry-shape|cherry]] of one KV layer, `v[t, l, :, :]`, 512 bytes, looked better than one of a whole token, `v[t, :, :, :]`, 3072 bytes. Then a [[same-window|same-window comparison]] ran both on the same values of 20 sequences, and token cherries won by 0.0043, on 20 of 20. The token screen had happened to sample punnets 0.0046 harder than the layer screen, for every compressor, within 0.0001. Each screen reads different punnets and carries its own offset, so **scores from two screens can never be subtracted.** [[#measured-cutting-the-tensor]] ranks the cherry shapes with same-window comparisons only, for this reason.
 
 What makes a punnet hard turned out to be simple. One number per 4096-token window explains 97 % of the punnet-to-punnet variance, shared by all KV layers and heads (punnet scores correlate 0.99 between the two heads of a layer and 0.96 between KV layers 0 and 5, the LLM's layers 3 and 23), and it follows the share of repeated token ids in the window, r = −0.91. A compressor's *gain* behaves differently: 99 % of a prediction rule's per-punnet gain lies between layers. Hardness belongs to the text; gain belongs to the layer.
 

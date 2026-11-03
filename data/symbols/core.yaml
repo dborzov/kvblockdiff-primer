@@ -83,9 +83,9 @@ p:     { tex: "p", fam: frac, name: probability, unit: "", home: school-surprise
 m:     { tex: "m", fam: frac, name: miss rate, unit: "", home: school-reuse-distance,
          short: "Fraction of asks (picks) not found in the cache; $\\vm(\\vB)$ for a cache of size $\\vB$.", ref: "{m2} / {m4} / {m8} at 2048 / 4096 / 8192 slots" }
 rho:   { tex: "\\rho", fam: frac, name: delta share, unit: "", home: scenario-the-score,
-         short: "Mean delta size over cherry size, $\\vrho = \\vdsz/\\ve$, over every cherry of the punnet. Smaller is better. The MDL ratio is $\\vxshare + \\vrho$." }
+         short: "Every delta of the punnet summed, over the punnet's raw bytes; equal to $\\vrho = \\vdsz/\\ve$ with $\\vdsz$ the mean delta size. One term of the MDL ratio, $\\vxshare + \\vrho$, and not a score on its own." }
 xshare: { tex: "x_{D}", fam: frac, name: dictionary share, unit: "", home: scenario-the-score,
-         short: "Dictionary bytes over the punnet's raw bytes, $\\vxshare = \\vw/\\vb$. Bookkeeping: where the bytes were filed, not how much is shared." }
+         short: "Dictionary bytes over the punnet's raw bytes, $\\vxshare = \\vw/\\vb$. One term of the MDL ratio, not a score on its own: it says where the bytes were filed, not how much is shared." }
 fD:    { tex: "f_D", fam: frac, name: δ-miss fraction, unit: "", home: app-shelf-and-two-misses,
          short: "Share of misses served by a delta (their stretch's dictionary was on the shelf)." }
 Rsq:   { tex: "R^2", fam: frac, name: variance explained, unit: "", home: school-exchange-rate,

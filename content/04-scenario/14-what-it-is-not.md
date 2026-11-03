@@ -43,7 +43,7 @@ All four fences were drawn before the first campaign; the first night crossed th
 
 ## The bridge to the serving system {#the-bridge}
 
-One sentence connects the scenario to kvblockdiff: **the indexer names picks, and a pick is served with one or more cherries.** A [[pick]] is `(layer_id, token_pos_id)` as the indexer names it; under the scenario `V · layer l · cherry (2, 256)` that pick is one cherry; under `cherry (256,)` it is two; if the design moves keys and values together it is the cherries of two slices. The shelf holds the dictionaries of the punnets those cherries belong to, and a miss becomes a δ-miss when the right dictionary is there.
+One sentence connects the scenario to kvblockdiff: **the indexer names picks, and a pick is served with one or more cherries.** A [[pick]] is `(layer_id, token_pos_id)` as the indexer names it; under the scenario `V at one KV layer, v[t, l, :, :]` that pick is one cherry; under cherries `v[t, l, h, :]` it is two; if the design moves keys and values together it is the cherries of two slices. The shelf holds the dictionaries of the punnets those cherries belong to, and a miss becomes a δ-miss when the right dictionary is there.
 
 Everything else about the serving system, hits, misses, loads, levers, fire and ice, is Part VI, and every one of its numbers is a scenario's number multiplied by a count of picks.
 

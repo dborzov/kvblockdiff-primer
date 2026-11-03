@@ -35,7 +35,7 @@ cards:
 15. **The experiment repository**, `kv-compress-roofline` (snapshotted under `experiment_repos/` beside this site): the harness `kvcr`, the two research campaigns of 29–30 October 2026 (C1: 4 researcher agents, 218 ledger trials; C2: about 21 agents, 169 trials), 126 compressors, the ledgers, the verification notes `notes/00…05` and the pinned-number sheet `PART-XI-SPEC.md`, and the target `02-qwen3.5-2b-agent-long30` (30 sequences of Qwen3.5-2B's orchard, 20.9 GB of values). Every trial id in a receipt on this site is a row of its ledgers. → [[#measured-dispatch]], [[#scenario-the-harness]], [[#reference-numbers]]
 
 ::: note practice How to cite a number from this site
-Quote the page, the grade and the receipt: "0.636, verified, compressor 121 on `V · all · cherry (2, 256) · stretch 4096 · leash 293`, two development sequences, ledger trial env-t0096 (Part VIII)". A ratio from a different screen is a different sample and cannot be subtracted from it ([[#measured-signal-or-noise]]).
+Quote the page, the grade and the receipt: "0.636, verified, compressor 121 on `V · all · cherry v[t, l, :, :] · stretch 4096 · leash 293`, two development sequences, ledger trial env-t0096 (Part VIII)". A ratio from a different screen is a different sample and cannot be subtracted from it ([[#measured-signal-or-noise]]).
 :::
 
 ::: takeaway

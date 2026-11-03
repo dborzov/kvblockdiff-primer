@@ -29,20 +29,27 @@ Receipts: `experiment_repos/kv-compress-roofline/PART-XI-SPEC.md` §1 (every num
 id); figure data in `figures/data/measured-*.json` (ledger-derived; it wins over prose); hand-entered
 page numbers with receipts in `analysis/measured_pages.json`.
 
+Every campaign number below is a dev-screen number: two dev sequences of target 03 (five of target 02
+where stated), no holdout measurement, no confidence interval. They predate the measurement protocol of
+2026-11-03 (`docs/project/scenario.md` §4.1) and are leads for choosing configurations, not results under
+it. "Verified" below means every cherry rebuilt in a separate process on that screen. Cherry shapes are
+written as index expressions: `v[t, l, :, :]` is one KV layer with both heads (512 elements),
+`v[t, l, h, :]` one head vector (256), `v[t, :, :, :]` one token across six KV layers (3072).
+
 | number | value | grade |
 |---|---|---|
 | solo, ideal, six layers / best real solo compressor | 0.778 (6.22 bits per element) / 0.804 | code-length estimate / verified |
-| compressor 121 on cherry `(2, 256)`, leash 293 (screen) | 0.6364 = 0.5247 + 0.1116; ≈ 80 % of deltas empty; reads mean 120, worst 226 | verified, every cherry |
-| compressor 129 (no reference tree) on cherry `(2, 256)` | 0.6863 = 0.021 + 0.665 | verified |
-| compressor 102 on five sequences of target 02 | 0.63848 (`(2, 256)`), 0.67015 (`(256,)`) | verified; different punnets, not subtractable |
+| compressor 121 on cherry `v[t, l, :, :]`, leash 293 (screen) | 0.6364 = dictionary share 0.5247 + delta share 0.1116; ≈ 80 % of deltas empty; reads mean 120, worst 226 | verified, every cherry |
+| compressor 129 (no reference tree) on cherry `v[t, l, :, :]` | 0.6863 = dictionary share 0.021 + delta share 0.665 | verified |
+| compressor 102 on five sequences of target 02 | 0.63848 (`v[t, l, :, :]`), 0.67015 (`v[t, l, h, :]`) | verified; different punnets, not subtractable |
 | all-dictionary corner, no leash | 0.6705 at 4096 positions; reads ≈ 1 490 | verified (C1) |
 | joining the two heads (same window, 20 sequences) | −0.0322 ± 0.0009, 20 of 20 | encoded bytes, not isolated-verified |
 | joining the six layers after that | −0.0043 ± 0.0014, 20 of 20 | same |
-| two / four adjacent tokens as one cherry (like for like) | +0.037 / +0.063 | quick trial |
+| two / four adjacent tokens as one cherry, `v[t:t+2, l, :, :]` / `v[t:t+4, l, :, :]` (like for like; stacked positions, out of scope since 2026-11-03) | +0.037 / +0.063 | quick trial |
 | bits shared, code-length bounds (four punnets) | heads 0.85 raw, 0.54 after one reference, 0.21 with separate references; adjacent layers 0.03–0.08, distant ≈ 0.01; adjacent tokens ≤ 0.29 raw, ≤ 0.02 after references | bound |
 | reference links within 8 tokens | 37 / 47 / 39 % at KV layers 1–3; 9 / 7 / 12 % at KV layers 0, 4, 5 | 24 punnets |
 | punnet floors | ≈ 0.60 at 16 384 positions (code-length estimate); ≈ 0.57 for a whole sequence (extrapolation) | estimate |
-| BF16 vs FP8 | BF16 ratio ≈ FP8 ratio / 2 + 0.25 along the whole C1 ladder (within 0.0004) | verified (C1) |
+| BF16 vs FP8 (bf16 is out of scope since 2026-11-03; a C1 reading) | BF16 ratio ≈ FP8 ratio / 2 + 0.25 along the whole C1 ladder (within 0.0004) | verified (C1) |
 | dictionary-budget curve (C1, layer 0 head 0, compressor 30) | share ≤ 0.02 → 0.7532; ≤ 0.10 → 0.7095; ≤ 0.25 → 0.6906; free (0.36) → 0.6815; solo 0.804 | verified (C1) |
 | the memory table (one window) | LLM intact 1.35 bits per value; attention cut beyond 16K 3.49; reset + last 2 048 tokens 5.16; compressor 102 5.13 | estimate |
 
