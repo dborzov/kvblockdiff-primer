@@ -139,7 +139,7 @@ What it does not show: how many bits the steady furrow costs exactly. The figure
 **Conflicts with.** Nothing measured. Two cautions instead. Storing keys pre-RoPE changes what "exact" means: the [[contract]] then reproduces the pre-RoPE 8-bit keys, and the GPU applies RoPE after every cold decode; a floating-point rotation is not undone bit for bit, so this is a design choice made up front, not a free re-encoding. And partial RoPE (Qwen3.5-2B turns 64 of 256 elements) means the pre-/post-RoPE difference lives in fewer furrows than in LLaMA.
 
 **Suggests.**
-- The keys scenario, `K · all · cherry (2, 256) · stretch 4096 · leash 293`, first in the harness queue ([[#plan-next-in-the-harness]]): C2 never touched keys.
+- The keys scenario, `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293`, first in the harness queue ([[#plan-next-in-the-harness]]): C2 never touched keys.
 - Per-furrow key statistics at two scopes, global and stretch, to separate the stable range KVQuant fixes offline from any drift along the text ([[#scenario-scope]]).
 
 ::: theme grid-matters

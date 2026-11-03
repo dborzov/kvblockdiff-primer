@@ -29,7 +29,7 @@ Five questions have a graded number next to them now. Every figure here traces t
 
 | question | reading on [[bench|the Bench]] | grade | where |
 |---|---|---|---|
-| Do the two KV heads of a layer share bits? ([[stereo\|stereo similarity]]) | joining them into one `(2, 256)` cherry saves 0.032 of ratio, on 20 of 20 sequences; a bound says 0.85 bit per element is shared | same-window, encoded bytes | [[#measured-cutting-the-tensor]] |
+| Do the two KV heads of a layer share bits? ([[stereo\|stereo similarity]]) | joining them into one `v[t, l, :, :]` cherry saves 0.032 of ratio, on 20 of 20 sequences; a bound says 0.85 bit per element is shared | same-window, encoded bytes | [[#measured-cutting-the-tensor]] |
 | Where does the dictionary's gain come from? ([[echo\|echo similarity]]) | the reference tree lives on repeats of the same token: shuffling tokens across sequences moves the tree's score from 0.691 to 0.752 while the linear-prediction gain barely moves (0.034 → 0.034) | screen, 2 sequences | [[#measured-two-kinds-of-structure]] |
 | What does the [[leash]] cost? | 293 cherries' worth for every cherry costs nothing at stretch 4096; 137 costs +0.023 (0.660 against 0.636); the best compressor's worst cherry reads 226 | verified, every cherry counted | [[#measured-reading-one-cherry]] |
 | Where is the [[solo]] floor, and how far below it can a dictionary go? | solo 0.778 (ideal), 0.804 (real); the best stretch-scope compressor 0.636; a light no-tree compressor 0.686 | verified | [[#measured-scorecard]] |
@@ -50,9 +50,9 @@ Stereo and layers: same-window comparison on 20 sequences of target 02 (notes/03
 
 The list of what is open is longer than the list of what is known, and most of it was never attempted rather than attempted and failed.
 
-- **Keys.** C2 never touched them. C1 ran keys for one night, head 0 only, without the leash and without the stereo gain. There is no verified number for `K · all · cherry (2, 256) · stretch 4096 · leash 293`.
-- **Keys and values together.** A hot-cache miss moves both halves of a [[pick]]. Nobody has coded a `(2, 2, 256)` cherry of one token's keys and values, so nobody knows whether the two halves share bits.
-- **Sequence scope.** The stretch-length curve stops at 32K. A whole-sequence pool was estimated once as a bound (0.26–0.45 bit per element below a 16 384 pool, allowing cycles), never run under the [[contract]].
+- **Keys.** C2 never touched them. C1 ran keys for one night, head 0 only, without the leash and without the stereo gain. There is no verified number for `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293`.
+- **Keys and values together.** A hot-cache miss moves both halves of a [[pick]]. Nobody has coded a `(k[t, l, :, :], v[t, l, :, :])` cherry (1024 elements) of one token's keys and values at one layer, so nobody knows whether the two halves share bits; the scenario in scope since 2026-11-03 is `(k[t, :, :, :], v[t, :, :, :])` (6144 elements).
+- **Sequence scope.** The stretch-length curve stops at 32K; since 2026-11-03 the whole sequence is a stretch length in scope, with leash 14 503. A whole-sequence pool was estimated once as a bound (0.26–0.45 bit per element below a 16 384 pool, allowing cycles), never run under the [[contract]].
 - **Global scope.** A linear-prediction table fit on another sequence recovered 91–96 % of its gain: a lead that a [[calibration-set|calibration set]] has not confirmed.
 - **Other text, another LLM.** Every number is from coding-agent transcripts, 26–89 % tool output, on one [[stand-in-llm|stand-in LLM]]. The echo finding is about repetition in the text; prose repeats less.
 - **The whole application side.** No [[indexer]] ran on the Bench. There is no pick trace, so no miss rate, no [[popularity]], no [[delta-miss-fraction|δ-miss fraction]], no dictionary loads, and no measurement of how fast any compressor decodes on a GPU.

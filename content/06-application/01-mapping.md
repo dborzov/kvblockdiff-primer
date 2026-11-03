@@ -7,7 +7,7 @@ cards:
   - q: How does a pick relate to the cherries of a scenario?
     a: The indexer names a pick; the scenario's cherry shape says how many cherries rebuild it, one on the Pin, one or two on the Bench
     wrong: ["A pick is always exactly one cherry", "A pick is a punnet", "Picks and cherries are the same word for the same thing"]
-    why: 'A pick is `(layer_id, token_pos_id)`. Under `cherry (2, 256)` that is one cherry; under `(256,)` it is two; a design that moves keys and values together needs the cherries of two slices.'
+    why: 'A pick is `(layer_id, token_pos_id)`. Under `cherry v[t, l, :, :]` that is one cherry; under `v[t, l, h, :]` it is two; a design that moves keys and values together needs the cherries of two slices.'
     sec: picks-and-cherries
   - q: In the mapping between the tiny files of Part I and kvblockdiff, what plays the role of one tiny file?
     a: One cherry, the unit a miss fetches alone
@@ -39,9 +39,9 @@ def cherries_of(p, scenario):
     """The cherries that rebuild pick p = (layer_id, token_pos_id)."""
     # the Pin, GLM-5.1: one MLA latent per token per layer; slice latent[:, layer_id], cherry (640,)
     #   -> one cherry of 640 B
-    # the Bench, Qwen3.5-2B: slice v[:, layer_id], cherry (2, 256)
+    # the Bench, Qwen3.5-2B: slice v[:, layer_id], cherry v[t, l, :, :]
     #   -> one cherry of 512 B: both KV heads of that token at that layer
-    # the Bench with cherry (256,)
+    # the Bench with cherry v[t, l, h, :]
     #   -> two cherries of 256 B, one per KV head
     # a design that moves keys and values together
     #   -> the cherries of two slices, one of k and one of v

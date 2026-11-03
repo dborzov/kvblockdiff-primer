@@ -20,7 +20,7 @@ cards:
     why: All three read the curve over Δ on the same slice; the shuffle destroys every neighbour relation, so a real fallen-apple gain must vanish under it.
     sec: measuring
   - q: Like for like, what did joining two and four adjacent tokens into one cherry cost?
-    a: +0.037 and +0.063 of ratio against one layer's (2, 256) cherry
+    a: +0.037 and +0.063 of ratio against one layer's v[t, l, :, :] cherry
     wrong: ["−0.037 and −0.063, a saving", "Nothing: adjacent tokens share 0.29 bit", "It could not be measured under a leash"]
     why: The best stage points at an earlier similar token, one pointer per token; a pair of tokens rarely has a good earlier pair to point at.
     sec: verdict
@@ -72,7 +72,7 @@ Why believe it? Nearby tokens come from nearby hidden states, and the lossy lite
 
 Three readings, all on the same slice of values ([[#scenario-why-vary]]).
 
-1. **Cherry shape.** Dice the same elements as one layer's `(2, 256)` cherries and as two adjacent tokens `(2, 2, 256)`. The wider cherry may use token $\vt$ to predict token $\vt+1$ for free; the gap between the two scores, on the same elements, bounds what adjacent tokens share given everything else the compressor knows.
+1. **Cherry shape.** Dice the same elements as one layer's `v[t, l, :, :]` cherries and as two adjacent tokens `v[t:t+2, l, :, :]` (1024 elements; cherries that stack positions are out of scope since 2026-11-03). The wider cherry may use token $\vt$ to predict token $\vt+1$ for free; the gap between the two scores, on the same elements, bounds what adjacent tokens share given everything else the compressor knows.
 2. **Where the references point.** A [[reference-tree]] stage lets every cherry hang off the cherry of the punnet nearest to it. If the apple falls near the tree, the links are short. Their length distribution is the curve read backwards.
 3. **A stage along the token axis.** A linear filter that predicts a cherry from the few before it, the way FLAC predicts a sound sample, measures the next-door saving directly, before and after a reference cherry is allowed.
 
@@ -103,7 +103,7 @@ Weak, except in the middle layers; and even there, the apple was not the point. 
 | the same, once each cherry has its own reference | 0.02 or less | | code length, 4 punnets |
 | reference links within 8 tokens | 37 / 47 / 39 % | 9 / 7 / 12 % | 24 punnets |
 | a filter along tokens, order 8 | up to 0.33 bit alone; ≤ 0.06 after a reference; +0.001 shuffled | | code length, bound |
-| two / four adjacent tokens as one cherry | +0.037 / +0.063 of ratio against `(2, 256)` (one layer's cherry), 2 sequences, quick | | quick trial |
+| two / four adjacent tokens as one cherry | +0.037 / +0.063 of ratio against `v[t, l, :, :]` (one layer's cherry), 2 sequences, quick | | quick trial |
 
 The shape is the interesting part. In the middle layers the reference tree builds *chains* along the text and a filter along tokens does save a third of a bit on its own; but the one thing the compressor does anyway, pointing at a similar earlier cherry, already captures it, and after the pointer the filter has at most 0.06 bit left. At the first and last layers the links jump far: to the same token again, wherever it last appeared. The apple fell near the tree only in the middle of the LLM, and even there the pointer, not the distance, was the mechanism. The axis that mattered is the next page, [[#hypotheses-echo]].
 

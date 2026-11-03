@@ -7,7 +7,7 @@ cards:
   - q: What does the replay subproblem take in and give out?
     a: 'A pick trace, a cache size `B`, a policy and a stretch length; out come counts: miss rate, misses per stretch, popularity, the δ-miss fraction and dictionary loads'
     wrong: ["A compressor and a punnet; out comes an MDL ratio", "The orchard's bytes; out comes a dictionary", "A GPU and a kernel; out come cherries per second"]
-    why: The replay is pure bookkeeping on which positions are wanted. Bytes enter only afterwards, when the counts are multiplied by cherry and delta sizes in the napkin.
+    why: The replay only counts which positions are wanted. Bytes enter only afterwards, when the counts are multiplied by cherry and delta sizes in the napkin.
     sec: subproblem
   - q: In the replay, when does a miss count as a δ-miss?
     a: When the dictionary of the missed pick's stretch was already on the shelf at the moment of the miss

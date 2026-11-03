@@ -92,6 +92,6 @@ For this project the difference is cosmetic. Either way there is **one fixed-siz
 
 ::: takeaway
 - MLA stores one latent per token per KV layer instead of separate keys and values; attention rebuilds them when needed.
-- On the Pin that latent is ≈ 640 elements, ≈ 640 B at 8 bits, treated as `(1, 640)`; on the Bench a row is `(2, 256)` of values plus the same of keys.
+- On the Pin that latent is ≈ 640 elements, ≈ 640 B at 8 bits, treated as `(1, 640)`; on the Bench a row is 2 heads × 256 elements of values, `v[t, l, :, :]`, plus the same of keys.
 - Still one row per token per KV layer, and every row is kept.
 :::

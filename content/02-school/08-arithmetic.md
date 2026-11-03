@@ -112,7 +112,7 @@ Two old friends hide in this table. The 2.25 bits of winter is the “year-round
 
 ## rANS, and why streams decode front to back {#rans}
 
-Arithmetic coding reaches the entropy, but for decades it had a reputation for being slow: a division or two per symbol, careful bookkeeping of the interval's ends. Around 2013 Jarek Duda found a faster member of the family, the asymmetric numeral systems. Its range variant, rANS, keeps one integer as its whole state.
+Arithmetic coding reaches the entropy, but for decades it had a reputation for being slow: a division or two per symbol, careful tracking of the interval's ends. Around 2013 Jarek Duda found a faster member of the family, the asymmetric numeral systems. Its range variant, rANS, keeps one integer as its whole state.
 
 ::: define rans
 - **What it is:** an entropy coder with arithmetic coding's near-ideal cost and much faster decoding. Its state is one integer, which grows by a factor of about $1/\vp$ for each symbol coded.

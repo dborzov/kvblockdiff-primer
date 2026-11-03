@@ -97,7 +97,7 @@ The toy's prototypes cost two things: one bit in every delta, and two cherries' 
 
 ::: define bill
 - **What it is.** The rate of a compressor in [[bpe|bits per element]], written as three lines: the residual bits, the per-cherry tax spread over the cherry's elements, and the dictionary's bytes spread over the punnet that shares it.
-- **Example.** Compressor 121 on `V · all layers · cherry (2, 256) · stretch 4096 · leash 293`: dictionary share 0.5247, delta share 0.1116, MDL ratio 0.6364, which is 5.09 bits per element against 6.22 for solo coding ([[#measured-scorecard]]).
+- **Example.** Compressor 121 on `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293`: dictionary share 0.5247, delta share 0.1116, MDL ratio 0.6364, which is 5.09 bits per element against 6.22 for solo coding ([[#measured-scorecard]]).
 - **Easy to confuse with** the residual bits alone. A rate quoted without its tax and its dictionary is a guess, and the [[harness]] refuses it.
 :::
 

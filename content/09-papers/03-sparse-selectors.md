@@ -50,7 +50,7 @@ Here is one decode step at one layer, as a toy: 64 past positions, each with a r
 
 ## The idea, by example {#idea}
 
-All five replace "read every stored position" with "read $\vk$ of them". In the toy, the orchard of one layer is `v[:64, layer_id]`, 64 cherries of shape `(2, 256)` on [[bench|the Bench]]; the indexer returns a set $\vS$ of positions, and attention runs over `v[S, layer_id]` only ([[#landscape-sparse-attention]]). What differs is how they score, and what unit one [[pick]] covers.
+All five replace "read every stored position" with "read $\vk$ of them". In the toy, the orchard of one layer is `v[:64, layer_id]`, 64 cherries `v[t, l, :, :]` (512 elements) on [[bench|the Bench]]; the indexer returns a set $\vS$ of positions, and attention runs over `v[S, layer_id]` only ([[#landscape-sparse-attention]]). What differs is how they score, and what unit one [[pick]] covers.
 
 | selector | how it scores the past | what one pick covers | extra state kept | trained? |
 |---|---|---|---|---|
@@ -60,7 +60,7 @@ All five replace "read every stored position" with "read $\vk$ of them". In the 
 | **DeepSeek-V4** | an indexer over squeezed rows | one row that squeezes 4 consecutive tokens; top 512 (Flash) or 1024 (Pro) | the squeezed rows replace the tokens | with the LLM |
 | **GLM-5.1** | a DSA-style indexer, run once for a group of layers | one position for a whole group of layers | one indexer key per token per group | with the LLM |
 
-The last two rows are the ones that matter to the scenario, because a pick is served with one or more [[cherry|cherries]] by the [[cherry-shape|cherry shape]], and these two change what a pick is. Under DSA a pick is `(layer_id, token_pos_id)` and one `(2, 256)` cherry serves it. Under GLM-5.1 a pick is one position for, say, $n$ layers at once: served by one `(n, 2, 256)` cherry, or by $n$ one-layer cherries whose dictionaries may be shared. Under V4 a pick is a squeezed row, and the stretch counts rows, not tokens. All five live on the miss path of [[#papers-reading-guide/data-path]]: every one still keeps the whole orchard and reads a little of it.
+The last two rows are the ones that matter to the scenario, because a pick is served with one or more [[cherry|cherries]] by the [[cherry-shape|cherry shape]], and these two change what a pick is. Under DSA a pick is `(layer_id, token_pos_id)` and one `v[t, l, :, :]` cherry serves it. Under GLM-5.1 a pick is one position for, say, $n$ layers at once: served by one `v[t, layers, :, :]` cherry, or by $n$ one-layer cherries whose dictionaries may be shared. Under V4 a pick is a squeezed row, and the stretch counts rows, not tokens. All five live on the miss path of [[#papers-reading-guide/data-path]]: every one still keeps the whole orchard and reads a little of it.
 
 ::: takeaway
 - DSA picks single positions per layer; NSA and Quest pick runs; V4 picks squeezed rows; GLM-5.1 picks a position for a group of layers.
@@ -84,7 +84,7 @@ A fourth, implicit in V4 and in NSA's coarse branch: a row that blends 4 tokens 
 
 ## What they show {#show}
 
-Quest's bound is the one result worth redoing at a desk, because it is pure bookkeeping. For a stretch of positions, keep for each element $\vc$ the smallest and largest key value. Then for the query $\vq$ of this step,
+Quest's bound is the one result worth redoing at a desk, because it is arithmetic on stored bounds and nothing else. For a stretch of positions, keep for each element $\vc$ the smallest and largest key value. Then for the query $\vq$ of this step,
 
 $$
 \text{score bound of a stretch} = \sum_{\vc} \max\Big(\vq_{\vc} \cdot \underbrace{\min_{\vt} \vK_{\vt,\vc}}_{\text{smallest key in the stretch}},\; \vq_{\vc} \cdot \underbrace{\max_{\vt} \vK_{\vt,\vc}}_{\text{largest key in the stretch}}\Big)
@@ -113,7 +113,7 @@ The exact run lengths of NSA and the group size of GLM-5.1 could not be confirme
 
 **Builds on.**
 - The definition of a pick as "one unit of demand, served by one or more cherries", and the three designs it lists ([[#landscape-sparse-attention]]).
-- The map of applications in [[#scenario-why-vary]] and [[#app-which-application]]: DSA → one-layer cherries, one dictionary per layer per stretch; GLM-5.1 → multi-layer cherries `(n, 2, 256)` or one-layer cherries under a dictionary shared across the group; V4 → cherries of the squeezed row, stretches counted in rows.
+- The map of applications in [[#scenario-why-vary]] and [[#app-which-application]]: DSA → one-layer cherries, one dictionary per layer per stretch; GLM-5.1 → multi-layer cherries `v[t, layers, :, :]` or one-layer cherries under a dictionary shared across the group; V4 → cherries of the squeezed row, stretches counted in rows.
 - The campaigns' reading on shapes: joining the two heads of a layer into one cherry saved 0.032 of ratio, joining all six layers a further 0.004, on 20 of 20 sequences (encoded bytes on one window per sequence, not verified in a separate process; [[#measured-cutting-the-tensor]]). A GLM-style design gets the second saving for free; a DSA-style design must pay for it in the dictionary.
 
 **Conflicts with.** The first draft's claim that the project is "indifferent to which indexer is used". Half holds: the interface is a set of positions per layer, and HiSparse itself runs DSA, NSA and Quest. Half does not: group picks (NSA, Quest) pile misses into few stretches by construction, which answers part of [[#hypotheses-heavy-stretches]] by design rather than by measurement; and a run of consecutive picks arrives together, so a short stream over the run becomes legal where the [[leash]] forbade it. Token picks and group picks are different access patterns and need different scenarios.

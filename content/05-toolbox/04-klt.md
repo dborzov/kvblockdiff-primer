@@ -46,7 +46,7 @@ def decode(coords, dictionary):
     return unlift_rotate(coords, basis)                    # the same integer shears, backwards
 ```
 
-- **Dictionary.** An orthogonal basis, a $\vd \times \vd$ matrix, plus the furrow locations the data is centred by. In BF16 the basis is $2\vd^2$ bytes, so $\vw = 2\vd$: 1024 cherries' worth for the Bench's `(2, 256)` cherry, 1280 for the Pin's 640 elements. A **partial** basis keeps only the 16 strongest directions: $\vw = 32$.
+- **Dictionary.** An orthogonal basis, a $\vd \times \vd$ matrix, plus the furrow locations the data is centred by. In BF16 the basis is $2\vd^2$ bytes, so $\vw = 2\vd$: 1024 cherries' worth for the Bench's `v[t, l, :, :]` cherry, 1280 for the Pin's 640 elements. A **partial** basis keeps only the 16 strongest directions: $\vw = 32$.
 - **Per-cherry tax.** None for the full basis: the $\vd$ rotated coordinates *replace* the cherry. The partial basis pays one: the cherry's 16 coefficients along the kept directions must travel in the delta, on top of the residual of all $\vd$ elements.
 - **Losslessness.** Only through a lifted rotation ([[#toolbox-lifting]]). The campaigns never built one; they computed what it could save and found a tax even lifting cannot remove (below).
 

@@ -67,7 +67,7 @@ Read the table by columns.
 So "the deltas dominate" is true for one end of the curve and false for the other, and the number that does not lie is the sum. What the two columns differ in is *where the bytes sit*, and that is exactly what the serving system cares about: a delta crosses the link at miss time, a dictionary must be on the GPU before it. The old draft's rule $\vw \ll \vb$ holds for the light column (86 against 4096) and fails for the tree (2150 against 4096). <!-- old-words -->
 
 ::: aside source Receipts
-Light compressor 129: ledger trial r25-t0003, ratio 0.6863 = 0.021 + 0.665, `s-layer-b4k-r293` (values, cherry `(2, 256)`, stretch 4096, leash 293). Tree compressor 121: env-t0096, 0.63639 = 0.5247 + 0.1116, same screen; about 80 % of its deltas are empty, the rest 0.5–0.75 of a cherry. Bytes in the table: $\vw$ rounded to 86 and 2150; Pin $\ve = 640$, Bench $\ve = 512$; per-cherry bytes are the stored punnet over 4096.
+Light compressor 129: ledger trial r25-t0003, ratio 0.6863 = 0.021 + 0.665, `s-layer-b4k-r293` (values, cherry `v[t, l, :, :]`, stretch 4096, leash 293). Tree compressor 121: env-t0096, 0.63639 = 0.5247 + 0.1116, same screen; about 80 % of its deltas are empty, the rest 0.5–0.75 of a cherry. Bytes in the table: $\vw$ rounded to 86 and 2150; Pin $\ve = 640$, Bench $\ve = 512$; per-cherry bytes are the stored punnet over 4096.
 :::
 
 ::: takeaway

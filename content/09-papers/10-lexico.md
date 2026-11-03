@@ -142,7 +142,7 @@ What Lexico shows is that a dictionary fitted once on generic text describes the
 **Conflicts with.** Codebooks lost on the Bench. Stacked on linear prediction, residual quantization saved 0.0029 of ratio and product quantization 0.0017; stacked on a reference tree, the encoder chose no codebook on 72 of 72 punnets; clusters exist only in a minority of cherries, and k-means centroids lost to real cherries as references (0.780 vs 0.753) ([[#measured-codebooks-and-rotations]]). We believe the campaigns for lossless coding: on nearly Gaussian data an untaxed rotation or prediction beats any taxed codebook ([[#school-vq-vs-klt]]), and sparse coding inherits that with $\vs$ times the tax. Lexico's win is a lossy one at 2–3 bits, where the tax is a smaller share of the budget.
 
 **Suggests.**
-- A global-scope scenario with a calibration corpus, `V · all · cherry (2, 256) · global dictionary on held-out sequences`, to measure $\vgainseq$ properly ([[#plan-next-in-the-harness]]); the human's ruling allows a [[shared-table]] once such a corpus exists ([[#measured-where-the-bits-come-from]]).
+- A scenario with a [[shared-table]]: `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293` plus a table fitted on dev sequences or on a separate training corpus, to measure $\vgainseq$ properly ([[#plan-next-in-the-harness]]); by the human's ruling such a table is free side information, deferred until the corpus exists ([[#measured-where-the-bits-come-from]]).
 - Lexico's atoms as a prediction stage, with the exact residual coded after: the break-even of 82 % variance explained is the number to beat, and the campaigns' linear prediction reaches its gain with no index tax at all.
 
 ::: theme every-tax

@@ -40,7 +40,7 @@ Every compression scheme for an [[orchard]] that lives on the GPU runs into the 
 
 ## The idea, by example {#idea}
 
-KVComp ([[lossy]]) lives on the GPU-memory road of [[#papers-reading-guide/data-path]] and has three stages. On the Bench's cherry `v[t, l]` of shape `(2, 256)`:
+KVComp ([[lossy]]) lives on the GPU-memory road of [[#papers-reading-guide/data-path]] and has three stages. On the Bench's cherry `v[t, l, :, :]` (512 elements):
 
 1. **Round, with a bound on the error.** Keys get one ruler per [[furrow]] within each run of tokens; values one ruler per [[cherry]]: KIVI's directions ([[#papers-kivi]]), in [[scale-group|scale groups]]. Each ruler's step is set so that no number moves by more than a chosen bound.
 2. **Huffman-code the rounded integers** on the GPU, with code tables per layer (as one summary puts it). The authors chose Huffman over arithmetic coding and rANS for its simplicity and speed.

@@ -1143,7 +1143,7 @@ window.FIG = window.FIG || {};
   // FIG.hypStereo — stereo similarity: the two KV heads of a layer are two projections of one hidden vector.
   // Panel A: a seeded toy (two random projections of a 64-dimensional latent plus noise), element against
   // element (cosine near 0) or token-to-token distances (correlation high). Panel B: the measured bits the
-  // heads share (code-length bounds) and the measured join of the two heads into one (2, 256) cherry.
+  // heads share (code-length bounds) and the measured join of the two heads into one v[t, l, :, :] cherry.
   async function figData(file) {
     const url = (window.KV && KV.prefix ? KV.prefix : '/') + 'assets/figs/data/' + file + '.json';
     const r = await fetch(url);
@@ -1210,12 +1210,12 @@ window.FIG = window.FIG || {};
     const from = SW.means.head, to = SW.means.layer;
     const joinBox = h('div');
     panelB.insertBefore(joinBox, roB);
-    const PJ = Plot(joinBox, { xcats: ['cherry (256,)', 'cherry (2, 256)'], y: [0.6, 0.68], h: 200, ylabel: 'MDL ratio', grid: 'y', label: 'The measured join: the same compressor on one-head and on two-head cherries' });
-    bars(PJ, [from.ratio, to.ratio], { colors: () => T('stereo'), labels: v => fmt(v, 4), base: 0.6, tip: (v, i) => `<b>${i ? 'cherry (2, 256)' : 'cherry (256,)'}</b><br>MDL ratio ${fmt(v, 4)}, compressor ${i ? to.coder : from.coder}, ${SW.n_sequences} sequences, one ${SW.window_tokens}-token window each` });
+    const PJ = Plot(joinBox, { xcats: ['cherry v[t, l, h, :]', 'cherry v[t, l, :, :]'], y: [0.6, 0.68], h: 200, ylabel: 'MDL ratio', grid: 'y', label: 'The measured join: the same compressor on one-head and on two-head cherries' });
+    bars(PJ, [from.ratio, to.ratio], { colors: () => T('stereo'), labels: v => fmt(v, 4), base: 0.6, tip: (v, i) => `<b>${i ? 'cherry v[t, l, :, :]' : 'cherry v[t, l, h, :]'}</b><br>MDL ratio ${fmt(v, 4)}, compressor ${i ? to.coder : from.coder}, ${SW.n_sequences} sequences, one ${SW.window_tokens}-token window each` });
     const yj = (from.ratio + to.ratio) / 2;
     line(PJ, [[0.5, to.ratio - join.spread], [0.5, to.ratio + join.spread]], { color: 'var(--ink)', width: 2 });
     annotate(PJ, 0.5, yj, `the join saves ${fmt(-join.delta, 4)} ± ${fmt(join.spread, 4)}\n${join.agree} sequences agree`, { dx: -150, dy: -42, anchor: 'start' });
-    roB.set([['shared raw', `${fmt(SB.raw, 2)} bit per element`], ['after one reference cherry for both heads', `${fmt(SB.after_one_reference_for_both_heads, 2)} bit`], ['after a reference per head', `${fmt(SB.with_separate_references, 2)} bit`], ['(256,) → (2, 256)', `${fmt(from.ratio, 4)} → ${fmt(to.ratio, 4)} (${fmt(join.delta, 4)} ± ${fmt(join.spread, 4)}, ${join.agree} sequences)`]]);
+    roB.set([['shared raw', `${fmt(SB.raw, 2)} bit per element`], ['after one reference cherry for both heads', `${fmt(SB.after_one_reference_for_both_heads, 2)} bit`], ['after a reference per head', `${fmt(SB.with_separate_references, 2)} bit`], ['v[t, l, h, :] → v[t, l, :, :]', `${fmt(from.ratio, 4)} → ${fmt(to.ratio, 4)} (${fmt(join.delta, 4)} ± ${fmt(join.spread, 4)}, ${join.agree} sequences)`]]);
   };
 
   // =================================================================== VII.6

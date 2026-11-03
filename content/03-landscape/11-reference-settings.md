@@ -74,7 +74,7 @@ The LLM on the Bench is a [[=stand-in-llm|stand-in LLM]]: a small open LLM whose
 | the LLM | | GLM-5.1 | Qwen3.5-2B, a stand-in |
 | what it is for | | deployment: misses, link, memory, sequences per GPU | data: shapes, bytes, stretch lengths, measured ratios |
 | KV layers | $\vNL$ | 78 | 6 (of 24; the other 18 are linear attention) |
-| one row of the orchard | | one MLA latent, `(1, 640)` | `(2, 256)` of values, and keys the same |
+| one row of the orchard | | one MLA latent, `(1, 640)` | 2 heads × 256 elements of values, `v[t, l, :, :]`, and keys the same |
 | elements per row | $\vd$ | ≈ 640, derived from bytes per token | 512 (values), a real layout |
 | bytes per row, 8-bit | $\ve$ | **640 B**, keys and values together | **512 B** of values; 1 024 B with keys |
 | one token at every KV layer | | ≈ 50 KB | 3 072 B of values |
@@ -116,7 +116,7 @@ Read the two columns as a division of labour. The Pin owns the miss side of the 
 
 ::: takeaway
 - The Pin: GLM-5.1, 78 KV layers, 640 B rows, $\vk = 2048$, 100 384 tokens, 30 / 13.4 / 6.7 % misses, 30 ms, 50 GB/s, 30 GB. The deployment side.
-- The Bench: Qwen3.5-2B as a stand-in, 6 KV layers, `(2, 256)` rows of 512 B, 225K tokens, FP8, one RTX 5080. The data side; no indexer ran, so no picks, no miss rates, no step time.
+- The Bench: Qwen3.5-2B as a stand-in, 6 KV layers, rows `v[t, l, :, :]` of 2 × 256 elements, 512 B, 225K tokens, FP8, one RTX 5080. The data side; no indexer ran, so no picks, no miss rates, no step time.
 - Ratios of bytes may travel between them, flagged; miss rates and step times cannot.
 :::
 

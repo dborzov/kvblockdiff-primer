@@ -115,7 +115,7 @@ The campaigns scored everything in one unit, the [[mdl-ratio]] under the contrac
 
 | what was compared | a similarity score said | the bits said |
 |---|---|---|
-| the same element in the two KV heads of a layer | cosine ≈ 0.05: unrelated | joining the heads into one `(2, 256)` cherry saves 0.0322 ± 0.0009 of ratio, 20 of 20 sequences; a code-length bound puts 0.85 bit per element in common ([[#hypotheses-stereo]], [[#measured-cutting-the-tensor]]) |
+| the same element in the two KV heads of a layer | cosine ≈ 0.05: unrelated | joining the heads into one `v[t, l, :, :]` cherry saves 0.0322 ± 0.0009 of ratio, 20 of 20 sequences; a code-length bound puts 0.85 bit per element in common ([[#hypotheses-stereo]], [[#measured-cutting-the-tensor]]) |
 | a value and its successor, middle layers | one value correlates 0.48 with the next | up to 0.29 bit per element raw, 0.02 or less once each has its own reference cherry ([[#hypotheses-fallen-apple]]) |
 | the whole ladder of the project at stretch scope | | solo 0.778 (6.22 bits per element) to the best verified compressor 0.636 (5.09 bits): 1.14 bits per element won, every one of them counted under the contract ([[#measured-scorecard]]) |
 

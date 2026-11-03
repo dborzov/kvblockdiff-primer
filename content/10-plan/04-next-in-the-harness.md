@@ -5,11 +5,11 @@ group: Next experiments
 lede: Nine scenarios the harness can run as it stands, or one script away from it, ordered by hours to a first reading. Most are rows of the catalogue of Part IV marked "not run" or "partly"; the rest are measurements the scorecard left open. Each is written on the six-line card of the principles page.
 cards:
   - q: Which scenario comes first in the queue, and why?
-    a: 'Keys, `K · all · cherry (2, 256) · stretch 4096 · leash 293`: the harness only needs to read `k` instead of `v`, and C1''s one-night keys result predicts the reading within about 0.05'
+    a: 'Keys, `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293`: the harness only needs to read `k` instead of `v`, and C1''s one-night keys result predicts the reading within about 0.05'
     wrong: ["Sequence scope, because it promises the biggest gain", "A second LLM, because transfer is the biggest risk", "The GPU decode, because speed decides everything"]
     why: Speed first. Keys need no new data and almost no new code; the others need a corpus, a tree over 225K cherries, or a kernel.
     sec: queue
-  - q: 'What would a `K+V · cherry (2, 2, 256)` score below the byte-weighted mean of the K-only and V-only scores mean?'
+  - q: 'What would a `(k[t, l, :, :], v[t, l, :, :])` score below the byte-weighted mean of the K-only and V-only scores mean?'
     a: That one token's keys and values share bits, a new axis of neighbour similarity, and that a pick should be coded as one cherry
     wrong: ["That the leash was exceeded", "That keys are harder than values", "That the dictionary share doubled"]
     why: The two halves alone are the control; any saving beyond their mean can only come from predicting one half from the other.
@@ -31,17 +31,17 @@ The catalogue on [[#scenario-why-vary/a-map]] ends with rows marked "not run" or
 
 | # | scenario (what changes against the frontier line) | reads | first reading in |
 |---|---|---|---|
-| H1 | `K · all · cherry (2, 256) · stretch 4096 · leash 293` | keys as a separate problem | ≈ 3 h |
-| H2 | `V · all · cherry (2, 256) · stretch 4096 · leash 137 / 293 / 1103`, frontier compressor | what the leash costs at the frontier | ≈ 4 h |
-| H3 | `V · layers 0,4,5 · cherry (2, 256) · stretch 4096 · leash 293`, one dictionary for the group | stereo across layers; the GLM-5.1 question | ≈ 5 h |
-| H4 | `K+V · all · cherry (2, 2, 256) · stretch 4096 · leash 293` | what a miss really moves | ≈ 6 h |
-| H5 | `V · all · cherry (2, 256) · stretch 4096 · leash 293`, the bit-field split as a stage | whether a fixed-length delta exists | ≈ 1 day |
-| H6 | `V · all · cherry (2, 256) · stretch 32 768 → sequence · leash 293` | sequence scope, $\vgainstr$ | ≈ 2 days |
+| H1 | `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293` | keys as a separate problem | ≈ 3 h |
+| H2 | `v[t, l, :, :]` at the four stretch-and-leash pairs, `stretch 512 · leash 137`, `4096 · 293`, `16 384 · 1 103`, `whole sequence · 14 503`, frontier compressor | the stretch-length curve, each stretch under its own leash | ≈ 4 h |
+| H3 | `V at KV layers 0, 4, 5, cherry v[t, l, :, :] · stretch 4096 · leash 293`, one dictionary for the group | stereo across layers; the GLM-5.1 question | ≈ 5 h |
+| H4 | `(k[t, l, :, :], v[t, l, :, :]) · stretch 4096 · leash 293` (in scope since 2026-11-03 as `(k[t, :, :, :], v[t, :, :, :])`, 6144 elements) | what a miss really moves | ≈ 6 h |
+| H5 | `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293`, the bit-field split as a stage | whether a fixed-length delta exists | ≈ 1 day |
+| H6 | `v[t, l, :, :] · stretch 16 384 · leash 1 103`, then `the whole sequence · leash 14 503` | sequence scope, $\vgainstr$ | ≈ 2 days |
 | H7 | the frontier line on prose | whether echo survives another genre | 1 evening + ≈ 1 day |
 | H8 | the frontier line on Qwen3-1.7B | transfer across LLMs | 1 evening + ≈ 2 days |
 | H9 | a GPU decode of the frontier compressor | the 10× rule | ≈ 1 week ([[#plan-decoder-speed]]) |
 
-The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 · leash 293` with compressor 121, the best verified score of Part VIII, 0.636 ([[#measured-scorecard]]). Costs use the yardstick of [[#plan-principles/card]]: about 55 CPU seconds per punnet, 72 punnets per screen. One catalogue row is missing on purpose: global scope on a calibration corpus is a [[shared-table]] by the ruling of [[#measured-where-the-bits-come-from]], and waits for the independent corpus that H7 or H8 would dump.
+The "frontier line" throughout is `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293` with compressor 121, the best verified score of Part VIII, 0.636 ([[#measured-scorecard]]). Costs use the yardstick of [[#plan-principles/card]]: about 55 CPU seconds per punnet, 72 punnets per screen. One catalogue row is missing on purpose: global scope on a calibration corpus is a [[shared-table]] by the ruling of [[#measured-where-the-bits-come-from]], and waits for the independent corpus that H7 or H8 would dump.
 
 ::: takeaway
 - Nine scenarios; the first four need no new data and less than a day each.
@@ -52,34 +52,34 @@ The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 �
 
 ::: note practice H1 · Keys under the leash
 - **Question.** Are keys a separate problem? [[#hypotheses-keys-and-values]]. C1 found pre-RoPE keys within 0.05 of values at every KV layer but the last (K 0.660–0.701 against V 0.673–0.744 at 4K, head 0, no leash; at KV layer 5, 0.687 against 0.572, because that layer's values are unusually easy) and a lower solo floor (0.776–0.786); C2 never touched them.
-- **Scenario.** `K · all · cherry (2, 256) · stretch 4096 · leash 293`, FP8, same screen as the frontier line.
+- **Scenario.** `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293`, FP8, same screen as the frontier line.
 - **Exists.** The dump holds `k` pre-RoPE; the FP8 scale rule exists for `v` and is one function call for `k`. The harness reads a tensor name: one line changes.
-- **Signal.** A ratio within 0.03 of 0.636 on the same punnets says one compressor family serves both halves. Control: the shuffle; the stereo check (cherry `(256,)` against `(2, 256)` on keys, same window).
+- **Signal.** A ratio within 0.03 of 0.636 on the same punnets says one compressor family serves both halves. Control: the shuffle; the stereo check (`k[t, l, h, :]` against `k[t, l, :, :]` on keys, same window).
 - **Decision.** Whether keys need their own stages before any K+V scenario; whether the Pin's one MLA latent (keys and values in one vector) is a fair target for the same compressor.
 - **Cost.** 1 h to wire, 1–2 h of CPU for a screen.
 :::
 
-::: note practice H2 · The leash at 137, 293 and 1103 on the frontier compressor
-- **Question.** What does the leash cost at the frontier, not at the compressor that happened to fit it? [[#scenario-the-leash]]. At 137 the winner was a different compressor (97, 0.660); the frontier compressor's worst cherry reads 226 and was never made legal at 137, nor run at 1103.
-- **Scenario.** The frontier line at leash 137, 293 and 1103, compressor 121 with its tree depth capped to fit.
-- **Exists.** The harness counts reads for every cherry; capping the tree depth is a parameter of the layout stage.
-- **Signal.** Expected from the tree family's history: about 0.0005 of ratio per doubling of reads, so 1103 buys under 0.002 and 137 costs about 0.02. Control: the same punnets at 293.
-- **Decision.** Which leash the application pays for: at the Pin a cold decode touching 137 cherries' worth is 88 KB of dictionary per miss ([[#app-data-layout]]).
-- **Cost.** 1 h to parametrise, 3 screens × 1 h of CPU.
+::: note practice H2 · The four stretch-and-leash pairs on the frontier compressor
+- **Question.** What does each stretch length give under its own leash, at the frontier compressor rather than at the compressor that happened to fit? [[#scenario-the-leash]]. The campaigns ran leash 293 at every stretch length and 137 and 1 103 at 4096 only: at 137 the winner was a different compressor (97, 0.660); the frontier compressor's worst cherry reads 226 and was never made legal at 137, nor run at 1 103. Since 2026-11-03 each stretch length has its own leash, so "137 against 293 at stretch 4096" is no longer a scenario.
+- **Scenario.** The frontier compressor at `stretch 512 · leash 137`, `4096 · 293`, `16 384 · 1 103` and `the whole sequence · 14 503`, its tree depth capped to fit each leash.
+- **Exists.** The harness counts reads for every cherry; capping the tree depth is a parameter of the layout stage. The whole-sequence punnet needs the index of H6.
+- **Signal.** Expected from the tree family's history: about 0.0005 of ratio per doubling of reads, so the leashes of 16 384 and of the whole sequence should change the ratio by under 0.002 and the leash of 512 by about 0.02 against the campaigns' leash-293 curve (0.689, 0.636, 0.618 at 512, 4096, 16 384). Control: that curve, on the same punnets.
+- **Decision.** Which stretch length and leash the application uses: at the Pin a cold decode touching 137 cherries' worth is 88 KB of dictionary per miss ([[#app-data-layout]]).
+- **Cost.** 1 h to parametrise, 4 screens × 1 h of CPU, plus H6's index for the whole-sequence punnet.
 :::
 
 ::: note practice H3 · One dictionary for a group of layers
 - **Question.** Can layers that select together ([[#app-which-application]], the GLM-5.1 shape) share one dictionary without losing what per-layer dictionaries give? [[#hypotheses-upstairs]]. Joining six layers into one cherry saved 0.004; grouping by kind (layers 0, 4, 5 and 1, 2, 3) beat grouping by nearness by 0.0015 on 7 of 7 sequences.
-- **Scenario.** `V · layers 0,4,5 · cherry (2, 256) · stretch 4096 · leash 293`: one punnet of 3 × 4096 cherries, one dictionary, each cherry still one layer's values of one token.
+- **Scenario.** `V at KV layers 0, 4, 5, cherry v[t, l, :, :] · stretch 4096 · leash 293`: one punnet of 3 × 4096 cherries, one dictionary, each cherry still one layer's values of one token.
 - **Exists.** The harness takes a punnet; building one from three layers is a punnet constructor. The reference tree and the linear-prediction table work on any cherry set.
-- **Signal.** The paired difference against three per-layer dictionaries. The prediction table's share (0.013–0.021 per punnet) is paid once instead of three times, so a gain near 0.01 is expected from bookkeeping alone; a gain beyond it is upstairs structure. Control: a group of unrelated layers.
+- **Signal.** The paired difference against three per-layer dictionaries. The prediction table's share (0.013–0.021 per punnet) is paid once instead of three times, so a gain near 0.01 is expected from amortisation alone; a gain beyond it is upstairs structure. Control: a group of unrelated layers.
 - **Decision.** Whether a shelf keeps one dictionary per layer group (3× fewer on the GPU) or one per layer ([[#app-shelf-and-two-misses]]).
 - **Cost.** 2 h to write the constructor, 2 h of CPU.
 :::
 
 ::: note practice H4 · Keys and values as one cherry
 - **Question.** Do one token's keys and values at one layer share bits? A miss moves both halves, 1 KB on the Bench. Not a hypothesis of Part VII yet; its answer would add a fifth member to [[neighbour|neighbour similarity]].
-- **Scenario.** `K+V · all · cherry (2, 2, 256) · stretch 4096 · leash 293`.
+- **Scenario.** `(k[t, l, :, :], v[t, l, :, :]) · stretch 4096 · leash 293` (1024 elements); the scenario in scope since 2026-11-03 is `(k[t, :, :, :], v[t, :, :, :])` (6144 elements) at the four stretch-and-leash pairs.
 - **Exists.** After H1, both halves are scored alone; the harness needs a slice spanning two tensors, one script.
 - **Signal.** The ratio against the byte-weighted mean of H1 and the frontier line on the same punnets. Below the mean by more than 0.005: shared bits. Control: the same cherry with values from a different token (the shuffle on one half).
 - **Decision.** Whether a pick is coded as one cherry of both halves, or as two cherries with one dictionary each ([[#app-mapping]]).
@@ -97,9 +97,9 @@ The "frontier line" throughout is `V · all · cherry (2, 256) · stretch 4096 �
 
 ::: note practice H6 · Sequence scope
 - **Question.** How much does one dictionary per sequence buy over one per stretch, $\vgainstr$ with the sign reversed? [[#scenario-scope]]. The tree kept gaining 0.010–0.020 per doubling from 16K to 32K while the prediction table saturated; a whole-sequence pool was bounded at 0.26–0.45 bit per element below a 16 384 pool, allowing cycles.
-- **Scenario.** `V · all · cherry (2, 256) · stretch 32 768, 65 536, then = sequence · leash 293`.
+- **Scenario.** `v[t, l, :, :] · stretch 16 384 · leash 1 103`, then `the whole sequence · leash 14 503`: the two largest of the four stretch-and-leash pairs in scope (32 768 and 65 536 are not in scope).
 - **Exists.** The harness accepts any stretch length. The frontier compressor's tree is built from all pairwise distances; at 225K cherries that is 3 000 times the work of 4096 (55 s), so the sequence run needs a nearest-neighbour index or the row-by-row tree of C1's big-stretch twin.
-- **Signal.** The curve 0.636 → 0.618 → ? extended two doublings, then the sequence point. Control: the leash, which the tree must still keep (reads measured for every cherry), and the scope identity (a sequence as one stretch equals stretch scope with `stretch_len = n_tokens`).
+- **Signal.** The curve 0.636 → 0.618 → ? extended to the whole sequence under its own leash. Control: the leash, which the tree must still keep (reads measured for every cherry), and the scope identity (a sequence as one stretch equals stretch scope with `stretch_len = n_tokens`).
 - **Decision.** Whether the application is "one dictionary per sequence, loaded at admission, no shelf" ([[#app-on-fire]] becomes moot) or a shelf of stretch dictionaries.
 - **Cost.** 4 h to add the index, 1–2 days of CPU for 5 sequences.
 :::

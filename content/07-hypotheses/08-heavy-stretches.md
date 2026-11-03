@@ -72,7 +72,7 @@ $$
 \underbrace{\vnload}_{\text{loads per step per layer}} \times \underbrace{\vw}_{\text{cherries' worth each}} \;\ll\; \underbrace{274}_{\text{misses per layer per step}} .
 $$ {#eq-hyp-load-budget}
 
-How heavy are real dictionaries? The campaigns give three sizes, all for `(2, 256)` cherries at stretch 4096 on the values of Qwen3.5-2B, so $\vw = \vxshare \times 4096$ cherries' worth per punnet ([[#scenario-scope]]). Put them on a Pin-sized sequence of 25 stretches and compare with a hot cache of $\vB = 4096$ slots, as an illustration:
+How heavy are real dictionaries? The campaigns give three sizes, all for `v[t, l, :, :]` cherries at stretch 4096 on the values of Qwen3.5-2B, so $\vw = \vxshare \times 4096$ cherries' worth per punnet ([[#scenario-scope]]). Put them on a Pin-sized sequence of 25 stretches and compare with a hot cache of $\vB = 4096$ slots, as an illustration:
 
 | dictionary | $\vxshare$ | $\vw$ per punnet | all 25 stretches, per layer | in hot caches | what the shelf must do |
 |---|---|---|---|---|---|

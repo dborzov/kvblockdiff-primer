@@ -100,7 +100,7 @@ Because it is not taken apart, it is sorted. The parts that are right became the
 
 ## Verdict {#verdict}
 
-The rungs, measured so far, on the values of Qwen3.5-2B, FP8, `(2, 256)` cherries:
+The rungs, measured so far, on the values of Qwen3.5-2B, FP8, `v[t, l, :, :]` cherries:
 
 | rung | dictionary scope | reading | grade |
 |---|---|---|---|

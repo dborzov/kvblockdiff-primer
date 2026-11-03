@@ -35,16 +35,16 @@ Before a clinical trial starts, its authors register what they will measure and 
 |---|---|---|---|
 | H1 keys | within 0.03 of values on the same punnets | one compressor family serves both halves | H4 at once |
 | | worse by more than 0.05 | keys need stages of their own (RoPE-aware, outlier furrows) | a keys-only ladder before H4 |
-| H2 the leash | 1103 gains under 0.005 over 293 | 293 is the right leash for the application | keep 293 everywhere |
-| | 137 costs under 0.01 at the frontier | the tighter leash is free | adopt 137; the Pin's cold decode touches 88 KB |
-| H3 group dictionary | gain over per-layer ≈ the prediction table's amortised share (≈ 0.01) | bookkeeping only; no upstairs structure | per-layer dictionaries; GLM shape by the trace alone |
+| H2 the stretch-and-leash pairs | the 16 384 · 1 103 point is under 0.005 below the 4096 · 293 point | the 4096 · 293 scenario is the one for the application | the 4096 · 293 pair everywhere |
+| | the 512 · 137 point is within 0.01 of the 4096 · 293 point | short stretches lose little under their tighter leash | the 512 · 137 pair; the Pin's cold decode touches 88 KB |
+| H3 group dictionary | gain over per-layer ≈ the prediction table's amortised share (≈ 0.01) | amortisation only; no upstairs structure | per-layer dictionaries; GLM shape by the trace alone |
 | | gain > 0.02 | the group shares structure | the GLM-5.1 shelf: one dictionary per group |
 | H4 keys + values | below the byte-weighted mean of the halves by > 0.005 | K and V share bits | a pick is one cherry of both halves |
 | | at the mean | independent halves | two cherries, one dictionary each; scenarios stay per tensor |
 | H5 bit-field split | within 15 % of the frontier's ratio | a fixed-length delta exists | H9 on the fixed-length variant first |
 | | more than 25 % worse | the FP8 grid defeats fixed-length deltas | H9 on the entropy coder; INT8 storage as a scenario |
-| H6 sequence scope | the sequence point ≥ 0.03 below 32K | $\vgainstr$ is negative: one dictionary per sequence | the no-shelf design; Q3 is moot |
-| | within 0.01 of 32K | stretches are enough | the shelf design; Q3 decides |
+| H6 sequence scope | the whole-sequence point (leash 14 503) ≥ 0.03 below the 16 384 point (leash 1 103) | $\vgainstr$ is negative: one dictionary per sequence | the no-shelf design; Q3 is moot |
+| | within 0.01 of the 16 384 point | stretches are enough | the shelf design; Q3 decides |
 | H7 prose | frontier ratio worsens by > 0.05, no-tree compressor unchanged | echo is a property of tool-heavy text | quote two numbers everywhere: transcripts and prose |
 | | both unchanged within 0.02 | the gain is general | one number |
 | H8 second LLM | head-joining gain and shuffle gap of the same sign and size | stereo and echo are transformer properties | claim Part VIII beyond one LLM |

@@ -27,14 +27,14 @@ The frontier compressor of Part VIII, number 121, beat its parent by 0.0088 of r
 
 1. **Speed first.** The experiments are ordered by the time from "let's try it" to a reading we would act on, not by how interesting they are. A two-hour run that settles one line of the decision table beats a two-week study that settles three.
 2. **Use the Bench dump.** Thirty sequences of values and pre-RoPE keys already exist ([[#plan-the-dataset-we-have]]). Anything that can be measured on them is measured on them first; dumping new data is itself an experiment with a cost.
-3. **Paired comparisons on the same punnets.** Two compressors, or two cherry shapes, are compared on exactly the same [[punnet|punnets]], per sequence, and the [[paired-difference|paired difference]] is reported with its spread. Scores from two screens are never subtracted ([[#measured-signal-or-noise]]).
+3. **Paired comparisons on the same punnets.** Two compressors, or two cherry shapes, are compared on exactly the same [[punnet|punnets]]: the [[paired-difference|paired difference]] per punnet is reported with its Student-t confidence interval, and the spread per sequence is quoted beside it as the check. Under the protocol of 2026-11-03 every full-stretch punnet of a holdout sequence is one sample, and a compressor's configurations are chosen on the dev sequences before the holdout is read ([[#scenario-the-score]]). Scores from two screens are never subtracted ([[#measured-signal-or-noise]]).
 4. **Controls before conclusions.** The [[shuffle-control|shuffle control]] runs next to every neighbour-dependent claim; a shuffled trace runs next to every residency claim; synthetic data with a planted answer runs before either ([[#scenario-the-harness]]). A reading without its control is a lead.
-5. **One scenario per question.** Each experiment is one line, `slice · cherry shape · stretch · leash`, and one change against a line already run. Two changes at once produce a number nobody can attribute.
+5. **One scenario per question.** Each experiment is one line, `cherry (as an index expression) · stretch · leash`, and one change against a line already run. Two changes at once produce a number nobody can attribute.
 6. **Write the decision rule before the data.** Every experiment states, on [[#plan-decision-rules]], what each reading would make us do. Thresholds are judgement calls; their value is that they are fixed in advance.
 
 ::: define framework-question
 - **What it is.** A question asked together with everything needed to answer it: the scenario line (or the trace) it runs on, what exists and what must be written, the expected signal and its controls, the decision it informs, and a rough cost in hours. All of it written before the run.
-- **Example.** "Does `K · all · cherry (2, 256) · stretch 4096 · leash 293` land within 0.03 of the same line on values?" with the paired same-window control and the reading "yes: one compressor serves both halves; no: keys need their own stages".
+- **Example.** "Does `K at one KV layer, k[t, l, :, :] · stretch 4096 · leash 293` land within 0.03 of the same line on values?" with the paired same-window control and the reading "yes: one compressor serves both halves; no: keys need their own stages".
 - **Easy to confuse with** a [[big-question|big-picture question]], which it serves but never settles alone.
 :::
 

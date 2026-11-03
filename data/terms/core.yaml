@@ -1299,7 +1299,7 @@ scope:
   cat: project
   home: scenario-scope
   short: >-
-    What a dictionary is fit on and shared by: global (all sequences), sequence (one conversation) or stretch (one punnet). The one axis that decides who pays for the dictionary.
+    What a dictionary is fit on and shared by: global (all sequences), sequence (one conversation) or stretch (one punnet). The axis that decides how the dictionary's bytes enter the score: in full per punnet, in full to the one punnet a whole sequence is, or not at all (a shared table).
 
 weight:
   label: dictionary weight
@@ -1315,7 +1315,7 @@ calibration-set:
   cat: project
   home: scenario-scope
   short: >-
-    Sequences kept apart from the evaluation data. Every global-scope dictionary and every solo table is fit on them. If they overlap the evaluation data, the global scope cheats.
+    The data a shared table or a solo table is fitted on: the dev sequences, or a separate training corpus, never a holdout sequence. A table fitted on a holdout sequence is a hidden dictionary.
 
 stage:
   label: stage

@@ -112,7 +112,7 @@ The figure shows the whole curve. Rare outcomes sit on the left, where the curve
 3. Switch to the axis in halvings. The curve becomes a straight line: each halving of $\vp$ adds exactly one bit.
 :::
 
-Why a logarithm, and not simply $1/\vp$? Because of how independent events combine. Take a sunny report on one day and a fog report on another, unrelated day. The chance of that pair is $½ × ⅛ = 1/16$, and its surprisal is $\log_2 16 = 4$ bits — which is $1 + 3$. **Probabilities of independent events multiply; their surprisals add.** Bits sent over a radio link add up too, so this is exactly the bookkeeping we want.
+Why a logarithm, and not simply $1/\vp$? Because of how independent events combine. Take a sunny report on one day and a fog report on another, unrelated day. The chance of that pair is $½ × ⅛ = 1/16$, and its surprisal is $\log_2 16 = 4$ bits — which is $1 + 3$. **Probabilities of independent events multiply; their surprisals add.** Bits sent over a radio link add up too, so this is exactly the additivity we want.
 
 ::: note warning “Independent” is an assumption
 Two noon reports on different days are close to independent. Two reports half an hour apart are not: fog lingers, and a sunny sky usually stays sunny. Surprisals of such neighbours do not simply add. [[#school-mutual-information]] measures how much the neighbour gives away.

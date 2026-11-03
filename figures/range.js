@@ -118,7 +118,7 @@ window.FIG = window.FIG || {};
   const SPLIT_IDX = { head: 0, layer: 1, token: 2, other: 3 };
   const splitKey = s => (s in SPLIT_IDX && s !== 'other' ? s : 'other');
   const splitColor = s => series(SPLIT_IDX[splitKey(s)]);
-  const SPLIT_LABEL = { head: 'cherry (256,): one head', layer: 'cherry (2, 256): one KV layer, both heads', token: 'cherry (6, 2, 256): one token, six KV layers', other: 'other cherry shapes (two or three KV layers, by kind, columns, 8 tokens)' };
+  const SPLIT_LABEL = { head: 'cherry v[t, l, h, :]: one head', layer: 'cherry v[t, l, :, :]: one KV layer, both heads', token: 'cherry v[t, :, :, :]: one token, six KV layers', other: 'other cherry shapes (two or three KV layers, by kind, columns, 8 tokens)' };
   const splitLegend = (keys = ['head', 'layer', 'token', 'other'], shape = 'dot') => keys.map(k => [SPLIT_LABEL[k], splitColor(k), shape]);
   const CODER = { 121: series(5), 129: series(6) };          // the recurring compressors keep Part VIII's colours
   const NEUTRAL = 'var(--slate)';                            // landmarks that are not compressors (raw, solo)
@@ -128,7 +128,7 @@ window.FIG = window.FIG || {};
   const POLICY = { raw: HS, block: series(1), fire: series(0) };
   /* the two compressor points the on-fire figures switch between (measured: env-t0096; r1-t0036 on the curve) */
   const POINTS = {
-    tree: { x: 0.525, y: 0.112, short: 'reference tree', name: 'reference-tree compressor 121: x = 0.525, y = 0.112 (env-t0096, cherry (2, 256))', emptyShare: 0.8 },
+    tree: { x: 0.525, y: 0.112, short: 'reference tree', name: 'reference-tree compressor 121: dictionary share 0.525, delta share 0.112 (env-t0096, cherry v[t, l, :, :])', emptyShare: 0.8 },
     light: { x: 0.10, y: 0.61, short: 'curve point x = 0.10', name: 'curve point x ≤ 0.10: x = 0.099, y = 0.610 (r1-t0036, compressor 30, layer 3 head 0)' },
   };
   function pearson(xs, ys) {
@@ -226,7 +226,7 @@ window.FIG = window.FIG || {};
   FIG.rngShareVsRatio = async (host) => {
     const [pd, sd, cd] = await Promise.all([data('measured-points'), data('measured-splits'), data('range-curve')]);
     const pts = need(pd.points, 'points.points').filter(p => p.verified && p.role !== 'baseline');
-    // compressor 129 by cherry shape (verified ledger rows) carries the (2, 256) point the caption names
+    // compressor 129 by cherry shape (verified ledger rows) carries the v[t, l, :, :] point the caption names
     const extra = need(sd.coder_129_by_split.rows, 'splits.coder_129_by_split.rows')
       .filter(r => r.verified && !pts.some(p => p.coder === 129 && p.split === r.split && p.b === 4096))
       .map(r => ({ track: `s-${r.split}-b4k-r293`, split: r.split, b: 4096, campaign: 'C2', coder: 129, name: 'pure-wls', ratio: r.ratio, x: r.x, y: r.y, trial: r.trial, verified: true, role: '129 by split' }));
@@ -241,7 +241,7 @@ window.FIG = window.FIG || {};
     const xOf = p => p.x;                                  // the ledger's x: dictionary bytes ÷ raw bytes (a compressor with every delta empty sits at x = its ratio)
     const box = h('div'), ro = readout();
     host.append(legend([...splitLegend(), ['all good tree compressors, 0.63–0.69', 'var(--ink-3)', 'band'], ['solo ideal (six layers)', 'var(--ink-2)', 'dash']]), box, ro,
-      sub('Every point is a verified ledger row of Part VIII (C2 incumbents and the C1 ladder; C1 points are values of KV layer 0 (L3), head 0, cherry (256,)). The dictionary share is the dictionary’s bytes over the raw bytes, so a compressor whose deltas are all empty sits at x = its ratio, never at 1. Hover or tap a point for its record. The correlations are computed from the points shown, for the subsets named.'));
+      sub('Every point is a verified ledger row of Part VIII (C2 incumbents and the C1 ladder; C1 points are values of KV layer 0 (L3), head 0, cherry v[t, 0, 0, :]). The dictionary share is the dictionary’s bytes over the raw bytes, so a compressor whose deltas are all empty sits at a dictionary share equal to its ratio, never at 1. Hover or tap a point for its record. The correlations are computed from the points shown, for the subsets named.'));
     const solo = num(pd.landmarks.solo_ideal.ratio, 'landmarks.solo_ideal.ratio');
     const P = Plot(box, { x: [0, 1], y: [0.6, 0.82], h: tall(box, 400), m: { r: 58, t: 26 }, grid: 'y',
       xticks: [0, 0.2, 0.4, 0.6, 0.8, 1], yticks: [0.6, 0.65, 0.7, 0.75, 0.8],
@@ -303,8 +303,8 @@ window.FIG = window.FIG || {};
     const R = [
       { label: 'raw', v: 8, ratio: 1, color: NEUTRAL, kind: 'hollow', grade: 'definition', g: 'def', rec: 'one byte per element (FP8 E4M3)' },
       { label: 'solo ideal', v: soloB, ratio: solo, color: NEUTRAL, grade: 'ledger landmark', g: 'measured', rec: 'per-furrow order-0 entropy of the values, all six KV layers (landmark.solo_ratio of the C2 screens)' },
-      { label: 'light compressor 129', v: bits(light.rho), ratio: light.rho, color: CODER[129], grade: `verified · ${light.trial}`, g: 'measured', rec: `no reference cherries, ${fmtPct(light.w_over_b, 1)} of dictionary; cherry (2, 256), screen of a tenth of the stretches` },
-      { label: 'tree compressor 121', v: bits(tree.ratio), ratio: tree.ratio, color: CODER[121], grade: `verified · ${tree.trial}`, g: 'measured', rec: `${esc(words(tree.what))}; x ${fmt(tree.x, 3)} + y ${fmt(tree.y, 3)}; cherry (2, 256), screen of a tenth of the stretches` },
+      { label: 'light compressor 129', v: bits(light.rho), ratio: light.rho, color: CODER[129], grade: `verified · ${light.trial}`, g: 'measured', rec: `no reference cherries, ${fmtPct(light.w_over_b, 1)} of dictionary; cherry v[t, l, :, :], screen of a tenth of the stretches` },
+      { label: 'tree compressor 121', v: bits(tree.ratio), ratio: tree.ratio, color: CODER[121], grade: `verified · ${tree.trial}`, g: 'measured', rec: `${esc(words(tree.what))}; dictionary share ${fmt(tree.x, 3)} + delta share ${fmt(tree.y, 3)}; cherry v[t, l, :, :], screen of a tenth of the stretches` },
       { label: 'punnet floor, stretch 16K', v: bits(f16), ratio: f16, color: EST, kind: 'dashed', grade: 'code-length estimate', g: 'model', rec: esc(words(fl.block_16k.grade)) },
       { label: 'sequence floor', v: bits(fseq), ratio: fseq, color: EST, kind: 'range', grade: 'extrapolation', g: 'hypo', rec: esc(words(fl.whole_sequence.grade)) },
       { label: 'the LLM, state reset, 2K window', v: Math.round(cut.mean_bits * 100 + 1e-6) / 100, ratio: Math.round(cut.mean_bits * 100 + 1e-6) / 800, color: MODEL, grade: 'code-length estimate, one window', g: 'model', rec: `${esc(words(cut.label))}: the LLM predicting its own values with its running state reset and its attention kept inside the 2,048-token window; ${esc(words(mt.grade))}` },
@@ -335,7 +335,7 @@ window.FIG = window.FIG || {};
     const best = cd.best_per_budget || [];
     const X0 = 0.05, X1 = 0.45;                               // the corners: tiny dictionaries; half the punnet resident
     const box = h('div', { class: 'rng-square' }), ro = readout();
-    host.append(legend([['the measured curve: compressor 30 at each budget (C1, KV layer 0 (L3), head 0)', series(0), 'line'], ['the C2 reference-tree point, cherry (2, 256)', CODER[121], 'dot'], ['every cherry in the dictionary (y = 0)', NEUTRAL, 'dot'],
+    host.append(legend([['the measured curve: compressor 30 at each budget (C1, KV layer 0 (L3), head 0)', series(0), 'line'], ['the C2 reference-tree point, cherry v[t, l, :, :]', CODER[121], 'dot'], ['every cherry in the dictionary (delta share 0)', NEUTRAL, 'dot'],
       ['later best compressor per budget', 'var(--ink-2)', 'dot'], ['baseline x + y = 1, ending at (1, 0): the whole punnet resident, raw', 'var(--ink-2)', 'line'], [`solo lines: coded ${fmt(soloC.ratio, 3)} · ideal ${fmt(soloI.ratio, 3)} · six layers ${fmt(solo6.ratio, 3)}`, 'var(--ink-2)', 'dash']]), box, ro,
       sub('x is the dictionary’s share of the raw bytes, y the deltas’ share; the ratio is x + y, so every point of one ratio lies on one diagonal. Grey corners: solo coding (left) and half the orchard resident (right); the accent band between is the interesting range. Hover or tap a point for its receipt; click to read it out.'));
     const P = Plot(box, { w: 520, h: 520, x: [0, 1], y: [0, 1], equal: true, grid: false, xticks: [0, 0.2, 0.4, 0.6, 0.8, 1], yticks: [0, 0.2, 0.4, 0.6, 0.8, 1],
@@ -566,7 +566,7 @@ window.FIG = window.FIG || {};
     if (curve.length < 4) throw new Error('range-curve: too few points for the napkin slider');
     let idx = curve.findIndex(p => p.role === 'tree'), nD = 4, fD = 0.85, nload = 0.05, lever2 = false, Bs = 4096;
     const b = 4096;                                            // the curve was measured at stretch 4096
-    const ptName = p => (p.role === 'tree' ? 'reference-tree compressor 121 (C2, cherry (2, 256))' : p.role === 'all-dictionary' ? 'every cherry in the dictionary (compressor 43)' : p.budget == null ? 'compressor 30, unconstrained' : `compressor 30, dictionary cap x ≤ ${fmt(p.budget, 2)}`);
+    const ptName = p => (p.role === 'tree' ? 'reference-tree compressor 121 (C2, cherry v[t, l, :, :])' : p.role === 'all-dictionary' ? 'every cherry in the dictionary (compressor 43)' : p.budget == null ? 'compressor 30, unconstrained' : `compressor 30, dictionary share ≤ ${fmt(p.budget, 2)}`);
     const kp = { T: kpi(T('\\vTstep'), '', 'link bytes per step, per sequence'), M: kpi(T('\\vMreq'), '', 'GPU memory per sequence'),
       link: kpi(T('\\vNlink'), '', 'link-bound', 'var(--ink-2)'), hbm: kpi(T('\\vNhbm'), '', 'memory-bound', 'var(--ink-2)'),
       N: kpi(T('\\vN'), '', 'sequences per GPU'), ratio: kpi('vs HiSparse', '', 'same B, raw misses', series(5)),

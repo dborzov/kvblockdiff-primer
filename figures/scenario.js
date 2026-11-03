@@ -363,7 +363,7 @@ window.FIG = window.FIG || {};
     const LAYERS = [1, 3], N = STRETCH, RAW = N * LAYERS.length * BENCH.dim;   // 2 097 152 B
     let shape = 'layer';
     const box = h('div'), ro = readout();
-    host.append(controls(h('span', { class: 'scn-ctl-lab', text: 'cherry shape' }), seg([['head', '<code>(256,)</code>'], ['layer', '<code>(2, 256)</code>']], shape, v => { shape = v; draw(); }, 'cherry shape')), box, ro,
+    host.append(controls(h('span', { class: 'scn-ctl-lab', text: 'cherry shape' }), seg([['head', '<code>v[t, l, 0, :]</code>'], ['layer', '<code>v[t, [1, 3], 0, :]</code>']], shape, v => { shape = v; draw(); }, 'cherry shape')), box, ro,
       sub('The full-width bars are to scale (one tick every 64 positions); the zoom shows the first 12 positions as separate cells and boxes.'));
     const narrow = isNarrow(host);
     const W = narrow ? 380 : 640, ZN = 12;
@@ -482,7 +482,7 @@ window.FIG = window.FIG || {};
     const [pd, sd] = await Promise.all([data('points'), data('splits')]);
     const pts = need(pd.points, 'points.points'), lm = need(pd.landmarks, 'points.landmarks');
     const solo = num(lm.solo_ideal.ratio, 'landmarks.solo_ideal.ratio');
-    // compressor 129 by cherry shape (verified records): the ringed (2, 256) point of the caption lives here, not in the incumbents
+    // compressor 129 by cherry shape (verified records): the ringed v[t, l, :, :] point of the caption lives here, not in the incumbents
     const extra = need(sd.coder_129_by_split.rows, 'splits.coder_129_by_split.rows')
       .filter(r => !pts.some(p => p.coder === 129 && p.split === r.split && p.b === 4096))
       .map(r => ({ track: `s-${r.split}-b4k-r293`, split: r.split, b: 4096, budget: 293, coder: 129, name: 'pure-wls', ratio: r.ratio, x: r.x, y: r.y, reads: r.reads, trial: r.trial, verified: r.verified, campaign: 'C2', role: '129 by cherry shape', layers: 'all six', n_sequences: 2 }));
@@ -536,7 +536,9 @@ window.FIG = window.FIG || {};
   // The records hold summaries only (mean, p99, worst per screen); a per-cherry series is synthesised from them with a seeded generator.
   FIG.scnLeash = async (host) => {
     const rd = await data('reads');
-    const tbl = need(rd.every_entry_table, 'reads.every_entry_table'), leashes = need(rd.budgets, 'reads.budgets');
+    const tbl = need(rd.every_entry_table, 'reads.every_entry_table');
+    const LEASHES = [[137, 'stretch 512'], [293, 'stretch 4096'], [1103, 'stretch 16 384'], [14503, 'the whole sequence']];   // one leash per stretch length (the rulings of 2026-11-03)
+    const stretchOf = l => (LEASHES.find(([v]) => v === l) || [l, ''])[1];
     const tree = tbl.find(p => p.coder === 121 && p.b === 4096 && p.budget === 293);
     if (!tree) throw new Error('measured data: no every-cherry record for compressor 121 at stretch 4096, leash 293');
     const curve = need(rd.reads_curve && rd.reads_curve.points, 'reads.reads_curve.points');
@@ -556,25 +558,27 @@ window.FIG = window.FIG || {};
       light: { label: 'light, no tree (reads under 5)', color: series(1), v: range(N).map(() => (r() < 0.4 ? 4 : 3)), from: 'a loc dictionary of about 4 cherries’ worth, read whole' },
       all: { label: 'all-dictionary corner (≈ 1 490)', color: series(2), v: range(N).map(() => Math.round(1490 + r.normal(0, 6))), from: `every cherry in the dictionary; compressor ${corner.coder}: mean ${big(corner.reads_mean)} reads on record, sampled` },
     };
-    let leash = leashes[1] || 293, ser = 'tree';
+    let leash = 293, ser = 'tree';
     const box = h('div'), ro = readout();
-    host.append(controls(h('span', { class: 'scn-ctl-lab', text: 'leash' }), seg(leashes.map(v => [v, big(v)]), leash, v => { leash = v; draw(); }, 'leash'),
+    host.append(controls(h('span', { class: 'scn-ctl-lab', text: 'leash' }), seg(LEASHES.map(([v, s]) => [v, `${big(v)} (${s})`]), leash, v => { leash = Number(v); draw(); }, 'leash'),
       h('span', { class: 'scn-ctl-lab', text: 'compressor' }), seg(Object.entries(SER).map(([k, s]) => [k, s.label]), ser, v => { ser = v; draw(); }, 'compressor')),
       legend([...Object.values(SER).map(s => [s.label, s.color]), ['leash', T('leash'), 'dash'], ['above the leash', 'var(--bad)', 'band']]), box, ro,
-      sub('Synthesised: the records hold a mean, a p99 and a worst cherry per screen (in cherries’ worth of 512 B: the distinct dictionary bytes one cold decode touched), not every cherry’s reads. Each series here is drawn from those summaries with a seeded generator, so its shape is illustrative and its mean, p99 and worst are the records’.'));
+      sub('Synthesised: the records hold a mean, a p99 and a worst cherry per screen (in cherries’ worth of 512 B: the distinct dictionary bytes one cold decode touched), not every cherry’s reads. Each series here is drawn from those summaries with a seeded generator, so its shape is illustrative and its mean, p99 and worst are the records’. The punnet drawn is one stretch of 4096 cherries, whose own leash is 293; the leashes of the other stretch lengths are shown for comparison.'));
     const P = Plot(box, { x: [0, N - 1], y: [0, 300], h: 340, xlabel: 'cherry index in the punnet (position order)', ylabel: 'reads, in cherries’ worth', grid: 'y', xticks: [0, 1024, 2048, 3072, 4095], label: 'Reads of every cherry of one punnet against the leash' });
     crosshair(P, { xname: 'cherry', xfmt: v => `#${Math.round(v)}`, yfmt: v => `${fmt(v, 0)} cherries’ worth` });
     function draw() {
-      const S = SER[ser], v = S.v, top = Math.max(...v, leash);
-      P.domain({ y: [0, Math.max(10, top * 1.15)] });
+      const S = SER[ser], v = S.v, vmax = Math.max(...v);
+      const yTop = Math.max(10, vmax * 1.15, Math.min(leash, 2000) * 1.15);
+      const shown = Math.min(leash, yTop * 0.97);                                                // the whole-sequence leash sits above the chart
+      P.domain({ y: [0, yTop] });
       P.clear();
       const pts = v.map((y, i) => [i, y]);
       area(P, pts.map(([x, y]) => [x, leash, Math.max(y, leash)]), { color: 'var(--bad)', opacity: 0.45 });
       line(P, pts, { color: S.color, width: 1, name: 'reads' });
-      rule(P, { y: leash, label: `leash ${big(leash)}`, color: T('leash') });
+      rule(P, { y: shown, label: `leash ${big(leash)} (${stretchOf(leash)}${leash > yTop ? '; above the chart' : ''})`, color: T('leash') });
       const over = v.filter(y => y > leash).length, worst = Math.max(...v);
       ro.set([['mean', fmt(mean(v), 1)], ['p99', fmt(quantile(v, 0.99), 0)], ['worst cherry', fmt(worst, 0)], ['above the leash', `${big(over)} of ${big(N)} (${fmtPct(over / N, 1)})`],
-        ['verdict', over ? `fails the leash-${big(leash)} scenario` : `fits the leash-${big(leash)} scenario`], ['from', S.from]]);
+        ['verdict', over ? `fails the leash of ${big(leash)} (${stretchOf(leash)})` : `fits the leash of ${big(leash)} (${stretchOf(leash)})`], ['from', S.from]]);
     }
     draw();
   };

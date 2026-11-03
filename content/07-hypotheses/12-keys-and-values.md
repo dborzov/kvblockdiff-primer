@@ -84,7 +84,7 @@ The [[slice]] is the first axis of a scenario ([[#scenario-slice]]), and `k[...]
 - **Keys want their own tree.** Coding keys on the values' reference tree, with the links shared for free, is +0.0024 worse than keys on their own tree with the links paid for.
 - **The rule across elements is largest on keys**: 0.236 bit per element at KV layer 2 after the reference, against 0.107 and 0.171 for values at layers 0 and 2.
 
-A K+V cherry, `(2, 2, 256)` with keys and values of one token at one layer, is therefore a third scenario, and its ratio is the byte-weighted mean of its halves:
+A K+V cherry, `(k[t, l, :, :], v[t, l, :, :])` (1024 elements) with keys and values of one token at one layer, is therefore a third scenario, and its ratio is the byte-weighted mean of its halves:
 
 $$
 \vrho_{\text{K+V}} \;=\; \tfrac12\big(\vrho_{\vK} + \vrho_{\vV}\big) \;=\; \frac{\vbpe_{\vK} + \vbpe_{\vV}}{16}.

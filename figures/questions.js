@@ -193,7 +193,7 @@ window.FIG = window.FIG || {};
         sB),
       legend([
         ...FAM.map(f => [f.name, f.color, 'dot']),
-        ['roofline', 'var(--t-curve)'], ['pays for itself vs solo', 'var(--good)', 'band'],
+        ['lowest ratio at each dictionary share', 'var(--t-curve)'], ['below solo', 'var(--good)', 'band'],
       ]),
       box, ro,
     );
@@ -224,7 +224,7 @@ window.FIG = window.FIG || {};
         const x = s.w ? s.w / b : ZERO;
         pts.push({ f: fm, s, x, y });
       }));
-      // roofline: best ρ reachable at each dictionary cost (a staircase), starting from solo at x = 0
+      // the lowest delta share reached at each dictionary share (a staircase), starting from solo at dictionary share 0; the roofline proper is the lowest MDL ratio of the scenario
       const sorted = [{ x: ZERO, y: solo }, ...pts].sort((a, c) => a.x - c.x);
       const roof = []; let best = Infinity;
       sorted.forEach(p => { if (p.y < best) { best = p.y; roof.push([p.x, p.y]); } });
@@ -241,7 +241,7 @@ window.FIG = window.FIG || {};
       ro.set([
         ['world', WORLDS[world]],
         ['best total', cand.tot < solo ? `${cand.f.short} · ${cand.s.hp}: ${fmt(8 * cand.tot, 2)} bits per element, ${fmt(8 * (solo - cand.tot), 2)} below solo` : 'nothing beats solo coding'],
-        ['roofline at w/b ≤ 0.01', `ρ = ${fmt(light, 3)}`],
+        ['lowest ratio at w/b ≤ 0.01', `ρ = ${fmt(light, 3)}`],
       ]);
     }
     draw();

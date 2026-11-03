@@ -59,12 +59,12 @@ If upstairs similarity were strong, a [[dictionary]] could be shared by a group 
 
 Two scenarios measure it, on the same elements ([[#scenario-why-vary]]):
 
-1. **Cherry shape.** `(2, 256)`, one layer's values of one token, against `(6, 2, 256)`, the same token at every KV layer. The wider cherry may predict each layer from the others; the gap bounds what the layers share. And which layers to group is a question the same instrument answers: join three and three, by nearness or by some other rule, and compare.
-2. **A dictionary shared across layers.** Keep `(2, 256)` cherries and let one dictionary serve the cherries of several layers. This is the scenario a GLM-style design needs, and it has not been run ([[#plan-next-in-the-harness]]).
+1. **Cherry shape.** `v[t, l, :, :]`, one layer's values of one token, against `v[t, :, :, :]`, the same token at every KV layer. The wider cherry may predict each layer from the others; the gap bounds what the layers share. And which layers to group is a question the same instrument answers: join three and three, by nearness or by some other rule, and compare.
+2. **A dictionary shared across layers.** Keep `v[t, l, :, :]` cherries and let one dictionary serve the cherries of several layers. This is the scenario a GLM-style design needs, and it has not been run ([[#plan-next-in-the-harness]]).
 
 ::: takeaway
 - Strong upstairs similarity would let groups of layers share one dictionary: 78 per stretch could become 20 on the Pin.
-- Measured by cherry shape `(2, 256)` against `(6, 2, 256)` on the same window, and by how layers group.
+- Measured by cherry shape `v[t, l, :, :]` against `v[t, :, :, :]` on the same window, and by how layers group.
 :::
 
 ## Verdict {#verdict}
@@ -87,5 +87,5 @@ Same-window table and layer groupings: r24 iter-1-3 (20 windows of target 02; tr
 
 ::: takeaway
 - Joining six layers: 0.0043, against 0.0322 for joining two heads. Adjacent layers share 0.03 to 0.08 bit given the rest.
-- Layers group by kind (0, 4, 5 against 1, 2, 3), not by nearness; a dictionary shared across `(2, 256)` cherries of several layers is still unrun.
+- Layers group by kind (0, 4, 5 against 1, 2, 3), not by nearness; a dictionary shared across `v[t, l, :, :]` cherries of several layers is still unrun.
 :::

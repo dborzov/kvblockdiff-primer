@@ -10,7 +10,7 @@ cards:
     why: What a pick covers decides what one miss must return, hence the cherry shape, and what one dictionary must serve, hence the shelf.
     sec: designs
   - q: Which design's scenario have the campaigns already measured most directly?
-    a: 'The per-layer design: `V · all layers · cherry (2, 256) · stretch 4096 · leash 293` is one-layer cherries with one dictionary per layer per stretch'
+    a: 'The per-layer design: `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293` is one-layer cherries with one dictionary per layer per stretch'
     wrong: ["GLM-5.1's shared dictionary across a layer group", "DeepSeek-V4's squeezed rows", "The Pin's own MLA latents"]
     why: The C2 screens coded one token's values at one layer against a dictionary fit on that layer's punnet. The other designs need scenarios that have not been run, or data the Bench does not have.
     sec: what-to-measure
@@ -34,10 +34,10 @@ A [[pick]] is whatever the [[indexer]] names at one decode step ([[#landscape-sp
 
 | serving design | what one pick covers | the scenario it needs | what sits on the shelf | what a miss moves |
 |---|---|---|---|---|
-| **DeepSeek-V3.2 (DSA), per-layer picks** | one token at one layer | one-layer slice; `cherry (640,)` on an MLA latent, `cherry (2, 256)` on a GQA LLM; one dictionary per layer per stretch | $\vnD$ dictionaries per layer, 78 shelves per sequence on the Pin | one delta |
+| **DeepSeek-V3.2 (DSA), per-layer picks** | one token at one layer | one-layer slice; `v[t, l, 0, :]` (640 elements, the MLA latent) on the Pin, `v[t, l, :, :]` (512) on a GQA LLM; one dictionary per layer per stretch | $\vnD$ dictionaries per layer, 78 shelves per sequence on the Pin | one delta |
 | **GLM-5.1, shared picks** | one token for a group of layers, selected once | either multi-layer cherries `(n, 640)` with one dictionary per group per stretch, or one-layer cherries served by a dictionary fit on the group's slice | $\vnD$ dictionaries per group, not per layer | one multi-layer delta, or $n$ one-layer deltas against one dictionary |
 | **DeepSeek-V4, squeezed picks** | four tokens squeezed into one row | the squeezed row is the cherry; the stretch counts rows, not tokens | per layer, as DSA | one delta of a squeezed row |
-| **keys and values moved together** (GQA, no MLA) | both halves of the orchard at one layer | a slice of `k` and `v`, as one `(2, 2, 256)` cherry or two scenarios whose deltas travel together | one dictionary serving both, or two | two deltas, or one |
+| **keys and values moved together** (GQA, no MLA) | both halves of the orchard at one layer | a slice of `k` and `v`, as one `(k[t, l, :, :], v[t, l, :, :])` cherry (1024 elements) or two scenarios whose deltas travel together | one dictionary serving both, or two | two deltas, or one |
 
 Two of the columns are not alternatives to the others: squeezing and moving keys with values are properties of the LLM, and the per-layer-versus-group choice is made on top of them. Where the choice is open, it is a question about bits:
 
@@ -55,10 +55,10 @@ Each column needs a scenario run and a traffic replay. The scenario side has par
 
 | design | scenario measurement it needs | status | traffic measurement it needs |
 |---|---|---|---|
-| per-layer picks (DSA) | the per-layer curve: `V · layer l · cherry (2, 256) · stretch 4096 · leash 293` | **run**: 0.636 (tree) and 0.686 (light) on the Bench's values ([[#measured-scorecard]]); keys one night only ([[#hypotheses-keys-and-values]]) | per-layer popularity, $\vfD$ and loads from a replay |
-| shared picks (GLM-5.1) | the same slice with `cherry (6, 2, 256)`, and the unrun one: one-layer cherries against a dictionary fit on the group | **half run**: joining all six layers into one cherry saved 0.0043 over `(2, 256)` ([[#measured-cutting-the-tensor]]); the group-dictionary scenario is not run ([[#plan-next-in-the-harness]]) | one popularity per group; whether a group's picks are hot together |
+| per-layer picks (DSA) | the per-layer curve: `V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293` | **run**: 0.636 (tree) and 0.686 (light) on the Bench's values ([[#measured-scorecard]]); keys one night only ([[#hypotheses-keys-and-values]]) | per-layer popularity, $\vfD$ and loads from a replay |
+| shared picks (GLM-5.1) | the same slice with `cherry v[t, :, :, :]`, and the unrun one: one-layer cherries against a dictionary fit on the group | **half run**: joining all six layers into one cherry saved 0.0043 over `v[t, l, :, :]` ([[#measured-cutting-the-tensor]]); the group-dictionary scenario is not run ([[#plan-next-in-the-harness]]) | one popularity per group; whether a group's picks are hot together |
 | squeezed picks (V4) | a scenario on squeezed rows | **not possible on the Bench**: no squeezing; two adjacent tokens as one cherry cost +0.037, a hint that the squeezed row is a different object ([[#hypotheses-fallen-apple]]) | as DSA |
-| keys and values together | `K+V · cherry (2, 2, 256)` | **not run**; keys pre-RoPE are in the dump ([[#plan-the-dataset-we-have]]) | as DSA |
+| keys and values together | `(k[t, l, :, :], v[t, l, :, :]) · stretch 4096 · leash 293`; in scope since 2026-11-03 as `(k[t, :, :, :], v[t, :, :, :])` (6144 elements) at the four stretch-and-leash pairs | **not run**; keys pre-RoPE are in the dump ([[#plan-the-dataset-we-have]]) | as DSA |
 | the Pin itself (GLM-5.1 on MLA latents) | `latent · layer l · cherry (640,)` | **not measurable on the Bench**: Qwen3.5-2B is GQA; a stand-in LLM with MLA is needed ([[#plan-other-experiments]]) | HiSparse's own traces, if shared |
 
 The 0.0043 is the number that decides most. If layers shared many bits, a GLM-style group dictionary would be the natural win, lighter than $n$ per-layer ones for the same deltas. They share almost none once each layer has its reference cherry ([[#hypotheses-upstairs]]), so a group dictionary is close to the union of the per-layer ones. The group design then pays the shelf in units of $n$ dictionaries at a time, which only pays if the group's picks are hot together, a traffic question the replay would answer. The other measured number, the 0.032 from joining the two heads ([[#hypotheses-stereo]]), favours every design whose cherry covers both heads, which all four do on a GQA LLM.

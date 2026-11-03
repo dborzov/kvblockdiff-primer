@@ -9,7 +9,7 @@ cards:
     wrong: ["No, a cosine of 0.05 means independent", "Only at the first KV layer", "Only after a rotation aligns them"]
     why: Cosine compares element c with element c. A linear picture of head 1 from all of head 0 is what the bits count, and it is a property of the LLM's weights.
     sec: two-views
-  - q: What did joining the two heads into one (2, 256) cherry save, on the same window?
+  - q: What did joining the two heads into one v[t, l, :, :] cherry save, on the same window?
     a: 0.0322 ± 0.0009 of ratio, 20 of 20 sequences
     wrong: ["0.0043 of ratio", "0.85 of ratio", "Nothing verified"]
     why: About 37 times its spread over sequences; 0.26 bit per element of ratio, from a bound of 0.85 bit shared.
@@ -83,24 +83,24 @@ The real map is not a toy's. At KV layer 4 the campaign's linear prediction acro
 ## In bits {#in-bits}
 
 ::: figure fig-hypotheses-stereo hypStereo wide
-**Two views of one vector.** Left: a seeded toy of the two heads' elements for one `elem_id` (slider), drawn as element against element: the cosine is near zero; and as token-to-token distances in head 0 against head 1, which line up. Right: the three code-length bounds on four punnets, bits per element shared by the two heads (0.85 raw; 0.54 after one reference cherry serves both; 0.21 with a reference per head), and the measured join on the same window of 20 sequences: cherry `(256,)` at 0.6604 against `(2, 256)` at 0.6281 ± 0.0009. Data: `figures/data/measured-splits.json`.
+**Two views of one vector.** Left: a seeded toy of the two heads' elements for one `elem_id` (slider), drawn as element against element: the cosine is near zero; and as token-to-token distances in head 0 against head 1, which line up. Right: the three code-length bounds on four punnets, bits per element shared by the two heads (0.85 raw; 0.54 after one reference cherry serves both; 0.21 with a reference per head), and the measured join on the same window of 20 sequences: cherry `v[t, l, h, :]` at 0.6604 against `v[t, l, :, :]` at 0.6281 ± 0.0009. Data: `figures/data/measured-splits.json`.
 :::
 
 Why does a cosine near zero hide bits? Because cosine compares element $\vc$ with element $\vc$, one furrow against one furrow, and the information runs *across* furrows: element 57 of head 1 is a weighted sum of many elements of head 0 ([[#hypotheses-bits-are-the-unit]]). A lossless compressor that may see head 0 while coding head 1 can use that sum; a cosine never looks for it.
 
-How a scenario measures it ([[#scenario-why-vary]]): the same slice, two cherry shapes, the same compressor, the same elements. With `cherry_shape = (256,)` the receiver may ask for head 1 without head 0, so head 1 must be coded alone. With `(2, 256)` the compressor codes head 0 first and may predict head 1 from it. A wider cherry can always run the narrower compressor inside, so the gap is a lower bound on what the heads share.
+How a scenario measures it ([[#scenario-why-vary]]): the same slice, two cherry shapes, the same compressor, the same elements. With `cherry(t) = v[t, l, h, :]` (256 elements) the receiver may ask for head 1 without head 0, so head 1 must be coded alone. With `v[t, l, :, :]` the compressor codes head 0 first and may predict head 1 from it. A wider cherry can always run the narrower compressor inside, so the gap is a lower bound on what the heads share.
 
 | what was measured | reading | grade |
 |---|---|---|
-| ratio with `(256,)` cherries, compressor 102, 20 windows | 0.6604 | encoded bytes, one window per sequence |
-| ratio with `(2, 256)` cherries, same compressor, same elements | 0.6281 | encoded bytes |
+| ratio with `v[t, l, h, :]` cherries, compressor 102, 20 windows | 0.6604 | encoded bytes, one window per sequence |
+| ratio with `v[t, l, :, :]` cherries, same compressor, same elements | 0.6281 | encoded bytes |
 | the join saves | 0.0322 ± 0.0009 of ratio, 20 of 20 sequences, about 37 times its spread | paired, 20 sequences |
 | bits the heads share, raw | 0.85 per element | code length, 4 punnets |
 | after one reference cherry serves both heads | 0.54 | code length, 4 punnets |
 | after each head gets its own reference cherry | 0.21 | code length, 4 punnets |
 | of head 1's plateau after its reference, visible in head 0 at KV layers 1, 2, 4 | 66 to 70 % | code length |
 
-The three bound numbers tell the story of the join. Raw, the heads share 0.85 bit per element. A [[reference-cherry]], an earlier token that both heads are predicted from, explains part of what they had in common, leaving 0.54. Give each head its own reference and only 0.21 remains, because two different earlier tokens no longer line up. So the natural unit is one reference per token per layer, serving both heads, and a `(2, 256)` cherry is where that unit lives.
+The three bound numbers tell the story of the join. Raw, the heads share 0.85 bit per element. A [[reference-cherry]], an earlier token that both heads are predicted from, explains part of what they had in common, leaving 0.54. Give each head its own reference and only 0.21 remains, because two different earlier tokens no longer line up. So the natural unit is one reference per token per layer, serving both heads, and a `v[t, l, :, :]` cherry is where that unit lives.
 
 ::: theme bits-unit
 The warning of the old draft was that a high cosine can hide a useless neighbour. Here it cut the other way: a cosine near zero hid 0.85 bit per element. Only the bits settled it.
@@ -108,7 +108,7 @@ The warning of the old draft was that a high cosine can hide a useless neighbour
 
 ### What it implies
 
-For cherry shapes: **join the heads, always**. A cherry of one head throws away the cheapest bits in the orchard; whether to join layers or tokens as well is a separate and much weaker question ([[#hypotheses-upstairs]], [[#hypotheses-fallen-apple]]). For serving designs ([[#app-which-application]]): a pick in DSA or GLM-5.1 names a position for a layer, and attention at that layer reads every KV head of that position, so both views travel together and the saving comes free inside the `(2, 256)` cherry. A design whose picks covered one head at a time would pay for it, in a dictionary that carries the other head's picture or in raw bytes. On [[pin|the Pin]] there is no second head: GLM-5.1 keeps one MLA latent per token per layer, and what that latent shares with itself across its 640 elements is the same question asked of one vector ([[#toolbox-linear-prediction]]).
+For cherry shapes: **join the heads, always**. A cherry of one head throws away the cheapest bits in the orchard; whether to join layers or tokens as well is a separate and much weaker question ([[#hypotheses-upstairs]], [[#hypotheses-fallen-apple]]). For serving designs ([[#app-which-application]]): a pick in DSA or GLM-5.1 names a position for a layer, and attention at that layer reads every KV head of that position, so both views travel together and the saving comes free inside the `v[t, l, :, :]` cherry. A design whose picks covered one head at a time would pay for it, in a dictionary that carries the other head's picture or in raw bytes. On [[pin|the Pin]] there is no second head: GLM-5.1 keeps one MLA latent per token per layer, and what that latent shares with itself across its 640 elements is the same question asked of one vector ([[#toolbox-linear-prediction]]).
 
 ::: takeaway
 - Joining the heads: 0.0322 ± 0.0009 of ratio on 20 of 20 sequences, 0.26 bit per element of the 0.85 the bound allows.
@@ -119,7 +119,7 @@ For cherry shapes: **join the heads, always**. A cherry of one head throws away 
 
 The strongest structure measured, and the one the old draft had declined to pursue. Values of Qwen3.5-2B, FP8, stretch 4096: 0.0322 ± 0.0009 of ratio on 20 of 20 sequences for the join, a bound of 0.85 bit per element shared raw, 0.54 after one reference, 0.21 after two, 66 to 70 % of head 1's plateau visible in head 0, and 91 to 96 % of the map's gain recoverable from a map fit on another sequence ([[#measured-cutting-the-tensor]], [[#measured-two-kinds-of-structure]]).
 
-Grades: the 20-sequence join is encoded bytes on one window per sequence, not a verified ledger row; the bounds are four punnets of two sequences; the only verified split scores on five sequences (0.6385 for `(2, 256)`, 0.6702 for `(256,)`) read different punnets and may not be subtracted. Unmeasured: the same question on keys, whose two heads were coded jointly for one night only ([[#hypotheses-keys-and-values]]), and stereo across layers, a map from one layer's cherry into another's ([[#plan-next-in-the-harness]]).
+Grades: the 20-sequence join is encoded bytes on one window per sequence, not a verified ledger row; the bounds are four punnets of two sequences; the only verified split scores on five sequences (0.6385 for `v[t, l, :, :]`, 0.6702 for `v[t, l, h, :]`) read different punnets and may not be subtracted. Unmeasured: the same question on keys, whose two heads were coded jointly for one night only ([[#hypotheses-keys-and-values]]), and stereo across layers, a map from one layer's cherry into another's ([[#plan-next-in-the-harness]]).
 
 ::: aside source Receipts
 Cosine, copying R² and distance correlation: r7 iter-1-1 (36 blocks). Same-window join: r24 iter-1-3 (20 windows of target 02). Shared bits 0.85 / 0.54 / 0.21: r9 iter-1-2 (4 blocks, exact code lengths). Terms inside and across heads at L19, 73 %: r22 iter-1-2. Map fit elsewhere 91–96 %: r7 iter-1-2. Plateau 66–70 %: `[value/shared]`. Five-sequence ledger rows: r24-t0002 on `st02n5-layer-b4k-r293` and `st02n5-head-b4k-r293`.

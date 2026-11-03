@@ -4,7 +4,7 @@
    Every measured number is read at runtime from figures/data/measured-*.json (ledger-derived, see
    analysis/measured_extract.py and PART-XI-SPEC.md §4); the few constants of the data itself (tensor
    geometry, the Pin of III.11) are written inline with their source.
-   Colour follows the entity: the cherry shape ((256,) / (2, 256) / (6, 2, 256) / other) and the
+   Colour follows the entity: the cherry shape (v[t, l, h, :] / v[t, l, :, :] / v[t, :, :, :] / other) and the
    recurring compressors 102, 121 and 129 keep the same series colour in every figure. */
 window.FIG = window.FIG || {};
 
@@ -32,7 +32,7 @@ window.FIG = window.FIG || {};
   /** JSON strings shown verbatim (labels, grades, steps) in the site's words: numbers untouched. */
   const WORDS = [[/\bexact[- ]model\b/g, 'code-length estimate'], [/\bintact model\b/g, 'the LLM intact'], [/\bmodel\b/g, 'LLM'], [/\bentries\b/g, 'cherries'], [/\bentry\b/g, 'cherry'], [/\bblocks\b/g, 'punnets'], [/\bblock\b/g, 'punnet'], [/\bchannels\b/g, 'furrows'], [/\bchannel\b/g, 'furrow'], [/\bcoders\b/g, 'compressors'], [/\bcoder\b/g, 'compressor'], [/\bread budget\b/g, 'leash'], [/\bbudget\b/g, 'leash'], [/\bthreads?\b/g, 'sequence'], [/\bsegments?\b/g, 'parts']];
   const words = t => (t == null ? t : WORDS.reduce((x, [re, to]) => x.replace(re, to), String(t)));
-  const SPLIT_LABEL = { head: 'cherry (256,): one head', layer: 'cherry (2, 256): one KV layer, both heads', token: 'cherry (6, 2, 256): one token, six KV layers', other: 'other cherry shapes (two or three KV layers, by kind, columns, 8 tokens)' };
+  const SPLIT_LABEL = { head: 'cherry v[t, l, h, :]: one head', layer: 'cherry v[t, l, :, :]: one KV layer, both heads', token: 'cherry v[t, :, :, :]: one token, six KV layers', other: 'other cherry shapes (two or three KV layers, by kind, columns, 8 tokens)' };
   const splitLegend = (keys = ['head', 'layer', 'token', 'other'], shape = 'dot') => keys.map(k => [SPLIT_LABEL[k], splitColor(k), shape]);
   const CODER = { 102: series(4), 121: series(5), 129: series(6) };   // the compressors that recur across pages
   const NEUTRAL = 'var(--slate)';                                      // landmarks that are not compressors (raw, solo)
@@ -183,9 +183,9 @@ window.FIG = window.FIG || {};
       { label: 'raw FP8, one byte', v: 8, ratio: 1, color: NEUTRAL, tip: '<b>raw</b><br>every element stored as its byte: 8 bits, ratio 1.0' },
       { label: 'solo ideal, six layers', v: bits(solo), ratio: solo, color: NEUTRAL, tip: `<b>solo ideal</b><br>${rb(solo)}<br>per-furrow order-0 entropy of the values, all six layers (tables uncharged); the landmark of the stretch-4096 screens` },
       { label: 'C1 ladder top · KV layer 0 (L3) h0, stretch 4096', v: bits(c1.ratio), ratio: c1.ratio, color: splitColor('head'), tip: `<b>C1 · compressor ${c1.coder} ${esc(words(c1.name))}</b> · ${c1.trial}<br>${rb(c1.ratio)}<br>values of KV layer 0 (the LLM’s layer 3), head 0 · stretch 4096 · no leash · two dev sequences<br>${perSeq(c1.per_sequence)}` },
-      { label: 'C2 · cherry (2, 256), stretch 4096, 2 seq', v: bits(r4k.ratio), ratio: r4k.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r4k.coder} ${esc(words(r4k.name))}</b> · ${r4k.trial}<br>${rb(r4k.ratio)}<br>${esc(words(r4k.screen))} · ${ver(r4k)}<br>${readsOf(r4k)}` },
-      { label: 'C2 · cherry (2, 256), stretch 4096, 5 seq', v: bits(r5.ratio), ratio: r5.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r5.coder} ${esc(words(r5.name))}</b> · ${r5.trial}<br>${rb(r5.ratio)}<br>${esc(words(r5.screen))} · ${ver(r5)}<br>${readsOf(r5)}` },
-      { label: 'C2 · cherry (2, 256), stretch 16 384, 2 seq', v: bits(r16.ratio), ratio: r16.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r16.coder} ${esc(words(r16.name))}</b> · ${r16.trial}<br>${rb(r16.ratio)}<br>${esc(words(r16.screen))} · ${ver(r16)}<br>${readsOf(r16)}` },
+      { label: 'C2 · cherry v[t, l, :, :], stretch 4096, 2 seq', v: bits(r4k.ratio), ratio: r4k.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r4k.coder} ${esc(words(r4k.name))}</b> · ${r4k.trial}<br>${rb(r4k.ratio)}<br>${esc(words(r4k.screen))} · ${ver(r4k)}<br>${readsOf(r4k)}` },
+      { label: 'C2 · cherry v[t, l, :, :], stretch 4096, 5 seq', v: bits(r5.ratio), ratio: r5.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r5.coder} ${esc(words(r5.name))}</b> · ${r5.trial}<br>${rb(r5.ratio)}<br>${esc(words(r5.screen))} · ${ver(r5)}<br>${readsOf(r5)}` },
+      { label: 'C2 · cherry v[t, l, :, :], stretch 16 384, 2 seq', v: bits(r16.ratio), ratio: r16.ratio, color: splitColor('layer'), tip: `<b>C2 · compressor ${r16.coder} ${esc(words(r16.name))}</b> · ${r16.trial}<br>${rb(r16.ratio)}<br>${esc(words(r16.screen))} · ${ver(r16)}<br>${readsOf(r16)}` },
       { label: 'punnet floor · estimate', v: bits(floor), ratio: floor, kind: 'dashed', color: EST, tip: `<b>punnet floor at stretch 16 384 · code-length estimate</b><br>≈ ${rb(floor, 2)}<br>${esc(words(md.floors.block_16k.grade))} — an estimate, not a compressor` },
     ].map(r => Object.assign(r, { text: `${fmt(r.v, 2)} (${fmt(r.ratio, r.ratio === 1 ? 1 : 4)})` }));
     const box = h('div');
@@ -193,7 +193,7 @@ window.FIG = window.FIG || {};
     const kB = kpi('gain over solo', `${fmt(bits(solo - r4k.ratio), 2)} bits`, `at stretch 4096; ${fmt(bits(solo - r16.ratio), 2)} bits at stretch 16 384`, splitColor('layer'));
     const kC = kpi('the plan asked for', `${fmt(GO, 2)} bit`, 'go threshold: solo − 0.75 bit (IX, decision rule)');
     host.append(legend([
-      ['C1: KV layer 0 (L3), head 0, cherry (256,)', splitColor('head'), 'box'], ['C2: cherry (2, 256)', splitColor('layer'), 'box'],
+      ['C1: KV layer 0 (L3), head 0, cherry v[t, 0, 0, :]', splitColor('head'), 'box'], ['C2: cherry v[t, l, :, :]', splitColor('layer'), 'box'],
       ['landmarks (raw, solo)', NEUTRAL, 'box'], ['estimate (code-length)', EST, 'dash'], ['solo minus 0.75 bit', 'var(--ink-2)', 'dash']]), box,
       h('div', { class: 'kpis' }, kA, kB, kC));
     const { P } = hbars(box, rows, { x: [0, 9.6], xticks: [0, 2, 4, 6, 8], xlabel: 'bits per element of one value (ratio in brackets)', m: { t: 24 }, width: 24,
@@ -216,7 +216,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout();
     const kS = kpi('one sequence', MB(seqBytes), `${TOK.toLocaleString('en-GB')} tokens × ${BYTES.token} B`);
     const kD = kpi('thirty sequences', GB(allBytes), `${TOTAL.toLocaleString('en-GB')} tokens, values only`);
-    const sw = seg([['all', 'all three shapes'], ['head', '(256,)'], ['layer', '(2, 256)'], ['token', '(6, 2, 256)']], sel, v => select(v), 'cherry shape');
+    const sw = seg([['all', 'all three shapes'], ['head', 'v[t, l, h, :]'], ['layer', 'v[t, l, :, :]'], ['token', 'v[t, :, :, :]']], sel, v => select(v), 'cherry shape');
     host.append(controls(sw), legend([
       ['head 0 band', 'color-mix(in srgb, var(--ink) 7%, var(--paper-3))', 'box'], ['head 1 band', 'color-mix(in srgb, var(--ink) 16%, var(--paper-3))', 'box'],
       ...splitLegend(['head', 'layer', 'token'], 'box')]), box, ro, h('div', { class: 'kpis' }, kS, kD),
@@ -347,7 +347,7 @@ window.FIG = window.FIG || {};
     const kTop = kpi('ladder top (compressor 34)', fmt(rows.find(r => r.coder === 34).ratio, 4), `${fb(rows.find(r => r.coder === 34).ratio)} · from solo ${fmt(rows[0].ratio, 4)}`, col);
     const kGain = kpi('gain over solo coding', `${fmt(bits(rows[0].ratio - rows.find(r => r.coder === 34).ratio), 2)} bits`, 'compressor 09 → 34, same screen, same punnets', col);
     const kBlk = kpi('stretch length', `${fmt(blocks[0].ratio, 4)} → ${fmt(blocks[blocks.length - 1].ratio, 4)}`, `${tokFmt(blocks[0].b)} → ${tokFmt(blocks[blocks.length - 1].b)} tokens, compressor 34’s family`, col);
-    host.append(controls(sw), legend([['values of KV layer 0 (L3), head 0 · cherry (256,) · FP8 · stretch 4096 · two dev sequences', col, 'box'], ['set aside by C1 (stream compression)', col, 'dash'], [`solo ideal ${fmt(soloL3, 4)} · baseline ${fmt(base, 1)}`, 'var(--ink-2)', 'dash']]),
+    host.append(controls(sw), legend([['values of KV layer 0 (L3), head 0 · cherry v[t, 0, 0, :] · FP8 · stretch 4096 · two dev sequences', col, 'box'], ['set aside by C1 (stream compression)', col, 'dash'], [`solo ideal ${fmt(soloL3, 4)} · baseline ${fmt(base, 1)}`, 'var(--ink-2)', 'dash']]),
       box, h('div', { class: 'kpis' }, kTop, kGain, kBlk), sub('The axis starts at 0.6: bar lengths compare only above that. Hover a bar for its trial id.'));
     function draw() {
       box.replaceChildren();
@@ -379,7 +379,7 @@ window.FIG = window.FIG || {};
     const colOf = r => (CODER[r.coder] || col);
     const boxA = h('div'), boxB = h('div'), ro = readout();
     const last = rows[rows.length - 1];
-    host.append(legend([['cherry (2, 256), stretch 4096, leash 293, two dev sequences', col, 'box'], ['compressor 102', CODER[102], 'box'], ['compressor 121', CODER[121], 'box'], ['side branch off 102 (compressor 126)', col, 'dash']]),
+    host.append(legend([['cherry v[t, l, :, :], stretch 4096, leash 293, two dev sequences', col, 'box'], ['compressor 102', CODER[102], 'box'], ['compressor 121', CODER[121], 'box'], ['side branch off 102 (compressor 126)', col, 'dash']]),
       h('div', { class: 'msr-row msr-row-32' }, h('div', {}, head('the ladder, every rung verified'), boxA), h('div', {}, head('121 against 102 on five sequences of target 02'), boxB)), ro,
       sub(`Solo ideal on this screen: ${fmt(solo, 4)} (${fb(solo)}); the axis starts at 0.6. Hover a bar or a point for its trial id.`));
     const R = rows.map(r => ({
@@ -439,9 +439,9 @@ window.FIG = window.FIG || {};
     const j1 = need(joins.find(j => j.from === 'head' && j.to === 'layer'), 'join head→layer'), j2 = need(joins.find(j => j.from === 'layer' && j.to === 'token'), 'join layer→token');
     const tree102 = need(sd.cast && sd.cast.tree_102, 'splits.cast.tree_102');
     const boxA = h('div'), boxB = h('div');
-    const kH = kpi('(256,) → (2, 256)', fmtS(j1.delta, 4), `${fmtS(bits(j1.delta), 2)} bits · ${esc(words(j1.agree))} sequences`, splitColor('layer'));
-    const kL = kpi('(2, 256) → (6, 2, 256)', fmtS(j2.delta, 4), `${fmtS(bits(j2.delta), 2)} bits · ${esc(words(j2.agree))}; understated by ≈ ${fmt(j2.understated_by, 3)}`, splitColor('token'));
-    const kT = kpi('adjacent tokens joined', `${fmtS(adj.loss_vs_layer.tok2, 3)} · ${fmtS(adj.loss_vs_layer.tok4, 3)}`, '2 · 4 adjacent tokens, against the same compressor on (2, 256) cherries', splitColor('other'));
+    const kH = kpi('v[t, l, h, :] → v[t, l, :, :]', fmtS(j1.delta, 4), `${fmtS(bits(j1.delta), 2)} bits · ${esc(words(j1.agree))} sequences`, splitColor('layer'));
+    const kL = kpi('v[t, l, :, :] → v[t, :, :, :]', fmtS(j2.delta, 4), `${fmtS(bits(j2.delta), 2)} bits · ${esc(words(j2.agree))}; understated by ≈ ${fmt(j2.understated_by, 3)}`, splitColor('token'));
+    const kT = kpi('adjacent tokens joined', `${fmtS(adj.loss_vs_layer.tok2, 3)} · ${fmtS(adj.loss_vs_layer.tok4, 3)}`, '2 · 4 adjacent tokens, against the same compressor on v[t, l, :, :] cherries', splitColor('other'));
     host.append(legend([...splitLegend(['layer', 'token'], 'box'), ['adjacent tokens joined (tok2, tok4)', splitColor('other'), 'box'], ['spread over sequences (whisker)', 'var(--ink)', 'line'], ...splitLegend(['head']), [`tree compressor 102 on the layer screen, ${fmt(tree102, 4)}`, CODER[102], 'dash']]),
       h('div', { class: 'fig-row' },
         h('div', {}, head('(a) joining cherries: change in MDL ratio, same window'), boxA),
@@ -449,8 +449,8 @@ window.FIG = window.FIG || {};
       h('div', { class: 'kpis' }, kH, kL, kT),
       sub(`(a) ${esc(words(sw.grade))}; the tok2/tok4 rows are ${esc(words(adj.grade))}, trial ${adj.trial}. (b) ${esc(words(sd.coder_129_by_split.note))}.`));
     const RA = [
-      { label: '(256,) → (2, 256)', v: j1.delta, err: j1.spread, color: splitColor('layer'), text: `${fmtS(j1.delta, 4)} ± ${fmt(j1.spread, 4)}`, tip: `<b>joining the two heads of a layer</b><br>${fmtS(j1.delta, 5)} of ratio (${fmtS(bits(j1.delta), 3)} bits), spread ${fmt(j1.spread, 5)}, ${esc(words(j1.agree))} sequences<br>compressor ${sw.means.head.coder}: head ${fmt(sw.means.head.ratio, 4)} → layer ${fmt(sw.means.layer.ratio, 4)}` },
-      { label: '(2, 256) → (6, 2, 256)', v: j2.delta, err: j2.spread, color: splitColor('token'), text: `${fmtS(j2.delta, 4)} ± ${fmt(j2.spread, 4)}`, tip: `<b>joining all six layers of a token</b><br>${fmtS(j2.delta, 5)} of ratio (${fmtS(bits(j2.delta), 3)} bits), spread ${fmt(j2.spread, 5)}, ${esc(words(j2.agree))} sequences<br>layer ${fmt(sw.means.layer.ratio, 4)} (compressor ${sw.means.layer.coder}) → token ${fmt(sw.means.token.ratio, 4)} (compressor ${sw.means.token.coder})<br><i>${esc(words(j2.note))}</i>` },
+      { label: 'v[t, l, h, :] → v[t, l, :, :]', v: j1.delta, err: j1.spread, color: splitColor('layer'), text: `${fmtS(j1.delta, 4)} ± ${fmt(j1.spread, 4)}`, tip: `<b>joining the two heads of a layer</b><br>${fmtS(j1.delta, 5)} of ratio (${fmtS(bits(j1.delta), 3)} bits), spread ${fmt(j1.spread, 5)}, ${esc(words(j1.agree))} sequences<br>compressor ${sw.means.head.coder}: head ${fmt(sw.means.head.ratio, 4)} → layer ${fmt(sw.means.layer.ratio, 4)}` },
+      { label: 'v[t, l, :, :] → v[t, :, :, :]', v: j2.delta, err: j2.spread, color: splitColor('token'), text: `${fmtS(j2.delta, 4)} ± ${fmt(j2.spread, 4)}`, tip: `<b>joining all six layers of a token</b><br>${fmtS(j2.delta, 5)} of ratio (${fmtS(bits(j2.delta), 3)} bits), spread ${fmt(j2.spread, 5)}, ${esc(words(j2.agree))} sequences<br>layer ${fmt(sw.means.layer.ratio, 4)} (compressor ${sw.means.layer.coder}) → token ${fmt(sw.means.token.ratio, 4)} (compressor ${sw.means.token.coder})<br><i>${esc(words(j2.note))}</i>` },
       { label: '2 adjacent tokens (tok2)', v: adj.loss_vs_layer.tok2, color: splitColor('other'), text: fmtS(adj.loss_vs_layer.tok2, 4), tip: `<b>joining 2 adjacent tokens</b> · compressor ${adj.coder} · ${adj.trial}<br>layer ${fmt(adj.ratios.layer, 4)} → tok2 ${fmt(adj.ratios.tok2, 4)}: ${fmtS(adj.loss_vs_layer.tok2, 4)} (${fmtS(bits(adj.loss_vs_layer.tok2), 2)} bits)<br>${esc(words(adj.grade))}` },
       { label: '4 adjacent tokens (tok4)', v: adj.loss_vs_layer.tok4, color: splitColor('other'), text: fmtS(adj.loss_vs_layer.tok4, 4), tip: `<b>joining 4 adjacent tokens</b> · compressor ${adj.coder} · ${adj.trial}<br>layer ${fmt(adj.ratios.layer, 4)} → tok4 ${fmt(adj.ratios.tok4, 4)}: ${fmtS(adj.loss_vs_layer.tok4, 4)} (${fmtS(bits(adj.loss_vs_layer.tok4), 2)} bits)<br>${esc(words(adj.grade))}` },
     ];
@@ -476,7 +476,7 @@ window.FIG = window.FIG || {};
     const kRot = kpi('a fixed rotation costs', `+${fmt(pen[0], 2)}–${fmt(pen[1], 2)} bits`, `code-length bound; rounding after rotating ≈ ${fmt(cb.fixed_rotations.lattice_constant_bits, 2)} bit`, EST);
     host.append(legend([['landmark (solo ideal)', NEUTRAL, 'box'], ['compressor 129: linear prediction, no tree', CODER[129], 'box'], ['derived, not run', CODER[129], 'dash'], ['code-length bound', EST, 'band'], ['compressor 102: reference tree', CODER[102], 'box'], ['compressor 121: tree + prediction', CODER[121], 'box']]),
       box, h('div', { class: 'kpis' }, kGap, kRQ, kRot),
-      sub(`Scenario V · all · cherry (2, 256) · stretch 4096 · leash 293 (screen ${esc(words(c.track))}); the axis starts at 0.6. “129 + RQ” is derived: RQ’s ${fmtS(rq.delta_vs_own_control, 4)} was measured on compressor 128’s own prediction-only control (${fmt(led.control_prediction_only_128.ratio, 4)} → ${fmt(led.rq_no_tree_128.ratio, 4)}), not on compressor 129.`));
+      sub(`Scenario V at one KV layer, v[t, l, :, :] · stretch 4096 · leash 293 (screen ${esc(words(c.track))}); the axis starts at 0.6. “129 + RQ” is derived: RQ’s ${fmtS(rq.delta_vs_own_control, 4)} was measured on compressor 128’s own prediction-only control (${fmt(led.control_prediction_only_128.ratio, 4)} → ${fmt(led.rq_no_tree_128.ratio, 4)}), not on compressor 129.`));
     const rows = [
       { label: 'solo ideal', v: c.solo_ideal, color: NEUTRAL, tip: `<b>solo ideal</b> · landmark of the screen<br>${rb(c.solo_ideal)}<br>per-furrow order-0 entropy, tables uncharged` },
       { label: '129 · prediction only', v: c.c129_prediction_only, color: CODER[129], tip: `<b>compressor 129 pure-wls</b> · r25-t0003 · isolated-verified<br>${rb(c.c129_prediction_only)}<br>mean, scale, linear prediction, one stream per cherry; dictionary share 0.02` },
@@ -527,11 +527,11 @@ window.FIG = window.FIG || {};
     const tbl = need(rd.every_entry_table, 'reads.every_entry_table'), budgets = need(rd.budgets, 'reads.budgets');
     const cost = need(rd.budget_137_cost_on_layer, 'reads.budget_137_cost_on_layer'), rc = need(rd.rule_change, 'reads.rule_change');
     const box = h('div');
-    const k137 = kpi('leash 137 on (2, 256) cherries', fmtS(cost.delta, 4), esc(words(cost.note)), splitColor('layer'));
+    const k137 = kpi('leash 137 on v[t, l, :, :] cherries', fmtS(cost.delta, 4), esc(words(cost.note)), splitColor('layer'));
     const k293 = kpi('leash 293 at stretch 4096 and above', fmtS(rc.budget_293_cost_at_4k_and_above, 1), 'every incumbent fits; counting every cherry changed ' + esc(words(rc.winners_changed)) + ' winners');
     const kW = kpi('worst cherry over the mean', `${fmt(rc.worst_over_mean[0], 1)}–${fmt(rc.worst_over_mean[1], 1)}×`, `sampled maxima had run up to ${fmtPct(rc.sampled_max_low_by_up_to, 0)} low`);
     host.append(legend([...splitLegend(['head', 'layer', 'token']), ['mean → worst cherry', 'var(--ink-3)', 'line'], ['leashes', 'var(--ink-2)', 'dash']]), box, h('div', { class: 'kpis' }, k137, k293, kW),
-      sub(`Reads: one (2, 256) cherry of distinct dictionary bytes touched by one cold decode, counted for every cherry (${num(rd.entries_counted_in_table, 'entries_counted_in_table').toLocaleString('en-GB')} cherries in this table). Every row is verified.`));
+      sub(`Reads: one v[t, l, :, :] cherry (512 B) of distinct dictionary bytes touched by one cold decode, counted for every cherry (${num(rd.entries_counted_in_table, 'entries_counted_in_table').toLocaleString('en-GB')} cherries in this table). Every row is verified.`));
     const xs = tbl.flatMap(r => [r.reads.mean, r.reads.max]), ys = tbl.map(r => r.ratio);
     const [xl, xh] = extent(xs), [yl, yh] = extent(ys);
     const P = Plot(box, { x: [Math.min(40, xl * 0.8), Math.max(400, xh * 1.25)], xlog: true, y: [yl - 0.012, yh + 0.012], h: 380, xlabel: 'reads to rebuild one cherry, in cherries’ worth (log scale)', ylabel: 'MDL ratio', yfmt: v => fmt(v, 2), m: { r: 24, t: 26 },
@@ -564,7 +564,7 @@ window.FIG = window.FIG || {};
     const solo = num(pd.landmarks.solo_ideal.ratio, 'landmarks.solo_ideal.ratio');
     const C1 = splitColor('head'), C2 = splitColor('layer');
     const box = h('div'), ro = readout();
-    host.append(legend([['C1: values of KV layer 0 (L3), head 0, cherry (256,), no leash', C1], ['C2: cherry (2, 256), leash 293', C2], ['code-length floors: estimates, not compressors', EST, 'dash'], [`solo ideal ${fmt(solo, 3)} (six layers)`, 'var(--ink-2)', 'dash']]), box, ro,
+    host.append(legend([['C1: values of KV layer 0 (L3), head 0, cherry v[t, 0, 0, :], no leash', C1], ['C2: cherry v[t, l, :, :], leash 293', C2], ['code-length floors: estimates, not compressors', EST, 'dash'], [`solo ideal ${fmt(solo, 3)} (six layers)`, 'var(--ink-2)', 'dash']]), box, ro,
       sub('Each point is a verified incumbent on its own screen, so the shape is solid and the third decimal is not. Hover or scrub for values.'));
     const P = Plot(box, { x: [512, 32768], xlog: 2, y: [0.54, 0.82], h: 360, xlabel: 'stretch length (tokens, log scale)', ylabel: 'MDL ratio', xfmt: tokFmt, yfmt: v => fmt(v, 2), m: { r: 34 },
       xticks: [512, 1024, 2048, 4096, 8192, 16384, 32768], label: 'MDL ratio against stretch length for C1 and C2, with the code-length floors' });
@@ -685,7 +685,7 @@ window.FIG = window.FIG || {};
     const swD = seg([[nBlocks, `all ${nBlocks} resident`], [8, '8 resident'], [2, '2 resident']], nD, v => { nD = v; run(); }, 'resident punnet dictionaries per layer');
     host.append(controls(sw), controls(slF, slL, swD), h('div', { class: 'kpis' }, kp.link, kp.hbm, kp.n, kp.gain),
       legend([['link-bound sequences per GPU', series(0), 'box'], ['memory-bound sequences per GPU', series(1), 'box'], ['sequences per GPU (the smaller)', 'var(--ink)', 'line']]), box, tbl,
-      sub(`<b>Measured:</b> ρ and the dictionary share w/b of compressors 129 and 121 on (2, 256) cherries (ledger trials ${light.trial}, ${tree.trial}); the solo ideal is the per-furrow entropy. <b>Assumed:</b> ${texify('$\\vfD$, $\\vnload$')}, which dictionaries stay resident, HiSparse’s miss-rate curve and every number of the reference setting (III.10). Each design is shown at its best hot-cache size B of 2K, 4K or 8K. For the punnet compressors ρ is the bytes a miss moves over the link: compressor 129’s MDL ratio (its deltas alone are ${fmt(light.delta_share, 3)}), compressor 121’s deltas (its MDL ratio is ${fmt(tree.rho, 4)}). Requests are rounded to whole numbers.`));
+      sub(`<b>Measured:</b> ρ and the dictionary share w/b of compressors 129 and 121 on v[t, l, :, :] cherries (ledger trials ${light.trial}, ${tree.trial}); the solo ideal is the per-furrow entropy. <b>Assumed:</b> ${texify('$\\vfD$, $\\vnload$')}, which dictionaries stay resident, HiSparse’s miss-rate curve and every number of the reference setting (III.10). Each design is shown at its best hot-cache size B of 2K, 4K or 8K. For the punnet compressors ρ is the bytes a miss moves over the link: compressor 129’s MDL ratio (its deltas alone are ${fmt(light.delta_share, 3)}), compressor 121’s deltas (its MDL ratio is ${fmt(tree.rho, 4)}). Requests are rounded to whole numbers.`));
     function run() {
       const rows = S.map(s => Object.assign({ s }, best(s)));
       const hs = rows.find(r => r.s.id === 'hs'), me = rows.find(r => r.s.id === cur);

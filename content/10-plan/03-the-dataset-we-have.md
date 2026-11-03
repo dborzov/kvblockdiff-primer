@@ -37,13 +37,13 @@ That is the whole asset, thirty times over. It cost one evening on an RTX 5080, 
 | item | the Bench dump (target 02) | source |
 |---|---|---|
 | the LLM | Qwen3.5-2B, 24 layers, of which 6 are [[kv-layer|KV layers]] (layers 3, 7, 11, 15, 19, 23 of the 24); 2 KV heads × 256, 8 query heads | [[#measured-the-data]] |
-| sequences | 30, of 219 678 to 229 360 tokens each, 6.8 M tokens in all; 10 for development, 5 held out, 15 untouched | target 02 README |
+| sequences | 30, of 219 678 to 229 360 tokens each, 6.8 M tokens in all; since 2026-11-03: 13 dev sequences (`0000`–`0009` here and the three of target 03) and 20 holdout sequences (`0010`–`0029`), read only for the reported measurement | target 02 README |
 | text | the user's own coding-agent transcripts, rendered into Qwen's chat template; tool output 26–89 % of a sequence | target 02 README |
 | tensors | `v` as projected; `k` before RoPE, inverted to about one BF16 ulp on the 64 rotated elements | [[#landscape-rope-and-mla]] |
-| format | BF16 as captured; FP8 E4M3 derived with one power-of-two scale per layer and tensor, chosen so the 99.99th percentile of magnitudes lands near 256, round to nearest even; INT8 per furrow also derived | target-writer spec §1 |
+| format | BF16 as captured; FP8 E4M3 derived with one power-of-two scale per layer and tensor, chosen so the 99.99th percentile of magnitudes lands near 256, round to nearest even; INT8 per furrow also derived; every scenario in scope uses the FP8 copy, and BF16 and INT8 are out of scope since 2026-11-03 | target-writer spec §1 |
 | token kinds | one label per token: template, system, user, assistant, tool call, tool response | `target.json` |
 | size | one sequence's values ≈ 700 MB at 8 bits (1.4 GB in BF16); all 30 sequences ≈ 20.9 GB of value bytes, and the same again for keys | [[#measured-the-data]] |
-| a smaller twin | target 03: 3 sequences of the same family (2 development, 1 held out), the campaigns' screens | [[#measured-rules-of-the-game]] |
+| a smaller twin | target 03: 3 sequences of the same family (all three dev sequences since 2026-11-03), the campaigns' screens | [[#measured-rules-of-the-game]] |
 
 The token kinds are the one metadata the campaigns barely used. They make a cheap split available for free: tool responses (the repetitive part, where echoes live) against assistant turns (prose-like), inside the same sequence, with the same compressor.
 
