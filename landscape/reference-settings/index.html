@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>III.11 Two reference settings: the Pin and the Bench — kv-blockdiff</title>
+<meta name="description" content="Napkin math needs numbers, and numbers need a concrete machine. This site freezes two. The Pin is HiSparse&#39;s GLM-5.1 deployment at 8-bit storage, where misses and milliseconds...">
+<script>try{var t=localStorage.getItem('kvp.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Alegreya+Sans+SC:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Federo&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/tokens.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/gen/terms.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/site.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/figures.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/cards.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/figs/landscape.css">
+<link rel="icon" href="/kvblockdiff-primer/assets/img/favicon.svg" type="image/svg+xml">
+<script>window.KV={page:{"id":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/"}};</script>
+<script src="/kvblockdiff-primer/assets/gen/site-data.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/vendor/katex/katex.min.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/core.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/plotkit.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cgraph.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cards.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/figs-loader.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/figs/landscape.js"></script>
+</head>
+<body data-page-id="landscape-reference-settings" data-page-num="III.11" data-page-title="Two reference settings: the Pin and the Bench" data-part="III" class="is-page" style="--c:var(--part-III)">
+<svg class="sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+<!-- 24×24 line emblems. Stroke and colour come from CSS (.emb { stroke: currentColor }).
+     A brand term's emblem is named in data/terms/*.yaml ("emblem: compass"). -->
+<defs>
+<!-- ui -->
+<symbol id="emb-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+<symbol id="emb-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></symbol>
+<symbol id="emb-cards" viewBox="0 0 24 24"><rect x="3" y="6.5" width="12" height="14.5" rx="2"></rect><path d="M8 3.5h10.5a2 2 0 0 1 2 2V18"></path><path d="M9 11l1.5 2.5L9 16l-1.5-2.5z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-book" viewBox="0 0 24 24"><path d="M4 5.5a2.5 2.5 0 0 1 2.5-2.5H19v15.5H6.5A2.5 2.5 0 0 0 4 21z"></path><path d="M4 21V5.5M8.5 7.5h6M8.5 10.5h4"></path></symbol>
+<symbol id="emb-sigma" viewBox="0 0 24 24"><path d="M17.5 5H6.5l6.2 7-6.2 7h11"></path></symbol>
+<symbol id="emb-lighthouse" viewBox="0 0 24 24"><path d="M9.8 21l1.2-11.5h2L14.2 21z"></path><path d="M9.3 9.5h5.4M12 3.2l2.4 3.3H9.6z"></path><path d="M3.5 5.5l4.3 2M20.5 5.5l-4.3 2M3.5 9.5l4.3-.6M20.5 9.5l-4.3-.6M6 21h12"></path></symbol>
+<symbol id="emb-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.2"></circle><path d="M11 11l9.5 9.5M16.5 16.5l2.2-2.2M18.7 18.7l2-2"></path></symbol>
+<symbol id="emb-delta" viewBox="0 0 24 24"><path d="M12 3.5L3 20h18z"></path><path d="M12 10.5l-3.4 6h6.8z" style="fill:currentColor;stroke:none"></path></symbol>
+<!-- note kinds -->
+<symbol id="emb-spark" viewBox="0 0 24 24"><path d="M12 2.5v4.5M12 17v4.5M2.5 12H7M17 12h4.5M5.3 5.3l3 3M15.7 15.7l3 3M18.7 5.3l-3 3M8.3 15.7l-3 3"></path><circle cx="12" cy="12" r="2.2" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-quill" viewBox="0 0 24 24"><path d="M20.5 3.5C13 4.5 8.5 9.5 6.5 16.5L5 20.5"></path><path d="M20.5 3.5c-1 6-5 10.5-11.5 11.5"></path><path d="M9 15l-2.8-2.8"></path></symbol>
+<symbol id="emb-abacus" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"></rect><path d="M3 9h18M3 15h18"></path><circle cx="7.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="12.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="10" cy="15" r="1.7" style="fill:currentColor"></circle><circle cx="16.5" cy="15" r="1.7" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></symbol>
+<symbol id="emb-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.3"></circle><circle cx="12" cy="12" r="7"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"></path></symbol>
+<symbol id="emb-warn" viewBox="0 0 24 24"><path d="M12 3.5L2.5 20h19z"></path><path d="M12 10v4.5"></path><circle cx="12" cy="17.3" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-scroll" viewBox="0 0 24 24"><path d="M6.5 4H17a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7.5"></path><path d="M6.5 4a2 2 0 0 0-2 2v1.5h4V6a2 2 0 0 0-2-2zM7.5 20a2 2 0 0 1-2-2v-1h4v1a2 2 0 0 1-2 2"></path><path d="M10.5 9h5.5M10.5 12.5h5.5"></path></symbol>
+<symbol id="emb-gauge" viewBox="0 0 24 24"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"></path><path d="M12 17l4.2-6.3"></path><circle cx="12" cy="17" r="1.4" style="fill:currentColor"></circle><path d="M6 12.5l1.3.8M18 12.5l-1.3.8M12 8.5V10"></path></symbol>
+<symbol id="emb-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.8.3-1.1 1-1.1 1.8"></path><circle cx="12" cy="16.9" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- dictionary types -->
+<symbol id="emb-lantern" viewBox="0 0 24 24"><path d="M9 5h6M12 2.5V5"></path><path d="M7.5 7h9l-1.2 11.5H8.7z"></path><path d="M6.5 7h11M6.5 18.5h11"></path><path d="M12 10.3c1.4 1.4 1.4 3 0 4.4-1.4-1.4-1.4-3 0-4.4z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-anchor" viewBox="0 0 24 24"><circle cx="12" cy="4.8" r="2.1"></circle><path d="M12 7v14M8 10.5h8M4 13.5c0 4.3 3.6 7.5 8 7.5s8-3.2 8-7.5"></path><path d="M4 13.5l-1.8 2.2M4 13.5l2.6.9M20 13.5l1.8 2.2M20 13.5l-2.6.9"></path></symbol>
+<symbol id="emb-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.3"></circle><path d="M12 3.8l1.9 6.3 6.3 1.9-6.3 1.9-1.9 6.3-1.9-6.3L3.8 12l6.3-1.9z"></path><path d="M12 6.5l1 4.5 4.5 1-4.5 1-1 4.5-1-4.5-4.5-1 4.5-1z" style="fill:currentColor;stroke:none;opacity:.55"></path></symbol>
+<symbol id="emb-hive" viewBox="0 0 24 24"><path d="M7 3.5l3.2 1.8v3.7L7 10.8 3.8 9V5.3z"></path><path d="M17 3.5l3.2 1.8v3.7L17 10.8 13.8 9V5.3z"></path><path d="M12 12.4l3.2 1.8v3.7L12 19.7l-3.2-1.8v-3.7z"></path><circle cx="7" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="17" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="16" r="1.1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-twins" viewBox="0 0 24 24"><circle cx="8.8" cy="12" r="5.6"></circle><circle cx="15.2" cy="12" r="5.6"></circle><circle cx="8.8" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- properties -->
+<symbol id="emb-clover" viewBox="0 0 24 24"><path d="M12 11.5C9 11 6.2 9.8 6.6 7.2 7 5 9.6 5 10.6 6.6 10.4 4.8 12.5 3.5 14.2 4.6c1.9 1.3.6 4.6-2.2 6.9zM12 11.5c3-.5 5.8-1.7 5.4-4.3"></path><path d="M11.6 12c-3 .5-5.8 1.7-5.4 4.3.4 2.2 3 2.2 4 .6-.2 1.8 1.9 3.1 3.6 2 1.9-1.3.6-4.6-2.2-6.9zM12.2 12c2.9.7 5.6 2 5.1 4.6-.5 2.1-3.2 2-4.1.3"></path><path d="M12.5 12.3c1.9 2.8 3.6 5.4 6.5 8.2"></path></symbol>
+<symbol id="emb-apple" viewBox="0 0 24 24"><path d="M12 7.3c-2-1.6-6.2-1.3-7 3.1-.8 4.3 2.3 10.1 5 10.1.9 0 1.3-.5 2-.5s1.1.5 2 .5c2.7 0 5.8-5.8 5-10.1-.8-4.4-5-4.7-7-3.1z"></path><path d="M12 7.3c0-2.1 1-3.7 2.6-4.3"></path><path d="M12.6 5.8c1.6-.2 3.3-1.1 3.8-2.6-1.7-.2-3.3.6-3.8 2.6z" style="fill:currentColor"></path></symbol>
+<symbol id="emb-stairs" viewBox="0 0 24 24"><path d="M3 20.5h4.5V16H12v-4.5h4.5V7H21"></path><path d="M3 20.5h18"></path><path d="M14 3.5h5.5V9"></path></symbol>
+<symbol id="emb-houses" viewBox="0 0 24 24"><path d="M2.5 11.5l4.5-4.5 4.5 4.5v8.5h-9zM12.5 11.5l4.5-4.5 4.5 4.5v8.5h-9z"></path><path d="M5.5 20v-3.5h3V20M15.5 20v-3.5h3V20"></path></symbol>
+<!-- scopes -->
+<symbol id="emb-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.9 2.6 2.9 15.4 0 18M12 3c-2.9 2.6-2.9 15.4 0 18M4.5 7.5h15M4.5 16.5h15"></path></symbol>
+<symbol id="emb-spool" viewBox="0 0 24 24"><path d="M6.5 4h11M6.5 20h11"></path><path d="M8 4v16M16 4v16"></path><path d="M8 7.5l8 2M8 11l8 2M8 14.5l8 2"></path><path d="M16 17c3 0 4.3 1.6 3.3 4"></path></symbol>
+<symbol id="emb-brick" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="1"></rect><path d="M2.5 12h19M9 5.5V12M15 12v6.5"></path></symbol>
+<!-- project objects -->
+<symbol id="emb-tile" viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="15" rx="2"></rect><path d="M9 8.5h6M9 11.5h6M9 14.5h4"></path></symbol>
+<symbol id="emb-tiles" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="9.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="16.5" y="6.5" width="5" height="11" rx="1"></rect></symbol>
+<symbol id="emb-flame" viewBox="0 0 24 24"><path d="M12 21c-4 0-6.5-2.8-6.5-6.3 0-3.7 3.2-5.5 3.7-9.2 2.6 1.6 3.4 4 3.3 5.8 1-.7 1.7-2 1.8-3.3 2.4 2 3.2 4.3 3.2 6.6 0 3.6-2.6 6.4-5.5 6.4z"></path><path d="M12 21c-1.6 0-2.6-1.1-2.6-2.6 0-1.6 1.4-2.4 1.8-4 1.3 1 2.2 2 2.2 3.6 0 1.7-.6 3-1.4 3z" style="fill:currentColor;stroke:none;opacity:.6"></path></symbol>
+<symbol id="emb-shelf" viewBox="0 0 24 24"><path d="M3 20.5h18M3.5 20.5V5M20.5 20.5V5"></path><path d="M6 20.5V8.5h3v12M10.5 20.5V6h3v14.5M15 20.5l-.2-9.5 3-.6 1.4 10.1"></path></symbol>
+<symbol id="emb-dart" viewBox="0 0 24 24"><path d="M14 5.5l-6.5 12h13z"></path><path d="M2 9h6M3 13h4M2 17h3"></path></symbol>
+<symbol id="emb-crate" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="13.5" rx="1"></rect><path d="M3.5 10.5h17M9 6v4.5M15 6v4.5M3.5 6l17 13.5M20.5 6l-17 13.5" style="opacity:.55"></path></symbol>
+<symbol id="emb-ruler" viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1"></rect><path d="M6 8v3M9.5 8v4.5M13 8v3M16.5 8v4.5M20 8v3"></path></symbol>
+<symbol id="emb-weight" viewBox="0 0 24 24"><path d="M8.5 8.5a3.5 3.5 0 1 1 7 0"></path><path d="M6 9.5h12l2.2 11H3.8z"></path></symbol>
+<symbol id="emb-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"></path></symbol>
+<symbol id="emb-roofline" viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M5 5c2.5 6 7 10.5 15 12"></path><circle cx="9" cy="15.5" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="14" cy="18.2" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="7.2" cy="12.6" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-magnifier" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.2"></circle><path d="M15 15l5.5 5.5M8 10.5h5"></path></symbol>
+<symbol id="emb-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.4-6.5-11a6.5 6.5 0 0 1 13 0c0 4.6-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.4"></circle></symbol>
+<symbol id="emb-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"></path><path d="M3 12.5l9 5 9-5M3 16.5l9 5 9-5"></path></symbol>
+<symbol id="emb-ladder" viewBox="0 0 24 24"><path d="M7 2.5v19M17 2.5v19M7 6.5h10M7 11.5h10M7 16.5h10"></path></symbol>
+<symbol id="emb-cat" viewBox="0 0 24 24"><path d="M5 20.5v-8.3L4 5.5l4.3 3.2h7.4L20 5.5l-1 6.7v8.3z"></path><circle cx="9.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><circle cx="14.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><path d="M11 16.5h2l-1 1z"></path></symbol>
+<symbol id="emb-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6.2L4.6 18.4A1.8 1.8 0 0 0 6.2 21h11.6a1.8 1.8 0 0 0 1.6-2.6L14 9.2V3"></path><path d="M7.3 15h9.4"></path></symbol>
+<symbol id="emb-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"></path><path d="M9 4v14M15 6v14"></path></symbol>
+<symbol id="emb-flag" viewBox="0 0 24 24"><path d="M5 21V3.5M5 4h12.5l-2.2 4 2.2 4H5"></path></symbol>
+<symbol id="emb-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8.2-8 9-4.5-.8-8-4-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></symbol>
+<symbol id="emb-zip" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M12 3v2M12 7v2M12 11v2"></path><rect x="10.3" y="14" width="3.4" height="4.2" rx=".9"></rect></symbol>
+<symbol id="emb-braces" viewBox="0 0 24 24"><path d="M9 4C7 4 6 5 6 7v2.2c0 1.4-1 2.4-2.5 2.8 1.5.4 2.5 1.4 2.5 2.8V17c0 2 1 3 3 3M15 4c2 0 3 1 3 3v2.2c0 1.4 1 2.4 2.5 2.8-1.5.4-2.5 1.4-2.5 2.8V17c0 2-1 3-3 3"></path></symbol>
+<symbol id="emb-arrow" viewBox="0 0 24 24"><path d="M4.5 19.5L19 5"></path><path d="M19 5h-6.5M19 5v6.5"></path></symbol>
+<symbol id="emb-loggrid" viewBox="0 0 24 24"><path d="M2.5 18.5h19"></path><path d="M12 14v9M13.2 15.5v6M14.6 16v5M16.6 16.5v4M19.6 17v3M10.8 15.5v6M9.4 16v5M7.4 16.5v4M4.4 17v3"></path><path d="M5 5h14" style="opacity:.5"></path><path d="M5 3.5v3M8.5 3.5v3M12 3.5v3M15.5 3.5v3M19 3.5v3"></path></symbol>
+<symbol id="emb-cycle" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"></path><path d="M20 4.5v4h-4"></path></symbol>
+<symbol id="emb-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5L4.5 14h7l-1 7.5 9-11.5h-7z"></path></symbol>
+<symbol id="emb-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7.5 3c0 5.5 9 5.5 9 9s-9 3.5-9 9M16.5 3c0 5.5-9 5.5-9 9s9 3.5 9 9"></path></symbol>
+<symbol id="emb-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"></path><path d="M14.5 7.5v1.5M14.5 11.2v1.6M14.5 15v1.5"></path></symbol>
+<symbol id="emb-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.2"></rect><circle cx="8.8" cy="8.8" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="15.2" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.6" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-telegraph" viewBox="0 0 24 24"><path d="M3 19h18M6 19v-3.5h12V19M8.5 15.5l7.5-6"></path><circle cx="16.8" cy="8.8" r="1.9"></circle><path d="M3 9.5h2M3 12h3.5"></path></symbol>
+<!-- categories -->
+<symbol id="emb-envelope" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.5"></rect><path d="M3.5 6.5l8.5 7 8.5-7"></path></symbol>
+<symbol id="emb-bell" viewBox="0 0 24 24"><path d="M2 19.5c4 0 5.2-12.5 10-12.5s6 12.5 10 12.5"></path><path d="M2 19.5h20M12 7v12.5" style="opacity:.5"></path></symbol>
+<symbol id="emb-axes" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"></path><path d="M4 20l12-9.5"></path><path d="M16 10.5l-3.3.2M16 10.5l-1.2 3"></path></symbol>
+<symbol id="emb-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><rect x="9.5" y="9.5" width="5" height="5" rx=".6"></rect><path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"></path></symbol>
+<symbol id="emb-eye" viewBox="0 0 24 24"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+<symbol id="emb-seal" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6"></circle><circle cx="12" cy="9.5" r="3" style="opacity:.6"></circle><path d="M8.5 14.5l-1.6 6.5 5.1-2.6 5.1 2.6-1.6-6.5"></path></symbol>
+<!-- weather (toy world) -->
+<symbol id="emb-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"></path></symbol>
+<symbol id="emb-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.2 4.2 0 0 1-.6-8.4 5.8 5.8 0 0 1 11.2 1.6 3.4 3.4 0 0 1-.4 6.8z"></path></symbol>
+<symbol id="emb-rain" viewBox="0 0 24 24"><path d="M7 14.5a4.2 4.2 0 0 1-.6-8.4A5.8 5.8 0 0 1 17.6 7.7a3.4 3.4 0 0 1-.4 6.8z"></path><path d="M8.5 17.5l-1 3M12.5 17.5l-1 3M16.5 17.5l-1 3"></path></symbol>
+<symbol id="emb-fog" viewBox="0 0 24 24"><path d="M3 8h13M6 12h15M3 16h12M8 20h11"></path></symbol>
+<!-- the orchard (brand terms: orchard, furrow, cherry, punnet, leash, stereo, echo) -->
+<symbol id="emb-cherry" viewBox="0 0 24 24"><circle cx="8.3" cy="16.5" r="3.3"></circle><circle cx="15.7" cy="15.5" r="3.3"></circle><path d="M8.3 13.2c.4-4 2.4-7.2 5.2-9.7M15.7 12.2c-.3-3.4-1.1-6.3-2.2-8.7"></path><path d="M13.5 3.5c2.4-.6 4.5.3 5.6 2.4-2.4.7-4.5-.1-5.6-2.4z" style="fill:currentColor"></path></symbol>
+<symbol id="emb-basket" viewBox="0 0 24 24"><path d="M3.5 11.5h17l-1.4 9H4.9z"></path><path d="M5 11.5a2.5 2.5 0 0 1 5 0M14 11.5a2.5 2.5 0 0 1 5 0"></path><circle cx="12" cy="8.3" r="2.5"></circle><path d="M7.5 15h9"></path></symbol>
+<symbol id="emb-tree" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6.8"></circle><path d="M12 16.3V21M8.5 21h7"></path><circle cx="9.3" cy="8" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="14.6" cy="10.2" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="11" cy="12.4" r="1.2" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-furrow" viewBox="0 0 24 24"><path d="M2.5 6.5h19"></path><path d="M3 21l7.4-11.8M12 21V9.2M21 21l-7.4-11.8"></path></symbol>
+<symbol id="emb-leash" viewBox="0 0 24 24"><circle cx="6.8" cy="7" r="3.3"></circle><path d="M9.6 8.6c3.6 1.4 6.2 4 7.7 7.6"></path><circle cx="18.3" cy="18.5" r="2.5"></circle></symbol>
+<symbol id="emb-stereo" viewBox="0 0 24 24"><circle cx="7.8" cy="12" r="5.4"></circle><circle cx="16.2" cy="12" r="5.4"></circle><circle cx="7.8" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="16.2" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-echo" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" style="fill:currentColor;stroke:none"></circle><path d="M8.5 8.5a5 5 0 0 1 0 7M12 5.5a9.5 9.5 0 0 1 0 13M15.5 2.8a13.5 13.5 0 0 1 0 18.4"></path></symbol>
+</defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="ib menu-btn" type="button" aria-label="Open the table of contents" aria-controls="sidenav" aria-expanded="false"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-menu"></use></svg></button>
+  <a class="site-brand" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-delta"></use></svg><span class="brand-name">kv-blockdiff</span><span class="brand-sub">primer &amp; proposal</span></a>
+  <div class="crumb"><span class="crumb-part">Part III · How an LLM reads</span><span class="crumb-sep">›</span><span class="crumb-page"><b>III.11</b> The Pin and the Bench</span></div>
+  <a id="deck-count" class="deck-count" href="/kvblockdiff-primer/practice/" title="Your flashcard deck"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span class="dc-n">0</span></a>
+  <button id="setting-pill" class="setting-pill" type="button" data-setting="pin" aria-label="Reference setting for the examples: the Pin. Press to switch." title="the Pin: GLM-5.1 on 8 × H200, as HiSparse serves it, at 8-bit storage"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-pin"></use></svg><span class="sp-label" aria-live="polite">the Pin</span></button>
+  <button class="ib theme-btn" type="button" aria-label="Switch between light and dark"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-moon"></use></svg></button>
+</header>
+
+<nav id="sidenav" class="sidenav" aria-label="Table of contents">
+  <div class="sn-top">
+    <a class="sn-home" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-lighthouse"></use></svg><span>Start here</span></a>
+    <button class="ib sn-close" type="button" aria-label="Close the table of contents">×</button>
+  </div>
+  <details class="sn-part" style="--pc:var(--part-I)">
+    <summary><span class="sn-roman">I</span><span class="sn-title">The tiny-file problem</span><span class="sn-count">6</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/tiny-files/notice-anything/" data-page="tiny-files-notice-anything"><span class="sn-num">I.1</span><span class="sn-name">Notice anything?</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/one-at-a-time/" data-page="tiny-files-one-at-a-time"><span class="sn-num">I.2</span><span class="sn-name">One message alone</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/trained-dictionary/" data-page="tiny-files-trained-dictionary"><span class="sn-num">I.3</span><span class="sn-name">The trained dictionary</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/three-lessons/" data-page="tiny-files-three-lessons"><span class="sn-num">I.4</span><span class="sn-name">Three lessons</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/vectors-not-text/" data-page="tiny-files-vectors-not-text"><span class="sn-num">I.5</span><span class="sn-name">Lists of numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/profile/" data-page="tiny-files-profile"><span class="sn-num">I.6</span><span class="sn-name">The profile</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-II)">
+    <summary><span class="sn-roman">II</span><span class="sn-title">Back to school</span><span class="sn-count">25</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/school/why-school/" data-page="school-why-school"><span class="sn-num">II.1</span><span class="sn-name">Why go back to school?</span></a></li><li class="sn-group">Information</li>
+      <li><a href="/kvblockdiff-primer/school/bits/" data-page="school-bits"><span class="sn-num">II.2</span><span class="sn-name">Bits: twenty questions</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/surprise/" data-page="school-surprise"><span class="sn-num">II.3</span><span class="sn-name">Surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/entropy/" data-page="school-entropy"><span class="sn-num">II.4</span><span class="sn-name">Entropy: the average surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/side-information/" data-page="school-side-information"><span class="sn-num">II.5</span><span class="sn-name">Side information</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/mutual-information/" data-page="school-mutual-information"><span class="sn-num">II.6</span><span class="sn-name">Mutual information</span></a></li><li class="sn-group">Coding</li>
+      <li><a href="/kvblockdiff-primer/school/codes/" data-page="school-codes"><span class="sn-num">II.7</span><span class="sn-name">Codes and Huffman</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/arithmetic/" data-page="school-arithmetic"><span class="sn-num">II.8</span><span class="sn-name">Arithmetic coding and rANS</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fixed-length/" data-page="school-fixed-length"><span class="sn-num">II.9</span><span class="sn-name">Fixed-length codes and escapes</span></a></li><li class="sn-group">Prediction</li>
+      <li><a href="/kvblockdiff-primer/school/prediction/" data-page="school-prediction"><span class="sn-num">II.10</span><span class="sn-name">Predict, then send the surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/residual-shapes/" data-page="school-residual-shapes"><span class="sn-num">II.11</span><span class="sn-name">The shape of a residual</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/exchange-rate/" data-page="school-exchange-rate"><span class="sn-num">II.12</span><span class="sn-name">The exchange rate</span></a></li><li class="sn-group">Vectors</li>
+      <li><a href="/kvblockdiff-primer/school/vectors/" data-page="school-vectors"><span class="sn-num">II.13</span><span class="sn-name">Vectors and furrows</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/correlation/" data-page="school-correlation"><span class="sn-num">II.14</span><span class="sn-name">Correlation</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/rotation/" data-page="school-rotation"><span class="sn-num">II.15</span><span class="sn-name">Turning the axes (KLT)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/coding-gain/" data-page="school-coding-gain"><span class="sn-num">II.16</span><span class="sn-name">What the rotation buys</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/clusters/" data-page="school-clusters"><span class="sn-num">II.17</span><span class="sn-name">Clusters and codebooks (VQ)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/vq-vs-klt/" data-page="school-vq-vs-klt"><span class="sn-num">II.18</span><span class="sn-name">Codebooks vs rotations</span></a></li><li class="sn-group">Numbers</li>
+      <li><a href="/kvblockdiff-primer/school/integers-floats/" data-page="school-integers-floats"><span class="sn-num">II.19</span><span class="sn-name">Integers and floats</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fp8/" data-page="school-fp8"><span class="sn-num">II.20</span><span class="sn-name">FP8 and index space</span></a></li><li class="sn-group">Machines</li>
+      <li><a href="/kvblockdiff-primer/school/caches/" data-page="school-caches"><span class="sn-num">II.21</span><span class="sn-name">Caches and LRU</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/reuse-distance/" data-page="school-reuse-distance"><span class="sn-num">II.22</span><span class="sn-name">Reuse distance</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/wires/" data-page="school-wires"><span class="sn-num">II.23</span><span class="sn-name">Wires and memories</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/amortization/" data-page="school-amortization"><span class="sn-num">II.24</span><span class="sn-name">Amortization</span></a></li><li class="sn-group">Recap</li>
+      <li><a href="/kvblockdiff-primer/school/recap/" data-page="school-recap"><span class="sn-num">II.25</span><span class="sn-name">Cheat sheet</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-III)" open="">
+    <summary><span class="sn-roman">III</span><span class="sn-title">How an LLM reads its memory</span><span class="sn-count">12</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The LLM</li>
+      <li><a href="/kvblockdiff-primer/landscape/tokens-and-decoding/" data-page="landscape-tokens-and-decoding"><span class="sn-num">III.1</span><span class="sn-name">How an LLM writes</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/attention/" data-page="landscape-attention"><span class="sn-num">III.2</span><span class="sn-name">Attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/orchard/" data-page="landscape-orchard"><span class="sn-num">III.3</span><span class="sn-name">The orchard</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/rope-and-mla/" data-page="landscape-rope-and-mla"><span class="sn-num">III.4</span><span class="sn-name">RoPE and MLA</span></a></li><li class="sn-group">Sparse attention</li>
+      <li><a href="/kvblockdiff-primer/landscape/sparse-attention/" data-page="landscape-sparse-attention"><span class="sn-num">III.5</span><span class="sn-name">Sparse attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/memory-wall/" data-page="landscape-memory-wall"><span class="sn-num">III.6</span><span class="sn-name">Everything must be kept</span></a></li><li class="sn-group">HiSparse and its hot cache</li>
+      <li><a href="/kvblockdiff-primer/landscape/hisparse/" data-page="landscape-hisparse"><span class="sn-num">III.7</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/toy-trace/" data-page="landscape-toy-trace"><span class="sn-num">III.8</span><span class="sn-name">The toy trace</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/lucky-louis/" data-page="landscape-lucky-louis"><span class="sn-num">III.9</span><span class="sn-name">Lucky Louis</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/reuse-curve/" data-page="landscape-reuse-curve"><span class="sn-num">III.10</span><span class="sn-name">The reuse curve</span></a></li><li class="sn-group">The numbers</li>
+      <li><a href="/kvblockdiff-primer/landscape/reference-settings/" data-page="landscape-reference-settings" aria-current="page"><span class="sn-num">III.11</span><span class="sn-name">The Pin and the Bench</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/derived-numbers/" data-page="landscape-derived-numbers"><span class="sn-num">III.12</span><span class="sn-name">Three numbers and a deadline</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IV)">
+    <summary><span class="sn-roman">IV</span><span class="sn-title">The compression scenario</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The problem</li>
+      <li><a href="/kvblockdiff-primer/scenario/the-project-and-its-subproblems/" data-page="scenario-the-project-and-its-subproblems"><span class="sn-num">IV.1</span><span class="sn-name">The four subproblems</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/one-cherry-at-a-time/" data-page="scenario-one-cherry-at-a-time"><span class="sn-num">IV.2</span><span class="sn-name">One cherry at a time</span></a></li><li class="sn-group">The objects</li>
+      <li><a href="/kvblockdiff-primer/scenario/stretch/" data-page="scenario-stretch"><span class="sn-num">IV.3</span><span class="sn-name">The stretch</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/slice/" data-page="scenario-slice"><span class="sn-num">IV.4</span><span class="sn-name">The slice</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/cherry/" data-page="scenario-cherry"><span class="sn-num">IV.5</span><span class="sn-name">The cherry</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/punnet/" data-page="scenario-punnet"><span class="sn-num">IV.6</span><span class="sn-name">The punnet</span></a></li><li class="sn-group">The rules</li>
+      <li><a href="/kvblockdiff-primer/scenario/the-contract/" data-page="scenario-the-contract"><span class="sn-num">IV.7</span><span class="sn-name">The contract</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-score/" data-page="scenario-the-score"><span class="sn-num">IV.8</span><span class="sn-name">The score</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-leash/" data-page="scenario-the-leash"><span class="sn-num">IV.9</span><span class="sn-name">The leash</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/scope/" data-page="scenario-scope"><span class="sn-num">IV.10</span><span class="sn-name">Scope</span></a></li><li class="sn-group">The catalogue</li>
+      <li><a href="/kvblockdiff-primer/scenario/why-vary/" data-page="scenario-why-vary"><span class="sn-num">IV.11</span><span class="sn-name">Why vary it</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/compressors-and-stages/" data-page="scenario-compressors-and-stages"><span class="sn-num">IV.12</span><span class="sn-name">Compressors and stages</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-harness/" data-page="scenario-the-harness"><span class="sn-num">IV.13</span><span class="sn-name">The harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/what-it-is-not/" data-page="scenario-what-it-is-not"><span class="sn-num">IV.14</span><span class="sn-name">What it is not</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-V)">
+    <summary><span class="sn-roman">V</span><span class="sn-title">The compressor&#39;s toolbox</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Shape and baseline</li>
+      <li><a href="/kvblockdiff-primer/toolbox/the-bill/" data-page="toolbox-the-bill"><span class="sn-num">V.1</span><span class="sn-name">The bill</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/solo/" data-page="toolbox-solo"><span class="sn-num">V.2</span><span class="sn-name">Solo: the Hermit</span></a></li><li class="sn-group">Predictor stages</li>
+      <li><a href="/kvblockdiff-primer/toolbox/furrow-statistics/" data-page="toolbox-furrow-statistics"><span class="sn-num">V.3</span><span class="sn-name">Furrow statistics: the Anchor</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/klt/" data-page="toolbox-klt"><span class="sn-num">V.4</span><span class="sn-name">KLT: the Compass, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/vq/" data-page="toolbox-vq"><span class="sn-num">V.5</span><span class="sn-name">VQ: the Hive, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/reference-cherries/" data-page="toolbox-reference-cherries"><span class="sn-num">V.6</span><span class="sn-name">Siblings and reference trees</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/linear-prediction/" data-page="toolbox-linear-prediction"><span class="sn-num">V.7</span><span class="sn-name">Linear prediction</span></a></li><li class="sn-group">Coding the residual</li>
+      <li><a href="/kvblockdiff-primer/toolbox/context-modelling/" data-page="toolbox-context-modelling"><span class="sn-num">V.8</span><span class="sn-name">Context modelling</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/lifting/" data-page="toolbox-lifting"><span class="sn-num">V.9</span><span class="sn-name">Lifting</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/bit-fields/" data-page="toolbox-bit-fields"><span class="sn-num">V.10</span><span class="sn-name">Bit fields and the grid</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/two-rates/" data-page="toolbox-two-rates"><span class="sn-num">V.11</span><span class="sn-name">Two rates</span></a></li><li class="sn-group">Before building</li>
+      <li><a href="/kvblockdiff-primer/toolbox/exchange-rate/" data-page="toolbox-exchange-rate"><span class="sn-num">V.12</span><span class="sn-name">The exchange rate, applied</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/bounds/" data-page="toolbox-bounds"><span class="sn-num">V.13</span><span class="sn-name">Bounds before building</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/rehearsal/" data-page="toolbox-rehearsal"><span class="sn-num">V.14</span><span class="sn-name">Dress rehearsal</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VI)">
+    <summary><span class="sn-roman">VI</span><span class="sn-title">kvblockdiff: the application</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The idea</li>
+      <li><a href="/kvblockdiff-primer/app/mapping/" data-page="app-mapping"><span class="sn-num">VI.1</span><span class="sn-name">From scenario to system</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/sizes/" data-page="app-sizes"><span class="sn-num">VI.2</span><span class="sn-name">How big is each piece?</span></a></li><li class="sn-group">The mechanism</li>
+      <li><a href="/kvblockdiff-primer/app/shelf-and-two-misses/" data-page="app-shelf-and-two-misses"><span class="sn-num">VI.3</span><span class="sn-name">The shelf and two misses</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/toy-trace/" data-page="app-toy-trace"><span class="sn-num">VI.4</span><span class="sn-name">The same trace, with dictionaries</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/data-layout/" data-page="app-data-layout"><span class="sn-num">VI.5</span><span class="sn-name">The access pattern decides the layout</span></a></li><li class="sn-group">What better means</li>
+      <li><a href="/kvblockdiff-primer/app/two-levers/" data-page="app-two-levers"><span class="sn-num">VI.6</span><span class="sn-name">What “better than HiSparse” means</span></a></li><li class="sn-group">The design</li>
+      <li><a href="/kvblockdiff-primer/app/two-boring-corners/" data-page="app-two-boring-corners"><span class="sn-num">VI.7</span><span class="sn-name">The two boring corners</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/on-fire/" data-page="app-on-fire"><span class="sn-num">VI.8</span><span class="sn-name">On fire and ice</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/the-napkin/" data-page="app-the-napkin"><span class="sn-num">VI.9</span><span class="sn-name">The napkin</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/calculator/" data-page="app-calculator"><span class="sn-num">VI.10</span><span class="sn-name">What-if calculator</span></a></li><li class="sn-group">Economics</li>
+      <li><a href="/kvblockdiff-primer/app/bits-to-dollars/" data-page="app-bits-to-dollars"><span class="sn-num">VI.11</span><span class="sn-name">From bits to dollars</span></a></li><li class="sn-group">Design choices</li>
+      <li><a href="/kvblockdiff-primer/app/victim-tier/" data-page="app-victim-tier"><span class="sn-num">VI.12</span><span class="sn-name">The victim tier</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/which-application/" data-page="app-which-application"><span class="sn-num">VI.13</span><span class="sn-name">Which application</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VII)">
+    <summary><span class="sn-roman">VII</span><span class="sn-title">Hypotheses about the orchard</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The rule of the Part</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/bits-are-the-unit/" data-page="hypotheses-bits-are-the-unit"><span class="sn-num">VII.1</span><span class="sn-name">Bits are the unit</span></a></li><li class="sn-group">The hypotheses</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/neighbour-similarity/" data-page="hypotheses-neighbour-similarity"><span class="sn-num">VII.2</span><span class="sn-name">Neighbour similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/fallen-apple/" data-page="hypotheses-fallen-apple"><span class="sn-num">VII.3</span><span class="sn-name">Fallen-apple similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/upstairs/" data-page="hypotheses-upstairs"><span class="sn-num">VII.4</span><span class="sn-name">Upstairs similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/stereo/" data-page="hypotheses-stereo"><span class="sn-num">VII.5</span><span class="sn-name">Stereo similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/echo/" data-page="hypotheses-echo"><span class="sn-num">VII.6</span><span class="sn-name">Echo similarity</span></a></li><li class="sn-group">Which, and what</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/two-localities/" data-page="hypotheses-two-localities"><span class="sn-num">VII.7</span><span class="sn-name">Two localities</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/heavy-stretches/" data-page="hypotheses-heavy-stretches"><span class="sn-num">VII.8</span><span class="sn-name">Heavy stretches</span></a></li><li class="sn-group">The argument, sorted</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-ladder/" data-page="hypotheses-the-ladder"><span class="sn-num">VII.9</span><span class="sn-name">The ladder</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-leak/" data-page="hypotheses-the-leak"><span class="sn-num">VII.10</span><span class="sn-name">The leak</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-trap/" data-page="hypotheses-the-trap"><span class="sn-num">VII.11</span><span class="sn-name">The trap</span></a></li><li class="sn-group">Two more bets</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/keys-and-values/" data-page="hypotheses-keys-and-values"><span class="sn-num">VII.12</span><span class="sn-name">Keys and values</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/stack-distance/" data-page="hypotheses-stack-distance"><span class="sn-num">VII.13</span><span class="sn-name">The stack-distance curve</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VIII)">
+    <summary><span class="sn-roman">VIII</span><span class="sn-title">The measurements</span><span class="sn-count">15</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Setting the stage</li>
+      <li><a href="/kvblockdiff-primer/measured/dispatch/" data-page="measured-dispatch"><span class="sn-num">VIII.1</span><span class="sn-name">A dispatch from the harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/the-data/" data-page="measured-the-data"><span class="sn-num">VIII.2</span><span class="sn-name">The data on the table</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/rules-of-the-game/" data-page="measured-rules-of-the-game"><span class="sn-num">VIII.3</span><span class="sn-name">The rules, as scenarios</span></a></li><li class="sn-group">What was found</li>
+      <li><a href="/kvblockdiff-primer/measured/night-one/" data-page="measured-night-one"><span class="sn-num">VIII.4</span><span class="sn-name">Night one: the twin ladder</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/two-kinds-of-structure/" data-page="measured-two-kinds-of-structure"><span class="sn-num">VIII.5</span><span class="sn-name">Two kinds of structure</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/cutting-the-tensor/" data-page="measured-cutting-the-tensor"><span class="sn-num">VIII.6</span><span class="sn-name">Cutting the orchard</span></a></li><li class="sn-group">What lost</li>
+      <li><a href="/kvblockdiff-primer/measured/codebooks-and-rotations/" data-page="measured-codebooks-and-rotations"><span class="sn-num">VIII.7</span><span class="sn-name">Codebooks and rotations</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/time-and-bits/" data-page="measured-time-and-bits"><span class="sn-num">VIII.8</span><span class="sn-name">Sound, time and bits</span></a></li><li class="sn-group">What was found</li>
+      <li><a href="/kvblockdiff-primer/measured/reading-one-cherry/" data-page="measured-reading-one-cherry"><span class="sn-num">VIII.9</span><span class="sn-name">Reading one cherry</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/where-the-bits-come-from/" data-page="measured-where-the-bits-come-from"><span class="sn-num">VIII.10</span><span class="sn-name">Where the bits come from</span></a></li><li class="sn-group">The method</li>
+      <li><a href="/kvblockdiff-primer/measured/signal-or-noise/" data-page="measured-signal-or-noise"><span class="sn-num">VIII.11</span><span class="sn-name">Signal or noise</span></a></li><li class="sn-group">What it means</li>
+      <li><a href="/kvblockdiff-primer/measured/scorecard/" data-page="measured-scorecard"><span class="sn-num">VIII.12</span><span class="sn-name">The scorecard</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/what-it-means/" data-page="measured-what-it-means"><span class="sn-num">VIII.13</span><span class="sn-name">What it means</span></a></li><li class="sn-group">In bits</li>
+      <li><a href="/kvblockdiff-primer/measured/what-the-half-means/" data-page="measured-what-the-half-means"><span class="sn-num">VIII.14</span><span class="sn-name">What the half says</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/shared-across-the-stretch/" data-page="measured-shared-across-the-stretch"><span class="sn-num">VIII.15</span><span class="sn-name">Shared across the stretch</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IX)">
+    <summary><span class="sn-roman">IX</span><span class="sn-title">Papers</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">How to read</li>
+      <li><a href="/kvblockdiff-primer/papers/reading-guide/" data-page="papers-reading-guide"><span class="sn-num">IX.1</span><span class="sn-name">How we read papers</span></a></li><li class="sn-group">The serving side</li>
+      <li><a href="/kvblockdiff-primer/papers/hisparse/" data-page="papers-hisparse"><span class="sn-num">IX.2</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/sparse-selectors/" data-page="papers-sparse-selectors"><span class="sn-num">IX.3</span><span class="sn-name">Sparse selectors</span></a></li><li class="sn-group">Lossless, on the bulk road</li>
+      <li><a href="/kvblockdiff-primer/papers/splitzip/" data-page="papers-splitzip"><span class="sn-num">IX.4</span><span class="sn-name">SplitZip</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/float-coders/" data-page="papers-float-coders"><span class="sn-num">IX.5</span><span class="sn-name">Lossless float compressors</span></a></li><li class="sn-group">Lossy KV compression</li>
+      <li><a href="/kvblockdiff-primer/papers/kv-codec/" data-page="papers-kv-codec"><span class="sn-num">IX.6</span><span class="sn-name">KVFetcher</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kivi/" data-page="papers-kivi"><span class="sn-num">IX.7</span><span class="sn-name">KIVI</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvquant/" data-page="papers-kvquant"><span class="sn-num">IX.8</span><span class="sn-name">KVQuant</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvtc/" data-page="papers-kvtc"><span class="sn-num">IX.9</span><span class="sn-name">KVTC</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/lexico/" data-page="papers-lexico"><span class="sn-num">IX.10</span><span class="sn-name">Lexico</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/cachegen/" data-page="papers-cachegen"><span class="sn-num">IX.11</span><span class="sn-name">CacheGen</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvcomp/" data-page="papers-kvcomp"><span class="sn-num">IX.12</span><span class="sn-name">KVComp</span></a></li><li class="sn-group">Old theory</li>
+      <li><a href="/kvblockdiff-primer/papers/classics/" data-page="papers-classics"><span class="sn-num">IX.13</span><span class="sn-name">The classics</span></a></li><li class="sn-group">The gap</li>
+      <li><a href="/kvblockdiff-primer/papers/what-would-be-new/" data-page="papers-what-would-be-new"><span class="sn-num">IX.14</span><span class="sn-name">What would be new</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-X)">
+    <summary><span class="sn-roman">X</span><span class="sn-title">The research plan</span><span class="sn-count">10</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Where we stand</li>
+      <li><a href="/kvblockdiff-primer/plan/where-we-stand/" data-page="plan-where-we-stand"><span class="sn-num">X.1</span><span class="sn-name">Where we stand</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/principles/" data-page="plan-principles"><span class="sn-num">X.2</span><span class="sn-name">Principles</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/the-dataset-we-have/" data-page="plan-the-dataset-we-have"><span class="sn-num">X.3</span><span class="sn-name">The dataset we have</span></a></li><li class="sn-group">Next experiments</li>
+      <li><a href="/kvblockdiff-primer/plan/next-in-the-harness/" data-page="plan-next-in-the-harness"><span class="sn-num">X.4</span><span class="sn-name">Next in the harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/queries-and-picks/" data-page="plan-queries-and-picks"><span class="sn-num">X.5</span><span class="sn-name">Queries and picks</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/hot-cache-replay/" data-page="plan-hot-cache-replay"><span class="sn-num">X.6</span><span class="sn-name">Replaying the hot cache</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/decoder-speed/" data-page="plan-decoder-speed"><span class="sn-num">X.7</span><span class="sn-name">Decoder speed</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/other-experiments/" data-page="plan-other-experiments"><span class="sn-num">X.8</span><span class="sn-name">Beyond the harness</span></a></li><li class="sn-group">Decisions and risks</li>
+      <li><a href="/kvblockdiff-primer/plan/decision-rules/" data-page="plan-decision-rules"><span class="sn-num">X.9</span><span class="sn-name">Decision rules</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/risks/" data-page="plan-risks"><span class="sn-num">X.10</span><span class="sn-name">Risks and pivots</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-XI)">
+    <summary><span class="sn-roman">XI</span><span class="sn-title">The Bachelor: picks and misses, measured</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The result</li>
+      <li><a href="/kvblockdiff-primer/picks/dispatch/" data-page="picks-dispatch"><span class="sn-num">XI.1</span><span class="sn-name">The result</span></a></li><li class="sn-group">The setting</li>
+      <li><a href="/kvblockdiff-primer/picks/the-bachelor/" data-page="picks-the-bachelor"><span class="sn-num">XI.2</span><span class="sn-name">The Bachelor</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/a-trace/" data-page="picks-a-trace"><span class="sn-num">XI.3</span><span class="sn-name">A trace, up close</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/carrying-numbers/" data-page="picks-carrying-numbers"><span class="sn-num">XI.4</span><span class="sn-name">Carrying numbers</span></a></li><li class="sn-group">The hot cache</li>
+      <li><a href="/kvblockdiff-primer/picks/hot-cache/" data-page="picks-hot-cache"><span class="sn-num">XI.5</span><span class="sn-name">The hot cache</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/share-carries/" data-page="picks-share-carries"><span class="sn-num">XI.6</span><span class="sn-name">The share carries</span></a></li><li class="sn-group">Stretches and the shelf</li>
+      <li><a href="/kvblockdiff-primer/picks/heavy-stretches/" data-page="picks-heavy-stretches"><span class="sn-num">XI.7</span><span class="sn-name">Where misses land</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/shelf/" data-page="picks-shelf"><span class="sn-num">XI.8</span><span class="sn-name">The shelf</span></a></li><li class="sn-group">Bytes and the napkin</li>
+      <li><a href="/kvblockdiff-primer/picks/bytes-side/" data-page="picks-bytes-side"><span class="sn-num">XI.9</span><span class="sn-name">The bytes side</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/slot-price/" data-page="picks-slot-price"><span class="sn-num">XI.10</span><span class="sn-name">The slot price</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/ceiling/" data-page="picks-ceiling"><span class="sn-num">XI.11</span><span class="sn-name">The ceiling</span></a></li><li class="sn-group">What it changes</li>
+      <li><a href="/kvblockdiff-primer/picks/the-indexer/" data-page="picks-the-indexer"><span class="sn-num">XI.12</span><span class="sn-name">The indexer</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/what-it-means/" data-page="picks-what-it-means"><span class="sn-num">XI.13</span><span class="sn-name">What it means</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-XII)">
+    <summary><span class="sn-roman">XII</span><span class="sn-title">Summary and reference</span><span class="sn-count">9</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Summary</li>
+      <li><a href="/kvblockdiff-primer/reference/summary/" data-page="reference-summary"><span class="sn-num">XII.1</span><span class="sn-name">Summary (TL;DR)</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/glossary/" data-page="reference-glossary"><span class="sn-num">XII.2</span><span class="sn-name">Glossary</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/notation/" data-page="reference-notation"><span class="sn-num">XII.3</span><span class="sn-name">Notation</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/themes/" data-page="reference-themes"><span class="sn-num">XII.4</span><span class="sn-name">Running themes</span></a></li><li class="sn-group">Facts and sources</li>
+      <li><a href="/kvblockdiff-primer/reference/numbers/" data-page="reference-numbers"><span class="sn-num">XII.5</span><span class="sn-name">Grounded numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/fp8-facts/" data-page="reference-fp8-facts"><span class="sn-num">XII.6</span><span class="sn-name">FP8 facts</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/prior-art-map/" data-page="reference-prior-art-map"><span class="sn-num">XII.7</span><span class="sn-name">Prior-art map</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/references/" data-page="reference-references"><span class="sn-num">XII.8</span><span class="sn-name">References</span></a></li><li class="sn-group">Words</li>
+      <li><a href="/kvblockdiff-primer/reference/old-words/" data-page="reference-old-words"><span class="sn-num">XII.9</span><span class="sn-name">Old words, new words</span></a></li>
+    </ol>
+  </details>
+  <div class="sn-foot">
+    <a href="/kvblockdiff-primer/practice/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span>Flashcard practice</span></a>
+    <a href="/kvblockdiff-primer/reference/glossary/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-book"></use></svg><span>Glossary</span></a>
+    <a href="/kvblockdiff-primer/reference/notation/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-sigma"></use></svg><span>Notation &amp; colours</span></a>
+  </div>
+</nav>
+<div class="backdrop" hidden=""></div>
+
+<main id="main" class="main">
+<header class="banner">
+  <div class="banner-orn" aria-hidden="true"><svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMin slice" fill="none" stroke="currentColor" stroke-linecap="round">
+  <g opacity=".55" stroke-width=".8"><path d="M400 -40 L-500 340"></path><path d="M400 -40 L-400 340"></path><path d="M400 -40 L-300 340"></path><path d="M400 -40 L-200 340"></path><path d="M400 -40 L-100 340"></path><path d="M400 -40 L0 340"></path><path d="M400 -40 L100 340"></path><path d="M400 -40 L200 340"></path><path d="M400 -40 L300 340"></path><path d="M400 -40 L400 340"></path><path d="M400 -40 L500 340"></path><path d="M400 -40 L600 340"></path><path d="M400 -40 L700 340"></path><path d="M400 -40 L800 340"></path><path d="M400 -40 L900 340"></path><path d="M400 -40 L1000 340"></path><path d="M400 -40 L1100 340"></path><path d="M400 -40 L1200 340"></path><path d="M400 -40 L1300 340"></path>
+  </g>
+  <circle cx="400" cy="-40" r="120" stroke-width="1.2" opacity=".7"></circle>
+  <circle cx="400" cy="-40" r="150" stroke-width=".6" opacity=".6"></circle>
+  <path d="M10 290 C 60 200, 20 140, 90 90 S 160 40, 130 10" stroke-width="2"></path>
+  <path d="M40 300 C 90 230, 60 170, 120 130 S 200 90, 180 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M90 90 c 14 -4 26 6 22 20 c -10 -2 -18 -10 -22 -20z M120 130 c 14 -2 24 8 18 22 c -10 -4 -16 -12 -18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <path d="M790 290 C 740 200, 780 140, 710 90 S 640 40, 670 10" stroke-width="2"></path>
+  <path d="M760 300 C 710 230, 740 170, 680 130 S 600 90, 620 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M710 90 c -14 -4 -26 6 -22 20 c 10 -2 18 -10 22 -20z M680 130 c -14 -2 -24 8 -18 22 c 10 -4 16 -12 18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <circle cx="130" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle><circle cx="670" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle>
+</svg>
+</div>
+  <div class="banner-inner">
+    <a class="banner-part" href="/kvblockdiff-primer/landscape/tokens-and-decoding/"><span class="banner-roman">III</span><span class="banner-ptitle">Part III · How an LLM reads its memory</span></a>
+    <div class="banner-num" aria-label="Page III.11">III.11</div>
+    <h1>Two reference settings: the Pin and the Bench</h1><p class="lede">Napkin math needs numbers, and numbers need a concrete machine. This site freezes two. The Pin is HiSparse’s GLM-5.1 deployment at 8-bit storage, where misses and milliseconds live. The Bench is the Qwen3.5-2B rig the campaigns measured, where shapes, bytes and ratios live. A pill in the top bar switches between them.</p>
+  </div>
+</header>
+
+<div class="page-body">
+  <article class="prose">
+<p>A recipe that says “add some flour, bake until done” cannot be followed, or checked, or compared with another recipe. Physicists have the same problem with gases, so they agree on <em>standard conditions</em>: one temperature, one pressure, and every number in the table is quoted there.</p>
+<p>This site needs the same thing, twice over. Every page from here on estimates bytes, seconds and sequences per GPU, and every measurement page reports shapes and ratios. If one page assumed a 30 ms step and another 50 ms, or one a 512-byte row and another 640, nothing could be compared.</p>
+<h2 id="why">Why freeze</h2>
+<div class="defbox" data-term="reference-setting" style="--tc:var(--cat-project)"><div class="db-head"><dfn id="def-reference-setting" class="term plain def" data-term="reference-setting" style="--tc:var(--cat-project)"><span class="term-text">reference setting</span></dfn><span class="db-cat">this project's own words</span></div><div class="db-body">
+<ul>
+<li><strong>What it is.</strong> One fixed set of numbers that every estimate on the site is quoted for: an LLM and its shapes, a machine, and what was measured on it. The numbers live in one file, <code>data/settings.yaml</code>, and every hover reminder reads them from there.</li>
+<li><strong>Why two.</strong> The deployment the project aims at (GLM-5.1 on HiSparse’s server) and the data the project could measure (Qwen3.5-2B’s orchard on a desk) are different rigs with different shapes. Each gets a card, a name and an emblem; a sentence that gives a number names its setting.</li>
+<li><strong>What it is not.</strong> A claim that either machine is the right one, or the best. The job of a reference setting is to make every page use the <em>same</em> numbers.</li>
+<li><strong>Easy to confuse with</strong> a scenario (<a class="xref" data-ref="scenario-one-cherry-at-a-time" href="/kvblockdiff-primer/scenario/one-cherry-at-a-time/" title="IV.2 One cherry at a time">IV.2 One cherry at a time</a>), which fixes what is compressed and how; a setting fixes the LLM, the machine and the measured facts a scenario is run on.</li>
+</ul>
+</div></div>
+<p>Freezing has a second benefit. Most conclusions on this site come out as <strong>ratios</strong>: “a miss that moves 60 % of a row moves 60 % of the bytes”. Ratios carry over to other machines far better than absolute numbers do. If your link is twice as fast, every sequence count doubles, and every comparison between methods stays the same.</p>
+<aside class="takeaway" data-sec="why"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>A reference setting is a frozen rig every number is quoted for, so pages can be compared.</li>
+<li>There are two, because the deployment and the measurable data are different rigs; conclusions are stated as ratios, which travel.</li>
+</ul>
+</div></aside>
+<h2 id="side-by-side">The Pin and the Bench</h2>
+<div class="defbox brand" data-term="pin" style="--tc:var(--t-pin)"><div class="db-head"><dfn id="def-pin" class="term brand def" data-term="pin" style="--tc:var(--t-pin)"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-pin"></use></svg><span class="term-text">the Pin</span></dfn><span class="db-nick">“the Pin”</span><span class="db-cat">this project's own words</span></div><div class="db-body">
+<ul>
+<li><strong>What it is.</strong> HiSparse’s GLM-5.1 deployment, eight H200 GPUs, with the orchard converted from BF16 to 8-bit storage: 78 KV layers, one MLA latent of ≈ 640 elements per token per layer, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">2048</span></span></span></span> picks per layer per step, the 100 384-token trace, miss rates 30 / 13.4 / 6.7 % at 2048 / 4096 / 8192 slots, 30 ms per token, a 50 GB/s link, 30 GB of GPU memory per GPU for orchards.</li>
+<li><strong>What it is for.</strong> The deployment side: misses, link traffic, GPU memory, sequences per GPU, the decode-step deadline. Everything that needs an indexer and a decode loop.</li>
+<li><strong>Why 8 bits.</strong> HiSparse serves BF16, but 8-bit storage is where serving is heading, and it is the format a compressor on this site must reproduce bit for bit (<a class="xref" data-ref="school-fp8" href="/kvblockdiff-primer/school/fp8/" title="II.20 Eight-bit floats and index space">II.20 Eight-bit floats and index space</a>). We assume the format changes bytes, not which positions the indexer picks.</li>
+<li><strong>Its nickname.</strong> The Pin: it pins every estimate to one place.</li>
+</ul>
+</div></div>
+<div class="defbox brand" data-term="bench" style="--tc:var(--t-bench)"><div class="db-head"><dfn id="def-bench" class="term brand def" data-term="bench" style="--tc:var(--t-bench)"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-flask"></use></svg><span class="term-text">the Bench</span></dfn><span class="db-nick">“the Bench”</span><span class="db-cat">this project's own words</span></div><div class="db-body">
+<ul>
+<li><strong>What it is.</strong> The campaigns’ rig as a second frozen set of numbers: Qwen3.5-2B’s six KV layers, 2 KV heads × 256 elements, 512-byte rows of values (keys another 512 B), 225K-token coding-agent transcripts, FP8 E4M3, stretches of 512 to 32 768 tokens measured, one RTX 5080 with 16 GB, a PCIe 5.0 link taken as 50 GB/s, about 10 GB of GPU memory for orchards.</li>
+<li><strong>What it is for.</strong> The data side: shapes, bytes, stretch lengths and measured ratios. Every ratio of Part VIII was measured here and nowhere else.</li>
+<li><strong>What it does not measure.</strong> No indexer ran on it, so there are no picks: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span></span></span></span></span>, the miss rates and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-tpot f-resource"><span class="mord"><span class="mord mathrm">TPOT</span></span></span></span></span></span> are not measured, and the chain from bytes to sequences per GPU stops at bytes. The link bandwidth and the 10 GB are assumptions.</li>
+<li><strong>Its nickname.</strong> The Bench, after the lab table the data was made on.</li>
+</ul>
+</div></div>
+<p>The LLM on the Bench is a <dfn id="def-stand-in-llm" class="term plain def" data-term="stand-in-llm" style="--tc:var(--cat-llm)"><span class="term-text">stand-in LLM</span></dfn>: a small open LLM whose orchard is measured in place of the real sparse-attention target. Qwen3.5-2B stands in for GLM-5.1 because its orchard can be dumped on one desk and GLM-5.1’s cannot. Whether a ratio measured on a 2B-parameter LLM’s values holds for GLM-5.1’s latents is an assumption, and every page that carries a Bench number onto the Pin says so (<a class="xref" data-ref="measured-what-it-means" href="/kvblockdiff-primer/measured/what-it-means/" title="VIII.13 What it means for kvblockdiff">VIII.13 What it means for kvblockdiff</a>).</p>
+<div class="tbl-wrap"><table class="data">
+<thead>
+<tr>
+<th>quantity</th>
+<th>symbol</th>
+<th>the Pin</th>
+<th>the Bench</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the LLM</td>
+<td></td>
+<td>GLM-5.1</td>
+<td>Qwen3.5-2B, a stand-in</td>
+</tr>
+<tr>
+<td>what it is for</td>
+<td></td>
+<td>deployment: misses, link, memory, sequences per GPU</td>
+<td>data: shapes, bytes, stretch lengths, measured ratios</td>
+</tr>
+<tr>
+<td>KV layers</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-NL f-count"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>78</td>
+<td>6 (of 24; the other 18 are linear attention)</td>
+</tr>
+<tr>
+<td>one row of the orchard</td>
+<td></td>
+<td>one MLA latent, <code>(1, 640)</code></td>
+<td>2 heads × 256 elements of values, <code>v[t, l, :, :]</code>, and keys the same</td>
+</tr>
+<tr>
+<td>elements per row</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-d f-count"><span class="mord mathnormal">d</span></span></span></span></span></td>
+<td>≈ 640, derived from bytes per token</td>
+<td>512 (values), a real layout</td>
+</tr>
+<tr>
+<td>bytes per row, 8-bit</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span></td>
+<td><strong>640 B</strong>, keys and values together</td>
+<td><strong>512 B</strong> of values; 1 024 B with keys</td>
+</tr>
+<tr>
+<td>one token at every KV layer</td>
+<td></td>
+<td>≈ 50 KB</td>
+<td>3 072 B of values</td>
+</tr>
+<tr>
+<td>storage format</td>
+<td></td>
+<td>8-bit, assumed</td>
+<td>FP8 E4M3, one power-of-two scale per layer and tensor, measured</td>
+</tr>
+<tr>
+<td>context length</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-L f-count"><span class="mord mathnormal">L</span></span></span></span></span></td>
+<td>100 384 tokens (HiSparse’s LongBench-V2 prompt)</td>
+<td>225K (219 678 to 229 360 tokens, 30 transcripts, prefill only)</td>
+</tr>
+<tr>
+<td>stretch length in examples</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span></td>
+<td>4 096</td>
+<td>4 096 (512 to 32 768 measured)</td>
+</tr>
+<tr>
+<td>picks per layer per step</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span></span></span></span></span></td>
+<td>2 048</td>
+<td>not measured</td>
+</tr>
+<tr>
+<td>miss rates at 2K / 4K / 8K slots</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-m f-frac"><span class="mord mathnormal">m</span></span></span></span></span></td>
+<td>30 / 13.4 / 6.7 % (Bélády 8.2 % at 4K)</td>
+<td>not measured</td>
+</tr>
+<tr>
+<td>time per output token</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-tpot f-resource"><span class="mord"><span class="mord mathrm">TPOT</span></span></span></span></span></span></td>
+<td>30 ms</td>
+<td>not measured</td>
+</tr>
+<tr>
+<td>the link</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-Wlink f-resource"><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">link</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>50 GB/s (PCIe Gen5 ×16; 64 on paper)</td>
+<td>50 GB/s, assumed, same slot generation</td>
+</tr>
+<tr>
+<td>GPU memory for orchards</td>
+<td><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-Mhbm f-resource"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">HBM</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></td>
+<td>30 GB of 141 (about 240 GB left on 8 × H200 after the weights)</td>
+<td>≈ 10 GB of 16, assumed</td>
+</tr>
+<tr>
+<td>GPU, host</td>
+<td></td>
+<td>8 × H200</td>
+<td>RTX 5080; Ryzen 7 9700X</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two symbols come with the machine side. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-Wlink f-resource"><span class="mord"><span class="mord mathnormal" style="margin-right:0.1389em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">link</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> is the <strong>link bandwidth</strong>, the bytes per second the link actually carries. <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-Mhbm f-resource"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">M</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">HBM</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> is the <strong>GPU memory available for orchards</strong>, per GPU, after the LLM’s weights have taken their share: hot caches, and later the dictionaries of Part VI, must fit in it.</p>
+<p>Three numbers fall out of the Bench’s column the way <a class="xref" data-ref="landscape-derived-numbers" href="/kvblockdiff-primer/landscape/derived-numbers/" title="III.12 Three numbers and a deadline">III.12 Three numbers and a deadline</a> draws three from the Pin’s. One token’s values over the six layers are <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">512</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">072</span></span></span></span> B, so a 225 000-token sequence holds about 691 MB of values, 1.38 GB with keys, and the 10 GB would hold about seven such orchards whole. One layer’s values over a 4 096-token stretch are 2.1 MB. The fourth number, sequences per GPU, needs misses and a step time, and the Bench has neither.</p>
+<figure class="plate wide" id="fig-landscape-settings" data-fig="refSettings"><div class="fig-host"></div><figcaption><span class="plate-no">Plate III.11·1.</span>
+<p><strong>The two settings, side by side.</strong> Left card the Pin, right card the Bench, every key of <code>data/settings.yaml</code> on one row: the LLM, KV layers, heads and elements, cherry bytes, picks per step, context length, the stretch length of the examples, miss rates, TPOT, the link, the GPU memory for orchards, the GPU, the format. “Not measured” marks what the Bench never ran. The highlighted card is the setting the pill in the top bar has selected; switch it and the highlight follows.</p>
+</figcaption></figure>
+<figure class="plate" id="fig-landscape-pin" data-fig="refSetting"><div class="fig-host"></div><figcaption><span class="plate-no">Plate III.11·2.</span>
+<p><strong>The Pin as a pinboard.</strong> Each card is one frozen number of the Pin: its symbol, its value, and (on hover or tap) where it comes from. Cards are grouped into the LLM, the cache and the machine; the last group holds three numbers derived from the others. The switch converts the rows between 8-bit storage (the Pin) and BF16 (what HiSparse actually serves); cards whose value changes are outlined. All values are from the table above; the derived ones are computed live.</p>
+</figcaption></figure>
+<div class="try"><div class="try-head">☞ Things to try</div><div class="try-body">
+<ol>
+<li>Switch to BF16. Only byte counts change: the row, the bytes per token, and what is derived from them.</li>
+<li>Nothing about <em>which</em> positions are picked changes, so the miss rates stay put.</li>
+</ol>
+</div></div>
+<p>Read the two columns as a division of labour. The Pin owns the miss side of the economics, everything that needs an indexer and a decode loop: <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-m f-frac"><span class="mord mathnormal">m</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-tpot f-resource"><span class="mord"><span class="mord mathrm">TPOT</span></span></span></span></span></span>, and so the sequences per GPU. The Bench owns the byte side: what a row is, what a stretch’s worth of values weighs, what a compressor saves. A ratio of bytes to bytes may travel from the Bench to the Pin, with a flag; the miss rates cannot travel at all, since the Bench has none.</p>
+<aside class="side side-source"><details><summary><span class="side-kind">Source</span><span class="side-title">Receipts</span></summary><div class="side-body">
+<ul>
+<li>Pin: HiSparse (Xie et al., 2026) as the first draft of this proposal recorded it: 78 sparse layers, top-2048, the 100,384-token LongBench-V2 prompt, 1,799 decode steps, miss rates 30 / 13.4 / 6.7 % (LRU), 17.2 % FIFO, 16.1 % random, 8.2 % Bélády at 4096; 30 ms per token; about 240 GB of KV memory left on 8 × H200; PCIe Gen5 ×16 at 64 GB/s nominal, 50 practical. The 640 B entry is 100 KB of BF16 per token ÷ 78 layers ÷ 2.</li>
+<li>Bench: model geometry, sequences, tool-output shares and the FP8 recipe from <code>targets/02-qwen3.5-2b-agent-long30/README.md</code> (the campaigns’ spec, <code>PART-XI-SPEC.md</code>, §1.1); block sizes 512 to 32,768 from the reading-cost sweep; the machine is one RTX 5080 (16 GB GDDR7) in a PCIe 5.0 ×16 slot with a Ryzen 7 9700X host. 50 GB/s and about 10 GB for KV are assumptions: the link is the Pin’s practical figure for the same slot generation; the memory is 16 GB less about 4 GB of BF16 weights for a 2B-parameter model, less headroom.</li>
+<li>Derived: 6 × 512 = 3,072 B per token; 225,000 × 3,072 ≈ 691 MB; × 2 for keys ≈ 1.38 GB; 10 GB ÷ 1.38 GB ≈ 7; 4,096 × 512 B ≈ 2.1 MB; 78 × 640 B = 49,920 B ≈ 50 KB.</li>
+<li>The switch’s keys and behaviour: <code>data/settings.yaml</code> and <code>docs/AUTHORING.md</code> §3.</li>
+</ul>
+</div></details></aside>
+<aside class="takeaway" data-sec="side-by-side"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>The Pin: GLM-5.1, 78 KV layers, 640 B rows, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-k f-count"><span class="mord mathnormal" style="margin-right:0.0315em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">2048</span></span></span></span>, 100 384 tokens, 30 / 13.4 / 6.7 % misses, 30 ms, 50 GB/s, 30 GB. The deployment side.</li>
+<li>The Bench: Qwen3.5-2B as a stand-in, 6 KV layers, rows <code>v[t, l, :, :]</code> of 2 × 256 elements, 512 B, 225K tokens, FP8, one RTX 5080. The data side; no indexer ran, so no picks, no miss rates, no step time.</li>
+<li>Ratios of bytes may travel between them, flagged; miss rates and step times cannot.</li>
+</ul>
+</div></aside>
+<h2 id="the-switch">The switch</h2>
+<p>The pill in the top bar shows the current setting with its emblem, a pin or a flask. Click it to change the setting; the choice is kept in your browser and follows you from page to page. Three things follow it.</p>
+<ol>
+<li><strong>Hover reminders.</strong> The reminder of a term or symbol that has a size in the setting (<a class="term brand" data-term="orchard" href="/kvblockdiff-primer/landscape/orchard/#def-orchard" style="--tc:var(--t-orchard)" data-def="III.3 The orchard"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-tree"></use></svg><span class="term-text">orchard</span></a>, <a class="term brand" data-term="pick" href="/kvblockdiff-primer/landscape/sparse-attention/#def-pick" style="--tc:var(--t-pick)" data-def="III.5 Sparse attention and the indexer"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-target"></use></svg><span class="term-text">pick</span></a>, <a class="term brand" data-term="hot-cache" href="/kvblockdiff-primer/landscape/hisparse/#def-hot-cache" style="--tc:var(--t-hot-cache)" data-def="III.7 HiSparse: a library with a reading desk"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-flame"></use></svg><span class="term-text">hot cache</span></a>, <a class="term plain" data-term="head" href="/kvblockdiff-primer/landscape/attention/#def-head" style="--tc:var(--cat-llm)" data-def="III.2 Attention: looking back"><span class="term-text">KV head</span></a>, <a class="term plain" data-term="layer" href="/kvblockdiff-primer/landscape/tokens-and-decoding/#def-layer" style="--tc:var(--cat-llm)" data-def="III.1 How an LLM writes"><span class="term-text">layer</span></a>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.4306em;"></span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-NL f-count"><span class="mord"><span class="mord mathnormal" style="margin-right:0.109em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-L f-count"><span class="mord mathnormal">L</span></span></span></span></span>) ends with a line “In the Pin: …” or “In the Bench: …”, the current setting first.</li>
+<li><strong>Live numbers.</strong> A number written with the macro <code>[[@key]]</code> renders as a small marked value and updates in place. Read the next paragraph, flip the pill, and read it again.</li>
+<li><strong>Figures that read the setting.</strong> Where a setting has no value for what a figure needs, the figure says “not measured” instead of inventing one.</li>
+</ol>
+<p>In the setting selected now the LLM is <span class="refv" data-key="llm" title="in the Pin">GLM-5.1</span> on an <span class="refv" data-key="gpu" title="in the Pin">H200 (141 GB)</span>. One token’s row at one layer is <span class="refv" data-key="e" title="in the Pin">640 B</span>, over <span class="refv" data-key="NL" title="in the Pin">78</span> KV layers, in sequences of <span class="refv" data-key="L" title="in the Pin">100 384</span> tokens stored as <span class="refv" data-key="format" title="in the Pin">8-bit (E4M3), one MLA latent per token per layer</span>. The link carries <span class="refv" data-key="Wlink" title="in the Pin">50 GB/s</span> and the GPU keeps <span class="refv" data-key="Mhbm" title="in the Pin">30 GB</span> for orchards. The indexer names <span class="refv" data-key="k" title="in the Pin">2 048</span> picks per layer per step, misses <span class="refv" data-key="m4" title="in the Pin">13.4 %</span> of them at 4096 slots, and a step takes <span class="refv" data-key="tpot" title="in the Pin">30 ms</span>.</p>
+<p>What does not follow the switch is every number typed into a sentence. The 274 misses of <a class="xref" data-ref="landscape-derived-numbers" href="/kvblockdiff-primer/landscape/derived-numbers/" title="III.12 Three numbers and a deadline">III.12 Three numbers and a deadline</a>, the 13.7 MB and the 110 sequences were computed for the Pin and stay the Pin’s whatever the pill says; the 0.636 of <a class="xref" data-ref="measured-scorecard" href="/kvblockdiff-primer/measured/scorecard/" title="VIII.12 The scorecard">VIII.12 The scorecard</a> was measured on the Bench and stays the Bench’s.</p>
+<p>For writers, one rule in two halves. A setting-dependent number in new prose goes through the macro, so that it follows the switch. A number that belongs to one setting by design is typed out and its setting is named, “on the Pin” or “on the Bench”. Never mix the two in one piece of arithmetic: “<code>[[@e]]</code> × 274 misses” would be right on the Pin and wrong on the Bench, where nobody counted misses; a sentence is either all live or all named.</p>
+<aside class="takeaway" data-sec="the-switch"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>The pill changes hover reminders, live <code>[[@key]]</code> numbers and the figures that read the setting; it leaves every number typed for one setting alone.</li>
+<li>New prose writes setting-dependent numbers with the macro and names the setting for numbers that belong to one of them; never mix live and fixed numbers in one calculation.</li>
+</ul>
+</div></aside>
+
+  </article>
+</div>
+<section id="deck" class="deck" aria-label="Flashcards for this page"></section>
+<script type="application/json" id="page-cards">[{"id":"landscape-reference-settings/why-freeze-a-reference-setting-instead-o","q":"Why freeze a reference setting instead of using the best numbers for each question?","a":"So every estimate on the site is comparable, and conclusions can be stated as ratios that carry over to other machines","wrong":["Because GLM-5.1 is the best LLM","Because the numbers are exact","Because other machines do not use sparse attention"],"why":"The point is not this rig; the point is that all pages use the same one, and name it.","sec":"why","page":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/#why"},{"id":"landscape-reference-settings/what-is-one-token-s-row-at-one-layer-on-","q":"What is one token’s row at one layer on the Pin, and on the Bench?","a":"640 B on the Pin (one MLA latent, keys and values together); 512 B of values on the Bench, with keys another 512 B","wrong":["640 B on both","512 B on both","50 KB and 3 072 B"],"why":"The Pin’s 640 B is derived from GLM-5.1’s 50 KB per token at 8 bits over 78 layers. The Bench’s 512 B is 2 heads × 256 elements, values alone; 50 KB and 3 072 B are the per-token totals over all KV layers.","sec":"side-by-side","page":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/#side-by-side"},{"id":"landscape-reference-settings/which-quantities-does-the-bench-lack-tha","q":"Which quantities does the Bench lack that the Pin has?","a":"Picks per step \u003cspan class=\"katex\">\u003cspan class=\"katex-html\" aria-hidden=\"true\">\u003cspan class=\"katex-base\">\u003cspan class=\"katex-strut\" style=\"height:0.6944em;\">\u003c/span>\u003cspan class=\"enclosing sym s-k f-count\">\u003cspan class=\"mord mathnormal\" style=\"margin-right:0.0315em;\">k\u003c/span>\u003c/span>\u003c/span>\u003c/span>\u003c/span>, the miss rates and the time per output token: no indexer ever ran on it","wrong":["The row size and the number of KV layers","The link bandwidth and the GPU memory","The stretch length and the storage format"],"why":"The Bench is the data-side setting. It has shapes, bytes and measured ratios; the miss side of the economics needs an indexer and a decode loop.","sec":"side-by-side","page":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/#side-by-side"},{"id":"landscape-reference-settings/what-is-a-stand-in-llm","q":"What is a stand-in LLM?","a":"A small open LLM whose orchard is measured in place of the real sparse-attention target","wrong":["A smaller copy of GLM-5.1 with the same weights","The LLM that runs the indexer","A probability table used by an entropy coder"],"why":"Qwen3.5-2B on the Bench stands in for GLM-5.1. Whether its statistics transfer is itself a risk, and the site says so wherever a Bench number is carried to the Pin.","sec":"side-by-side","page":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/#side-by-side"},{"id":"landscape-reference-settings/what-does-the-setting-switch-in-the-top-","q":"What does the setting switch in the top bar change?","a":"The hover reminders of terms and symbols, every live number written with the \u003ccode>[[@key]]\u003c/code> macro, and the figures that read the setting","wrong":["Every number on every page","Only the glossary page","The miss rates of HiSparse’s trace"],"why":"Prose typed for one setting keeps its numbers and names the setting; only what was written to follow the switch follows it.","sec":"the-switch","page":"landscape-reference-settings","num":"III.11","title":"Two reference settings: the Pin and the Bench","part":"III","url":"/kvblockdiff-primer/landscape/reference-settings/#the-switch"}]</script>
+
+<nav class="pager" aria-label="Previous and next page">
+  <a class="pg pg-prev" href="/kvblockdiff-primer/landscape/reuse-curve/" rel="prev" style="--pc:var(--part-III)"><span class="pg-dir">← previous</span><span class="pg-num">III.10</span><span class="pg-title">The reuse curve</span></a>
+  <a class="pg pg-next" href="/kvblockdiff-primer/landscape/derived-numbers/" rel="next" style="--pc:var(--part-III)"><span class="pg-dir">next →</span><span class="pg-num">III.12</span><span class="pg-title">Three numbers and a deadline</span></a>
+</nav>
+
+</main>
+
+<footer class="colophon">
+  <div class="orn-rule" aria-hidden="true"><svg viewBox="0 0 420 30" fill="none" stroke="currentColor" stroke-linecap="round">
+  <path d="M10 15 C 80 15, 110 4, 160 15 S 190 26, 196 15" stroke-width="1.2"></path>
+  <path d="M410 15 C 340 15, 310 4, 260 15 S 230 26, 224 15" stroke-width="1.2"></path>
+  <path d="M210 4 l9 11 -9 11 -9 -11z" stroke-width="1.2"></path><circle cx="210" cy="15" r="2.5" fill="currentColor"></circle>
+  <circle cx="160" cy="15" r="1.6" fill="currentColor"></circle><circle cx="260" cy="15" r="1.6" fill="currentColor"></circle>
+</svg>
+</div>
+  <p><b>kv-blockdiff</b> — A primer and research proposal on lossless dictionary coding of LLM KV caches. Written by Dmitry Borzov. Source, figures and analysis scripts: <a href="https://github.com/dborzov/kvblockdiff-primer">github.com/dborzov/kvblockdiff-primer</a>.</p>
+  <p class="small">Keys: <kbd>←</kbd> <kbd>→</kbd> previous / next page · <kbd>g</kbd> glossary · <kbd>p</kbd> practise flashcards. Hover any coloured term or symbol for a reminder.</p>
+</footer>
+</body>
+</html>

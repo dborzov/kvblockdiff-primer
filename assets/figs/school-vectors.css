@@ -1,0 +1,33 @@
+/* Part II (II.13–II.25) figures — school-vectors. Tokens only; every class is prefixed sv-. */
+
+/* the table of readings (II.13) */
+.tbl-wrap table.sv-tab th { vertical-align: bottom; line-height: 1.2; }
+.tbl-wrap table.sv-tab .sv-sub, .tbl-wrap table.sv-heat .sv-sub { font-size: .78rem; color: var(--ink-3); letter-spacing: .02em; }
+.tbl-wrap table.sv-tab .sv-click { cursor: pointer; border-radius: 4px; }
+.tbl-wrap table.sv-tab .sv-click:hover { background: color-mix(in srgb, var(--c) 10%, transparent); }
+.tbl-wrap table.sv-tab .sv-click:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
+.tbl-wrap table.sv-tab th.sv-sel { background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--ink); }
+.tbl-wrap table.sv-tab td.sv-sel { background: color-mix(in srgb, var(--c) 22%, transparent); font-weight: 600; }
+.tbl-wrap table.sv-tab td.sv-colsel { background: color-mix(in srgb, var(--c) 13%, transparent); }
+.tbl-wrap table.sv-tab tr.sv-rowsel td { background: color-mix(in srgb, var(--c) 13%, transparent); }
+.tbl-wrap table.sv-tab tr.sv-foot td { border-top: 1.5px solid var(--rule); color: var(--ink-2); font-family: var(--f-mono); }
+.tbl-wrap table.sv-tab tr.sv-foot td.l { font-family: var(--f-sc); }
+.tbl-wrap table.sv-tab tr.sv-bits td { font-weight: 600; color: var(--ink); }
+.tbl-wrap table.sv-tab tfoot tr:first-child td { border-top: 1.5px solid var(--rule); }
+
+/* the covariance / correlation heat table (II.14) */
+.tbl-wrap table.sv-heat th { line-height: 1.2; vertical-align: bottom; }
+.tbl-wrap table.sv-heat tbody th { vertical-align: middle; white-space: nowrap; }
+.tbl-wrap table.sv-heat td { text-align: center; min-width: 4.6rem; padding: .55rem .4rem; color: var(--ink); border: 1px solid var(--paper-3); }
+.tbl-wrap table.sv-heat td.sv-diag { font-weight: 600; }
+.tbl-wrap table.sv-heat td:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
+
+/* BF16 bit patterns (II.19) */
+.tbl-wrap table.sv-bits-tab td.sv-bitcell { font-size: .86rem; letter-spacing: .06em; }
+.sv-b-s, .sv-b-e, .sv-b-m { padding: .05rem .2rem; border-radius: 3px; }
+.sv-b-s { background: color-mix(in srgb, var(--dusk) 22%, transparent); }
+.sv-b-e { background: color-mix(in srgb, var(--lapis) 20%, transparent); }
+.sv-b-m { background: color-mix(in srgb, var(--vermilion) 18%, transparent); }
+
+/* the prediction handle (II.20) takes the amethyst series colour instead of the accent */
+svg.plot .handle.sv-pred { fill: var(--amethyst); }

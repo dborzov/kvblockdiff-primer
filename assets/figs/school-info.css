@@ -1,0 +1,26 @@
+/* Part II figures, pages II.2–II.12 (school-info). Tokens only; every class starts with si-. */
+.si-q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(3.3rem, 1fr)); gap: .3rem; }
+.si-q-cell { border: 1px solid var(--rule); border-radius: 8px; padding: .25rem .15rem; text-align: center; background: var(--paper); transition: opacity .25s, background .25s; min-width: 0; }
+.si-q-cell b { display: block; font-family: var(--f-sc); font-weight: 600; font-size: .92rem; color: var(--ink); }
+.si-q-cell code { display: block; font-size: .7rem; color: var(--ink-3); background: none; padding: 0; letter-spacing: .04em; }
+.si-q-cell.out { opacity: .22; }
+.si-q-cell.hit { background: color-mix(in srgb, var(--c) 20%, var(--paper)); outline: 2px solid var(--c); }
+.si-q-log { margin: 0; padding: .4rem .6rem .4rem 2rem; max-height: 9.5rem; overflow-y: auto; font-size: .9rem; color: var(--ink-2); background: var(--paper); border: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); border-radius: 8px; }
+.si-q-log:empty { display: none; }
+.si-q-log b { font-family: var(--f-mono); font-weight: 500; color: var(--ink); white-space: nowrap; }
+.si-strip { display: flex; height: 1.5rem; width: 100%; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.si-strip > span { display: block; height: 100%; border-right: 1px solid var(--paper-3); }
+.si-jt-wrap { overflow-x: auto; }
+.si-jt { width: 100%; }
+.si-jt td, .si-jt th { text-align: center; }
+.si-jt th.l { text-align: left; }
+.si-jt tbody tr:not(.sum) { cursor: pointer; }
+.si-jt tbody tr:not(.sum):hover th { color: var(--c); }
+.si-jt tr.is-sel th.l { color: var(--c); box-shadow: inset 4px 0 0 var(--c); }
+.si-jt tr.is-sel td { font-weight: 700; }
+.si-jt .si-jt-h { font-family: var(--f-mono); }
+.si-jt tr:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
+
+.si-hf-sliders { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: .3rem 1.2rem; }
+.si-hf-sliders > .fig-note { grid-column: 1 / -1; }
+.si-hf-sliders .slider { max-width: none; }

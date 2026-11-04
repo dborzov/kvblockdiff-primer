@@ -1,0 +1,54 @@
+/* Part XI figures (figures/picks.js). Tokens only; every class starts with pks-. */
+
+/* legend keys the kit does not have: a ring (hollow marker), a diamond (HiSparse's published points),
+   a hollow diamond, a star (the primer's assumption) and a pill (a range bar) */
+.pks-legend .lg-ring { width: .72rem; height: .72rem; border-radius: 50%; box-sizing: border-box; border: 2px solid var(--kc); background: var(--paper-3); }
+.pks-legend .lg-diamond { width: .55rem; height: .55rem; margin: 0 .1rem; background: var(--kc); transform: rotate(45deg); }
+.pks-legend .lg-hdiamond { width: .55rem; height: .55rem; margin: 0 .1rem; box-sizing: border-box; border: 2px solid var(--kc); background: var(--paper-3); transform: rotate(45deg); }
+.pks-legend .lg-star { width: .85rem; height: .85rem; background: var(--kc); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.pks-legend .lg-pill { width: 1.5rem; height: .48rem; border-radius: .24rem; background: var(--kc); }
+.pks-legend .lg-dots { width: .8rem; height: .5rem; background: radial-gradient(circle, var(--kc) 0 1.6px, transparent 2.2px) 0 0 / .4rem .5rem; opacity: .7; }
+
+/* panel headings inside a plate */
+.pks-head { font-family: var(--f-sc); font-size: .88rem; letter-spacing: .03em; color: var(--ink-2); margin: 0 0 .1rem; }
+
+/* faint context lines: other layers, other configurations */
+svg.plot .pks-faint { opacity: .42; }
+svg.plot .pks-ghost .line { stroke: var(--ink-3); stroke-width: 1; opacity: .38; }
+/* a fat invisible stroke over a thin line so it can be hovered and clicked */
+svg.plot .pks-hitline { fill: none; stroke: transparent; stroke-width: 9px; pointer-events: stroke; cursor: pointer; }
+svg.plot .pks-hitline:focus-visible { stroke: color-mix(in srgb, var(--c) 35%, transparent); outline: none; }
+/* range bars (extrapolated ends) and hollow markers */
+svg.plot .pks-range { fill: none; stroke-linecap: round; }
+svg.plot .pks-hollow { fill: var(--paper-3); stroke-width: 2px; }
+svg.plot .pks-row-hit { fill: transparent; }
+svg.plot .pks-row-hit:hover { fill: color-mix(in srgb, var(--ink) 4%, transparent); }
+
+/* the readout's current item */
+.readout .pks-on { color: var(--ink); font-weight: 700; }
+.pks-note { font-size: .86rem; color: var(--ink-3); font-style: italic; margin: 0; }
+
+/* three panels side by side in a wide plate; one column where the plate is narrow */
+.pks-row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; align-items: start; }
+.pks-row3 > * { min-width: 0; }
+@container fighost (max-width: 44rem) { .pks-row3 { grid-template-columns: minmax(0, 1fr); } }
+/* two panels stacked, sharing the horizontal axis */
+.pks-stack { display: flex; flex-direction: column; gap: .2rem; }
+
+/* the raster: a bitmap of cells, kept sharp; the step cursor in the Part's accent */
+svg.plot .pks-raster-img { image-rendering: pixelated; image-rendering: crisp-edges; }
+svg.plot .pks-cursor { stroke: var(--c); stroke-width: 2px; pointer-events: none; }
+
+/* the chain diagram sits inside a plate: no outer margin, labels on the plate's ground */
+.fig-host .cgraph.pks-chain { margin: .4rem 0 .2rem; --cg-bg: var(--paper-3); }
+.pks-chain .cg-text { font-size: .82rem; }
+
+/* the explorer's two bills (as Part VI's anatomy rows) */
+.pks-bars { display: flex; flex-direction: column; gap: .35rem; }
+.pks-stack-rows { display: flex; flex-direction: column; gap: .4rem; }
+.pks-srow { display: grid; grid-template-columns: 8.5rem 1fr 5.6rem; gap: .6rem; align-items: center; font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); }
+.pks-track { display: flex; height: 1.25rem; background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 999px; overflow: hidden; }
+.pks-seg { display: block; height: 100%; min-width: 2px; border-right: 1px solid var(--paper-3); }
+.pks-seg:last-child { border-right: 0; }
+.pks-sval { font-family: var(--f-mono); font-size: .82rem; color: var(--ink); text-align: right; }
+@container fighost (max-width: 30rem) { .pks-srow { grid-template-columns: 6.2rem 1fr 4.8rem; font-size: .84rem; } }

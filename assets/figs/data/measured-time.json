@@ -1,0 +1,228 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/measured_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0005",
+   "env-t0006",
+   "env-t0007",
+   "env-t0009",
+   "env-t0010",
+   "env-t0011",
+   "env-t0012",
+   "env-t0013",
+   "env-t0088",
+   "env-t0089",
+   "env-t0090",
+   "env-t0091",
+   "env-t0092",
+   "env-t0093",
+   "env-t0094",
+   "env-t0095",
+   "env-t0096",
+   "env-t0097",
+   "r1-t0005",
+   "r1-t0008",
+   "r1-t0009",
+   "r1-t0014",
+   "r1-t0019",
+   "r1-t0021",
+   "r1-t0035",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0045",
+   "r1-t0068",
+   "r11-t0001",
+   "r11-t0002",
+   "r11-t0003",
+   "r12-t0001",
+   "r12-t0002",
+   "r12-t0004",
+   "r12-t0005",
+   "r12-t0006",
+   "r12-t0007",
+   "r14-t0006",
+   "r16-t0001",
+   "r16-t0003",
+   "r17-t0001",
+   "r18-t0001",
+   "r18-t0002",
+   "r20-t0001",
+   "r20-t0002",
+   "r21-t0001",
+   "r21-t0002",
+   "r22-t0001",
+   "r22-t0003",
+   "r22-t0005",
+   "r24-t0001",
+   "r24-t0002",
+   "r24-t0003",
+   "r24-t0004",
+   "r25-t0003",
+   "r25-t0004",
+   "r26-t0002",
+   "r26-t0008",
+   "r26-t0011",
+   "r3-t0002",
+   "r4-t0008",
+   "r4-t0019",
+   "r6-t0003",
+   "r6-t0004",
+   "r7-t0001",
+   "r7-t0002",
+   "r7-t0003",
+   "r7-t0004",
+   "r8-t0002",
+   "r8-t0003"
+  ],
+  "hand_entered": "analysis/measured_pages.json (blocks carry their own receipt)",
+  "notes": [
+   "flac, references_point, neural_network, values_not_bits are hand-entered from pages (bounds / exact models), with receipts",
+   "coder_126 and the b = 512 rows are ledger numbers"
+  ]
+ },
+ "flac": {
+  "receipt": "research/agents/r16/pages/iter-1-1.md (4 blocks per series, exact model); KNOWLEDGE [family/blend] for serial coding",
+  "grade": "exact model, 4 mid-sequence blocks per layer/head, 2 sequences",
+  "order8_alone_bits": {
+   "L7_h0": 0.329,
+   "L11_h0": 0.331
+  },
+  "after_reference_max_bits": 0.063,
+  "shuffled_control_bits": 0.001,
+  "next_token_correlation_middle_layers": 0.48,
+  "slowest_direction_correlation_max": 0.98,
+  "serial_coding_gain_bits": [
+   0.02,
+   0.05
+  ],
+  "adjacent_reference_share_pct": {
+   "middle_layers": [
+    16,
+    30
+   ],
+   "outer_layers": [
+    3,
+    4
+   ]
+  },
+  "within_8_tokens_share_pct_r16": {
+   "middle_layers": [
+    25,
+    52
+   ],
+   "outer_layers": [
+    7,
+    10
+   ]
+  },
+  "adaptive_filters_share_of_shared_rule": 0.1,
+  "adaptive_filters_receipt": "research/agents/r17/pages/iter-1-1.md (online scale -0.0019, gain -0.0008, blend -0.0010 vs 0.015 for a decoder-learned shared rule at b = 512)"
+ },
+ "references_point": {
+  "receipt": "research/agents/r6/pages/iter-2-1.md (24 blocks at 4k, value-space L2 tree)",
+  "layers": [
+   3,
+   7,
+   11,
+   15,
+   19,
+   23
+  ],
+  "within_8_tokens_pct": {
+   "3": 9,
+   "7": 37,
+   "11": 47,
+   "15": 39,
+   "19": 7,
+   "23": 12
+  },
+  "largest_degree": {
+   "3": 14,
+   "7": 8,
+   "11": 6,
+   "15": 10,
+   "19": 22,
+   "23": 12
+  },
+  "parent_bits": {
+   "3": 9.8,
+   "7": 7.4,
+   "11": 6.6,
+   "15": 7.4,
+   "19": 10.0,
+   "23": 9.6
+  }
+ },
+ "neural_network": {
+  "receipt": "research/agents/r21/pages/iter-1-1.md",
+  "grade": "exact model, one run, L7, no reference, fit on 100,000 tokens of one sequence, tested on the other",
+  "layer": 7,
+  "bits": {
+   "solo": 6.435,
+   "linear": 5.804,
+   "network": 5.636
+  },
+  "with_reference_bits": {
+   "network": [
+    -0.002,
+    -0.01
+   ],
+   "trees": [
+    -0.0038,
+    -0.0224
+   ]
+  },
+  "positive_control_recovery": 0.45
+ },
+ "coder_126": {
+  "track": "s-layer-b4k-r293",
+  "ratio": 0.64074,
+  "vs_102": 0.64494,
+  "delta": -0.0042,
+  "trial": "r20-t0001",
+  "blocks": "72 of 72",
+  "verified": true,
+  "what": "each entry blends its tree ancestors' errors while decoding, no byte sent"
+ },
+ "b512_learned_vs_paid": {
+  "receipt": "research/agents/r21/pages/iter-1-2.md (best fully paid model 0.6960 on the screen); research/agents/r17/pages/iter-1-2.md (48 blocks in process: 0.71174 reference alone, 0.69981 paid rows, 0.69016 learned)",
+  "best_fully_paid_on_screen": 0.696,
+  "in_process_48_blocks": {
+   "reference_alone": 0.71174,
+   "paid_rows_89": 0.69981,
+   "learned_96": 0.69016
+  },
+  "coder_113_ledger": {
+   "track": "s-layer-b512-r293",
+   "trial": "env-t0010",
+   "ratio": 0.68938,
+   "reads": {
+    "mean": 159.1,
+    "p99": 249.0,
+    "max": 257.2
+   }
+  }
+ },
+ "values_not_bits": {
+  "receipt": "research/agents/r13/pages/iter-1-2.md and iter-1-5.md; research/agents/r15/pages/iter-1-1.md; KNOWLEDGE [value/*]",
+  "c1_false_floor": 0.37,
+  "one_head_model_from_local_history_ratio": 0.5,
+  "blocks": 48,
+  "framing_cost_max": 0.009,
+  "shared_bits_estimate_vs_real": {
+   "estimate": 0.278,
+   "real": 0.263,
+   "r": 0.9993
+  },
+  "estimate_on_fp8_code_index": 0.104,
+  "error_skew": {
+   "value": -0.03,
+   "code_index": -1.6
+  },
+  "any_error_curve_gain_max": 0.014
+ }
+}

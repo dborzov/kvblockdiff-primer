@@ -1,0 +1,582 @@
+{
+ "generated_by": "analysis/plan_harness.py",
+ "step0": {
+  "grid_values": 127,
+  "codes": 253,
+  "probes": 200514,
+  "max_value": 448.0,
+  "smallest_subnormal": 0.001953125
+ },
+ "rates_check": {
+  "laplace_beta": 3.0,
+  "laplace_entropy_true": 4.015,
+  "laplace_entropy_fit": 4.035,
+  "laplace_entropy_hist": 4.034,
+  "grid_model_int8": 4.034
+ },
+ "wave2_check": {
+  "miss_rates": [
+   0.088,
+   0.029,
+   0.022
+  ],
+  "fD_by_nD": [
+   0.101,
+   0.219,
+   0.408,
+   0.723,
+   0.878
+  ],
+  "nload_at_nD4": 0.127
+ },
+ "synthetic": {
+  "n_eval": 4,
+  "n_calib": 8,
+  "T": 8192,
+  "d": 64,
+  "true_b": 2048,
+  "var_req": 1.0,
+  "var_blk": 1.0,
+  "truth": {
+   "gainreq": 0.292,
+   "gainblk": 0.5
+  }
+ },
+ "bs": [
+  256,
+  512,
+  1024,
+  2048,
+  4096
+ ],
+ "float_gains": {
+  "orig": {
+   "gainreq": 0.407,
+   "gainblk": {
+    "256": 0.37,
+    "512": 0.369,
+    "1024": 0.368,
+    "2048": 0.368,
+    "4096": 0.114
+   }
+  },
+  "shuf": {
+   "gainreq": 0.105,
+   "gainblk": {
+    "256": 0.003,
+    "512": 0.001,
+    "1024": 0.001,
+    "2048": 0.0,
+    "4096": 0.0
+   }
+  }
+ },
+ "roundtrip": {
+  "entries": 2048,
+  "d": 64,
+  "loc_dict_bytes": 64,
+  "mean_delta_bytes": 56.05,
+  "raw_entry_bytes": 64,
+  "fixed_bits_per_element": 7.006,
+  "int8_wraparound_example": {
+   "codes": [
+    120,
+    -120
+   ],
+   "location": [
+    -100,
+    100
+   ],
+   "int8_residual": [
+    -36,
+    36
+   ],
+   "true_residual": [
+    220,
+    -220
+   ]
+  }
+ },
+ "solo": {
+  "int8": {
+   "entropy": 7.073,
+   "fixed": 8.0,
+   "entropy_index_space_laplace": 7.074,
+   "order0_hist": 6.836
+  },
+  "e4m3": {
+   "entropy": 6.367,
+   "fixed": 8.0,
+   "entropy_index_space_laplace": 8.375,
+   "order0_hist": 6.128
+  }
+ },
+ "ladder": {
+  "int8": {
+   "loc": {
+    "orig": {
+     "global": [
+      7.0734,
+      7.9533
+     ],
+     "request": [
+      6.6139,
+      7.3832
+     ],
+     "block": {
+      "256": [
+       6.3759,
+       7.1389
+      ],
+      "512": [
+       6.3164,
+       7.0825
+      ],
+      "1024": [
+       6.2867,
+       7.0296
+      ],
+      "2048": [
+       6.2718,
+       7.0117
+      ],
+      "4096": [
+       6.4958,
+       7.2245
+      ]
+     }
+    },
+    "shuf": {
+     "global": [
+      7.0734,
+      7.9533
+     ],
+     "request": [
+      6.9427,
+      7.8349
+     ],
+     "block": {
+      "256": [
+       7.058,
+       7.9019
+      ],
+      "512": [
+       6.9986,
+       7.8797
+      ],
+      "1024": [
+       6.9688,
+       7.8454
+      ],
+      "2048": [
+       6.9539,
+       7.8381
+      ],
+      "4096": [
+       6.9465,
+       7.835
+      ]
+     }
+    }
+   },
+   "loc+flag": {
+    "orig": {
+     "global": [
+      7.0734,
+      7.9531
+     ],
+     "request": [
+      6.6141,
+      7.383
+     ],
+     "block": {
+      "256": [
+       6.3798,
+       7.1405
+      ],
+      "512": [
+       6.3183,
+       7.0824
+      ],
+      "1024": [
+       6.2876,
+       7.0295
+      ],
+      "2048": [
+       6.2723,
+       7.0122
+      ],
+      "4096": [
+       6.4961,
+       7.2228
+      ]
+     }
+    },
+    "shuf": {
+     "global": [
+      7.0734,
+      7.9531
+     ],
+     "request": [
+      6.9429,
+      7.8311
+     ],
+     "block": {
+      "256": [
+       7.062,
+       7.8953
+      ],
+      "512": [
+       7.0006,
+       7.8736
+      ],
+      "1024": [
+       6.9697,
+       7.841
+      ],
+      "2048": [
+       6.9544,
+       7.8365
+      ],
+      "4096": [
+       6.9467,
+       7.8332
+      ]
+     }
+    }
+   }
+  },
+  "e4m3": {
+   "loc": {
+    "orig": {
+     "global": [
+      6.3668,
+      8.8471
+     ],
+     "request": [
+      5.906,
+      8.7859
+     ],
+     "block": {
+      "256": [
+       5.6694,
+       8.6142
+      ],
+      "512": [
+       5.6098,
+       8.5958
+      ],
+      "1024": [
+       5.5801,
+       8.557
+      ],
+      "2048": [
+       5.5653,
+       8.5559
+      ],
+      "4096": [
+       5.7887,
+       8.722
+      ]
+     }
+    },
+    "shuf": {
+     "global": [
+      6.3668,
+      8.8471
+     ],
+     "request": [
+      6.2344,
+      8.8286
+     ],
+     "block": {
+      "256": [
+       6.3496,
+       8.9376
+      ],
+      "512": [
+       6.2902,
+       8.8799
+      ],
+      "1024": [
+       6.2604,
+       8.8506
+      ],
+      "2048": [
+       6.2456,
+       8.8354
+      ],
+      "4096": [
+       6.2381,
+       8.8247
+      ]
+     }
+    }
+   },
+   "loc+flag": {
+    "orig": {
+     "global": [
+      6.3668,
+      7.9065
+     ],
+     "request": [
+      5.9062,
+      7.8485
+     ],
+     "block": {
+      "256": [
+       5.6733,
+       7.7662
+      ],
+      "512": [
+       5.6118,
+       7.7301
+      ],
+      "1024": [
+       5.5811,
+       7.6942
+      ],
+      "2048": [
+       5.5658,
+       7.6873
+      ],
+      "4096": [
+       5.7889,
+       7.8062
+      ]
+     }
+    },
+    "shuf": {
+     "global": [
+      6.3668,
+      7.9065
+     ],
+     "request": [
+      6.2345,
+      7.8794
+     ],
+     "block": {
+      "256": [
+       6.3535,
+       8.001
+      ],
+      "512": [
+       6.2922,
+       7.9404
+      ],
+      "1024": [
+       6.2614,
+       7.9077
+      ],
+      "2048": [
+       6.2461,
+       7.8916
+      ],
+      "4096": [
+       6.2384,
+       7.8835
+      ]
+     }
+    }
+   }
+  }
+ },
+ "gains": {
+  "int8": {
+   "loc": {
+    "orig": {
+     "entropy": {
+      "gainreq": 0.459,
+      "gainblk": 0.342,
+      "best_b": 2048,
+      "bpe_global": 7.073,
+      "bpe_best": 6.272
+     },
+     "fixed": {
+      "gainreq": 0.57,
+      "gainblk": 0.371,
+      "best_b": 2048,
+      "bpe_global": 7.953,
+      "bpe_best": 7.012
+     }
+    },
+    "shuf": {
+     "entropy": {
+      "gainreq": 0.131,
+      "gainblk": -0.004,
+      "best_b": 4096,
+      "bpe_global": 7.073,
+      "bpe_best": 6.946
+     },
+     "fixed": {
+      "gainreq": 0.118,
+      "gainblk": -0.0,
+      "best_b": 4096,
+      "bpe_global": 7.953,
+      "bpe_best": 7.835
+     }
+    }
+   },
+   "loc+flag": {
+    "orig": {
+     "entropy": {
+      "gainreq": 0.459,
+      "gainblk": 0.342,
+      "best_b": 2048,
+      "bpe_global": 7.073,
+      "bpe_best": 6.272
+     },
+     "fixed": {
+      "gainreq": 0.57,
+      "gainblk": 0.371,
+      "best_b": 2048,
+      "bpe_global": 7.953,
+      "bpe_best": 7.012
+     }
+    },
+    "shuf": {
+     "entropy": {
+      "gainreq": 0.131,
+      "gainblk": -0.004,
+      "best_b": 4096,
+      "bpe_global": 7.073,
+      "bpe_best": 6.947
+     },
+     "fixed": {
+      "gainreq": 0.122,
+      "gainblk": -0.002,
+      "best_b": 4096,
+      "bpe_global": 7.953,
+      "bpe_best": 7.833
+     }
+    }
+   }
+  },
+  "e4m3": {
+   "loc": {
+    "orig": {
+     "entropy": {
+      "gainreq": 0.461,
+      "gainblk": 0.341,
+      "best_b": 2048,
+      "bpe_global": 6.367,
+      "bpe_best": 5.565
+     },
+     "fixed": {
+      "gainreq": 0.061,
+      "gainblk": 0.23,
+      "best_b": 2048,
+      "bpe_global": 8.847,
+      "bpe_best": 8.556
+     }
+    },
+    "shuf": {
+     "entropy": {
+      "gainreq": 0.132,
+      "gainblk": -0.004,
+      "best_b": 4096,
+      "bpe_global": 6.367,
+      "bpe_best": 6.238
+     },
+     "fixed": {
+      "gainreq": 0.019,
+      "gainblk": 0.004,
+      "best_b": 4096,
+      "bpe_global": 8.847,
+      "bpe_best": 8.825
+     }
+    }
+   },
+   "loc+flag": {
+    "orig": {
+     "entropy": {
+      "gainreq": 0.461,
+      "gainblk": 0.34,
+      "best_b": 2048,
+      "bpe_global": 6.367,
+      "bpe_best": 5.566
+     },
+     "fixed": {
+      "gainreq": 0.058,
+      "gainblk": 0.161,
+      "best_b": 2048,
+      "bpe_global": 7.907,
+      "bpe_best": 7.687
+     }
+    },
+    "shuf": {
+     "entropy": {
+      "gainreq": 0.132,
+      "gainblk": -0.004,
+      "best_b": 4096,
+      "bpe_global": 6.367,
+      "bpe_best": 6.238
+     },
+     "fixed": {
+      "gainreq": 0.027,
+      "gainblk": -0.004,
+      "best_b": 4096,
+      "bpe_global": 7.907,
+      "bpe_best": 7.883
+     }
+    }
+   }
+  }
+ },
+ "controls": {
+  "synthetic_truth": {
+   "best_b": 2048,
+   "gainblk": 0.342,
+   "gainreq": 0.459,
+   "float_gainblk": 0.368,
+   "float_gainreq": 0.407,
+   "population_gainblk": 0.5,
+   "population_gainreq": 0.292
+  },
+  "shuffle": {
+   "int8": {
+    "loc": {
+     "gainreq": 0.131,
+     "gainblk": -0.004,
+     "best_b": 4096,
+     "bpe_global": 7.073,
+     "bpe_best": 6.946
+    },
+    "loc+flag": {
+     "gainreq": 0.131,
+     "gainblk": -0.004,
+     "best_b": 4096,
+     "bpe_global": 7.073,
+     "bpe_best": 6.947
+    }
+   },
+   "e4m3": {
+    "loc": {
+     "gainreq": 0.132,
+     "gainblk": -0.004,
+     "best_b": 4096,
+     "bpe_global": 6.367,
+     "bpe_best": 6.238
+    },
+    "loc+flag": {
+     "gainreq": 0.132,
+     "gainblk": -0.004,
+     "best_b": 4096,
+     "bpe_global": 6.367,
+     "bpe_best": 6.238
+    }
+   }
+  },
+  "scope_consistency": "request == block(b = T) for every coder, format and data set, to the bit",
+  "roundtrip": "every block (residuals) + 2048 entries packed to bytes and rebuilt one at a time",
+  "calibration_gap_float": {
+   "n_eval": 8,
+   "by_n_calib": {
+    "2": 0.217,
+    "8": 0.115,
+    "32": 0.069
+   }
+  }
+ },
+ "seconds": 46.1
+}

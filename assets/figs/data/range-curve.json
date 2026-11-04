@@ -1,0 +1,414 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/range_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0096",
+   "r1-t0005",
+   "r1-t0030",
+   "r1-t0031",
+   "r1-t0036",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0046",
+   "r1-t0056",
+   "r1-t0058",
+   "r1-t0068",
+   "r25-t0003",
+   "r6-t0003",
+   "r6-t0004"
+  ],
+  "what": "the compressibility curve under a dictionary budget: x = dictionary share of the raw bytes, y = delta share, ratio = x + y (MDL, all costs included)",
+  "curve": "C1, coder 30-copy-shrink, values of layer 3 head 0 (256 B entries), FP8 E4M3, 4096-token blocks, dev split (2 sequences), no read budget; tracks v-l3h0-fp8-b4k and -x02 / -x10 / -x25 (x_max budgets)",
+  "grades": {
+   "ledger": "ratio, x, y from the ledger row of `trial`",
+   "page": "number as quoted on the receipt page; no ledger row found"
+  },
+  "receipts": [
+   "research/ASK_HUMAN.md r1.Q1 (r1 session-2 measurement of the curve, best coder per budget, 30-copy-shrink)",
+   "research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape]"
+  ],
+  "notes": [
+   "KNOWLEDGE 'Dictionary budgets' section cites 15 trials: of the curve's ['r1-t0030', 'r1-t0031', 'r1-t0036', 'r1-t0037'] it cites [] (budget/frontier quotes coder 30's scores without trial ids); of the best-per-budget extras it cites ['r1-t0042', 'r1-t0046', 'r1-t0056', 'r1-t0058']",
+   "the spec's delta shares 0.441 / 0.322 at x <= 0.25 / free are ratio minus the nominal budget (0.25 / 0.36); the ledger's y are 0.4425 / 0.3250 because x was 0.2481 / 0.3564 — the check table reports the ledger's y"
+  ]
+ },
+ "points": [
+  {
+   "x": 0.0198,
+   "y": 0.7334,
+   "ratio": 0.75321,
+   "coder": 30,
+   "name": "copy-shrink",
+   "track": "v-l3h0-fp8-b4k-x02",
+   "trial": "r1-t0030",
+   "role": "curve",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.02,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 81.282421875,
+   "per_sequence": {
+    "0000": 0.75379,
+    "0001": 0.75263
+   },
+   "note": "C1, dictionary share <= 0.02: coder 30-copy-shrink, values of layer 3 head 0, 4096-token blocks, no read budget; research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape]",
+   "spec": {
+    "ratio": 0.7532,
+    "x": 0.02,
+    "y": 0.733
+   }
+  },
+  {
+   "x": 0.0993,
+   "y": 0.6102,
+   "ratio": 0.70954,
+   "coder": 30,
+   "name": "copy-shrink",
+   "track": "v-l3h0-fp8-b4k-x10",
+   "trial": "r1-t0036",
+   "role": "curve",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.1,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 406.8501775568182,
+   "per_sequence": {
+    "0000": 0.7102,
+    "0001": 0.70888
+   },
+   "note": "C1, dictionary share <= 0.10: coder 30-copy-shrink, values of layer 3 head 0, 4096-token blocks, no read budget; research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape]",
+   "spec": {
+    "ratio": 0.7095,
+    "x": 0.1,
+    "y": 0.61
+   }
+  },
+  {
+   "x": 0.2481,
+   "y": 0.4425,
+   "ratio": 0.69062,
+   "coder": 30,
+   "name": "copy-shrink",
+   "track": "v-l3h0-fp8-b4k-x25",
+   "trial": "r1-t0031",
+   "role": "curve",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.25,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 1016.1551491477272,
+   "per_sequence": {
+    "0000": 0.69176,
+    "0001": 0.68948
+   },
+   "note": "C1, dictionary share <= 0.25: coder 30-copy-shrink, values of layer 3 head 0, 4096-token blocks, no read budget; research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape]",
+   "spec": {
+    "ratio": 0.6906,
+    "x": 0.25,
+    "y": 0.441
+   }
+  },
+  {
+   "x": 0.3564,
+   "y": 0.325,
+   "ratio": 0.68145,
+   "coder": 30,
+   "name": "copy-shrink",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "r1-t0037",
+   "role": "curve",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 1459.8644176136363,
+   "per_sequence": {
+    "0000": 0.68226,
+    "0001": 0.68063
+   },
+   "note": "C1, unconstrained (k = 2): coder 30-copy-shrink, values of layer 3 head 0, 4096-token blocks, no read budget; research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape]",
+   "spec": {
+    "ratio": 0.6815,
+    "x": 0.36,
+    "y": 0.322
+   }
+  },
+  {
+   "x": 0.5247,
+   "y": 0.1116,
+   "ratio": 0.63639,
+   "coder": 121,
+   "name": "stack-rows",
+   "track": "s-layer-b4k-r293",
+   "trial": "env-t0096",
+   "role": "tree",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 72,
+   "w": 2149.3489583333335,
+   "per_sequence": {
+    "0000": 0.6431,
+    "0001": 0.62968
+   },
+   "note": "C2 tree coder 121 stack-rows on layer entries (512 B), the screen of a tenth of the blocks, read budget 293; the heavy point of XII.4-5"
+  },
+  {
+   "x": 0.0212,
+   "y": 0.665,
+   "ratio": 0.68629,
+   "coder": 129,
+   "name": "pure-wls",
+   "track": "s-layer-b4k-r293",
+   "trial": "r25-t0003",
+   "role": "light",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 72,
+   "w": 87.01302083333333,
+   "per_sequence": {
+    "0000": 0.69037,
+    "0001": 0.68221
+   },
+   "note": "C2 light no-tree coder 129 pure-wls on layer entries: 2 % of dictionary buys 0.09 of ratio"
+  },
+  {
+   "x": 0.6705,
+   "y": 0.0,
+   "ratio": 0.67048,
+   "coder": 43,
+   "name": "fast-lean",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "r1-t0068",
+   "role": "all-dictionary",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 2746.296661931818,
+   "per_sequence": {
+    "0000": 0.67143,
+    "0001": 0.66953
+   },
+   "note": "C1 coder 43 fast-lean with every entry in the dictionary (y = 0): the sequential-compression corner, set aside by C1 (about 1,490 reads per entry)"
+  },
+  {
+   "x": 0.0005,
+   "y": 0.8034,
+   "ratio": 0.80385,
+   "coder": 9,
+   "name": "blockstats-logistic-tail",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "r1-t0005",
+   "role": "solo-coded",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 2.0,
+   "per_sequence": {
+    "0000": 0.80405,
+    "0001": 0.80365
+   },
+   "note": "C1 coder 9 blockstats-logistic-tail: per-channel statistics only, the best real solo coder on layer 3 head 0"
+  },
+  {
+   "x": 0.0,
+   "y": 0.7999,
+   "ratio": 0.79989,
+   "coder": null,
+   "name": "solo ideal",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "r1-t0005",
+   "role": "solo-ideal",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "bits": 6.399,
+   "note": "per-channel order-0 entropy of the values of layer 3 head 0: the ledger landmark.solo_ratio of the C1 4k track"
+  },
+  {
+   "x": 0.0,
+   "y": 0.7781,
+   "ratio": 0.77811,
+   "coder": null,
+   "name": "solo ideal, six layers",
+   "track": "s-layer-b4k-r293",
+   "trial": "env-t0096",
+   "role": "solo-ideal-c2",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "bits": 6.225,
+   "note": "the same ideal over all six layers (C2 screens): the solo line of Part XI"
+  },
+  {
+   "x": 0.0,
+   "y": 1.0,
+   "ratio": 1.0,
+   "coder": 1,
+   "name": "baseline",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "env-t0001",
+   "role": "baseline",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 0.0,
+   "per_sequence": {
+    "0000": 1.0,
+    "0001": 1.0
+   },
+   "note": "01-baseline, perc = 0: x + y = 1 by construction"
+  }
+ ],
+ "share_pair": {
+  "from": {
+   "x": 0.5566,
+   "y": 0.1351,
+   "ratio": 0.69167,
+   "coder": 91,
+   "name": "path-records",
+   "track": "s-head-b4k-u",
+   "trial": "r6-t0003",
+   "role": "pair",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 120,
+   "w": 2279.842220052083,
+   "per_sequence": {
+    "0000": 0.69227,
+    "0001": 0.69107
+   },
+   "note": "coder 91 path-records: a tree coder with 0.56 of raw in the dictionary"
+  },
+  "to": {
+   "x": 0.6909,
+   "y": 0.0,
+   "ratio": 0.6909,
+   "coder": 109,
+   "name": "subtree-streams",
+   "track": "s-head-b4k-u",
+   "trial": "r6-t0004",
+   "role": "pair",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 120,
+   "w": 2829.942805989583,
+   "per_sequence": {
+    "0000": 0.6915,
+    "0001": 0.69031
+   },
+   "note": "coder 109 subtree-streams: every byte in the dictionary (x = ratio, y = 0)"
+  },
+  "receipt": "PART-XI-SPEC.md section 1.9 (101 vs 91: x 0.56 -> 1.00 for +0.00004 in-process, 12 blocks); the ledger pair 91 -> 109 is isolated-verified",
+  "delta_ratio": -0.00077
+ },
+ "best_per_budget": [
+  {
+   "x": 0.0199,
+   "y": 0.726,
+   "ratio": 0.74586,
+   "coder": 49,
+   "name": "facility-codelen",
+   "track": "v-l3h0-fp8-b4k-x02",
+   "trial": "r1-t0058",
+   "role": "best-per-budget",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.02,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 81.43892045454545,
+   "per_sequence": {
+    "0000": 0.74647,
+    "0001": 0.74526
+   },
+   "note": "the best coder at this budget by the end of C1 (research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape])"
+  },
+  {
+   "x": 0.0992,
+   "y": 0.5965,
+   "ratio": 0.69565,
+   "coder": 49,
+   "name": "facility-codelen",
+   "track": "v-l3h0-fp8-b4k-x10",
+   "trial": "r1-t0056",
+   "role": "best-per-budget",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.1,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 406.17404119318184,
+   "per_sequence": {
+    "0000": 0.6963,
+    "0001": 0.69499
+   },
+   "note": "the best coder at this budget by the end of C1 (research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape])"
+  },
+  {
+   "x": 0.2477,
+   "y": 0.4384,
+   "ratio": 0.68603,
+   "coder": 37,
+   "name": "lean-tables",
+   "track": "v-l3h0-fp8-b4k-x25",
+   "trial": "r1-t0046",
+   "role": "best-per-budget",
+   "grade": "ledger",
+   "verified": true,
+   "budget": 0.25,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 1014.4813920454545,
+   "per_sequence": {
+    "0000": 0.68709,
+    "0001": 0.68498
+   },
+   "note": "the best coder at this budget by the end of C1 (research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape])"
+  },
+  {
+   "x": 0.4061,
+   "y": 0.267,
+   "ratio": 0.67309,
+   "coder": 34,
+   "name": "mst-anchors",
+   "track": "v-l3h0-fp8-b4k",
+   "trial": "r1-t0042",
+   "role": "best-per-budget",
+   "grade": "ledger",
+   "verified": true,
+   "budget": null,
+   "b": 4096,
+   "n_blocks": 110,
+   "w": 1663.4356889204546,
+   "per_sequence": {
+    "0000": 0.67404,
+    "0001": 0.67213
+   },
+   "note": "the best coder at this budget by the end of C1 (research/c1/KNOWLEDGE.md [budget/frontier], [budget/shape])"
+  }
+ ]
+}

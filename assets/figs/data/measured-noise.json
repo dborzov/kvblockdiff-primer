@@ -1,0 +1,391 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/measured_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0005",
+   "env-t0006",
+   "env-t0007",
+   "env-t0009",
+   "env-t0010",
+   "env-t0011",
+   "env-t0012",
+   "env-t0013",
+   "env-t0088",
+   "env-t0089",
+   "env-t0090",
+   "env-t0091",
+   "env-t0092",
+   "env-t0093",
+   "env-t0094",
+   "env-t0095",
+   "env-t0096",
+   "env-t0097",
+   "r1-t0005",
+   "r1-t0008",
+   "r1-t0009",
+   "r1-t0014",
+   "r1-t0019",
+   "r1-t0021",
+   "r1-t0035",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0045",
+   "r1-t0068",
+   "r11-t0001",
+   "r11-t0002",
+   "r11-t0003",
+   "r12-t0001",
+   "r12-t0002",
+   "r12-t0004",
+   "r12-t0005",
+   "r12-t0006",
+   "r12-t0007",
+   "r14-t0006",
+   "r16-t0001",
+   "r16-t0003",
+   "r17-t0001",
+   "r18-t0001",
+   "r18-t0002",
+   "r20-t0001",
+   "r20-t0002",
+   "r21-t0001",
+   "r21-t0002",
+   "r22-t0001",
+   "r22-t0003",
+   "r22-t0005",
+   "r24-t0001",
+   "r24-t0002",
+   "r24-t0003",
+   "r24-t0004",
+   "r25-t0003",
+   "r25-t0004",
+   "r26-t0002",
+   "r26-t0008",
+   "r26-t0011",
+   "r3-t0002",
+   "r4-t0008",
+   "r4-t0019",
+   "r6-t0003",
+   "r6-t0004",
+   "r7-t0001",
+   "r7-t0002",
+   "r7-t0003",
+   "r7-t0004",
+   "r8-t0002",
+   "r8-t0003"
+  ],
+  "hand_entered": "analysis/measured_pages.json (blocks carry their own receipt)",
+  "notes": [
+   "five_sequences, escalation, trap scores and between_sequence_sd_ledger are computed from ledger per_sequence ratios (sample SD, n-1)",
+   "between-sequence SD 0.012 is the page's figure over 20 sequences (hand-entered); the 5-sequence ledger SDs are smaller (0.007) because 5 sequences is a small sample",
+   "the screen deltas are two-sequence screens; the five-sequence deltas are st02n5-layer-b4k-r293, all isolated-verified"
+  ]
+ },
+ "five_sequences": {
+  "track": "st02n5-layer-b4k-r293",
+  "n_blocks": 182,
+  "n_entries": 745472,
+  "sequences": [
+   "0000",
+   "0001",
+   "0002",
+   "0003",
+   "0004"
+  ],
+  "coder_121": {
+   "trial": "env-t0096",
+   "ratio": 0.6297,
+   "per_sequence": {
+    "0000": 0.6414,
+    "0001": 0.62464,
+    "0002": 0.63118,
+    "0003": 0.62817,
+    "0004": 0.6231
+   },
+   "reads_mean": 119.7,
+   "reads_every_entry": true,
+   "verified": true
+  },
+  "coder_102": {
+   "trial": "r24-t0002",
+   "ratio": 0.63848,
+   "per_sequence": {
+    "0000": 0.65023,
+    "0001": 0.63351,
+    "0002": 0.63979,
+    "0003": 0.63691,
+    "0004": 0.63196
+   },
+   "reads_mean": 102.9,
+   "reads_every_entry": false,
+   "verified": true
+  },
+  "paired_difference": {
+   "per_sequence": {
+    "0000": -0.00883,
+    "0001": -0.00887,
+    "0002": -0.00861,
+    "0003": -0.00874,
+    "0004": -0.00886
+   },
+   "mean": -0.00878,
+   "sd": 0.00011,
+   "grade_in_ledger": "better-t95",
+   "graded_trial": "env-t0007 (same bytes as env-t0096, reads sampled)"
+  }
+ },
+ "between_sequence_sd_ledger": {
+  "coder_121_5_seq": 0.00726,
+  "coder_102_5_seq": 0.00724,
+  "coder_94_10_seq_token": 0.01504,
+  "coder_62_5_seq_head": 0.00684
+ },
+ "escalation": [
+  {
+   "pair": "102 vs 89",
+   "screen": {
+    "track": "s-layer-b4k-r293",
+    "a": {
+     "trial": "r11-t0002",
+     "coder": 102,
+     "ratio": 0.64494
+    },
+    "b": {
+     "trial": "r11-t0003",
+     "coder": 89,
+     "ratio": 0.64704
+    },
+    "delta": -0.0021,
+    "per_sequence": null,
+    "sd": null
+   },
+   "five_sequences": {
+    "track": "st02n5-layer-b4k-r293",
+    "a": {
+     "trial": "r24-t0002",
+     "coder": 102,
+     "ratio": 0.63848
+    },
+    "b": {
+     "trial": "r12-t0007",
+     "coder": 89,
+     "ratio": 0.6406
+    },
+    "delta": -0.00212,
+    "per_sequence": {
+     "0000": -0.00203,
+     "0001": -0.00212,
+     "0002": -0.00212,
+     "0003": -0.00216,
+     "0004": -0.00218
+    },
+    "sd": 6e-05
+   },
+   "held": true
+  },
+  {
+   "pair": "89 vs 71",
+   "screen": {
+    "track": "s-layer-b4k-r293",
+    "a": {
+     "trial": "r11-t0003",
+     "coder": 89,
+     "ratio": 0.64704
+    },
+    "b": {
+     "trial": "r7-t0001",
+     "coder": 71,
+     "ratio": 0.67746
+    },
+    "delta": -0.03041,
+    "per_sequence": null,
+    "sd": null
+   },
+   "five_sequences": {
+    "track": "st02n5-layer-b4k-r293",
+    "a": {
+     "trial": "r12-t0007",
+     "coder": 89,
+     "ratio": 0.6406
+    },
+    "b": {
+     "trial": "r24-t0003",
+     "coder": 71,
+     "ratio": 0.67212
+    },
+    "delta": -0.03153,
+    "per_sequence": {
+     "0000": -0.03134,
+     "0001": -0.03225,
+     "0002": -0.0311,
+     "0003": -0.03122,
+     "0004": -0.03171
+    },
+    "sd": 0.00047
+   },
+   "held": true
+  },
+  {
+   "pair": "100 vs 89",
+   "screen": {
+    "track": "s-layer-b4k-r293",
+    "a": {
+     "trial": "env-t0013",
+     "coder": 100,
+     "ratio": 0.64879
+    },
+    "b": {
+     "trial": "r11-t0003",
+     "coder": 89,
+     "ratio": 0.64704
+    },
+    "delta": 0.00174,
+    "per_sequence": null,
+    "sd": null
+   },
+   "five_sequences": {
+    "track": "st02n5-layer-b4k-r293",
+    "a": {
+     "trial": "r24-t0001",
+     "coder": 100,
+     "ratio": 0.64254
+    },
+    "b": {
+     "trial": "r12-t0007",
+     "coder": 89,
+     "ratio": 0.6406
+    },
+    "delta": 0.00195,
+    "per_sequence": {
+     "0000": 0.00213,
+     "0001": 0.00205,
+     "0002": 0.00189,
+     "0003": 0.00179,
+     "0004": 0.00184
+    },
+    "sd": 0.00014
+   },
+   "held": true
+  },
+  {
+   "pair": "121 vs 102",
+   "screen": {
+    "track": "s-layer-b4k-r293",
+    "a": {
+     "trial": "env-t0096",
+     "coder": 121,
+     "ratio": 0.63639
+    },
+    "b": {
+     "trial": "r11-t0002",
+     "coder": 102,
+     "ratio": 0.64494
+    },
+    "delta": -0.00855,
+    "per_sequence": null,
+    "sd": null
+   },
+   "five_sequences": {
+    "track": "st02n5-layer-b4k-r293",
+    "a": {
+     "trial": "env-t0096",
+     "coder": 121,
+     "ratio": 0.6297
+    },
+    "b": {
+     "trial": "r24-t0002",
+     "coder": 102,
+     "ratio": 0.63848
+    },
+    "delta": -0.00878,
+    "per_sequence": {
+     "0000": -0.00883,
+     "0001": -0.00887,
+     "0002": -0.00861,
+     "0003": -0.00874,
+     "0004": -0.00886
+    },
+    "sd": 0.00011
+   },
+   "held": true
+  }
+ ],
+ "trap": {
+  "layer_screen": {
+   "coder": 102,
+   "trial": "r11-t0002",
+   "ratio": 0.64494
+  },
+  "token_screen": {
+   "coder": 94,
+   "trial": "r8-t0003",
+   "ratio": 0.64611
+  },
+  "same_window_token_minus_layer": -0.00432,
+  "agree": "20 of 20",
+  "token_screen_harder_by": 0.00462,
+  "note": "scores from two screens read different blocks and cannot be subtracted"
+ },
+ "page_numbers": {
+  "receipt": "research/agents/r12/pages/iter-1-1.md and iter-1-2.md; research/agents/r12/journal/SESSION-001.md line 42 (r = -0.91); KNOWLEDGE [noise/*]",
+  "between_sequence_sd_20_sequences": 0.012,
+  "paired_sd_range": [
+   0.0001,
+   0.001
+  ],
+  "c1_detection_limit": 0.002,
+  "limit_over_paired_noise": [
+   5,
+   30
+  ],
+  "hidden_effect_example": {
+   "label": "neighbour term, 62 x0 vs 50 on head",
+   "delta": -0.00059,
+   "sd": 7e-05
+  },
+  "screen_offset_from_full_track": {
+   "token": 0.00462,
+   "pair": -0.00206,
+   "note": "the same for every coder within 0.0001"
+  },
+  "hardness": {
+   "one_number_per_window_share": 0.97,
+   "r_between_heads": 0.99,
+   "r_L3_L23": 0.96,
+   "r_repeated_token_share": -0.91,
+   "gain_variance_between_layers": 0.99,
+   "windows": 110
+  }
+ },
+ "how_the_day_ran": {
+  "receipt": "research/agents/env/pages/retro-review.md; research/agents/env/journal/SUPERVISOR.md",
+  "crash_utc": "12:35",
+  "empty_git_objects": 14,
+  "researchers_at_peak": 12,
+  "threads": 16,
+  "verification_minutes": {
+   "planned": 10,
+   "observed": 50,
+   "cut_to_agents": 7
+  },
+  "status_loop_hung_minutes": 55,
+  "failing_tests_in_one_commit": 9,
+  "false_lossy_coders": 2,
+  "duplicate_ledger_rows": 74,
+  "duplicate_rows_note": "env-t0014..env-t0087, counted again from the ledger by the script",
+  "duplicate_rows_counted": 74
+ },
+ "campaign_scale": {
+  "ledger_trials": {
+   "C1": 218,
+   "C2": 169
+  },
+  "agents_with_ledgers": 23,
+  "coders": 126,
+  "note": "C2 169 trials include the 74 duplicate rows"
+ }
+}

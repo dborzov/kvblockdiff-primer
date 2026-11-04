@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VII.12 Keys before RoPE; keys and values apart — kv-blockdiff</title>
+<meta name="description" content="RoPE spins pairs of key elements by an angle that grows with position, smearing a tidy cluster into a ring. Store keys before the spin. And treat keys and values as two problems,...">
+<script>try{var t=localStorage.getItem('kvp.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Alegreya+Sans+SC:wght@400;500;700&family=Cinzel+Decorative:wght@700;900&family=Federo&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/tokens.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/gen/terms.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/site.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/figures.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/css/cards.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/figs/idea.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/figs/missed-a.css">
+<link rel="stylesheet" href="/kvblockdiff-primer/assets/figs/missed-b.css">
+<link rel="icon" href="/kvblockdiff-primer/assets/img/favicon.svg" type="image/svg+xml">
+<script>window.KV={page:{"id":"hypotheses-keys-and-values","num":"VII.12","title":"Keys before RoPE; keys and values apart","part":"VII","url":"/kvblockdiff-primer/hypotheses/keys-and-values/"}};</script>
+<script src="/kvblockdiff-primer/assets/gen/site-data.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/vendor/katex/katex.min.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/core.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/plotkit.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cgraph.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/cards.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/js/figs-loader.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/figs/idea.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/figs/missed-a.js"></script>
+<script defer="" src="/kvblockdiff-primer/assets/figs/missed-b.js"></script>
+</head>
+<body data-page-id="hypotheses-keys-and-values" data-page-num="VII.12" data-page-title="Keys before RoPE; keys and values apart" data-part="VII" class="is-page" style="--c:var(--part-VII)">
+<svg class="sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+<!-- 24×24 line emblems. Stroke and colour come from CSS (.emb { stroke: currentColor }).
+     A brand term's emblem is named in data/terms/*.yaml ("emblem: compass"). -->
+<defs>
+<!-- ui -->
+<symbol id="emb-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+<symbol id="emb-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></symbol>
+<symbol id="emb-cards" viewBox="0 0 24 24"><rect x="3" y="6.5" width="12" height="14.5" rx="2"></rect><path d="M8 3.5h10.5a2 2 0 0 1 2 2V18"></path><path d="M9 11l1.5 2.5L9 16l-1.5-2.5z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-book" viewBox="0 0 24 24"><path d="M4 5.5a2.5 2.5 0 0 1 2.5-2.5H19v15.5H6.5A2.5 2.5 0 0 0 4 21z"></path><path d="M4 21V5.5M8.5 7.5h6M8.5 10.5h4"></path></symbol>
+<symbol id="emb-sigma" viewBox="0 0 24 24"><path d="M17.5 5H6.5l6.2 7-6.2 7h11"></path></symbol>
+<symbol id="emb-lighthouse" viewBox="0 0 24 24"><path d="M9.8 21l1.2-11.5h2L14.2 21z"></path><path d="M9.3 9.5h5.4M12 3.2l2.4 3.3H9.6z"></path><path d="M3.5 5.5l4.3 2M20.5 5.5l-4.3 2M3.5 9.5l4.3-.6M20.5 9.5l-4.3-.6M6 21h12"></path></symbol>
+<symbol id="emb-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.2"></circle><path d="M11 11l9.5 9.5M16.5 16.5l2.2-2.2M18.7 18.7l2-2"></path></symbol>
+<symbol id="emb-delta" viewBox="0 0 24 24"><path d="M12 3.5L3 20h18z"></path><path d="M12 10.5l-3.4 6h6.8z" style="fill:currentColor;stroke:none"></path></symbol>
+<!-- note kinds -->
+<symbol id="emb-spark" viewBox="0 0 24 24"><path d="M12 2.5v4.5M12 17v4.5M2.5 12H7M17 12h4.5M5.3 5.3l3 3M15.7 15.7l3 3M18.7 5.3l-3 3M8.3 15.7l-3 3"></path><circle cx="12" cy="12" r="2.2" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-quill" viewBox="0 0 24 24"><path d="M20.5 3.5C13 4.5 8.5 9.5 6.5 16.5L5 20.5"></path><path d="M20.5 3.5c-1 6-5 10.5-11.5 11.5"></path><path d="M9 15l-2.8-2.8"></path></symbol>
+<symbol id="emb-abacus" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"></rect><path d="M3 9h18M3 15h18"></path><circle cx="7.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="12.5" cy="9" r="1.7" style="fill:currentColor"></circle><circle cx="10" cy="15" r="1.7" style="fill:currentColor"></circle><circle cx="16.5" cy="15" r="1.7" style="fill:currentColor"></circle></symbol>
+<symbol id="emb-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></symbol>
+<symbol id="emb-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.3"></circle><circle cx="12" cy="12" r="7"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"></path></symbol>
+<symbol id="emb-warn" viewBox="0 0 24 24"><path d="M12 3.5L2.5 20h19z"></path><path d="M12 10v4.5"></path><circle cx="12" cy="17.3" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-scroll" viewBox="0 0 24 24"><path d="M6.5 4H17a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7.5"></path><path d="M6.5 4a2 2 0 0 0-2 2v1.5h4V6a2 2 0 0 0-2-2zM7.5 20a2 2 0 0 1-2-2v-1h4v1a2 2 0 0 1-2 2"></path><path d="M10.5 9h5.5M10.5 12.5h5.5"></path></symbol>
+<symbol id="emb-gauge" viewBox="0 0 24 24"><path d="M3.5 17a8.5 8.5 0 1 1 17 0"></path><path d="M12 17l4.2-6.3"></path><circle cx="12" cy="17" r="1.4" style="fill:currentColor"></circle><path d="M6 12.5l1.3.8M18 12.5l-1.3.8M12 8.5V10"></path></symbol>
+<symbol id="emb-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.8.3-1.1 1-1.1 1.8"></path><circle cx="12" cy="16.9" r="1" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- dictionary types -->
+<symbol id="emb-lantern" viewBox="0 0 24 24"><path d="M9 5h6M12 2.5V5"></path><path d="M7.5 7h9l-1.2 11.5H8.7z"></path><path d="M6.5 7h11M6.5 18.5h11"></path><path d="M12 10.3c1.4 1.4 1.4 3 0 4.4-1.4-1.4-1.4-3 0-4.4z" style="fill:currentColor;stroke:none"></path></symbol>
+<symbol id="emb-anchor" viewBox="0 0 24 24"><circle cx="12" cy="4.8" r="2.1"></circle><path d="M12 7v14M8 10.5h8M4 13.5c0 4.3 3.6 7.5 8 7.5s8-3.2 8-7.5"></path><path d="M4 13.5l-1.8 2.2M4 13.5l2.6.9M20 13.5l1.8 2.2M20 13.5l-2.6.9"></path></symbol>
+<symbol id="emb-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.3"></circle><path d="M12 3.8l1.9 6.3 6.3 1.9-6.3 1.9-1.9 6.3-1.9-6.3L3.8 12l6.3-1.9z"></path><path d="M12 6.5l1 4.5 4.5 1-4.5 1-1 4.5-1-4.5-4.5-1 4.5-1z" style="fill:currentColor;stroke:none;opacity:.55"></path></symbol>
+<symbol id="emb-hive" viewBox="0 0 24 24"><path d="M7 3.5l3.2 1.8v3.7L7 10.8 3.8 9V5.3z"></path><path d="M17 3.5l3.2 1.8v3.7L17 10.8 13.8 9V5.3z"></path><path d="M12 12.4l3.2 1.8v3.7L12 19.7l-3.2-1.8v-3.7z"></path><circle cx="7" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="17" cy="7.2" r="1.1" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="16" r="1.1" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-twins" viewBox="0 0 24 24"><circle cx="8.8" cy="12" r="5.6"></circle><circle cx="15.2" cy="12" r="5.6"></circle><circle cx="8.8" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="12" r="1.2" style="fill:currentColor;stroke:none"></circle></symbol>
+<!-- properties -->
+<symbol id="emb-clover" viewBox="0 0 24 24"><path d="M12 11.5C9 11 6.2 9.8 6.6 7.2 7 5 9.6 5 10.6 6.6 10.4 4.8 12.5 3.5 14.2 4.6c1.9 1.3.6 4.6-2.2 6.9zM12 11.5c3-.5 5.8-1.7 5.4-4.3"></path><path d="M11.6 12c-3 .5-5.8 1.7-5.4 4.3.4 2.2 3 2.2 4 .6-.2 1.8 1.9 3.1 3.6 2 1.9-1.3.6-4.6-2.2-6.9zM12.2 12c2.9.7 5.6 2 5.1 4.6-.5 2.1-3.2 2-4.1.3"></path><path d="M12.5 12.3c1.9 2.8 3.6 5.4 6.5 8.2"></path></symbol>
+<symbol id="emb-apple" viewBox="0 0 24 24"><path d="M12 7.3c-2-1.6-6.2-1.3-7 3.1-.8 4.3 2.3 10.1 5 10.1.9 0 1.3-.5 2-.5s1.1.5 2 .5c2.7 0 5.8-5.8 5-10.1-.8-4.4-5-4.7-7-3.1z"></path><path d="M12 7.3c0-2.1 1-3.7 2.6-4.3"></path><path d="M12.6 5.8c1.6-.2 3.3-1.1 3.8-2.6-1.7-.2-3.3.6-3.8 2.6z" style="fill:currentColor"></path></symbol>
+<symbol id="emb-stairs" viewBox="0 0 24 24"><path d="M3 20.5h4.5V16H12v-4.5h4.5V7H21"></path><path d="M3 20.5h18"></path><path d="M14 3.5h5.5V9"></path></symbol>
+<symbol id="emb-houses" viewBox="0 0 24 24"><path d="M2.5 11.5l4.5-4.5 4.5 4.5v8.5h-9zM12.5 11.5l4.5-4.5 4.5 4.5v8.5h-9z"></path><path d="M5.5 20v-3.5h3V20M15.5 20v-3.5h3V20"></path></symbol>
+<!-- scopes -->
+<symbol id="emb-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.9 2.6 2.9 15.4 0 18M12 3c-2.9 2.6-2.9 15.4 0 18M4.5 7.5h15M4.5 16.5h15"></path></symbol>
+<symbol id="emb-spool" viewBox="0 0 24 24"><path d="M6.5 4h11M6.5 20h11"></path><path d="M8 4v16M16 4v16"></path><path d="M8 7.5l8 2M8 11l8 2M8 14.5l8 2"></path><path d="M16 17c3 0 4.3 1.6 3.3 4"></path></symbol>
+<symbol id="emb-brick" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="1"></rect><path d="M2.5 12h19M9 5.5V12M15 12v6.5"></path></symbol>
+<!-- project objects -->
+<symbol id="emb-tile" viewBox="0 0 24 24"><rect x="6" y="4.5" width="12" height="15" rx="2"></rect><path d="M9 8.5h6M9 11.5h6M9 14.5h4"></path></symbol>
+<symbol id="emb-tiles" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="9.5" y="6.5" width="5" height="11" rx="1"></rect><rect x="16.5" y="6.5" width="5" height="11" rx="1"></rect></symbol>
+<symbol id="emb-flame" viewBox="0 0 24 24"><path d="M12 21c-4 0-6.5-2.8-6.5-6.3 0-3.7 3.2-5.5 3.7-9.2 2.6 1.6 3.4 4 3.3 5.8 1-.7 1.7-2 1.8-3.3 2.4 2 3.2 4.3 3.2 6.6 0 3.6-2.6 6.4-5.5 6.4z"></path><path d="M12 21c-1.6 0-2.6-1.1-2.6-2.6 0-1.6 1.4-2.4 1.8-4 1.3 1 2.2 2 2.2 3.6 0 1.7-.6 3-1.4 3z" style="fill:currentColor;stroke:none;opacity:.6"></path></symbol>
+<symbol id="emb-shelf" viewBox="0 0 24 24"><path d="M3 20.5h18M3.5 20.5V5M20.5 20.5V5"></path><path d="M6 20.5V8.5h3v12M10.5 20.5V6h3v14.5M15 20.5l-.2-9.5 3-.6 1.4 10.1"></path></symbol>
+<symbol id="emb-dart" viewBox="0 0 24 24"><path d="M14 5.5l-6.5 12h13z"></path><path d="M2 9h6M3 13h4M2 17h3"></path></symbol>
+<symbol id="emb-crate" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="13.5" rx="1"></rect><path d="M3.5 10.5h17M9 6v4.5M15 6v4.5M3.5 6l17 13.5M20.5 6l-17 13.5" style="opacity:.55"></path></symbol>
+<symbol id="emb-ruler" viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1"></rect><path d="M6 8v3M9.5 8v4.5M13 8v3M16.5 8v4.5M20 8v3"></path></symbol>
+<symbol id="emb-weight" viewBox="0 0 24 24"><path d="M8.5 8.5a3.5 3.5 0 1 1 7 0"></path><path d="M6 9.5h12l2.2 11H3.8z"></path></symbol>
+<symbol id="emb-lifebuoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"></path></symbol>
+<symbol id="emb-roofline" viewBox="0 0 24 24"><path d="M3 3v18h18"></path><path d="M5 5c2.5 6 7 10.5 15 12"></path><circle cx="9" cy="15.5" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="14" cy="18.2" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="7.2" cy="12.6" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-magnifier" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.2"></circle><path d="M15 15l5.5 5.5M8 10.5h5"></path></symbol>
+<symbol id="emb-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.4-6.5-11a6.5 6.5 0 0 1 13 0c0 4.6-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.4"></circle></symbol>
+<symbol id="emb-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"></path><path d="M3 12.5l9 5 9-5M3 16.5l9 5 9-5"></path></symbol>
+<symbol id="emb-ladder" viewBox="0 0 24 24"><path d="M7 2.5v19M17 2.5v19M7 6.5h10M7 11.5h10M7 16.5h10"></path></symbol>
+<symbol id="emb-cat" viewBox="0 0 24 24"><path d="M5 20.5v-8.3L4 5.5l4.3 3.2h7.4L20 5.5l-1 6.7v8.3z"></path><circle cx="9.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><circle cx="14.5" cy="13.5" r="1" style="fill:currentColor;stroke:none"></circle><path d="M11 16.5h2l-1 1z"></path></symbol>
+<symbol id="emb-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6.2L4.6 18.4A1.8 1.8 0 0 0 6.2 21h11.6a1.8 1.8 0 0 0 1.6-2.6L14 9.2V3"></path><path d="M7.3 15h9.4"></path></symbol>
+<symbol id="emb-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"></path><path d="M9 4v14M15 6v14"></path></symbol>
+<symbol id="emb-flag" viewBox="0 0 24 24"><path d="M5 21V3.5M5 4h12.5l-2.2 4 2.2 4H5"></path></symbol>
+<symbol id="emb-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8.2-8 9-4.5-.8-8-4-8-9V6z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></symbol>
+<symbol id="emb-zip" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M12 3v2M12 7v2M12 11v2"></path><rect x="10.3" y="14" width="3.4" height="4.2" rx=".9"></rect></symbol>
+<symbol id="emb-braces" viewBox="0 0 24 24"><path d="M9 4C7 4 6 5 6 7v2.2c0 1.4-1 2.4-2.5 2.8 1.5.4 2.5 1.4 2.5 2.8V17c0 2 1 3 3 3M15 4c2 0 3 1 3 3v2.2c0 1.4 1 2.4 2.5 2.8-1.5.4-2.5 1.4-2.5 2.8V17c0 2-1 3-3 3"></path></symbol>
+<symbol id="emb-arrow" viewBox="0 0 24 24"><path d="M4.5 19.5L19 5"></path><path d="M19 5h-6.5M19 5v6.5"></path></symbol>
+<symbol id="emb-loggrid" viewBox="0 0 24 24"><path d="M2.5 18.5h19"></path><path d="M12 14v9M13.2 15.5v6M14.6 16v5M16.6 16.5v4M19.6 17v3M10.8 15.5v6M9.4 16v5M7.4 16.5v4M4.4 17v3"></path><path d="M5 5h14" style="opacity:.5"></path><path d="M5 3.5v3M8.5 3.5v3M12 3.5v3M15.5 3.5v3M19 3.5v3"></path></symbol>
+<symbol id="emb-cycle" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"></path><path d="M20 4.5v4h-4"></path></symbol>
+<symbol id="emb-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5L4.5 14h7l-1 7.5 9-11.5h-7z"></path></symbol>
+<symbol id="emb-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7.5 3c0 5.5 9 5.5 9 9s-9 3.5-9 9M16.5 3c0 5.5-9 5.5-9 9s9 3.5 9 9"></path></symbol>
+<symbol id="emb-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"></path><path d="M14.5 7.5v1.5M14.5 11.2v1.6M14.5 15v1.5"></path></symbol>
+<symbol id="emb-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.2"></rect><circle cx="8.8" cy="8.8" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="12" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="15.2" cy="15.2" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.6" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-telegraph" viewBox="0 0 24 24"><path d="M3 19h18M6 19v-3.5h12V19M8.5 15.5l7.5-6"></path><circle cx="16.8" cy="8.8" r="1.9"></circle><path d="M3 9.5h2M3 12h3.5"></path></symbol>
+<!-- categories -->
+<symbol id="emb-envelope" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="1.5"></rect><path d="M3.5 6.5l8.5 7 8.5-7"></path></symbol>
+<symbol id="emb-bell" viewBox="0 0 24 24"><path d="M2 19.5c4 0 5.2-12.5 10-12.5s6 12.5 10 12.5"></path><path d="M2 19.5h20M12 7v12.5" style="opacity:.5"></path></symbol>
+<symbol id="emb-axes" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"></path><path d="M4 20l12-9.5"></path><path d="M16 10.5l-3.3.2M16 10.5l-1.2 3"></path></symbol>
+<symbol id="emb-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><rect x="9.5" y="9.5" width="5" height="5" rx=".6"></rect><path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"></path></symbol>
+<symbol id="emb-eye" viewBox="0 0 24 24"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+<symbol id="emb-seal" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6"></circle><circle cx="12" cy="9.5" r="3" style="opacity:.6"></circle><path d="M8.5 14.5l-1.6 6.5 5.1-2.6 5.1 2.6-1.6-6.5"></path></symbol>
+<!-- weather (toy world) -->
+<symbol id="emb-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"></path></symbol>
+<symbol id="emb-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.2 4.2 0 0 1-.6-8.4 5.8 5.8 0 0 1 11.2 1.6 3.4 3.4 0 0 1-.4 6.8z"></path></symbol>
+<symbol id="emb-rain" viewBox="0 0 24 24"><path d="M7 14.5a4.2 4.2 0 0 1-.6-8.4A5.8 5.8 0 0 1 17.6 7.7a3.4 3.4 0 0 1-.4 6.8z"></path><path d="M8.5 17.5l-1 3M12.5 17.5l-1 3M16.5 17.5l-1 3"></path></symbol>
+<symbol id="emb-fog" viewBox="0 0 24 24"><path d="M3 8h13M6 12h15M3 16h12M8 20h11"></path></symbol>
+<!-- the orchard (brand terms: orchard, furrow, cherry, punnet, leash, stereo, echo) -->
+<symbol id="emb-cherry" viewBox="0 0 24 24"><circle cx="8.3" cy="16.5" r="3.3"></circle><circle cx="15.7" cy="15.5" r="3.3"></circle><path d="M8.3 13.2c.4-4 2.4-7.2 5.2-9.7M15.7 12.2c-.3-3.4-1.1-6.3-2.2-8.7"></path><path d="M13.5 3.5c2.4-.6 4.5.3 5.6 2.4-2.4.7-4.5-.1-5.6-2.4z" style="fill:currentColor"></path></symbol>
+<symbol id="emb-basket" viewBox="0 0 24 24"><path d="M3.5 11.5h17l-1.4 9H4.9z"></path><path d="M5 11.5a2.5 2.5 0 0 1 5 0M14 11.5a2.5 2.5 0 0 1 5 0"></path><circle cx="12" cy="8.3" r="2.5"></circle><path d="M7.5 15h9"></path></symbol>
+<symbol id="emb-tree" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6.8"></circle><path d="M12 16.3V21M8.5 21h7"></path><circle cx="9.3" cy="8" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="14.6" cy="10.2" r="1.2" style="fill:currentColor;stroke:none"></circle><circle cx="11" cy="12.4" r="1.2" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-furrow" viewBox="0 0 24 24"><path d="M2.5 6.5h19"></path><path d="M3 21l7.4-11.8M12 21V9.2M21 21l-7.4-11.8"></path></symbol>
+<symbol id="emb-leash" viewBox="0 0 24 24"><circle cx="6.8" cy="7" r="3.3"></circle><path d="M9.6 8.6c3.6 1.4 6.2 4 7.7 7.6"></path><circle cx="18.3" cy="18.5" r="2.5"></circle></symbol>
+<symbol id="emb-stereo" viewBox="0 0 24 24"><circle cx="7.8" cy="12" r="5.4"></circle><circle cx="16.2" cy="12" r="5.4"></circle><circle cx="7.8" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle><circle cx="16.2" cy="12" r="1.3" style="fill:currentColor;stroke:none"></circle></symbol>
+<symbol id="emb-echo" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" style="fill:currentColor;stroke:none"></circle><path d="M8.5 8.5a5 5 0 0 1 0 7M12 5.5a9.5 9.5 0 0 1 0 13M15.5 2.8a13.5 13.5 0 0 1 0 18.4"></path></symbol>
+</defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="ib menu-btn" type="button" aria-label="Open the table of contents" aria-controls="sidenav" aria-expanded="false"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-menu"></use></svg></button>
+  <a class="site-brand" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-delta"></use></svg><span class="brand-name">kv-blockdiff</span><span class="brand-sub">primer &amp; proposal</span></a>
+  <div class="crumb"><span class="crumb-part">Part VII · Hypotheses</span><span class="crumb-sep">›</span><span class="crumb-page"><b>VII.12</b> Keys and values</span></div>
+  <a id="deck-count" class="deck-count" href="/kvblockdiff-primer/practice/" title="Your flashcard deck"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span class="dc-n">0</span></a>
+  <button id="setting-pill" class="setting-pill" type="button" data-setting="pin" aria-label="Reference setting for the examples: the Pin. Press to switch." title="the Pin: GLM-5.1 on 8 × H200, as HiSparse serves it, at 8-bit storage"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-pin"></use></svg><span class="sp-label" aria-live="polite">the Pin</span></button>
+  <button class="ib theme-btn" type="button" aria-label="Switch between light and dark"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-moon"></use></svg></button>
+</header>
+
+<nav id="sidenav" class="sidenav" aria-label="Table of contents">
+  <div class="sn-top">
+    <a class="sn-home" href="/kvblockdiff-primer/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-lighthouse"></use></svg><span>Start here</span></a>
+    <button class="ib sn-close" type="button" aria-label="Close the table of contents">×</button>
+  </div>
+  <details class="sn-part" style="--pc:var(--part-I)">
+    <summary><span class="sn-roman">I</span><span class="sn-title">The tiny-file problem</span><span class="sn-count">6</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/tiny-files/notice-anything/" data-page="tiny-files-notice-anything"><span class="sn-num">I.1</span><span class="sn-name">Notice anything?</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/one-at-a-time/" data-page="tiny-files-one-at-a-time"><span class="sn-num">I.2</span><span class="sn-name">One message alone</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/trained-dictionary/" data-page="tiny-files-trained-dictionary"><span class="sn-num">I.3</span><span class="sn-name">The trained dictionary</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/three-lessons/" data-page="tiny-files-three-lessons"><span class="sn-num">I.4</span><span class="sn-name">Three lessons</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/vectors-not-text/" data-page="tiny-files-vectors-not-text"><span class="sn-num">I.5</span><span class="sn-name">Lists of numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/tiny-files/profile/" data-page="tiny-files-profile"><span class="sn-num">I.6</span><span class="sn-name">The profile</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-II)">
+    <summary><span class="sn-roman">II</span><span class="sn-title">Back to school</span><span class="sn-count">25</span></summary>
+    <ol class="sn-pages">
+      <li><a href="/kvblockdiff-primer/school/why-school/" data-page="school-why-school"><span class="sn-num">II.1</span><span class="sn-name">Why go back to school?</span></a></li><li class="sn-group">Information</li>
+      <li><a href="/kvblockdiff-primer/school/bits/" data-page="school-bits"><span class="sn-num">II.2</span><span class="sn-name">Bits: twenty questions</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/surprise/" data-page="school-surprise"><span class="sn-num">II.3</span><span class="sn-name">Surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/entropy/" data-page="school-entropy"><span class="sn-num">II.4</span><span class="sn-name">Entropy: the average surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/side-information/" data-page="school-side-information"><span class="sn-num">II.5</span><span class="sn-name">Side information</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/mutual-information/" data-page="school-mutual-information"><span class="sn-num">II.6</span><span class="sn-name">Mutual information</span></a></li><li class="sn-group">Coding</li>
+      <li><a href="/kvblockdiff-primer/school/codes/" data-page="school-codes"><span class="sn-num">II.7</span><span class="sn-name">Codes and Huffman</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/arithmetic/" data-page="school-arithmetic"><span class="sn-num">II.8</span><span class="sn-name">Arithmetic coding and rANS</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fixed-length/" data-page="school-fixed-length"><span class="sn-num">II.9</span><span class="sn-name">Fixed-length codes and escapes</span></a></li><li class="sn-group">Prediction</li>
+      <li><a href="/kvblockdiff-primer/school/prediction/" data-page="school-prediction"><span class="sn-num">II.10</span><span class="sn-name">Predict, then send the surprise</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/residual-shapes/" data-page="school-residual-shapes"><span class="sn-num">II.11</span><span class="sn-name">The shape of a residual</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/exchange-rate/" data-page="school-exchange-rate"><span class="sn-num">II.12</span><span class="sn-name">The exchange rate</span></a></li><li class="sn-group">Vectors</li>
+      <li><a href="/kvblockdiff-primer/school/vectors/" data-page="school-vectors"><span class="sn-num">II.13</span><span class="sn-name">Vectors and furrows</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/correlation/" data-page="school-correlation"><span class="sn-num">II.14</span><span class="sn-name">Correlation</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/rotation/" data-page="school-rotation"><span class="sn-num">II.15</span><span class="sn-name">Turning the axes (KLT)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/coding-gain/" data-page="school-coding-gain"><span class="sn-num">II.16</span><span class="sn-name">What the rotation buys</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/clusters/" data-page="school-clusters"><span class="sn-num">II.17</span><span class="sn-name">Clusters and codebooks (VQ)</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/vq-vs-klt/" data-page="school-vq-vs-klt"><span class="sn-num">II.18</span><span class="sn-name">Codebooks vs rotations</span></a></li><li class="sn-group">Numbers</li>
+      <li><a href="/kvblockdiff-primer/school/integers-floats/" data-page="school-integers-floats"><span class="sn-num">II.19</span><span class="sn-name">Integers and floats</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/fp8/" data-page="school-fp8"><span class="sn-num">II.20</span><span class="sn-name">FP8 and index space</span></a></li><li class="sn-group">Machines</li>
+      <li><a href="/kvblockdiff-primer/school/caches/" data-page="school-caches"><span class="sn-num">II.21</span><span class="sn-name">Caches and LRU</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/reuse-distance/" data-page="school-reuse-distance"><span class="sn-num">II.22</span><span class="sn-name">Reuse distance</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/wires/" data-page="school-wires"><span class="sn-num">II.23</span><span class="sn-name">Wires and memories</span></a></li>
+      <li><a href="/kvblockdiff-primer/school/amortization/" data-page="school-amortization"><span class="sn-num">II.24</span><span class="sn-name">Amortization</span></a></li><li class="sn-group">Recap</li>
+      <li><a href="/kvblockdiff-primer/school/recap/" data-page="school-recap"><span class="sn-num">II.25</span><span class="sn-name">Cheat sheet</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-III)">
+    <summary><span class="sn-roman">III</span><span class="sn-title">How an LLM reads its memory</span><span class="sn-count">12</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The LLM</li>
+      <li><a href="/kvblockdiff-primer/landscape/tokens-and-decoding/" data-page="landscape-tokens-and-decoding"><span class="sn-num">III.1</span><span class="sn-name">How an LLM writes</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/attention/" data-page="landscape-attention"><span class="sn-num">III.2</span><span class="sn-name">Attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/orchard/" data-page="landscape-orchard"><span class="sn-num">III.3</span><span class="sn-name">The orchard</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/rope-and-mla/" data-page="landscape-rope-and-mla"><span class="sn-num">III.4</span><span class="sn-name">RoPE and MLA</span></a></li><li class="sn-group">Sparse attention</li>
+      <li><a href="/kvblockdiff-primer/landscape/sparse-attention/" data-page="landscape-sparse-attention"><span class="sn-num">III.5</span><span class="sn-name">Sparse attention</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/memory-wall/" data-page="landscape-memory-wall"><span class="sn-num">III.6</span><span class="sn-name">Everything must be kept</span></a></li><li class="sn-group">HiSparse and its hot cache</li>
+      <li><a href="/kvblockdiff-primer/landscape/hisparse/" data-page="landscape-hisparse"><span class="sn-num">III.7</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/toy-trace/" data-page="landscape-toy-trace"><span class="sn-num">III.8</span><span class="sn-name">The toy trace</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/lucky-louis/" data-page="landscape-lucky-louis"><span class="sn-num">III.9</span><span class="sn-name">Lucky Louis</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/reuse-curve/" data-page="landscape-reuse-curve"><span class="sn-num">III.10</span><span class="sn-name">The reuse curve</span></a></li><li class="sn-group">The numbers</li>
+      <li><a href="/kvblockdiff-primer/landscape/reference-settings/" data-page="landscape-reference-settings"><span class="sn-num">III.11</span><span class="sn-name">The Pin and the Bench</span></a></li>
+      <li><a href="/kvblockdiff-primer/landscape/derived-numbers/" data-page="landscape-derived-numbers"><span class="sn-num">III.12</span><span class="sn-name">Three numbers and a deadline</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IV)">
+    <summary><span class="sn-roman">IV</span><span class="sn-title">The compression scenario</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The problem</li>
+      <li><a href="/kvblockdiff-primer/scenario/the-project-and-its-subproblems/" data-page="scenario-the-project-and-its-subproblems"><span class="sn-num">IV.1</span><span class="sn-name">The four subproblems</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/one-cherry-at-a-time/" data-page="scenario-one-cherry-at-a-time"><span class="sn-num">IV.2</span><span class="sn-name">One cherry at a time</span></a></li><li class="sn-group">The objects</li>
+      <li><a href="/kvblockdiff-primer/scenario/stretch/" data-page="scenario-stretch"><span class="sn-num">IV.3</span><span class="sn-name">The stretch</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/slice/" data-page="scenario-slice"><span class="sn-num">IV.4</span><span class="sn-name">The slice</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/cherry/" data-page="scenario-cherry"><span class="sn-num">IV.5</span><span class="sn-name">The cherry</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/punnet/" data-page="scenario-punnet"><span class="sn-num">IV.6</span><span class="sn-name">The punnet</span></a></li><li class="sn-group">The rules</li>
+      <li><a href="/kvblockdiff-primer/scenario/the-contract/" data-page="scenario-the-contract"><span class="sn-num">IV.7</span><span class="sn-name">The contract</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-score/" data-page="scenario-the-score"><span class="sn-num">IV.8</span><span class="sn-name">The score</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-leash/" data-page="scenario-the-leash"><span class="sn-num">IV.9</span><span class="sn-name">The leash</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/scope/" data-page="scenario-scope"><span class="sn-num">IV.10</span><span class="sn-name">Scope</span></a></li><li class="sn-group">The catalogue</li>
+      <li><a href="/kvblockdiff-primer/scenario/why-vary/" data-page="scenario-why-vary"><span class="sn-num">IV.11</span><span class="sn-name">Why vary it</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/compressors-and-stages/" data-page="scenario-compressors-and-stages"><span class="sn-num">IV.12</span><span class="sn-name">Compressors and stages</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/the-harness/" data-page="scenario-the-harness"><span class="sn-num">IV.13</span><span class="sn-name">The harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/scenario/what-it-is-not/" data-page="scenario-what-it-is-not"><span class="sn-num">IV.14</span><span class="sn-name">What it is not</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-V)">
+    <summary><span class="sn-roman">V</span><span class="sn-title">The compressor&#39;s toolbox</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Shape and baseline</li>
+      <li><a href="/kvblockdiff-primer/toolbox/the-bill/" data-page="toolbox-the-bill"><span class="sn-num">V.1</span><span class="sn-name">The bill</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/solo/" data-page="toolbox-solo"><span class="sn-num">V.2</span><span class="sn-name">Solo: the Hermit</span></a></li><li class="sn-group">Predictor stages</li>
+      <li><a href="/kvblockdiff-primer/toolbox/furrow-statistics/" data-page="toolbox-furrow-statistics"><span class="sn-num">V.3</span><span class="sn-name">Furrow statistics: the Anchor</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/klt/" data-page="toolbox-klt"><span class="sn-num">V.4</span><span class="sn-name">KLT: the Compass, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/vq/" data-page="toolbox-vq"><span class="sn-num">V.5</span><span class="sn-name">VQ: the Hive, at work</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/reference-cherries/" data-page="toolbox-reference-cherries"><span class="sn-num">V.6</span><span class="sn-name">Siblings and reference trees</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/linear-prediction/" data-page="toolbox-linear-prediction"><span class="sn-num">V.7</span><span class="sn-name">Linear prediction</span></a></li><li class="sn-group">Coding the residual</li>
+      <li><a href="/kvblockdiff-primer/toolbox/context-modelling/" data-page="toolbox-context-modelling"><span class="sn-num">V.8</span><span class="sn-name">Context modelling</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/lifting/" data-page="toolbox-lifting"><span class="sn-num">V.9</span><span class="sn-name">Lifting</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/bit-fields/" data-page="toolbox-bit-fields"><span class="sn-num">V.10</span><span class="sn-name">Bit fields and the grid</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/two-rates/" data-page="toolbox-two-rates"><span class="sn-num">V.11</span><span class="sn-name">Two rates</span></a></li><li class="sn-group">Before building</li>
+      <li><a href="/kvblockdiff-primer/toolbox/exchange-rate/" data-page="toolbox-exchange-rate"><span class="sn-num">V.12</span><span class="sn-name">The exchange rate, applied</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/bounds/" data-page="toolbox-bounds"><span class="sn-num">V.13</span><span class="sn-name">Bounds before building</span></a></li>
+      <li><a href="/kvblockdiff-primer/toolbox/rehearsal/" data-page="toolbox-rehearsal"><span class="sn-num">V.14</span><span class="sn-name">Dress rehearsal</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VI)">
+    <summary><span class="sn-roman">VI</span><span class="sn-title">kvblockdiff: the application</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The idea</li>
+      <li><a href="/kvblockdiff-primer/app/mapping/" data-page="app-mapping"><span class="sn-num">VI.1</span><span class="sn-name">From scenario to system</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/sizes/" data-page="app-sizes"><span class="sn-num">VI.2</span><span class="sn-name">How big is each piece?</span></a></li><li class="sn-group">The mechanism</li>
+      <li><a href="/kvblockdiff-primer/app/shelf-and-two-misses/" data-page="app-shelf-and-two-misses"><span class="sn-num">VI.3</span><span class="sn-name">The shelf and two misses</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/toy-trace/" data-page="app-toy-trace"><span class="sn-num">VI.4</span><span class="sn-name">The same trace, with dictionaries</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/data-layout/" data-page="app-data-layout"><span class="sn-num">VI.5</span><span class="sn-name">The access pattern decides the layout</span></a></li><li class="sn-group">What better means</li>
+      <li><a href="/kvblockdiff-primer/app/two-levers/" data-page="app-two-levers"><span class="sn-num">VI.6</span><span class="sn-name">What “better than HiSparse” means</span></a></li><li class="sn-group">The design</li>
+      <li><a href="/kvblockdiff-primer/app/two-boring-corners/" data-page="app-two-boring-corners"><span class="sn-num">VI.7</span><span class="sn-name">The two boring corners</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/on-fire/" data-page="app-on-fire"><span class="sn-num">VI.8</span><span class="sn-name">On fire and ice</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/the-napkin/" data-page="app-the-napkin"><span class="sn-num">VI.9</span><span class="sn-name">The napkin</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/calculator/" data-page="app-calculator"><span class="sn-num">VI.10</span><span class="sn-name">What-if calculator</span></a></li><li class="sn-group">Economics</li>
+      <li><a href="/kvblockdiff-primer/app/bits-to-dollars/" data-page="app-bits-to-dollars"><span class="sn-num">VI.11</span><span class="sn-name">From bits to dollars</span></a></li><li class="sn-group">Design choices</li>
+      <li><a href="/kvblockdiff-primer/app/victim-tier/" data-page="app-victim-tier"><span class="sn-num">VI.12</span><span class="sn-name">The victim tier</span></a></li>
+      <li><a href="/kvblockdiff-primer/app/which-application/" data-page="app-which-application"><span class="sn-num">VI.13</span><span class="sn-name">Which application</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VII)" open="">
+    <summary><span class="sn-roman">VII</span><span class="sn-title">Hypotheses about the orchard</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The rule of the Part</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/bits-are-the-unit/" data-page="hypotheses-bits-are-the-unit"><span class="sn-num">VII.1</span><span class="sn-name">Bits are the unit</span></a></li><li class="sn-group">The hypotheses</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/neighbour-similarity/" data-page="hypotheses-neighbour-similarity"><span class="sn-num">VII.2</span><span class="sn-name">Neighbour similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/fallen-apple/" data-page="hypotheses-fallen-apple"><span class="sn-num">VII.3</span><span class="sn-name">Fallen-apple similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/upstairs/" data-page="hypotheses-upstairs"><span class="sn-num">VII.4</span><span class="sn-name">Upstairs similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/stereo/" data-page="hypotheses-stereo"><span class="sn-num">VII.5</span><span class="sn-name">Stereo similarity</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/echo/" data-page="hypotheses-echo"><span class="sn-num">VII.6</span><span class="sn-name">Echo similarity</span></a></li><li class="sn-group">Which, and what</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/two-localities/" data-page="hypotheses-two-localities"><span class="sn-num">VII.7</span><span class="sn-name">Two localities</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/heavy-stretches/" data-page="hypotheses-heavy-stretches"><span class="sn-num">VII.8</span><span class="sn-name">Heavy stretches</span></a></li><li class="sn-group">The argument, sorted</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-ladder/" data-page="hypotheses-the-ladder"><span class="sn-num">VII.9</span><span class="sn-name">The ladder</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-leak/" data-page="hypotheses-the-leak"><span class="sn-num">VII.10</span><span class="sn-name">The leak</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/the-trap/" data-page="hypotheses-the-trap"><span class="sn-num">VII.11</span><span class="sn-name">The trap</span></a></li><li class="sn-group">Two more bets</li>
+      <li><a href="/kvblockdiff-primer/hypotheses/keys-and-values/" data-page="hypotheses-keys-and-values" aria-current="page"><span class="sn-num">VII.12</span><span class="sn-name">Keys and values</span></a></li>
+      <li><a href="/kvblockdiff-primer/hypotheses/stack-distance/" data-page="hypotheses-stack-distance"><span class="sn-num">VII.13</span><span class="sn-name">The stack-distance curve</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-VIII)">
+    <summary><span class="sn-roman">VIII</span><span class="sn-title">The measurements</span><span class="sn-count">15</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Setting the stage</li>
+      <li><a href="/kvblockdiff-primer/measured/dispatch/" data-page="measured-dispatch"><span class="sn-num">VIII.1</span><span class="sn-name">A dispatch from the harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/the-data/" data-page="measured-the-data"><span class="sn-num">VIII.2</span><span class="sn-name">The data on the table</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/rules-of-the-game/" data-page="measured-rules-of-the-game"><span class="sn-num">VIII.3</span><span class="sn-name">The rules, as scenarios</span></a></li><li class="sn-group">What was found</li>
+      <li><a href="/kvblockdiff-primer/measured/night-one/" data-page="measured-night-one"><span class="sn-num">VIII.4</span><span class="sn-name">Night one: the twin ladder</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/two-kinds-of-structure/" data-page="measured-two-kinds-of-structure"><span class="sn-num">VIII.5</span><span class="sn-name">Two kinds of structure</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/cutting-the-tensor/" data-page="measured-cutting-the-tensor"><span class="sn-num">VIII.6</span><span class="sn-name">Cutting the orchard</span></a></li><li class="sn-group">What lost</li>
+      <li><a href="/kvblockdiff-primer/measured/codebooks-and-rotations/" data-page="measured-codebooks-and-rotations"><span class="sn-num">VIII.7</span><span class="sn-name">Codebooks and rotations</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/time-and-bits/" data-page="measured-time-and-bits"><span class="sn-num">VIII.8</span><span class="sn-name">Sound, time and bits</span></a></li><li class="sn-group">What was found</li>
+      <li><a href="/kvblockdiff-primer/measured/reading-one-cherry/" data-page="measured-reading-one-cherry"><span class="sn-num">VIII.9</span><span class="sn-name">Reading one cherry</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/where-the-bits-come-from/" data-page="measured-where-the-bits-come-from"><span class="sn-num">VIII.10</span><span class="sn-name">Where the bits come from</span></a></li><li class="sn-group">The method</li>
+      <li><a href="/kvblockdiff-primer/measured/signal-or-noise/" data-page="measured-signal-or-noise"><span class="sn-num">VIII.11</span><span class="sn-name">Signal or noise</span></a></li><li class="sn-group">What it means</li>
+      <li><a href="/kvblockdiff-primer/measured/scorecard/" data-page="measured-scorecard"><span class="sn-num">VIII.12</span><span class="sn-name">The scorecard</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/what-it-means/" data-page="measured-what-it-means"><span class="sn-num">VIII.13</span><span class="sn-name">What it means</span></a></li><li class="sn-group">In bits</li>
+      <li><a href="/kvblockdiff-primer/measured/what-the-half-means/" data-page="measured-what-the-half-means"><span class="sn-num">VIII.14</span><span class="sn-name">What the half says</span></a></li>
+      <li><a href="/kvblockdiff-primer/measured/shared-across-the-stretch/" data-page="measured-shared-across-the-stretch"><span class="sn-num">VIII.15</span><span class="sn-name">Shared across the stretch</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-IX)">
+    <summary><span class="sn-roman">IX</span><span class="sn-title">Papers</span><span class="sn-count">14</span></summary>
+    <ol class="sn-pages"><li class="sn-group">How to read</li>
+      <li><a href="/kvblockdiff-primer/papers/reading-guide/" data-page="papers-reading-guide"><span class="sn-num">IX.1</span><span class="sn-name">How we read papers</span></a></li><li class="sn-group">The serving side</li>
+      <li><a href="/kvblockdiff-primer/papers/hisparse/" data-page="papers-hisparse"><span class="sn-num">IX.2</span><span class="sn-name">HiSparse</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/sparse-selectors/" data-page="papers-sparse-selectors"><span class="sn-num">IX.3</span><span class="sn-name">Sparse selectors</span></a></li><li class="sn-group">Lossless, on the bulk road</li>
+      <li><a href="/kvblockdiff-primer/papers/splitzip/" data-page="papers-splitzip"><span class="sn-num">IX.4</span><span class="sn-name">SplitZip</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/float-coders/" data-page="papers-float-coders"><span class="sn-num">IX.5</span><span class="sn-name">Lossless float compressors</span></a></li><li class="sn-group">Lossy KV compression</li>
+      <li><a href="/kvblockdiff-primer/papers/kv-codec/" data-page="papers-kv-codec"><span class="sn-num">IX.6</span><span class="sn-name">KVFetcher</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kivi/" data-page="papers-kivi"><span class="sn-num">IX.7</span><span class="sn-name">KIVI</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvquant/" data-page="papers-kvquant"><span class="sn-num">IX.8</span><span class="sn-name">KVQuant</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvtc/" data-page="papers-kvtc"><span class="sn-num">IX.9</span><span class="sn-name">KVTC</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/lexico/" data-page="papers-lexico"><span class="sn-num">IX.10</span><span class="sn-name">Lexico</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/cachegen/" data-page="papers-cachegen"><span class="sn-num">IX.11</span><span class="sn-name">CacheGen</span></a></li>
+      <li><a href="/kvblockdiff-primer/papers/kvcomp/" data-page="papers-kvcomp"><span class="sn-num">IX.12</span><span class="sn-name">KVComp</span></a></li><li class="sn-group">Old theory</li>
+      <li><a href="/kvblockdiff-primer/papers/classics/" data-page="papers-classics"><span class="sn-num">IX.13</span><span class="sn-name">The classics</span></a></li><li class="sn-group">The gap</li>
+      <li><a href="/kvblockdiff-primer/papers/what-would-be-new/" data-page="papers-what-would-be-new"><span class="sn-num">IX.14</span><span class="sn-name">What would be new</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-X)">
+    <summary><span class="sn-roman">X</span><span class="sn-title">The research plan</span><span class="sn-count">10</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Where we stand</li>
+      <li><a href="/kvblockdiff-primer/plan/where-we-stand/" data-page="plan-where-we-stand"><span class="sn-num">X.1</span><span class="sn-name">Where we stand</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/principles/" data-page="plan-principles"><span class="sn-num">X.2</span><span class="sn-name">Principles</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/the-dataset-we-have/" data-page="plan-the-dataset-we-have"><span class="sn-num">X.3</span><span class="sn-name">The dataset we have</span></a></li><li class="sn-group">Next experiments</li>
+      <li><a href="/kvblockdiff-primer/plan/next-in-the-harness/" data-page="plan-next-in-the-harness"><span class="sn-num">X.4</span><span class="sn-name">Next in the harness</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/queries-and-picks/" data-page="plan-queries-and-picks"><span class="sn-num">X.5</span><span class="sn-name">Queries and picks</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/hot-cache-replay/" data-page="plan-hot-cache-replay"><span class="sn-num">X.6</span><span class="sn-name">Replaying the hot cache</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/decoder-speed/" data-page="plan-decoder-speed"><span class="sn-num">X.7</span><span class="sn-name">Decoder speed</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/other-experiments/" data-page="plan-other-experiments"><span class="sn-num">X.8</span><span class="sn-name">Beyond the harness</span></a></li><li class="sn-group">Decisions and risks</li>
+      <li><a href="/kvblockdiff-primer/plan/decision-rules/" data-page="plan-decision-rules"><span class="sn-num">X.9</span><span class="sn-name">Decision rules</span></a></li>
+      <li><a href="/kvblockdiff-primer/plan/risks/" data-page="plan-risks"><span class="sn-num">X.10</span><span class="sn-name">Risks and pivots</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-XI)">
+    <summary><span class="sn-roman">XI</span><span class="sn-title">The Bachelor: picks and misses, measured</span><span class="sn-count">13</span></summary>
+    <ol class="sn-pages"><li class="sn-group">The result</li>
+      <li><a href="/kvblockdiff-primer/picks/dispatch/" data-page="picks-dispatch"><span class="sn-num">XI.1</span><span class="sn-name">The result</span></a></li><li class="sn-group">The setting</li>
+      <li><a href="/kvblockdiff-primer/picks/the-bachelor/" data-page="picks-the-bachelor"><span class="sn-num">XI.2</span><span class="sn-name">The Bachelor</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/a-trace/" data-page="picks-a-trace"><span class="sn-num">XI.3</span><span class="sn-name">A trace, up close</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/carrying-numbers/" data-page="picks-carrying-numbers"><span class="sn-num">XI.4</span><span class="sn-name">Carrying numbers</span></a></li><li class="sn-group">The hot cache</li>
+      <li><a href="/kvblockdiff-primer/picks/hot-cache/" data-page="picks-hot-cache"><span class="sn-num">XI.5</span><span class="sn-name">The hot cache</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/share-carries/" data-page="picks-share-carries"><span class="sn-num">XI.6</span><span class="sn-name">The share carries</span></a></li><li class="sn-group">Stretches and the shelf</li>
+      <li><a href="/kvblockdiff-primer/picks/heavy-stretches/" data-page="picks-heavy-stretches"><span class="sn-num">XI.7</span><span class="sn-name">Where misses land</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/shelf/" data-page="picks-shelf"><span class="sn-num">XI.8</span><span class="sn-name">The shelf</span></a></li><li class="sn-group">Bytes and the napkin</li>
+      <li><a href="/kvblockdiff-primer/picks/bytes-side/" data-page="picks-bytes-side"><span class="sn-num">XI.9</span><span class="sn-name">The bytes side</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/slot-price/" data-page="picks-slot-price"><span class="sn-num">XI.10</span><span class="sn-name">The slot price</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/ceiling/" data-page="picks-ceiling"><span class="sn-num">XI.11</span><span class="sn-name">The ceiling</span></a></li><li class="sn-group">What it changes</li>
+      <li><a href="/kvblockdiff-primer/picks/the-indexer/" data-page="picks-the-indexer"><span class="sn-num">XI.12</span><span class="sn-name">The indexer</span></a></li>
+      <li><a href="/kvblockdiff-primer/picks/what-it-means/" data-page="picks-what-it-means"><span class="sn-num">XI.13</span><span class="sn-name">What it means</span></a></li>
+    </ol>
+  </details>
+  <details class="sn-part" style="--pc:var(--part-XII)">
+    <summary><span class="sn-roman">XII</span><span class="sn-title">Summary and reference</span><span class="sn-count">9</span></summary>
+    <ol class="sn-pages"><li class="sn-group">Summary</li>
+      <li><a href="/kvblockdiff-primer/reference/summary/" data-page="reference-summary"><span class="sn-num">XII.1</span><span class="sn-name">Summary (TL;DR)</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/glossary/" data-page="reference-glossary"><span class="sn-num">XII.2</span><span class="sn-name">Glossary</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/notation/" data-page="reference-notation"><span class="sn-num">XII.3</span><span class="sn-name">Notation</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/themes/" data-page="reference-themes"><span class="sn-num">XII.4</span><span class="sn-name">Running themes</span></a></li><li class="sn-group">Facts and sources</li>
+      <li><a href="/kvblockdiff-primer/reference/numbers/" data-page="reference-numbers"><span class="sn-num">XII.5</span><span class="sn-name">Grounded numbers</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/fp8-facts/" data-page="reference-fp8-facts"><span class="sn-num">XII.6</span><span class="sn-name">FP8 facts</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/prior-art-map/" data-page="reference-prior-art-map"><span class="sn-num">XII.7</span><span class="sn-name">Prior-art map</span></a></li>
+      <li><a href="/kvblockdiff-primer/reference/references/" data-page="reference-references"><span class="sn-num">XII.8</span><span class="sn-name">References</span></a></li><li class="sn-group">Words</li>
+      <li><a href="/kvblockdiff-primer/reference/old-words/" data-page="reference-old-words"><span class="sn-num">XII.9</span><span class="sn-name">Old words, new words</span></a></li>
+    </ol>
+  </details>
+  <div class="sn-foot">
+    <a href="/kvblockdiff-primer/practice/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-cards"></use></svg><span>Flashcard practice</span></a>
+    <a href="/kvblockdiff-primer/reference/glossary/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-book"></use></svg><span>Glossary</span></a>
+    <a href="/kvblockdiff-primer/reference/notation/"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-sigma"></use></svg><span>Notation &amp; colours</span></a>
+  </div>
+</nav>
+<div class="backdrop" hidden=""></div>
+
+<main id="main" class="main">
+<header class="banner">
+  <div class="banner-orn" aria-hidden="true"><svg viewBox="0 0 800 300" preserveAspectRatio="xMidYMin slice" fill="none" stroke="currentColor" stroke-linecap="round">
+  <g opacity=".55" stroke-width=".8"><path d="M400 -40 L-500 340"></path><path d="M400 -40 L-400 340"></path><path d="M400 -40 L-300 340"></path><path d="M400 -40 L-200 340"></path><path d="M400 -40 L-100 340"></path><path d="M400 -40 L0 340"></path><path d="M400 -40 L100 340"></path><path d="M400 -40 L200 340"></path><path d="M400 -40 L300 340"></path><path d="M400 -40 L400 340"></path><path d="M400 -40 L500 340"></path><path d="M400 -40 L600 340"></path><path d="M400 -40 L700 340"></path><path d="M400 -40 L800 340"></path><path d="M400 -40 L900 340"></path><path d="M400 -40 L1000 340"></path><path d="M400 -40 L1100 340"></path><path d="M400 -40 L1200 340"></path><path d="M400 -40 L1300 340"></path>
+  </g>
+  <circle cx="400" cy="-40" r="120" stroke-width="1.2" opacity=".7"></circle>
+  <circle cx="400" cy="-40" r="150" stroke-width=".6" opacity=".6"></circle>
+  <path d="M10 290 C 60 200, 20 140, 90 90 S 160 40, 130 10" stroke-width="2"></path>
+  <path d="M40 300 C 90 230, 60 170, 120 130 S 200 90, 180 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M90 90 c 14 -4 26 6 22 20 c -10 -2 -18 -10 -22 -20z M120 130 c 14 -2 24 8 18 22 c -10 -4 -16 -12 -18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <path d="M790 290 C 740 200, 780 140, 710 90 S 640 40, 670 10" stroke-width="2"></path>
+  <path d="M760 300 C 710 230, 740 170, 680 130 S 600 90, 620 40" stroke-width="1.1" opacity=".8"></path>
+  <path d="M710 90 c -14 -4 -26 6 -22 20 c 10 -2 18 -10 22 -20z M680 130 c -14 -2 -24 8 -18 22 c 10 -4 16 -12 18 -22z" fill="currentColor" fill-opacity=".35" stroke-width=".8"></path>
+  <circle cx="130" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle><circle cx="670" cy="10" r="5" fill="currentColor" fill-opacity=".5"></circle>
+</svg>
+</div>
+  <div class="banner-inner">
+    <a class="banner-part" href="/kvblockdiff-primer/hypotheses/bits-are-the-unit/"><span class="banner-roman">VII</span><span class="banner-ptitle">Part VII · Hypotheses about the orchard</span></a>
+    <div class="banner-num" aria-label="Page VII.12">VII.12</div>
+    <h1>Keys before RoPE; keys and values apart</h1><p class="lede">RoPE spins pairs of key elements by an angle that grows with position, smearing a tidy cluster into a ring. Store keys before the spin. And treat keys and values as two problems, with their own slice, their own reference tree and their own verdict, because one night of measurement says they are alike in mechanism and different in detail.</p>
+  </div>
+</header>
+
+<div class="page-body">
+  <article class="prose">
+<p>Picture two <a class="term brand" data-term="furrow" href="/kvblockdiff-primer/school/vectors/#def-furrow" style="--tc:var(--t-furrow)" data-def="II.13 Vectors, elements and furrows"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-furrow"></use></svg><span class="term-text">furrows</span></a> of a key that sit almost still, token after token: near 5 in one, near 1 in the other. A location per furrow predicts both almost perfectly, and the residuals are tiny. Now apply <a class="term plain" data-term="rope" href="/kvblockdiff-primer/landscape/rope-and-mla/#def-rope" style="--tc:var(--cat-llm)" data-def="III.4 Two wrinkles: RoPE and MLA"><span class="term-text">RoPE</span></a>, the position code most LLMs put into their keys. The pair starts to turn, a little more with every token. Plotted against each other, the tidy dot becomes a ring.</p>
+<h2 id="before-rope">Keys before RoPE</h2>
+<aside class="side side-reminder"><details><summary><span class="side-kind">Reminder</span><span class="side-title">RoPE</span></summary><div class="side-body">
+<p>RoPE tells attention where a token sits by rotating each pair of key (and query) elements by an angle proportional to the position <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6151em;"></span><span class="enclosing sym s-t f-index"><span class="mord mathnormal">t</span></span></span></span></span> (<a class="xref" data-ref="landscape-rope-and-mla" href="/kvblockdiff-primer/landscape/rope-and-mla/" title="III.4 Two wrinkles: RoPE and MLA">III.4 Two wrinkles: RoPE and MLA</a>). Each pair has its own speed θ, spread geometrically: the fastest pair turns about 1 radian per token, the slowest once in tens of thousands of tokens.</p>
+</div></details></aside>
+<p>A stretch-scope dictionary of furrow statistics predicts the stretch’s mean. How much does the spin cost it? A few lines of numpy on one slow pair:</p>
+<figure class="code"><figcaption class="code-cap"><span class="code-lang">python</span><span class="code-title">one pair of key furrows, before and after RoPE, in extra bits per element</span></figcaption><pre class="language-python"><code><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+rng <span class="token operator">=</span> np<span class="token punctuation">.</span>random<span class="token punctuation">.</span>default_rng<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+t <span class="token operator">=</span> np<span class="token punctuation">.</span>arange<span class="token punctuation">(</span><span class="token number">2048</span><span class="token punctuation">)</span>
+pair <span class="token operator">=</span> np<span class="token punctuation">.</span>array<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token number">5.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">0.25</span> <span class="token operator">*</span> rng<span class="token punctuation">.</span>standard_normal<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">2048</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>      <span class="token comment"># a slow pair: near (5, 1) at every token</span>
+<span class="token keyword">def</span> <span class="token function">extra_bits</span><span class="token punctuation">(</span>theta<span class="token punctuation">,</span> stretch_len<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    c<span class="token punctuation">,</span> s <span class="token operator">=</span> np<span class="token punctuation">.</span>cos<span class="token punctuation">(</span>t <span class="token operator">*</span> theta<span class="token punctuation">)</span><span class="token punctuation">,</span> np<span class="token punctuation">.</span>sin<span class="token punctuation">(</span>t <span class="token operator">*</span> theta<span class="token punctuation">)</span>
+    spun <span class="token operator">=</span> np<span class="token punctuation">.</span>stack<span class="token punctuation">(</span><span class="token punctuation">[</span>pair<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">*</span> c <span class="token operator">-</span> pair<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">*</span> s<span class="token punctuation">,</span> pair<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">*</span> s <span class="token operator">+</span> pair<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">*</span> c<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>   <span class="token comment"># RoPE: rotate by t·θ</span>
+    spread <span class="token operator">=</span> <span class="token keyword">lambda</span> a<span class="token punctuation">:</span> np<span class="token punctuation">.</span>sqrt<span class="token punctuation">(</span>np<span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">[</span>a<span class="token punctuation">[</span>j<span class="token punctuation">:</span>j <span class="token operator">+</span> stretch_len<span class="token punctuation">]</span><span class="token punctuation">.</span>var<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>mean<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">for</span> j <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2048</span><span class="token punctuation">,</span> stretch_len<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> np<span class="token punctuation">.</span>log2<span class="token punctuation">(</span>spread<span class="token punctuation">(</span>spun<span class="token punctuation">)</span> <span class="token operator">/</span> spread<span class="token punctuation">(</span>pair<span class="token punctuation">)</span><span class="token punctuation">)</span>     <span class="token comment"># bell-shaped residuals: log2 of the ratio of spreads around the stretch mean</span>
+<span class="token keyword">for</span> theta<span class="token punctuation">,</span> b <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token number">0.001</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.01</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.01</span><span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">0.01</span><span class="token punctuation">,</span> <span class="token number">1024</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"theta </span><span class="token interpolation"><span class="token punctuation">{</span>theta<span class="token punctuation">}</span></span><span class="token string">  stretch </span><span class="token interpolation"><span class="token punctuation">{</span>b<span class="token punctuation">}</span></span><span class="token string">: </span><span class="token interpolation"><span class="token punctuation">{</span>extra_bits<span class="token punctuation">(</span>theta<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token format-spec">.2f</span><span class="token punctuation">}</span></span><span class="token string"> extra bits per element"</span></span><span class="token punctuation">)</span>
+</code></pre></figure>
+<div class="tbl-wrap"><table class="data">
+<thead>
+<tr>
+<th>pair speed θ (radians per token)</th>
+<th>stretch length</th>
+<th>extra bits per element</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.001</td>
+<td>64</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td>0.01</td>
+<td>64</td>
+<td>1.50</td>
+</tr>
+<tr>
+<td>0.1</td>
+<td>64</td>
+<td>3.87</td>
+</tr>
+<tr>
+<td>0.01</td>
+<td>16</td>
+<td>0.28</td>
+</tr>
+<tr>
+<td>0.01</td>
+<td>1024</td>
+<td>3.83</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="plate" id="fig-hyp-rope" data-fig="mbRopeSmear"><div class="fig-host"></div><figcaption><span class="plate-no">Plate VII.12·1.</span>
+<p><strong>One pair of key furrows, before and after RoPE.</strong> 2048 tokens of a toy pair that sits near (5, 1) with small noise (standard deviation 0.25, seeded). Grey: the pre-RoPE values of one stretch of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-b f-count"><span class="mord mathnormal">b</span></span></span></span></span> tokens. Vermilion: the same tokens after RoPE, rotated by <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6944em;"></span><span class="enclosing sym s-t f-index"><span class="mord mathnormal">t</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">θ</span></span></span></span>; faint vermilion: all 2048 tokens after RoPE. Blue dots: each version’s stretch mean, exactly what a stretch-scope dictionary of furrow statistics predicts. The readout gives the spread around the stretch mean before and after, and the extra bits per element this costs, estimated as <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.0139em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span> of the ratio of spreads. Slide the pair’s speed θ and the stretch length.</p>
+</figcaption></figure>
+<p>The damage is uneven: what matters is θ times the stretch length. Fast pairs are scrambled at any stretch length; slow pairs survive in short stretches and fail in long ones. Either way the fix is the same and cheap: <strong>store the key as it was before RoPE</strong>. The receiver rebuilds the pre-RoPE key bit for bit, then applies the rotation for the known position, a handful of multiplications per element outside the hard part of the pipeline. KVQuant rounds keys before RoPE for the same reason (<a class="xref" data-ref="papers-kvquant" href="/kvblockdiff-primer/papers/kvquant/" title="IX.8 KVQuant (2024)">IX.8 KVQuant (2024)</a>). The Bench’s dump was made this way: the generator inverted the rotation, and elements 0 to 63 match the un-rotated key within one bf16 step.</p>
+<div class="note note-warning"><div class="note-tag"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-warn"></use></svg><span>Careful</span><span class="note-title">What “lossless” is relative to</span></div><div class="note-body">
+<p>A system that stores 8-bit keys <em>after</em> RoPE and one that stores them <em>before</em> and rotates later do not feed attention bit-identical numbers. Switching is a small change in numerics, made once, and any comparison with HiSparse must use the same choice on both sides.</p>
+</div></div>
+<aside class="takeaway" data-sec="before-rope"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>RoPE turns a nearly constant pair of key furrows into an arc or a ring; the cost grows with θ × stretch length.</li>
+<li>Store keys before RoPE and rotate after decoding; the Bench’s dump already does.</li>
+</ul>
+</div></aside>
+<h2 id="two-problems">Keys and values are two problems</h2>
+<p>The <a class="term brand" data-term="slice" href="/kvblockdiff-primer/scenario/slice/#def-slice" style="--tc:var(--t-slice)" data-def="IV.4 The slice: what is in play"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-axes"></use></svg><span class="term-text">slice</span></a> is the first axis of a scenario (<a class="xref" data-ref="scenario-slice" href="/kvblockdiff-primer/scenario/slice/" title="IV.4 The slice: what is in play">IV.4 The slice: what is in play</a>), and <code>k[...]</code> and <code>v[...]</code> are different slices for good reasons. The first campaign’s one night on keys found these, all at stretch 4096, FP8, head 0, two sequences:</p>
+<ul>
+<li><strong>Keys are Gaussian with a nearly constant norm</strong>, because Qwen3.5-2B normalises them before RoPE (norm spread 2 to 3 %, kurtosis 3.0 to 3.1). Their solo rate is lower than the values’ (0.776 to 0.786 against 0.799 to 0.819), and no key-specific in-stretch structure beyond the reference tree was found.</li>
+<li><strong>Keys drift slowly.</strong> Stretch means explain 5 % (KV layer 0) and 12 % (KV layer 2) of a key’s variance, against 1.6 % and 4 % for values.</li>
+<li><strong>Keys stay a chain layer deeper.</strong> The nearest cherry is the same token again for 74 % of key cherries at KV layer 0 but 42 % at layer 2 and 33 % at layer 3; position-adjacent neighbours reach 41 % at KV layer 3. Values flip to hubs at KV layers 4 and 5; keys only at 5 (<a class="xref" data-ref="hypotheses-echo" href="/kvblockdiff-primer/hypotheses/echo/" title="VII.6 Echo similarity (repeats)">VII.6 Echo similarity (repeats)</a>).</li>
+<li><strong>Keys share information with values beyond any reference.</strong> A key predicted from the same token’s value: R² 0.40 (KV layer 0) and 0.62 (layer 2) raw; 0.26 and 0.44 after each has its own in-punnet reference; worth 0.19 and 0.40 bit per element of the key, but only through a map fit on <em>other</em> sequences, since a per-punnet fit scores about zero. That is a global-scope table (<a class="xref" data-ref="scenario-scope" href="/kvblockdiff-primer/scenario/scope/" title="IV.10 Who pays for the dictionary: scope">IV.10 Who pays for the dictionary: scope</a>), not a stretch dictionary.</li>
+<li><strong>Keys want their own tree.</strong> Coding keys on the values’ reference tree, with the links shared for free, is +0.0024 worse than keys on their own tree with the links paid for.</li>
+<li><strong>The rule across elements is largest on keys</strong>: 0.236 bit per element at KV layer 2 after the reference, against 0.107 and 0.171 for values at layers 0 and 2.</li>
+</ul>
+<p>A K+V cherry, <code>(k[t, l, :, :], v[t, l, :, :])</code> (1024 elements) with keys and values of one token at one layer, is therefore a third scenario, and its ratio is the byte-weighted mean of its halves:</p>
+<div class="eq" id="eq-hyp-kv-rho"><div class="eq-math"><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.733em;vertical-align:-0.3025em;"></span><span class="mord"><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">K+V</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3025em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="delimsizing size1">(</span></span><span class="mord"><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-K f-object mtight"><span class="mord mathnormal mtight" style="margin-right:0.0715em;">K</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-V f-object mtight"><span class="mord mathnormal mtight" style="margin-right:0.2222em;">V</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mord"><span class="delimsizing size1">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">16</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-K f-object mtight"><span class="mord mathnormal mtight" style="margin-right:0.0715em;">K</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2342em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="enclosing sym s-V f-object mtight"><span class="mord mathnormal mtight" style="margin-right:0.2222em;">V</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord">.</span></span></span></span></span><span class="eq-no">(VII.12·1)</span></div><details class="eq-legend"><summary><span class="side-kind">Symbols</span><span class="side-title">What’s in this equation (4)</span></summary><dl><div class="lg-row f-frac"><dt><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span></span></span></span></dt><dd><b>delta share</b> — Every delta of the punnet summed, over the punnet’s raw bytes; equal to <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-dsz f-resource"><span class="mopen">∣</span><span class="mord mathnormal" style="margin-right:0.0379em;">δ</span><span class="mclose">∣</span></span><span class="mord">/</span><span class="enclosing sym s-e f-resource"><span class="mord mathnormal">e</span></span></span></span></span> with <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="enclosing sym s-dsz f-resource"><span class="mopen">∣</span><span class="mord mathnormal" style="margin-right:0.0379em;">δ</span><span class="mclose">∣</span></span></span></span></span> the mean delta size. One term of the MDL ratio, <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="enclosing sym s-xshare f-frac"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="katex-sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0278em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-rho f-frac"><span class="mord mathnormal">ρ</span></span></span></span></span>, and not a score on its own. <a class="xref lg-home" data-ref="scenario-the-score" data-ref-style="num" href="/kvblockdiff-primer/scenario/the-score/" title="IV.8 The score: the MDL ratio">IV.8</a></dd></div><div class="lg-row f-object"><dt><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-K f-object"><span class="mord mathnormal" style="margin-right:0.0715em;">K</span></span></span></span></span></dt><dd><b>keys</b> — The key half of the orchard, <code>k[token_pos_id, layer_id, head_id, elem_id]</code>. <a class="xref lg-home" data-ref="landscape-orchard" data-ref-style="num" href="/kvblockdiff-primer/landscape/orchard/" title="III.3 The orchard">III.3</a></dd></div><div class="lg-row f-object"><dt><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.6833em;"></span><span class="enclosing sym s-V f-object"><span class="mord mathnormal" style="margin-right:0.2222em;">V</span></span></span></span></span></dt><dd><b>values</b> — The value half of the orchard, <code>v[token_pos_id, layer_id, head_id, elem_id]</code>. <a class="xref lg-home" data-ref="landscape-orchard" data-ref-style="num" href="/kvblockdiff-primer/landscape/orchard/" title="III.3 The orchard">III.3</a></dd></div><div class="lg-row f-info"><dt><span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span></span></span></span></span></dt><dd><b>bits per element</b> <span class="lg-unit">[bits]</span> — Rate of a lossless compressor per 8-bit element, all costs included. Raw is 8; <span class="katex"><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="enclosing sym s-bpe f-info"><span class="mord"><span class="mord mathrm">bpe</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">8</span><span class="mord">×</span></span></span></span> MDL ratio. <a class="xref lg-home" data-ref="scenario-the-score" data-ref-style="num" href="/kvblockdiff-primer/scenario/the-score/" title="IV.8 The score: the MDL ratio">IV.8</a></dd></div></dl></details></div>
+<p>At the first campaign’s numbers for KV layer 2, 0.701 and 0.740, that is 0.72. What a hot-cache miss really moves is this cherry, and it has not been run (<a class="xref" data-ref="plan-next-in-the-harness" href="/kvblockdiff-primer/plan/next-in-the-harness/" title="X.4 Next in the harness">X.4 Next in the harness</a>). On <a class="term brand" data-term="pin" href="/kvblockdiff-primer/landscape/reference-settings/#def-pin" style="--tc:var(--t-pin)" data-def="III.11 Two reference settings: the Pin and the Bench"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-pin"></use></svg><span class="term-text">the Pin</span></a> the question has a different shape: GLM-5.1 keeps one MLA latent per token per layer, keys and values together, and RoPE lives in a small separate part of it (<a class="xref" data-ref="landscape-rope-and-mla" href="/kvblockdiff-primer/landscape/rope-and-mla/" title="III.4 Two wrinkles: RoPE and MLA">III.4 Two wrinkles: RoPE and MLA</a>).</p>
+<aside class="takeaway" data-sec="two-problems"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>Keys: Gaussian, constant norm, slow drift, chains one layer deeper, 0.19 to 0.40 bit shared with values but only at global scope, and their own tree.</li>
+<li>A K+V cherry is a third scenario; its ratio is the mean of its halves, about 0.72 at the first campaign’s numbers.</li>
+</ul>
+</div></aside>
+<h2 id="verdict">Verdict</h2>
+<p>One night of measurement, and it says: same mechanisms, same order, slightly better ratios. The first campaign ran its compressor family on pre-RoPE keys at every KV layer, stretch 4096, FP8, head 0, two development sequences, before the leash existed (<a class="xref" data-ref="measured-night-one" href="/kvblockdiff-primer/measured/night-one/" title="VIII.4 Night one: the twin ladder">VIII.4 Night one: the twin ladder</a>):</p>
+<div class="tbl-wrap"><table class="data">
+<thead>
+<tr>
+<th>KV layer (transformer layer)</th>
+<th>keys: solo → best</th>
+<th>values: solo → best</th>
+<th>gain over solo, keys / values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 (3)</td>
+<td>0.776 → 0.660</td>
+<td>0.800 → 0.673</td>
+<td>−0.116 / −0.127</td>
+</tr>
+<tr>
+<td>1 (7)</td>
+<td>0.781 → 0.692</td>
+<td>0.799 → 0.712</td>
+<td>−0.089 / −0.087</td>
+</tr>
+<tr>
+<td>2 (11)</td>
+<td>0.779 → 0.701</td>
+<td>0.804 → 0.740</td>
+<td>−0.078 / −0.064</td>
+</tr>
+<tr>
+<td>3 (15)</td>
+<td>0.786 → 0.695</td>
+<td>0.814 → 0.744</td>
+<td>−0.090 / −0.070</td>
+</tr>
+<tr>
+<td>4 (19)</td>
+<td>0.780 → 0.681</td>
+<td>0.819 → 0.728</td>
+<td>−0.098 / −0.092</td>
+</tr>
+<tr>
+<td>5 (23)</td>
+<td>0.784 → 0.687</td>
+<td>0.651 → 0.572</td>
+<td>−0.097 / −0.080</td>
+</tr>
+</tbody>
+</table></div>
+<p>The same stages won on keys in the same order: reference cherries along the punnet’s minimum spanning tree, then a match-quality class per cherry, with a neighbour term paying only in the chain layers. On ten sequences the tree step on keys at KV layer 0 reproduced at −0.0088 against −0.0083 on the two development sequences. KV layer 5’s values are the one flip: a tenth of its furrows are one-signed offsets and its solo rate is unusually low.</p>
+<p>Grades and gaps: every key number is dev-only on two sequences (ten for KV layer 0), head 0, with no leash, no isolated verification, and no second campaign; the second campaign compressed values only. Unmeasured: keys under the leash with the frontier compressor, keys’ two heads joined (stereo on keys), the K+V cherry, and a global-scope key-from-value table. All four are rows of <a class="xref" data-ref="plan-next-in-the-harness" href="/kvblockdiff-primer/plan/next-in-the-harness/" title="X.4 Next in the harness">X.4 Next in the harness</a>.</p>
+<aside class="side side-source"><details><summary><span class="side-kind">Source</span><span class="side-title">Receipts</span></summary><div class="side-body">
+<p>Key and value ladders: r3-t0036, r3-t0040, r3-t0024, r3-t0035, r1-t0042; target 02: r2-t0052, r2-t0060. Solo landmarks: <code>c1/REPORT.md</code> scaling table. Norm, kurtosis, drift, same-token and adjacency rates: r3 journal SESSION-002, SESSION-003; <code>[gen/regimes]</code>, <code>[gen/bits]</code>. Keys from values: r3.H8 (kvjoint3.py, kvrank.py), <code>[relax/table]</code>. Keys on the values’ tree: r1 a33 run_k. Cross-element rule on keys: <code>[gen/scopeG]</code>, xchan.py. Pre-RoPE dump: <code>docs/concepts/rope-and-keys.md</code>.</p>
+</div></details></aside>
+<aside class="takeaway" data-sec="verdict"><div class="tk-head"><svg class="emb" aria-hidden="true" focusable="false"><use href="#emb-key"></use></svg><span class="tk-kicker">Takeaway</span></div><div class="tk-body">
+<ul>
+<li>Verdict: keys compress like values, with the same stages in the same order, 0.01 to 0.05 lower in ratio; one night, two sequences, no leash.</li>
+<li>Open: keys under the leash, keys’ heads, the K+V cherry, the global key-from-value table.</li>
+</ul>
+</div></aside>
+
+  </article>
+</div>
+<section id="deck" class="deck" aria-label="Flashcards for this page"></section>
+<script type="application/json" id="page-cards">[{"id":"hypotheses-keys-and-values/a-pair-of-key-furrows-sits-near-the-same","q":"A pair of key furrows sits near the same point token after token. What does RoPE do to it?","a":"It rotates the pair by an angle that grows with position, smearing the tight cluster into an arc or a whole ring","wrong":["Nothing; RoPE only touches queries","It adds random noise to every element","It shrinks the pair toward zero"],"why":"RoPE rotates each pair of key elements by position × that pair’s speed. A location per furrow can no longer predict a value that keeps turning.","sec":"before-rope","page":"hypotheses-keys-and-values","num":"VII.12","title":"Keys before RoPE; keys and values apart","part":"VII","url":"/kvblockdiff-primer/hypotheses/keys-and-values/#before-rope"},{"id":"hypotheses-keys-and-values/why-store-keys-before-rope","q":"Why store keys before RoPE?","a":"Before the spin the structured furrows are nearly constant and cheap to predict; the receiver rebuilds the pre-RoPE key exactly and applies the rotation for the known position","wrong":["Because RoPE is lossy","Because attention never uses rotated keys","Because pre-RoPE keys are smaller in bytes"],"why":"The rotation after decoding is a cheap element-wise step. The Bench’s dump already holds keys with the rotation inverted.","sec":"before-rope","page":"hypotheses-keys-and-values","num":"VII.12","title":"Keys before RoPE; keys and values apart","part":"VII","url":"/kvblockdiff-primer/hypotheses/keys-and-values/#before-rope"},{"id":"hypotheses-keys-and-values/how-did-pre-rope-keys-compress-compared-","q":"How did pre-RoPE keys compress, compared with values at the same layer, in the first campaign?","a":"About the same, with the same compressor family and the same stages in the same order; slightly lower ratios at every KV layer but the last","wrong":["Keys did not compress at all","Keys compressed twice as well as values","Keys needed a completely different compressor"],"why":"Keys against values at stretch 4096, head 0: 0.660 against 0.673 at KV layer 0, 0.701 against 0.740 at KV layer 2. Only KV layer 5 flips, because its values are unusually easy.","sec":"verdict","page":"hypotheses-keys-and-values","num":"VII.12","title":"Keys before RoPE; keys and values apart","part":"VII","url":"/kvblockdiff-primer/hypotheses/keys-and-values/#verdict"},{"id":"hypotheses-keys-and-values/why-are-keys-a-separate-scenario-rather-","q":"Why are keys a separate scenario rather than half of a K+V cherry?","a":"Keys want their own reference tree (coding them on the values’ tree costs +0.0024), their shared structure with values needs a global-scope table, and a K+V cherry is a third scenario with its own numbers","wrong":["Because keys are stored on a different GPU","Because keys cannot be compressed under a leash","Because values are noise"],"why":"The slice is the first axis of a scenario: \u003ccode>k[...]\u003c/code> and \u003ccode>v[...]\u003c/code> are different problems, and what they share (0.19 to 0.40 bit of the key) is not learnable per punnet.","sec":"two-problems","page":"hypotheses-keys-and-values","num":"VII.12","title":"Keys before RoPE; keys and values apart","part":"VII","url":"/kvblockdiff-primer/hypotheses/keys-and-values/#two-problems"}]</script>
+
+<nav class="pager" aria-label="Previous and next page">
+  <a class="pg pg-prev" href="/kvblockdiff-primer/hypotheses/the-trap/" rel="prev" style="--pc:var(--part-VII)"><span class="pg-dir">← previous</span><span class="pg-num">VII.11</span><span class="pg-title">The trap</span></a>
+  <a class="pg pg-next" href="/kvblockdiff-primer/hypotheses/stack-distance/" rel="next" style="--pc:var(--part-VII)"><span class="pg-dir">next →</span><span class="pg-num">VII.13</span><span class="pg-title">The stack-distance curve</span></a>
+</nav>
+
+</main>
+
+<footer class="colophon">
+  <div class="orn-rule" aria-hidden="true"><svg viewBox="0 0 420 30" fill="none" stroke="currentColor" stroke-linecap="round">
+  <path d="M10 15 C 80 15, 110 4, 160 15 S 190 26, 196 15" stroke-width="1.2"></path>
+  <path d="M410 15 C 340 15, 310 4, 260 15 S 230 26, 224 15" stroke-width="1.2"></path>
+  <path d="M210 4 l9 11 -9 11 -9 -11z" stroke-width="1.2"></path><circle cx="210" cy="15" r="2.5" fill="currentColor"></circle>
+  <circle cx="160" cy="15" r="1.6" fill="currentColor"></circle><circle cx="260" cy="15" r="1.6" fill="currentColor"></circle>
+</svg>
+</div>
+  <p><b>kv-blockdiff</b> — A primer and research proposal on lossless dictionary coding of LLM KV caches. Written by Dmitry Borzov. Source, figures and analysis scripts: <a href="https://github.com/dborzov/kvblockdiff-primer">github.com/dborzov/kvblockdiff-primer</a>.</p>
+  <p class="small">Keys: <kbd>←</kbd> <kbd>→</kbd> previous / next page · <kbd>g</kbd> glossary · <kbd>p</kbd> practise flashcards. Hover any coloured term or symbol for a reminder.</p>
+</footer>
+</body>
+</html>

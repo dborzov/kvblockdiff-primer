@@ -1,0 +1,299 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/measured_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0005",
+   "env-t0006",
+   "env-t0007",
+   "env-t0009",
+   "env-t0010",
+   "env-t0011",
+   "env-t0012",
+   "env-t0013",
+   "env-t0088",
+   "env-t0089",
+   "env-t0090",
+   "env-t0091",
+   "env-t0092",
+   "env-t0093",
+   "env-t0094",
+   "env-t0095",
+   "env-t0096",
+   "env-t0097",
+   "r1-t0005",
+   "r1-t0008",
+   "r1-t0009",
+   "r1-t0014",
+   "r1-t0019",
+   "r1-t0021",
+   "r1-t0035",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0045",
+   "r1-t0068",
+   "r11-t0001",
+   "r11-t0002",
+   "r11-t0003",
+   "r12-t0001",
+   "r12-t0002",
+   "r12-t0004",
+   "r12-t0005",
+   "r12-t0006",
+   "r14-t0006",
+   "r16-t0001",
+   "r16-t0003",
+   "r17-t0001",
+   "r18-t0001",
+   "r18-t0002",
+   "r20-t0001",
+   "r20-t0002",
+   "r21-t0001",
+   "r21-t0002",
+   "r22-t0001",
+   "r22-t0003",
+   "r22-t0005",
+   "r24-t0002",
+   "r24-t0004",
+   "r25-t0003",
+   "r25-t0004",
+   "r26-t0002",
+   "r26-t0008",
+   "r26-t0011",
+   "r3-t0002",
+   "r4-t0008",
+   "r4-t0019",
+   "r6-t0003",
+   "r6-t0004",
+   "r7-t0001",
+   "r7-t0002",
+   "r7-t0003",
+   "r7-t0004",
+   "r8-t0002"
+  ],
+  "hand_entered": "analysis/measured_pages.json (blocks carry their own receipt)",
+  "notes": [
+   "everything here is hand-entered from r23's and r9's pages (one window / 4 blocks / exact models), with receipts; the only ledger number is coder 102's screen score"
+  ]
+ },
+ "memory_table": {
+  "receipt": "research/agents/r23/pages/iter-1-3.md (table 'what the network is missing'); research/agents/r23/journal/SESSION-001.md 18:31 for the per-layer values; KNOWLEDGE [net/memory]",
+  "grade": "one 2048-token window of sequence 0000 of target 03 (tokens 40960-43008), torch 2.11, logistic over the FP8 cell with per-channel scale fit in-sample; the removal masks only the final chunk's attention",
+  "window": {
+   "sequence": "0000",
+   "target": "03",
+   "tokens": [
+    40960,
+    43008
+   ]
+  },
+  "layers": [
+   3,
+   7,
+   11,
+   15,
+   19,
+   23
+  ],
+  "rows": [
+   {
+    "id": "intact",
+    "label": "intact model (torch 2.11 rounding)",
+    "mean_bits": 1.345,
+    "per_layer": [
+     1.148,
+     1.278,
+     1.419,
+     1.495,
+     1.566,
+     1.167
+    ]
+   },
+   {
+    "id": "attn16k",
+    "label": "attention cut beyond the last 16,384 tokens",
+    "mean_bits": 3.494,
+    "per_layer": [
+     1.15,
+     3.3,
+     4.58,
+     4.44,
+     4.13,
+     3.36
+    ]
+   },
+   {
+    "id": "attn2k",
+    "label": "attention cut beyond the last 2,048 tokens",
+    "mean_bits": 4.221,
+    "per_layer": [
+     1.15,
+     4.26,
+     5.47,
+     5.32,
+     4.96,
+     4.17
+    ]
+   },
+   {
+    "id": "attn256",
+    "label": "attention cut beyond the last 256 tokens",
+    "mean_bits": 4.759,
+    "per_layer": [
+     1.15,
+     4.88,
+     6.04,
+     5.96,
+     5.64,
+     4.88
+    ]
+   },
+   {
+    "id": "reset",
+    "label": "delta-rule state reset",
+    "mean_bits": 4.97,
+    "per_layer": [
+     3.86,
+     5.45,
+     5.8,
+     5.39,
+     5.13,
+     4.19
+    ]
+   },
+   {
+    "id": "both",
+    "label": "state reset and attention cut beyond 2,048",
+    "mean_bits": 5.164,
+    "per_layer": [
+     3.86,
+     5.39,
+     5.97,
+     5.71,
+     5.43,
+     4.62
+    ]
+   }
+  ],
+  "coder_102_yardstick": {
+   "mean_bits": 5.13,
+   "ratio": 0.6407,
+   "per_layer": [
+    4.85,
+    5.16,
+    5.5,
+    5.69,
+    5.22,
+    4.32
+   ],
+   "blocks": 12,
+   "note": "6 layers x both dev sequences, b = 4096, block start 40960; receipt research/agents/r23/pages/iter-1-2.md"
+  }
+ },
+ "replay": {
+  "receipt": "research/agents/r23/pages/iter-1-1.md and iter-1-3.md; KNOWLEDGE [net/exact], [net/arith]",
+  "bytes_reproduced_exactly": 50331648,
+  "windows": "first 8192 tokens of sequence 0000 plus two 4096-token tails",
+  "text_bits_per_token": 2.6,
+  "ratio_with_same_binary": 0.0001,
+  "other_arithmetic": {
+   "fp8_cells_changed": 0.28,
+   "bits_per_value": [
+    1.2,
+    1.4
+   ],
+   "ratio": [
+    0.15,
+    0.17
+   ],
+   "note": "torch 2.11 with a stand-in loader, or float32; one window; the torch-version attribution is a reading, the control never finished"
+  }
+ },
+ "weights_rule": {
+  "receipt": "research/agents/r23/pages/iter-1-2.md and iter-1-4.md; KNOWLEDGE [net/weights]",
+  "grade": "exact model, 12 blocks; illegal today (a shared table)",
+  "share_of_gain": {
+   "all": 0.72,
+   "L19": 0.89,
+   "L3": 0.49
+  },
+  "coder_102_under_smaller_paid_rule": {
+   "4k": [
+    0.6407,
+    0.6326
+   ],
+   "512": [
+    0.7015,
+    0.6723
+   ]
+  }
+ },
+ "variance_and_sharing": {
+  "receipt": "research/agents/r23/pages (variance); research/agents/r9/pages/iter-1-2.md and iter-1-3.md (conditional sharing); KNOWLEDGE [info/*]",
+  "hidden_state_variance_kept": {
+   "one_layer": [
+    0.3,
+    0.38
+   ],
+   "all_12_views": [
+    0.62,
+    0.73
+   ]
+  },
+  "shared_bits_given_all_other_parts": {
+   "two_heads": [
+    0.19,
+    1.19
+   ],
+   "adjacent_layers": [
+    0.03,
+    0.08
+   ],
+   "further_layers": 0.01
+  },
+  "metadata_savings_of_4_89_bits": {
+   "token_id": 0.004,
+   "role": 0.0003,
+   "previous_token": 0.007,
+   "other_layers": 0.025,
+   "blocks": 24
+  },
+  "new_text_share": {
+   "entries": 0.74,
+   "bits": 0.75,
+   "reread_text_cheaper_by_bits": [
+    0.2,
+    0.45
+   ]
+  }
+ },
+ "floors": {
+  "receipt": "research/agents/r9/pages/iter-1-6.md ('Bigger blocks', token row at 16k: 4.80 bit, 0.600); research/agents/r23/pages/iter-1-3.md (adopted as block ceiling; 0.57 'not a measurement'); c1/KNOWLEDGE.md [sim/whole-thread]",
+  "block_16k": {
+   "ratio": 0.6,
+   "grade": "exact model, unpaid dense rule plus one reference, 4 blocks, 2 sequences"
+  },
+  "whole_sequence": {
+   "ratio": 0.57,
+   "grade": "extrapolation: 0.614 -> 0.600 from 4k to 16k, about -0.007 per doubling, 3.8 more doublings to a 225K-token sequence"
+  },
+  "c1_whole_sequence_bound_l3h0": [
+   0.594,
+   0.6
+  ]
+ },
+ "coder_102_screen": {
+  "track": "s-layer-b4k-r293",
+  "trial": "r11-t0002",
+  "ratio": 0.64494,
+  "bits": 5.16
+ },
+ "human_decisions": [
+  "read budget for every single entry",
+  "delta lengths not counted",
+  "a shared table is legitimate but no coder may use one until an independent dataset exists"
+ ]
+}

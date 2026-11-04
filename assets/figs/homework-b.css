@@ -1,0 +1,37 @@
+/* Part VI, pages VI.13–VI.18 (homework-b). Tokens only; every class starts with hwb-. */
+
+/* stacked horizontal bars (VI.15) */
+.hwb-shead { font-family: var(--f-sc); font-size: .9rem; letter-spacing: .03em; color: var(--ink-2); margin-top: .2rem; }
+.hwb-stack { display: flex; flex-direction: column; gap: .4rem; }
+.hwb-srow { display: grid; grid-template-columns: 8.5rem 1fr 5.6rem; gap: .6rem; align-items: center; font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); }
+.hwb-srow.is-sel .hwb-slabel { color: var(--ink); font-weight: 600; }
+.hwb-track { display: flex; height: 1.25rem; background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 999px; overflow: hidden; }
+.hwb-seg { display: block; height: 100%; min-width: 2px; border-right: 1px solid var(--paper-3); }
+.hwb-seg:last-child { border-right: 0; }
+.hwb-sval { font-family: var(--f-mono); font-size: .82rem; color: var(--ink); text-align: right; }
+.hwb-eq { overflow-x: auto; padding: .2rem 0; }
+.hwb-eq .katex-display { margin: .3rem 0; }
+
+/* the calculator (VI.16) */
+.hwb-calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr)); gap: .8rem; }
+.hwb-fs { margin: 0; padding: .55rem .75rem .7rem; border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--paper-3) 70%, transparent); display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.hwb-fs legend { font-family: var(--f-sc); font-size: .86rem; letter-spacing: .03em; color: var(--ink-2); padding: 0 .35rem; }
+.hwb-in { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-family: var(--f-sc); font-size: .88rem; color: var(--ink-2); }
+.hwb-in-name { flex: 1 1 auto; min-width: 0; }
+.hwb-in-box { display: inline-flex; align-items: center; gap: .3rem; flex: none; }
+.hwb-in input, .hwb-in select, .hwb-start select {
+  font-family: var(--f-mono); font-size: .84rem; color: var(--ink); background: var(--paper-3);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .18rem .35rem; min-height: 1.8rem;
+}
+.hwb-in input { width: 6.2rem; text-align: right; }
+.hwb-in select { max-width: 11rem; }
+.hwb-in input:focus-visible, .hwb-in select:focus-visible, .hwb-start select:focus-visible { outline: 2px solid var(--c); outline-offset: 1px; }
+.hwb-in-unit { font-size: .78rem; color: var(--ink-3); max-width: 5.5rem; line-height: 1.1; }
+.hwb-in.is-assumed .hwb-in-name::after { content: " (assumed)"; font-style: italic; color: var(--bad); font-size: .8em; }
+.hwb-start select { max-width: 100%; font-family: var(--f-sc); }
+.hwb-toggles { display: inline-flex; flex-wrap: wrap; gap: .35rem; }
+@media (max-width: 520px) {
+  .hwb-srow { grid-template-columns: 6.2rem 1fr 4.8rem; font-size: .84rem; }
+  .hwb-in input { width: 5.2rem; }
+  .hwb-in-unit { max-width: 4.2rem; }
+}

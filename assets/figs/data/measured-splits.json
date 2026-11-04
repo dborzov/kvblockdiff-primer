@@ -1,0 +1,505 @@
+{
+ "source": {
+  "generated_at": "2026-10-31",
+  "generated_by": "analysis/measured_extract.py",
+  "kvcr_repo": "/attic/d/kv-compress-roofline",
+  "ledger_commit": "f455ef9",
+  "trials": [
+   "env-t0001",
+   "env-t0007",
+   "env-t0009",
+   "env-t0010",
+   "env-t0011",
+   "env-t0012",
+   "env-t0089",
+   "env-t0090",
+   "env-t0091",
+   "env-t0092",
+   "env-t0093",
+   "env-t0094",
+   "env-t0095",
+   "env-t0096",
+   "env-t0097",
+   "r1-t0005",
+   "r1-t0008",
+   "r1-t0009",
+   "r1-t0014",
+   "r1-t0019",
+   "r1-t0021",
+   "r1-t0035",
+   "r1-t0037",
+   "r1-t0042",
+   "r1-t0045",
+   "r1-t0068",
+   "r11-t0001",
+   "r11-t0002",
+   "r11-t0003",
+   "r12-t0001",
+   "r12-t0002",
+   "r12-t0004",
+   "r12-t0005",
+   "r12-t0006",
+   "r16-t0003",
+   "r17-t0001",
+   "r20-t0001",
+   "r22-t0001",
+   "r22-t0003",
+   "r22-t0005",
+   "r24-t0002",
+   "r25-t0003",
+   "r25-t0004",
+   "r26-t0002",
+   "r26-t0008",
+   "r26-t0011",
+   "r3-t0002",
+   "r4-t0008",
+   "r4-t0019",
+   "r6-t0004",
+   "r7-t0001",
+   "r7-t0002",
+   "r7-t0003",
+   "r8-t0002"
+  ],
+  "hand_entered": "analysis/measured_pages.json (blocks carry their own receipt)",
+  "notes": [
+   "same_window, shuffle, free_model, overlap, heads_geometry, rule_portability and the page parts of codebooks are hand-entered with receipts",
+   "adjacent_tokens and coder_129_by_split are ledger rows; the tok2/tok4 loss is like for like (same trial, same settings of coder 62, quick)"
+  ]
+ },
+ "same_window": {
+  "receipt": "research/agents/r24/pages/iter-1-3.md; KNOWLEDGE [split/same-bytes]",
+  "grade": "encoded bytes, 20 sequences of target 02, one 4096-token window each, not isolated-verified",
+  "n_sequences": 20,
+  "window_tokens": 4096,
+  "means": {
+   "head": {
+    "coder": 102,
+    "ratio": 0.66036
+   },
+   "layer": {
+    "coder": 102,
+    "ratio": 0.62814
+   },
+   "token": {
+    "coder": 94,
+    "ratio": 0.62382
+   }
+  },
+  "joins": [
+   {
+    "from": "head",
+    "to": "layer",
+    "delta": -0.03216,
+    "spread": 0.00086,
+    "agree": "20 of 20"
+   },
+   {
+    "from": "layer",
+    "to": "token",
+    "delta": -0.00432,
+    "spread": 0.00136,
+    "agree": "20 of 20",
+    "ci95": [
+     -0.00495,
+     -0.00368
+    ],
+    "understated_by": 0.002,
+    "note": "coder 102 at head and layer, coder 94 at token, so the second gap is understated by about 0.002"
+   }
+  ],
+  "regime_vs_triple": {
+   "delta": -0.00148,
+   "spread": 0.00065,
+   "agree": "7 of 7",
+   "windows": 8,
+   "note": "regime = layers 3+19+23 and 7+11+15; triple = 3+7+11 and 15+19+23"
+  },
+  "recovered_share_of_free_model_gap": {
+   "head_to_layer": 0.9,
+   "layer_to_token": 0.19,
+   "receipt": "research/agents/r24/pages/iter-1-2.md (0.0322/0.036 and 0.0043/0.023)"
+  }
+ },
+ "adjacent_tokens": {
+  "trial": "r12-t0004",
+  "coder": 62,
+  "grade": "quick (not isolated-verified), same settings on every split",
+  "ratios": {
+   "layer": 0.68956,
+   "tok2": 0.72642,
+   "tok4": 0.75302,
+   "token": 0.70555
+  },
+  "loss_vs_layer": {
+   "tok2": 0.03686,
+   "tok4": 0.06346
+  },
+  "note": "the article compares against 0.677 (r12-t0001, a differently configured 62); like for like the loss is +0.037 / +0.063"
+ },
+ "coder_129_by_split": {
+  "rows": [
+   {
+    "split": "head",
+    "values_per_entry": 256,
+    "ratio": 0.73481,
+    "x": 0.0104,
+    "y": 0.7244,
+    "trial": "r25-t0003",
+    "verified": true,
+    "reads": {
+     "mean": 42.6,
+     "p99": null,
+     "max": 53.3
+    }
+   },
+   {
+    "split": "layer",
+    "values_per_entry": 512,
+    "ratio": 0.68629,
+    "x": 0.0212,
+    "y": 0.665,
+    "trial": "r25-t0003",
+    "verified": true,
+    "reads": {
+     "mean": 87.0,
+     "p99": null,
+     "max": 110.4
+    }
+   },
+   {
+    "split": "pair",
+    "values_per_entry": 1024,
+    "ratio": 0.66959,
+    "x": 0.0305,
+    "y": 0.639,
+    "trial": "r25-t0003",
+    "verified": true,
+    "reads": {
+     "mean": 125.1,
+     "p99": null,
+     "max": 151.2
+    }
+   },
+   {
+    "split": "regime",
+    "values_per_entry": 1536,
+    "ratio": 0.66672,
+    "x": 0.0363,
+    "y": 0.6305,
+    "trial": "r25-t0003",
+    "verified": true,
+    "reads": {
+     "mean": 148.6,
+     "p99": null,
+     "max": 172.2
+    }
+   },
+   {
+    "split": "triple",
+    "values_per_entry": 1536,
+    "ratio": 0.66522,
+    "x": 0.037,
+    "y": 0.6283,
+    "trial": "r25-t0003",
+    "verified": true,
+    "reads": {
+     "mean": 151.4,
+     "p99": null,
+     "max": 173.7
+    }
+   },
+   {
+    "split": "column",
+    "values_per_entry": 1536,
+    "ratio": 0.69762,
+    "x": 0.0304,
+    "y": 0.6673,
+    "trial": "env-t0095",
+    "verified": true,
+    "reads": {
+     "mean": 124.3,
+     "p99": 143.0,
+     "max": 142.2
+    }
+   },
+   {
+    "split": "token",
+    "values_per_entry": 3072,
+    "ratio": 0.66216,
+    "x": 0.0423,
+    "y": 0.6198,
+    "trial": "r25-t0004",
+    "verified": true,
+    "reads": {
+     "mean": 173.3,
+     "p99": null,
+     "max": 191.4
+    }
+   }
+  ],
+  "vs_102_on_layer": 0.04134,
+  "segments": "14 of 14 worse",
+  "note": "no tree, no reference: x is 0.01-0.04 and meaningful; different screens per split, good to about 0.005"
+ },
+ "shuffle": {
+  "receipt": "research/agents/r12/pages/iter-1-2.md and iter-1-3.md; KNOWLEDGE [struct/shuffle]",
+  "grade": "encoded bytes on shuffled blocks of the 2 dev sequences of target 03 (blocks rebuilt from a layer's tokens drawn at random across both sequences, both heads of a token kept together); 8 to 41 windows",
+  "tree_coder": {
+   "label": "base head coder (reference tree, no prediction)",
+   "original": 0.6907,
+   "shuffled": 0.752,
+   "windows": 41,
+   "note": "destroys about 70 % of the reference gain over solo"
+  },
+  "tree_coder_other_slice": {
+   "label": "base coder of the 8-window slice",
+   "original": 0.711,
+   "shuffled": 0.773,
+   "windows": 8
+  },
+  "prediction_gain": [
+   {
+    "coder": 80,
+    "label": "sparse triangular linear prediction",
+    "original": -0.0337,
+    "shuffled": -0.0344,
+    "windows": 8
+   },
+   {
+    "coder": 74,
+    "label": "forward-selected cross-head prediction",
+    "original": -0.0232,
+    "shuffled": -0.021,
+    "windows": 8
+   }
+  ],
+  "other_gains": [
+   {
+    "label": "shared reference for both heads",
+    "original": -0.003,
+    "shuffled": -0.0031,
+    "windows": 14
+   },
+   {
+    "label": "cross-head linear prediction (16 terms)",
+    "original": -0.0098,
+    "shuffled": -0.0093,
+    "windows": 14
+   }
+  ]
+ },
+ "free_model": {
+  "receipt": "research/agents/r9/pages/iter-1-6.md (tables 'free model + 0.004 overhead' and 'Bigger blocks'); r24 iter-1-2 for the recovered shares",
+  "grade": "exact model, dense linear rule fit on the other sequence and not paid for, 4 blocks of the 2 dev sequences",
+  "by_split_4k": {
+   "head": 0.677,
+   "layer": 0.641,
+   "token": 0.618
+  },
+  "real_coders_at_the_time": {
+   "head": {
+    "ratio": 0.6845,
+    "coder": 80
+   },
+   "layer": {
+    "ratio": 0.6562,
+    "coder": 80
+   },
+   "token": {
+    "ratio": 0.6461,
+    "coder": 94
+   }
+  },
+  "bigger_blocks": {
+   "reference_plus_prediction": {
+    "4k": {
+     "head": 0.689,
+     "layer": 0.655,
+     "token": 0.63
+    },
+    "16k": {
+     "head": 0.669,
+     "layer": 0.636,
+     "token": 0.616
+    }
+   },
+   "reference_plus_triangle": {
+    "4k": {
+     "head": 0.673,
+     "layer": 0.637,
+     "token": 0.614
+    },
+    "16k": {
+     "head": 0.654,
+     "layer": 0.62,
+     "token": 0.6
+    }
+   }
+  }
+ },
+ "overlap": {
+  "receipt": "research/agents/r11/pages/iter-1-2.md",
+  "grade": "encoded bytes, one 4096-token block per layer of sequence 0000, layer entries",
+  "tree_alone": [
+   0.064,
+   0.142
+  ],
+  "prediction_alone": [
+   0.055,
+   0.095
+  ],
+  "overlap_by_layer": {
+   "3": 0.03,
+   "7": 0.027,
+   "11": 0.024,
+   "15": 0.026,
+   "19": 0.042,
+   "23": 0.037
+  },
+  "note": "prediction alone beats the tree at L7 (0.091 vs 0.087) and L11 (0.077 vs 0.064)"
+ },
+ "heads_geometry": {
+  "receipt": "research/agents/r7/pages/iter-1-1.md (36 blocks); research/agents/r9/pages/iter-1-2.md (4 blocks, bound)",
+  "same_channel_cosine": 0.05,
+  "token_distance_correlation_max": 0.92,
+  "shared_bits_per_element": {
+   "raw": 0.85,
+   "after_one_reference_for_both_heads": 0.54,
+   "with_separate_references": 0.21
+  },
+  "l19_terms": {
+   "inside_head_0": 4103,
+   "head_0_into_head_1": 29835,
+   "receipt": "research/agents/r22/pages/iter-1-2.md, one block"
+  }
+ },
+ "rule_portability": {
+  "receipt": "research/agents/r7/pages/iter-1-2.md (91-96 %); research/agents/r9/pages/iter-1-3.md (0.9995, 10 sequences, Gaussian estimate)",
+  "gain_recovered_by_rule_fit_elsewhere": [
+   0.91,
+   0.96
+  ],
+  "shared_pattern_correlation_between_datasets": 0.9995,
+  "rule_storage_cost_at_4k": {
+   "range": [
+    0.013,
+    0.021
+   ],
+   "receipt": "research/agents/r22/pages/iter-1-1.md (0.0129 to 0.0208, six blocks)"
+  }
+ },
+ "codebooks": {
+  "receipt": "research/agents/r26/pages/iter-1-3.md (RQ, PQ); research/agents/r25/pages/iter-1-2.md (anchors curve, pointer); research/agents/r11/pages/iter-1-1.md (rotations); research/agents/r25/pages/iter-1-1.md (coverage)",
+  "rq_no_tree": {
+   "delta_vs_own_control": -0.00294,
+   "spread": 0.00092,
+   "segments": "14 of 14",
+   "blocks_better": "54 of 72",
+   "note": "r26-t0011 (isolated) against the same coder's prediction-only control r26-t0002 (quick); the ledger values are merged by the script"
+  },
+  "pq_no_tree": {
+   "delta_vs_own_control": -0.00172,
+   "grade": "quick"
+  },
+  "behind_tree_102": {
+   "rq": 0.0493,
+   "pq": 0.0505
+  },
+  "on_tree_plus_prediction": {
+   "codebook_chosen_on_blocks": "0 of 72",
+   "trial": "r26-t0010 (quick)"
+  },
+  "anchors_curve": {
+   "grade": "encoded bytes, one block per layer (sequence 0000, tokens 57344-61439)",
+   "rows": [
+    {
+     "references": "64",
+     "L3": 0.6858,
+     "L7": 0.6838,
+     "L19": 0.7015
+    },
+    {
+     "references": "256",
+     "L3": 0.6518,
+     "L7": 0.6703,
+     "L19": 0.6841
+    },
+    {
+     "references": "whole tree",
+     "L3": 0.5737,
+     "L7": 0.6275,
+     "L19": 0.6403
+    }
+   ],
+   "coder_129_same_blocks": {
+    "L3": 0.6775,
+    "L7": 0.6713,
+    "L19": 0.6811
+   }
+  },
+  "pointer_bits_uncoded": 12,
+  "fixed_rotations": {
+   "penalty_bits_per_element": [
+    0.28,
+    0.32
+   ],
+   "lattice_constant_bits": 0.2546,
+   "measured_rounding_bits": [
+    0.29,
+    0.32
+   ],
+   "same_index_correlation": 0.0734,
+   "grade": "exact-model bounds, two heads (V L3 h0, L11 h0), no coder"
+  },
+  "clusters": {
+   "rq_saving_share_from_top_tenth": 0.42,
+   "note": "one L3 block"
+  },
+  "coverage": {
+   "techniques": 62,
+   "real_coder": 21,
+   "bound_only": 18,
+   "untried": 16,
+   "not_applicable": 7
+  },
+  "ledger": {
+   "track": "s-layer-b4k-r293",
+   "control_prediction_only_128": {
+    "trial": "r26-t0002",
+    "ratio": 0.69716,
+    "verified": false,
+    "status": "unmeasured"
+   },
+   "rq_no_tree_128": {
+    "trial": "r26-t0011",
+    "ratio": 0.69421,
+    "verified": true,
+    "delta": -0.00294
+   },
+   "pq_no_tree_128": {
+    "trial": "r26-t0008",
+    "ratio": 0.69544,
+    "verified": false,
+    "delta": -0.00172
+   },
+   "tree_102": {
+    "trial": "r11-t0002",
+    "ratio": 0.64494
+   },
+   "note": "the spec's msrCast bar '129 + RQ 0.6834' is 0.6863 - 0.0029, a derived number: RQ's -0.0029 was measured on coder 128's own prediction-only control (0.69716 -> 0.69421), not on coder 129"
+  }
+ },
+ "cast": {
+  "track": "s-layer-b4k-r293",
+  "solo_ideal": 0.77811,
+  "c129_prediction_only": 0.68629,
+  "c129_plus_rq_derived": 0.68334,
+  "tree_102": 0.64494,
+  "tree_plus_prediction_121": 0.63639,
+  "fixed_rotation_penalty_bits": [
+   0.28,
+   0.32
+  ],
+  "note": "c129_plus_rq_derived is derived (see codebooks.ledger.note); mark it as such"
+ }
+}

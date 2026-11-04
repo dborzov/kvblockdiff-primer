@@ -1,0 +1,47 @@
+/* Part IV figures (figures/scenario.js). Tokens only; every class starts with scn-. */
+
+/* small helpers */
+.scn-ctl-lab { font-family: var(--f-sc); font-size: .88rem; color: var(--ink-2); letter-spacing: .03em; }
+.scn-ctl-lab code, .readout code, .seg code, .slider code { font-family: var(--f-mono); font-size: .92em; }
+
+/* IV.1 ask/answer: the sender's box is a button */
+svg.plot .scn-hit { cursor: pointer; outline: none; }
+svg.plot .scn-hit:focus-visible { stroke: var(--c); stroke-width: 3; }
+
+/* IV.4 three cherry shapes */
+.scn-shapes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .7rem; }
+.scn-shape { text-align: left; display: flex; flex-direction: column; gap: .3rem; min-width: 0; border: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); border-radius: 8px; background: var(--paper-3); padding: .5rem .6rem .6rem; cursor: pointer; color: var(--ink); font: inherit; }
+.scn-shape:hover, .scn-shape:focus-visible { border-color: var(--c); outline: none; }
+.scn-shape.on { border-color: var(--c); box-shadow: 0 0 0 2px var(--c); }
+.scn-shape-h { font-family: var(--f-mono); font-size: 1rem; color: var(--ink); }
+.scn-shape-s { font-family: var(--f-sc); font-size: .8rem; color: var(--ink-2); letter-spacing: .03em; }
+.scn-shape dl { display: grid; grid-template-columns: auto 1fr; gap: .12rem .6rem; margin: 0; font-size: .8rem; }
+.scn-shape dt { color: var(--ink-3); font-family: var(--f-sc); letter-spacing: .02em; }
+.scn-shape dd { margin: 0; font-family: var(--f-mono); text-align: right; color: var(--ink); overflow-wrap: anywhere; }
+.scn-shape dd small { display: block; color: var(--ink-3); font-family: var(--f-body); font-style: italic; font-size: .85em; }
+
+/* IV.6 the contract: three tables and a meter */
+.scn-da { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: .8rem; }
+.scn-da-t { background: var(--paper-3); border: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); border-radius: 8px; padding: .45rem .5rem .55rem; min-width: 0; }
+.scn-da-h { font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); margin-bottom: .3rem; }
+.scn-da-h small { color: var(--ink-3); font-size: .8em; }
+.scn-da-body { display: grid; gap: 2px; }
+.scn-da-c { font-family: var(--f-mono); font-size: .78rem; text-align: right; padding: .12rem .3rem; }
+.scn-da-k { font-family: var(--f-sc); font-size: .74rem; color: var(--ink-3); text-align: left; white-space: nowrap; }
+button.scn-da-v { border: 0; background: color-mix(in srgb, var(--ink) 5%, transparent); color: var(--ink); border-radius: 3px; cursor: pointer; }
+button.scn-da-v:hover, button.scn-da-v:focus-visible { background: color-mix(in srgb, var(--c) 18%, transparent); }
+.scn-da-v.on { background: color-mix(in srgb, var(--c) 30%, transparent); font-weight: 700; }
+.scn-da-v.used { background: color-mix(in srgb, var(--peacock) 24%, transparent); font-weight: 700; }
+.scn-da-v.dim { opacity: .35; }
+.scn-da-dict { border-color: var(--peacock); }
+.scn-meter { margin-top: .5rem; display: flex; flex-direction: column; gap: .25rem; }
+.scn-meter-track { position: relative; height: .85rem; background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 4px; }
+.scn-meter-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--peacock); border-radius: 4px; }
+.scn-meter-leash { position: absolute; top: -4px; bottom: -4px; border-left: 2px dashed var(--t-leash); }
+.scn-meter-lab { font-family: var(--f-sc); font-size: .74rem; color: var(--ink-3); letter-spacing: .02em; }
+.scn-meter-lab b { color: var(--ink-2); font-weight: 600; }
+
+/* IV.7 the square of scores keeps a square aspect in a wide plate */
+.scn-square { width: 100%; max-width: 36rem; margin: 0 auto; }
+svg.plot .scn-pt { cursor: pointer; outline: none; }
+svg.plot .scn-pt:focus-visible { stroke: var(--c); stroke-width: 3; }
