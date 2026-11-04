@@ -67,7 +67,7 @@ Every position of the dump also carries a token kind. Kind 2 is the user role, w
 
 ## The stand-in rule {#stand-in-rule}
 
-The indexer is replaced by the LLM's own attention, ranked. At step `t` and one layer, every query head scores every earlier key, the scores go through the causal softmax, and the 12 heads' probabilities are averaged into one score per position. The picks are the `k` best-scored positions before `t`.
+The indexer is replaced by the LLM's own attention, ranked. The listing is the attention step of [[#landscape-attention]] with the weighted sum of values replaced by a ranking, and with the softmax averaged over the 12 query heads instead of applied per head. At step `t` and one layer, every query head scores every earlier key, the scores go through the causal softmax, and the 12 heads' probabilities are averaged into one score per position. The picks are the `k` best-scored positions before `t`.
 
 ```python the stand-in indexer, one layer of the Bachelor at step t
 import numpy as np
@@ -134,7 +134,7 @@ The token's own position takes 8 % of the total mass on average and 39 % in laye
 :::
 
 ::: aside source Receipts
-bachelor-kv (private repository `dborzov/bachelor-kv`) at commit aa89697: `docs/design.md` §2 (the dump, token kinds), §3 (the stand-in rule, `W`, `g`), §5 (steps, `t_count = 8192`); `docs/traces.md` (ranked to `K1 = 2304`); `docs/log.md` 2026-11-03 (decode-like shares 17.2 / 23.4 / 17.5 / 69.4 / 24.8 %, per-layer sink and self). Mass shares: `results/summary/attention.json`, `R7_attention_mass` (`captured_g1_W0`, `shares_of_nonself`, `shares_of_total`), computed at commit d3c2b80; grade measured. `docs/results.md` §2.
+bachelor-kv (private repository `dborzov/bachelor-kv`) at commit 8f5a471: `docs/design.md` §2 (the dump, token kinds), §3 (the stand-in rule, `W`, `g`), §5 (steps, `t_count = 8192`); `docs/traces.md` (ranked to `K1 = 2304`); `docs/log.md` 2026-11-03 (decode-like shares 17.2 / 23.4 / 17.5 / 69.4 / 24.8 %, per-layer sink and self). Mass shares: `results/summary/attention.json`, `R7_attention_mass` (`captured_g1_W0`, `shares_of_nonself`, `shares_of_total`), computed at commit d3c2b80; grade measured. `docs/results.md` §2.
 :::
 
 ::: takeaway

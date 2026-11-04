@@ -106,7 +106,7 @@ Three differences cannot be carried and travel with every number as caveats:
 Two experiments would turn the first caveat into a measurement. A size ladder on the same five texts (Qwen 2.5 0.5B, 1.5B, 3B, and 7B if it fits on one GPU) is proposed and not run. A second LLM, Qwen3.5-2B, the Bench's LLM, with sequences up to 225K, is the next planned point ([[#picks-what-it-means/next]]).
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697: `docs/design.md` §4.1 (the table of settings and their scaling; the note of 2026-11-03 rejecting absolute `b`), §4.2 (what is measured inside the dump), §4.3 (what cannot be carried; the size ladder), §4.4 (the named configurations), §3.1 (replay semantics: LRU with the guard, reverse rank order, one stack-distance pass), §8 (grades); `docs/next-steps.md` §1 (Qwen3.5-2B). DeepSeek-V4-Flash constants (43 layers, `index_topk` 512, `sliding_window` 128): `docs/log.md` 2026-11-03, from its `config.json`.
+bachelor-kv at commit 8f5a471: `docs/design.md` §4.1 (the table of settings and their scaling; the note of 2026-11-03 rejecting absolute `b`), §4.2 (what is measured inside the dump), §4.3 (what cannot be carried; the size ladder), §4.4 (the named configurations), §3.1 (replay semantics: LRU with the guard, reverse rank order, one stack-distance pass), §8 (grades); `docs/next-steps.md` §1 (Qwen3.5-2B). DeepSeek-V4-Flash constants (43 layers, `index_topk` 512, `sliding_window` 128): `docs/log.md` 2026-11-03, from its `config.json`.
 :::
 
 ::: takeaway

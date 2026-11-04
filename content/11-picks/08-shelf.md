@@ -24,7 +24,7 @@ cards:
     wrong: ["f_D 0.85 at 0.05 loads per step", "f_D 0.94 at 0.018 loads per step", "f_D 0.04 at no loads"]
     why: 'The range comes from the two ends of the fitted exponent, 0.93 and 1.44. 0.85 is outside it.'
     sec: pin
-  - q: Read with the pre-registered decision rule of X.9, what does the shelf say at the Pin?
+  - q: Read with the pre-registered decision rule of X.9, what does a shelf of stretches of 4096 say at the Pin?
     a: '"Partly" at best (0.54 at 4 × 4096, with loads at the 0.1 limit), "spread" at worst'
     wrong: ['"Affordable": f_D above 0.8 with n_D ≤ 8', '"Spread" in every case', "The rule cannot be read without a GPU"]
     why: 'f_D ≥ 0.8 at n_D ≤ 8 with n_load ≤ 0.1 was "affordable"; 0.5 ≤ f_D < 0.8 "partly"; below 0.5 "spread". At the Pin only the upper end of 4 × 4096 reaches 0.5.'
@@ -56,13 +56,13 @@ Measured on the Bachelor (popular, `P = 32`, means over the whole sequence from 
 Part VI's shelf, 4 × 4096, catches 0.94 of the misses here, above the assumed 0.85. It also spans 60 % of the context, and the twin, with no concentration at all, catches 0.60. At equal coverage, more and shorter stretches catch more: with $\vnD \vb = 4096$ positions on the shelf, one stretch catches 0.46 and sixteen stretches of 256 catch 0.64.
 
 ::: figure fig-picks-shelf picksShelf wide
-**The δ-miss fraction against the shelf's coverage.** Horizontal axis: [[shelf-coverage|shelf coverage]] $\vnD \vb / \vt$ (log scale). Vertical axis: $\vfD$. One line per shelf size $\vnD$ = 1, 2, 4, 8, 16, each through stretch lengths 256 to 4096; grey points: the shuffled twin of the same shelves, which sit on the even-spread line $\vfD$ = coverage. Dashed lines at 0.8 ("affordable" if $\vnD \le 8$ and $\vnload \le 0.1$) and 0.5 (below it, misses are spread), the readings of [[#plan-decision-rules]]. The star is Part VI's assumed 0.85 for 4 × 4096. Bars: the extrapolated range at the Pin's 100K for each $\vnD$, placed at the Pin's coverage, for stretches of 4096 or 1024 (switch). Choosers: the configuration (pin-scaled by default) and the shelf policy (touched, heaviest, popular over 8 or 32 steps; popular over 32 by default). Coverage is computed over the whole sequence. Grades: measured on the Bachelor; the Pin's bars extrapolated.
+**The δ-miss fraction against the shelf's coverage.** Horizontal axis: [[shelf-coverage|shelf coverage]] $\vnD \vb / \vt$ (log scale). Vertical axis: $\vfD$. One line per shelf size $\vnD$ = 1, 2, 4, 8, 16, each through stretch lengths 256 to 4096; grey points: the shuffled twin of the same shelves, which sit on the even-spread line $\vfD$ = coverage. Dashed lines at 0.8 ("affordable" if $\vnD \le 8$ and $\vnload \le 0.1$) and 0.5 (below it, misses are spread), the readings of [[#plan-decision-rules]]. The star is Part VI's assumed 0.85 for 4 × 4096. Bars: the extrapolated range at the Pin's 100K for each $\vnD$, placed at the Pin's coverage, for stretches of 2048, 4096, 8192 or 16 384 (switch; 2048 has its high end only). Choosers: the configuration (pin-scaled by default) and the shelf policy (touched, heaviest, popular over 8 or 32 steps; popular over 32 by default). Coverage is computed over the whole sequence. Grades: measured on the Bachelor; the Pin's bars extrapolated.
 :::
 
 ::: try
 1. Find the star and the Bachelor's 4 × 4096 point. The Bachelor reaches 0.85 only with a shelf spanning over a third of its context.
 2. Switch the policy to touched. Every line drops toward the twin's.
-3. Switch the Pin's cells to $\vb$ = 1024. The bars move left and down: at 100K, four stretches of 1024 catch 0.13–0.24.
+3. Switch the Pin's bars to $\vb$ = 16 384. Four stretches catch 0.71–0.91 at a coverage of 0.65; eight would span the whole context.
 :::
 
 ::: takeaway
@@ -85,7 +85,7 @@ It is not. At the Pin's budget share, held fixed by choosing $\vk = 0.02\,\vt$ i
 Fitted on the bins before 20K and used to predict the later ones, the absolute rule is off by +0.13 in $\vfD$ and the share rule by +0.03. Loads collapse in the same way, with an exponent of 1.24 [1.04–1.46]. Misses spread over more of the context as it grows, slightly faster than the context itself. A larger budget share spreads them as well: at a fixed context, $\vfD$ falls with the budget as $\vk^{-0.47}$ (1 × 1024), while the twin's stays flat.
 
 ::: figure fig-picks-shelf-scaling picksShelfScaling wide
-**What a stretch catches as the context grows.** Vertical axis: $\vfD$ for one shelf of $\vnD$ dictionaries (chooser, 1 to 16), at the Pin's budget share (the budget interpolated to 2 % of $\vt$ in each bin), with the popular policy over 32 steps or the heaviest (chooser). One line per time bin, $\vt$ ≈ 10.2K, 14.3K, 18.4K, 22.5K and 26.5K. The first switch sets the horizontal axis: the stretch length $\vb$; $\vb/\vt$; or $\vb/\vt^{1.27}$, drawn as the stretch length at the Pin's 100K that a cell of the Bachelor stands for, $\vb\,(100\text{K}/\vt)^{1.27}$. Against $\vb$ the bins stack, later bins lower; against the last they fall on one line. Dashed lines: the Pin's stretches of 1024 and 4096, with the extrapolated ranges as bars. The readout gives the three rules' residuals and the fitted exponents. Grade: measured (the rules are derived).
+**What a stretch catches as the context grows.** Vertical axis: $\vfD$ for one shelf of $\vnD$ dictionaries (chooser, 1 to 16), at the Pin's budget share (the budget interpolated to 2 % of $\vt$ in each bin), with the popular policy over 32 steps or the heaviest (chooser). One line per time bin, $\vt$ ≈ 10.2K, 14.3K, 18.4K, 22.5K and 26.5K. The first switch sets the horizontal axis: the stretch length $\vb$; $\vb/\vt$; or $\vb/\vt^{1.27}$, drawn as the stretch length at the Pin's 100K that a cell of the Bachelor stands for, $\vb\,(100\text{K}/\vt)^{1.27}$. Against $\vb$ the bins stack, later bins lower; against the last they fall on one line. Dashed lines: the Pin's stretches of 2048, 4096, 8192 and 16 384, with the extrapolated ranges as bars (2048: the high end only; there is none below 2048, where the rule leaves the measured stretches). The readout gives the three rules' residuals and the fitted exponents. Grade: measured (the rules are derived).
 :::
 
 ::: takeaway
@@ -95,25 +95,31 @@ Fitted on the bins before 20K and used to predict the later ones, the absolute r
 
 ## At the Pin, and the decision rule read {#pin}
 
-To carry a shelf to the Pin, read the Bachelor at the time bin 20K–24K ($\vt$ ≈ 22.5K) with the stretch length rescaled to $\vb \times (22.5\text{K} / 100\text{K})^{0.93 \dots 1.44}$, the two ends of the fitted exponent, after shifting the bin's share to the Pin's 2.04 % along the budget sweep. A Pin stretch of 4096 positions then behaves like a Bachelor stretch of about 480 to 1020 positions. Extrapolated, popular `P = 32`:
+To carry a shelf to the Pin, read the Bachelor at the time bin 20K–24K ($\vt$ ≈ 22.5K) with the stretch length rescaled to $\vb \times (22.5\text{K} / 100\text{K})^{0.93 \dots 1.44}$, the two ends of the fitted exponent, after shifting the bin's share to the Pin's 2.04 % along the budget sweep. A Pin stretch of 4096 positions then behaves like a Bachelor stretch of about 480 to 1020 positions. A reading is taken only where the rescaled stretch lands between two stretch lengths the Bachelor measured, 256 to 4096; nothing is extrapolated in the stretch length itself. Pin stretches of 1024 rescale to 120–255 positions, below the shortest measured stretch, and have no reading. Stretches of 2048 have one at the favourable end of the exponent only. Extrapolated, popular `P = 32`, $\vfD$ with net loads per step:
 
-| $\vnD$ | $\vfD$, $\vb$ = 4096 | net loads | $\vfD$, $\vb$ = 1024 | net loads |
+| $\vnD$ | $\vb$ = 2048 (favourable end only) | 4096 | 8192 | 16 384 |
 |---|---|---|---|---|
-| 1 | 0.11–0.20 | 0.04–0.06 | 0.04–0.07 | 0.09–0.14 |
-| 4 | 0.36–0.54 | 0.10–0.13 | 0.13–0.24 | 0.19–0.29 |
-| 8 | 0.56–0.76 | 0.14–0.20 | 0.23–0.40 | 0.27–0.38 |
-| 16 | 0.78–0.95 | 0.15–0.29 | 0.35–0.60 | 0.40–0.61 |
+| 1 | 0.12 (0.06) | 0.11–0.20 (0.04–0.06) | 0.19–0.30 (0.03–0.04) | 0.29–0.43 (0.02–0.03) |
+| 4 | 0.37 (0.13) | 0.36–0.54 (0.10–0.13) | 0.52–0.73 (0.06–0.10) | 0.71–0.91 (0.03–0.06) |
+| 8 | 0.57 (0.20) | 0.56–0.76 (0.14–0.20) | 0.75–0.93 (0.07–0.14) | shelf spans the context |
+| 16 | 0.80 (0.28) | 0.78–0.95 (0.15–0.29) | shelf spans the context | shelf spans the context |
+
+Where the shelf's stretches span the whole 100K context, every stretch is on the shelf: $\vfD$ = 1 and a dictionary loads only when a new stretch opens. Longer stretches catch more: four stretches of 16 384 positions catch 0.71–0.91 of the misses, at a coverage of 0.65.
 
 The decision rule of [[#plan-decision-rules]] was registered before the data: $\vfD \ge 0.8$ at $\vnD \le 8$ with $\vnload \le 0.1$ reads "affordable"; $0.5 \le \vfD < 0.8$ "partly"; $\vfD < 0.5$ "spread". On this replay it is read on the best cell with $\vnD \le 8$ and $\vnload \le 0.1$, and on the lift over the twin as well, because of coverage.
 
 1. **The Bachelor, measured.** "Affordable" only with a shelf spanning 73 % of the context (4 × 4096 in the bin 20K–24K: $\vfD$ 0.90, 0.035 loads per step). Restricted to the Pin's coverage (at most 0.33), "partly": 0.52 at 4 × 1024, 0.098 loads per step.
-2. **The Pin, extrapolated.** "Partly" at best: 0.54 at 4 × 4096, with 0.10–0.13 loads per step, at the 0.1 limit. "Spread" at the other end of the exponent's range. Part VI's 0.85 at 4 × 4096 lies outside the range.
+2. **The Pin, extrapolated, stretches of 4096.** "Partly" at best: 0.54 at 4 × 4096, with 0.10–0.13 loads per step, at the 0.1 limit. "Spread" at the other end of the exponent's range. Part VI's 0.85 at 4 × 4096 lies outside the range.
+3. **The Pin, longer stretches.** At the favourable end, 8 × 8192 (0.93, 0.07 loads per step) and 4 × 16 384 (0.91, 0.03) reach "affordable"; at the other end they read "partly" (0.75 and 0.71). Both shelves span 65 % of the context.
+
+The rule was written about $\vfD$ and loads alone. It says nothing about the GPU memory a shelf holds, and that is where the long-stretch shelves fail: four dictionaries of 16 384 positions at a dictionary share of one half hold about 33 000 slots' worth per layer, seven resized hot caches ([[#picks-bytes-side/amortised-or-resident]], [[#picks-slot-price/stretch-length]]).
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697: `docs/results.md` §3 (the measured table, the scaling rule, the Pin table, the decision rule); `docs/design.md` §4.1 (the note of 2026-11-03: `b` does not carry as an absolute count). Details: `results/summary/shelf.json` (`bachelor_measured`, `R6`, `R6_time_bins_fixed_share`, `scaling_rule`, `pin_rule`, `pin_extrapolation`, `decision_rule`), computed at commit d3c2b80; `docs/log.md` 2026-11-03 (out-of-sample bias +0.13 against +0.03; loads exponent 1.24 [1.04–1.46]; `d ln f_D / d ln k = -0.47`; the bin 20K–24K reading 0.90 at coverage 0.73). The 0.80 and 0.48 of 4 × 1024 at 10K and 27K: `R6_time_bins_fixed_share` (popular `P = 32`; derived, the budget interpolated to 2 % of $\vt$). The rescaled lengths 480–1020 are $4096 \times 0.2245^{1.44}$ and $4096 \times 0.2245^{0.93}$ (derived). Grades: measured (Bachelor tables), derived (rules), extrapolated (Pin table).
+bachelor-kv at commit 8f5a471: `docs/results.md` §3 (the measured table, the scaling rule, the decision rule) and §4 (the refused stretch of 1024); `docs/design.md` §4.1 (the note of 2026-11-03: `b` does not carry as an absolute count). Details: `results/summary/shelf.json` (`bachelor_measured`, `R6`, `R6_time_bins_fixed_share`, `scaling_rule`, `pin_rule`, `pin_extrapolation_grid` with its `about`, `decision_rule`), the grid added at f2df58f; `docs/log.md` 2026-11-03 (out-of-sample bias +0.13 against +0.03; loads exponent 1.24 [1.04–1.46]; `d ln f_D / d ln k = -0.47`; the bin 20K–24K reading 0.90 at coverage 0.73). The 0.80 and 0.48 of 4 × 1024 at 10K and 27K: `R6_time_bins_fixed_share` (popular `P = 32`; derived, the budget interpolated to 2 % of $\vt$). The rescaled lengths 480–1020 are $4096 \times 0.2245^{1.44}$ and $4096 \times 0.2245^{0.93}$ (derived). Grades: measured (Bachelor tables), derived (rules), extrapolated (Pin table).
 :::
 
 ::: takeaway
 - At the Pin's 100K, 4 × 4096 extrapolates to $\vfD$ 0.36–0.54 at 0.10–0.13 loads per step; 0.85 is outside the range.
-- The decision rule reads "partly" at best at the Pin, "spread" at worst; on the Bachelor "affordable" only with a shelf spanning 73 % of the context.
+- The decision rule reads "partly" at best for stretches of 4096 at the Pin; longer stretches reach "affordable" at the favourable end, with shelves spanning 65 % of the context and the GPU memory to match.
+- Pin stretches of 1024 have no reading: carried to 100K they fall below the shortest stretch the Bachelor measured.
 :::

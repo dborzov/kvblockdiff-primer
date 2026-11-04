@@ -126,6 +126,7 @@ above are not that. They mislead, they are vague, and they distract from the arg
 - Takeaway blocks (`voice.md` §9) stay, as lists of the section's concrete results placed after the
   facts, which is consistent with §1. The pull quote (`::: pull`, "the one sentence to remember") is
   the one-sentence summary of trope 4 and is no longer used on new pages.
+- Amendment (2026-11-03): a pull quote is allowed when it states a measured fact with its number.
 - Running-theme titles in `data/themes.yaml` ("Predict, then store only the surprise", "Trust, but
   shuffle") are names of recurring ideas and are referenced like terms, which §1 item 4 allows; a
   future pass may replace the slogan-shaped ones with descriptive names.

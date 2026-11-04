@@ -42,7 +42,7 @@ The replay ran HiSparse's [[lru|LRU]] with its guard on the stand-in's picks, fo
 | HiSparse, GLM-5.1 (2048 picks of 100K) | 30 % | 13.4 % | 6.7 % | 8.2 % | ≈ 70 % | their measurement |
 | pin-scaled (512 picks, `W = 0`) | 35.1 [34.4–36.2] | 19.0 [18.2–20.2] | 9.7 [8.7–10.7] | 12.0 | 65 % | measured |
 | pin-absolute (2048 picks, `W = 0`) | 28.1 | 10.0 | 2.5 | 5.5 | 72 % | measured |
-| v4-scaled (128 squeezed rows of 4, `W = 32`) | 33.4 | 17.9 | 9.6 | 11.5 | 67 % | measured |
+| v4-scaled (128 squeezed rows of 4, `W = 32`) | 33.4 | 17.9 | 9.6 | 11.6 | 67 % | measured |
 
 Read the pin-scaled row against HiSparse's.
 
@@ -59,6 +59,9 @@ Read the pin-scaled row against HiSparse's.
 1. Choose pin-scaled. The line runs just above HiSparse's diamonds, parallel to the grey fit.
 2. Choose pin-absolute. Its line falls much more steeply: 2048 picks of about 27K positions are a share of 7.5 %, and the next page shows the slope rising with the share (0.63 at 64 picks, 2.2 at 2048).
 :::
+
+::: theme controls
+The 2× rule was written into [[#plan-decision-rules]] before the first replay ran. A stand-in that missed four times more often than GLM-5.1, or four times less, would have been reported as uncalibrated and every later page read with that caveat. Pin-scaled passed at all three sizes; pin-absolute failed at one, for a reason the next page measures.
 
 ::: takeaway
 - Pin-scaled misses 35 / 19 / 9.7 % at $\vB/\vk$ = 1 / 2 / 4 against HiSparse's 30 / 13.4 / 6.7 %: 1.2–1.5×, inside the 2× rule.
@@ -78,7 +81,7 @@ The link sees misses per step, not a miss rate. Pin-scaled at $\vB/\vk = 2$ has,
 
 Two settings move the mean:
 
-- **The resident window.** Keeping the last 128 positions resident raises the miss rate by 13–20 %. The window takes the easiest hits, recent positions that would have hit anyway, and the 512 picks move to farther positions, which repeat less. At V4's ratio (`W = 32` of a budget of 512 positions) the rise is 6–7 %.
+- **The resident window.** Keeping the last 128 positions resident raises the miss rate by 13–20 %. The window takes the easiest hits, recent positions that would have hit anyway, and the 512 picks move to farther positions, which repeat less. At V4's ratio (`W = 32` of a budget of 512 positions) the rise is 5–7 %.
 - **Decode-like steps.** Counted over assistant text and tool calls only ([[#picks-the-bachelor/the-dump]]), the miss rate is 1–9 % higher than over all steps.
 
 ::: takeaway
@@ -100,7 +103,7 @@ The napkins of Part VI use one miss rate for all 78 layers of the Pin. The repla
 :::
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697, `docs/results.md` §1 (the table, readings R1–R4, window, decode-like steps, layers). Detail and per-layer values: `results/summary/hotcache.json` (`R1_calibration`, `R2_overlap`, `R3_slope`, `R4_misses_per_step`), computed at commit d3c2b80; `docs/log.md` 2026-11-03 (ratios 1.17 / 1.41 / 1.45 and 0.94 / 0.75 / 0.37 to HiSparse; pin-absolute 205 misses, p99 679, burst 3.5; per-layer range 9–33 %). The slope 1.07 is the mean of per-pair fits over $\vB/\vk \in [1, 8]$ (1.065; the figure file `reuse_curve.png` prints it as 1.06). HiSparse: §4.3 of its paper, their measurement, as on [[#landscape-lucky-louis]].
+bachelor-kv at commit 8f5a471, `docs/results.md` §1 (the table, readings R1–R4, window, decode-like steps, layers). Detail and per-layer values: `results/summary/hotcache.json` (`R1_calibration`, `R2_overlap`, `R3_slope`, `R4_misses_per_step`), computed at commit d3c2b80; `docs/log.md` 2026-11-03 (ratios 1.17 / 1.41 / 1.45 and 0.94 / 0.75 / 0.37 to HiSparse; pin-absolute 205 misses, p99 679, burst 3.5; per-layer range 9–33 %). The slope 1.07 is the mean of per-pair fits over $\vB/\vk \in [1, 8]$ (1.065; the figure file `reuse_curve.png` prints it as 1.06). HiSparse: §4.3 of its paper, their measurement, as on [[#landscape-lucky-louis]].
 :::
 
 ::: takeaway

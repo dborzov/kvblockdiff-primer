@@ -116,16 +116,18 @@ A stand-in indexer (exact top-$\vk$ attention) and a replay of HiSparse's hot ca
 | $\vfD$ of 4 × 4096 on the Bachelor (coverage 0.60) | 0.94 (twin 0.60), 0.018 loads per step | measured | [[#picks-shelf]] |
 | what a stretch catches as the context grows | collapses on $\vb/\vt^{1.27}$ (exponent 0.93–1.44 by sequence) | derived | [[#picks-shelf]] |
 | $\vfD$ of 4 × 4096 at the Pin | 0.36–0.54, 0.10–0.13 loads per step (Part VI assumes 0.85 and 0.05) | extrapolated | [[#picks-shelf]] |
-| sequences per GPU at the Pin, each design at its best hot-cache size | HiSparse 109.5, resized (≈ 4750 slots) 126; tree shelf 105–107; light shelf 127–132; solo code on every miss 141 | derived and extrapolated | [[#picks-slot-price]] |
+| sequences per GPU at the Pin, each design at its best hot-cache size | HiSparse 109.5, resized (≈ 4740 slots) 127; tree shelf 88–108; mid shelf 118–124; light shelf 127–133; solo code on every miss 141 | derived and extrapolated | [[#picks-slot-price]] |
+| tree shelf at stretches of 4096 / 8192 / 16 384 | 88–97 / 74–81 / 55–59 sequences per GPU (light: 127–132 / 127–131 / 126–130) | derived and extrapolated | [[#picks-slot-price]] |
+| a global code of ratio 1 / 0.804 / 0.60 / 0.57 on every miss (the half-gain rule) | 127 / 141 / 162 / 166 sequences per GPU: at most +31 % | derived | [[#picks-ceiling]] |
 | indexer errors at recall 0.80 / 0.64 / 0.46 ($\vB/\vk$ = 2) | per step ×1.35 / 2.04 / 2.83; persistent ×0.95 / 0.85 / 0.71 | measured | [[#picks-the-indexer]] |
 
 ::: aside source Receipts
-bachelor-kv (private, `dborzov/bachelor-kv`) at commit aa89697, `docs/results.md` "The answer in five lines" and §1–§4; summaries `results/summary/{hotcache,attention,shelf,napkin}.json` computed at commit d3c2b80.
+bachelor-kv (private, `dborzov/bachelor-kv`) at commit 8f5a471, `docs/results.md` "The answer in five lines", §1–§4 and §4b; summaries `results/summary/{hotcache,attention,shelf,napkin}.json` computed at commit d3c2b80.
 :::
 
 ::: takeaway
 - The stand-in is calibrated against HiSparse (1.2–1.5×); miss rates carry at equal share of the context.
-- At the Pin, 4 × 4096 catches 36–54 % of misses, not 0.85; a solo code on every miss serves 141 sequences per GPU against 126 for HiSparse resized.
+- At the Pin, 4 × 4096 catches 36–54 % of misses, not 0.85; a solo code on every miss serves 141 sequences per GPU against 127 for HiSparse resized.
 :::
 
 ## Derived numbers {#derived}

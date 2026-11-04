@@ -49,8 +49,8 @@ site teaches each on the page named.
 - **Why standalone**: it is a deterministic function of the trace and the policy; it runs in seconds per
   sequence on a laptop; the shuffle-the-trace control says what is luck.
 - **Status**: HiSparse published `m(B)` for GLM-5.1 (30 / 13.4 / 6.7 % at 2048 / 4096 / 8192). Replayed
-  on the Bachelor's traces (Part XI.4–7): calibrated (35 / 19 / 9.7 % at the Pin's share), miss rates
-  carry at equal s = k/t; misses pile into stretches 3–5× above chance; f_D collapses on b / t^1.27, so at
+  on the Bachelor's traces (Part XI.3, XI.5–8): calibrated (35 / 19 / 9.7 % at the Pin's share), miss rates
+  carry at equal φ = k/t; misses pile into stretches 3–5× above chance; f_D collapses on b / t^1.27, so at
   the Pin 4 × 4096 extrapolates to f_D 0.36–0.54 at 0.10–0.13 net loads per step; best shelf policy:
   popularity over 32 steps. Nothing on the Bench; reading 7 (are missed cherries harder) open.
 
@@ -75,6 +75,11 @@ site teaches each on the page named.
   (settings). **Outputs** the napkin; every input carries its grade, every gap is an assumption marked.
 - **Why standalone**: it is arithmetic; its value is in making the other four's outputs commensurable and
   in saying which factor binds (on the Pin, heavy dictionaries bind GPU memory before the link).
+- **Status**: run at equal GPU memory with measured counts (Part XI.9–11): each design at its best hot-cache
+  size, HiSparse resized 127 sequences per GPU, light shelf 127–133, tree shelf 88–108 (worse at longer
+  stretches: a dictionary on the GPU is resident, not amortised), a solo code on every miss 141. The
+  half-gain rule bounds any global code at +31 % (166 at the floor 0.57). Proposal on the table (the
+  human's decision): count a dictionary byte as GPU memory at the slot price in the scenario's score.
 
 ## Dependencies
 

@@ -41,3 +41,11 @@ slot-price:
   home: picks-slot-price
   short: >-
     With misses falling as $\vm \propto \vB^{-\valpha}$, one more hot-cache slot per layer removes about $\valpha\,\vm\,\vk/\vB$ misses per decode step, $\valpha\,\vm\,\vk\,\ve/\vB$ link bytes. A dictionary on the GPU holds the memory of $\vw$ slots, so it helps only if it saves more link bytes than $\vw$ slots would. Not the exchange rate of Part II (variance explained to bits).
+
+half-gain-rule:
+  label: half-gain rule
+  name: the half-gain rule (sequences per GPU grow as about 1/√ρ for a code with no bytes per sequence)
+  cat: systems
+  home: picks-ceiling
+  short: >-
+    For a code that keeps no bytes per sequence on the GPU and shrinks every miss to a share $\vrho$ of a pick, the best hot-cache size balances the link against GPU memory, and sequences per GPU grow as $\vrho^{-1/(1+\valpha)} \approx 1/\sqrt{\vrho}$, not as $1/\vrho$: about half of the gain goes into a smaller hot cache. At the Pin, solo's 0.804 gives 141 sequences per GPU against 127, and the floor of 0.57 gives 166.

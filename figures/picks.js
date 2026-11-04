@@ -2,7 +2,9 @@
    figures/picks.js — Part XI, "The Bachelor: picks and misses, measured" (content/11-picks). See
    docs/site/figures.md.
    Builders: picksNapkin (two figures), picksMass, picksReuse, picksLayers, picksCollapse, picksHeavy,
-   picksShelf, picksShelfScaling, picksNoise.
+   picksShelf, picksShelfScaling, picksNoise; round two: picksPipeline (a concept graph built with cgraph.js),
+   picksRaster, picksLadder, picksStretchRatio, picksCeiling, picksStretchN, picksExplorer. The napkin bill they
+   share (BILL) is a pure block that analysis/picks_bill_check.mjs runs in node against napkin_grid.json.
    Every number is read at runtime from figures/data/picks-*.json, written by analysis/picks_figdata.py
    from the Bachelor's summaries (/attic/d/bachelor-kv/results/summary/*.json; receipts inside each file).
    Grades: measured (exact replay of stored traces), derived (arithmetic or fits on measured numbers),
@@ -439,7 +441,7 @@ window.FIG = window.FIG || {};
     const box = h('div'), ro = readout(), nt = note('');
     const swC = seg(NAMED.map(n => [n, n]), cfg, v => { cfg = v; draw(); }, 'configuration');
     const swP = seg(Object.entries(POLICY), pol, v => { pol = v; draw(); }, 'shelf policy');
-    const swB = seg([[4096, 'b = 4096'], [1024, 'b = 1024']], pinB, v => { pinB = v; draw(); }, 'the Pin’s stretch length');
+    const swB = seg([2048, 4096, 8192, 16384].map(b => [b, `b = ${b}`]), pinB, v => { pinB = v; draw(); }, 'the Pin’s stretch length');
     host.append(controls(swC), controls(h('span', { class: 'pks-head', text: 'policy' }), swP), controls(h('span', { class: 'pks-head', text: 'the Pin’s bars' }), swB),
       legend([...NDS.map(n => [`n_D = ${n}`, col(n), 'line']), ['shuffled twin (same shelves)', 'var(--ink-3)', 'dot'],
         ['the Pin at 100K, extrapolated range (n_D × b beside it)', PINC, 'pill'], ['the primer’s assumed f_D 0.85', HS, 'star']], { cls: 'pks-legend' }), box, ro, nt);
@@ -468,9 +470,12 @@ window.FIG = window.FIG || {};
       });
       const pinRows = cfg === 'pin-scaled' ? pin[pol] : null;
       if (pinRows) {
-        pinRows.filter(x => x[0] === pinB).forEach(([b, n, cov, lo, hi, nl, nlf]) => {
-          vrange(P, cov, lo, hi, PINC, 6.5, `<b>the Pin at 100K: n_D = ${n} × b = ${b}</b> · extrapolated<br>coverage ${fmt(cov, 3)} · f_D ${fmt(lo, 2)}–${fmt(hi, 2)} (exponent ${d.pin_beta[pol].join('–')})<br>net loads per step ${fmt(nl, 2)} at the low end, ${fmt(nlf, 2)} at the high end`, 6);
-          el('text', { x: P.x(cov) + 13 * f, y: P.y(lo) + 4 * f, class: 'lbl', style: 'fill:var(--ink-2)', text: `${n} × ${b}` }, P.g.top);
+        pinRows.filter(x => x[0] === pinB && x[2] <= 3.2).forEach(([b, n, cov, lo, hi, nlLo, nlHi, grade]) => {
+          const head0 = `<b>the Pin at 100K: n_D = ${n} × b = ${b}</b> · ${grade}<br>coverage ${fmt(cov, 3)} · `;
+          if (grade === 'derived') mark(P, cov, 1, 4, PINC, `${head0}f_D = 1: the shelf spans the Pin’s whole context`);
+          else if (lo != null && hi != null) vrange(P, cov, lo, hi, PINC, 6.5, `${head0}f_D ${fmt(lo, 2)}–${fmt(hi, 2)} (exponent ${d.pin_beta[pol].join('–')})<br>net loads per step ${fmt(nlLo, 2)} at the low end, ${fmt(nlHi, 2)} at the high end`, 6);
+          else mark(P, cov, lo ?? hi, 4, PINC, `${head0}f_D ${fmt(lo ?? hi, 2)}, the ${lo == null ? 'high' : 'low'} end only (the other end falls outside the measured stretches)<br>net loads per step ${fmt(lo == null ? nlHi : nlLo, 2)}`);
+          if (grade !== 'derived') el('text', { x: P.x(cov) + 13 * f, y: P.y(lo ?? hi) + 4 * f, class: 'lbl', style: 'fill:var(--ink-2)', text: `${n} × ${b}` }, P.g.top);
         });
       }
       mark(P, asm.coverage, asm.f_D, 5, HS, `<b>the primer’s assumption</b>: f_D ${asm.f_D} with ${asm.n_load} loads per step, n_D = ${asm.n_D} × b = ${asm.b} at the Pin (coverage ${fmt(asm.coverage, 3)})`, 'star');
@@ -502,13 +507,14 @@ window.FIG = window.FIG || {};
     const swP = seg([['popular_P32', 'popular, 32 steps'], ['heaviest', 'heaviest']], pol, v => { pol = v; draw(); }, 'shelf policy');
     host.append(controls(swM), controls(swN), controls(swP), legend([
       ...T.map((t, i) => [`t ≈ ${kfmt(t)}${d.n_seq[i] < 5 ? ` (${d.n_seq[i]} sequences)` : ''}`, col(i), 'line']),
-      ['the Pin at 100K (against b / t: one value; at the fitted exponent: its range)', 'var(--ink-2)', 'pill']], { cls: 'pks-legend' }), box, ro, nt);
+      ['the Pin at 100K, extrapolated: the range over the exponent’s two ends (dashed: the Pin’s stretch lengths)', 'var(--ink-2)', 'pill']], { cls: 'pks-legend' }), box, ro, nt);
     function draw() {
       box.replaceChildren();
       const R = rule[pol], beta = mode === 'b' ? 0 : mode === 'bt' ? 1 : R.beta;
       const X = (b, t) => (mode === 'b' ? b : b * Math.pow(Lpin / t, beta));
       const my = rows[pol].filter(r => r[1] === nD).sort((a, b) => a[0] - b[0]);
-      const xs = my.flatMap(r => T.map(t => X(r[0], t))).concat(mode === 'b' ? [] : [1024, 4096]), narrow = narrowOf(box);
+      const pins = pin[pol].filter(x => x[1] === nD).sort((a, b) => a[0] - b[0]);
+      const xs = my.flatMap(r => T.map(t => X(r[0], t))).concat(mode === 'b' ? [] : pins.map(x => x[0])), narrow = narrowOf(box);
       const scaled = `b · (100K / t)${mode === 'fit' ? `^${fmt(beta, 2)}` : ''}`;
       const P = Plot(box, {
         x: [Math.min(...xs) / 1.35, Math.max(...xs) * 1.35], xlog: 2, xfmt: kfmt, y: [0, 1.04], yticks: [0, 0.2, 0.4, 0.6, 0.8, 1], yfmt: v => fmt(v, 1), ...size(box, 340),
@@ -517,11 +523,11 @@ window.FIG = window.FIG || {};
         label: `δ-miss fraction per time bin at the Pin's share, n_D = ${nD}, against ${mode === 'b' ? 'the stretch length' : 'the stretch length scaled by the context'}`,
       });
       if (mode !== 'b') {
-        [[1024, 'top'], [4096, 'bottom']].forEach(([b, pos]) => vline(P, b, narrow ? `b = ${b}` : `the Pin’s b = ${b}`, { color: 'var(--ink-3)', pos, side: 'right' }));
-        pin[pol].filter(x => x[1] === nD).forEach(([b, n, lo, hi, sf]) => {
-          const tip = `<b>the Pin at 100K: n_D = ${n} × b = ${b}</b> · extrapolated<br>${mode === 'bt' ? `against b / t: f_D ${fmt(sf, 2)}` : `f_D ${fmt(lo, 2)}–${fmt(hi, 2)} for exponents ${R.beta_range.join('–')}`}`;
-          if (mode === 'bt') mark(P, b, sf, 4.5, 'var(--ink-2)', tip, 'dot');
-          else vrange(P, b, lo, hi, 'var(--ink-2)', 6.5, tip);
+        pins.forEach(([b, n, lo, hi], i) => {
+          vline(P, b, String(b), { color: 'var(--ink-3)', pos: i % 2 ? 'bottom' : 'top', side: 'right' });
+          const tip = `<b>the Pin at 100K: n_D = ${n} × b = ${b}</b> · extrapolated<br>${lo != null && hi != null ? `f_D ${fmt(lo, 2)}–${fmt(hi, 2)} for exponents ${R.beta_range.join('–')}` : `f_D ${fmt(lo ?? hi, 2)}, the ${lo == null ? 'high' : 'low'} end only (the other end falls outside the measured stretches)`}`;
+          if (lo != null && hi != null) vrange(P, b, lo, hi, 'var(--ink-2)', 6.5, tip);
+          else mark(P, b, lo ?? hi, 4.5, 'var(--ink-2)', tip, 'dot');
         });
       }
       T.forEach((t, i) => line(P, my.map(r => [X(r[0], t), r[2][i]]), {
@@ -532,10 +538,10 @@ window.FIG = window.FIG || {};
       ro.set([
         ['residual of logit f_D around one curve per n_D', `<span${on('b')}>b: ${fmt(R.rms_logit.b, 2)}</span> · <span${on('bt')}>b / t: ${fmt(R.rms_logit.b_over_t, 2)}</span> · <span${on('fit')}>b / t<sup>${fmt(R.beta, 2)}</sup>: ${fmt(R.rms_logit.fitted, 2)}</span>`],
         ['fitted exponent of t', `${fmt(R.beta, 2)} (sequences ${R.beta_range.join('–')}); the loads collapse at ${fmt(R.loads_beta, 2)}`],
-        [`the Pin, n_D = ${nD}`, pin[pol].filter(x => x[1] === nD).sort((a, b) => b[0] - a[0]).map(([b, , lo, hi]) => `b ${b}: f_D ${fmt(lo, 2)}–${fmt(hi, 2)}`).join(' · ')],
+        [`the Pin, n_D = ${nD}`, pins.map(([b, , lo, hi]) => `b ${b}: f_D ${lo != null && hi != null ? `${fmt(lo, 2)}–${fmt(hi, 2)}` : `${fmt(lo ?? hi, 2)} (${lo == null ? 'high' : 'low'} end only)`}`).join(' · ') || 'no extrapolated cell'],
       ]);
       nt.innerHTML = mode === 'b' ? 'Each line is one time bin; against b the bins stack: f_D at a fixed shelf falls as the context grows.'
-        : `x is the stretch length at the Pin’s 100K context that a cell of the Bachelor stands for, b · (100K / t)${mode === 'fit' ? `<sup>${fmt(beta, 2)}</sup>` : ''}, proportional to b / t${mode === 'fit' ? `<sup>${fmt(beta, 2)}</sup>` : ''}; the Pin’s own stretches are the two dashed lines.`;
+        : `x is the stretch length at the Pin’s 100K context that a cell of the Bachelor stands for, b · (100K / t)${mode === 'fit' ? `<sup>${fmt(beta, 2)}</sup>` : ''}, proportional to b / t${mode === 'fit' ? `<sup>${fmt(beta, 2)}</sup>` : ''}; the dashed lines are the Pin’s stretch lengths with an extrapolated cell (none below 2048: there the rule leaves the measured stretches).`;
     }
     draw();
   };
@@ -582,4 +588,518 @@ window.FIG = window.FIG || {};
     draw();
   };
 
+  // ---- BEGIN napkin bill (pure: analysis/picks_bill_check.mjs runs this block in node against napkin_grid.json)
+  /* The bill of the Bachelor's analysis/napkin_grid.py (the primer's econ(), Part VI): per sequence and step,
+     link bytes T = m·k·N_L·e·[f_D·y + (1 − f_D)·r_raw] + n_load·N_L·w·e with w = x·b (x the dictionary share,
+     y the delta share); GPU bytes M = N_L·e·(B + n_D·w); N = min(link·tpot / T, hbm / M); m(B) log-log through
+     HiSparse's measured points, slope α beyond them; the best B where the two bounds cross. */
+  const BILL = (() => {
+    function missCurve(G) {
+      const pts = G.m_points.slice().sort((a, b) => a[0] - b[0]);
+      const xs = pts.map(p => Math.log(p[0])), ys = pts.map(p => Math.log(p[1])), a = G.m_alpha_outside, n = xs.length;
+      return B => {
+        const x = Math.log(B);
+        if (x <= xs[0]) return Math.exp(ys[0] - a * (x - xs[0]));
+        if (x >= xs[n - 1]) return Math.exp(ys[n - 1] - a * (x - xs[n - 1]));
+        let i = 0;
+        while (x > xs[i + 1]) i++;
+        return Math.exp(ys[i] + (x - xs[i]) / (xs[i + 1] - xs[i]) * (ys[i + 1] - ys[i]));
+      };
+    }
+    /** One design at one hot-cache size. p = {x, y, b, nD, fD, nload, rhoRaw}; a global code of ratio r is {x: 0, y: r, fD: 1}. */
+    function at(G, m, B, p) {
+      const R = G.rig, e = R.e, NL = R.NL, w = p.x * p.b, mm = m(B), miss = mm * R.k * NL * e;
+      const parts = { delta: miss * p.fD * p.y, raw: miss * (1 - p.fD) * p.rhoRaw, loads: p.nload * NL * w * e };
+      const mem = { hot: NL * e * B, dict: NL * e * p.nD * w };
+      const T = parts.delta + parts.raw + parts.loads, M = mem.hot + mem.dict;
+      const Nlink = R.link * 1e9 * R.tpot / 1e3 / T, Nhbm = R.hbm * 1e9 / M;
+      return { B, m: mm, T, M, parts, mem, Nlink, Nhbm, N: Math.min(Nlink, Nhbm), binds: Nlink < Nhbm ? 'link' : 'memory' };
+    }
+    /** The best B: where the link bound (rising with B) meets the memory bound (falling), by bisection in log B
+        over [k, B_max] (bachelor.frontier.balance); if memory binds at k the answer is k, if the link binds at B_max, B_max. */
+    function best(G, m, p) {
+      let lo = G.B_range[0], hi = G.B_range[1];
+      const r0 = at(G, m, lo, p);
+      if (r0.Nlink >= r0.Nhbm) return { ...r0, Bx: lo, B: Math.round(lo) };
+      const r1 = at(G, m, hi, p);
+      if (r1.Nlink <= r1.Nhbm) return { ...r1, Bx: hi, B: Math.round(hi) };
+      for (let it = 0; it < 100; it++) {
+        const mid = Math.sqrt(lo * hi), r = at(G, m, mid, p);
+        if (r.Nlink < r.Nhbm) lo = mid; else hi = mid;
+      }
+      return { ...at(G, m, lo, p), Bx: lo, B: Math.round(lo) };
+    }
+    const globalCode = r => ({ x: 0, y: r, b: 0, nD: 0, fD: 1, nload: 0, rhoRaw: 1 });
+    return { missCurve, at, best, globalCode };
+  })();
+  // ---- END napkin bill
+
+  /** Compressor points of the napkin grid: one colour each, the same in every figure. */
+  const POINT_COLOR = { light: series(5), b02: series(7), b10: series(3), b25: series(4), free: series(0), tree: series(1) };
+  const SHARE = { dict: series(3), delta: series(0) };      // dictionary share, delta share (as Part X's bill)
+  const MB = v => `${fmt(v / 1e6, v < 1e7 ? 2 : 1)} MB`;
+  const pageUrl = id => (window.KV && KV.pages && KV.pages[id] ? KV.pages[id].url : (window.KV && KV.prefix ? KV.prefix : '/') + id.replace(/^picks-/, 'picks/') + '/');
+
+  // ================================================================== picksPipeline — the Part's chain, card by card
+  FIG.picksPipeline = async (host) => {
+    const d = await data('pipeline');
+    const q = need(d.queries, 'pipeline.queries'), ix = need(d.indexer, 'pipeline.indexer'), tr = need(d.trace, 'pipeline.trace');
+    const hc = need(d.hot_cache, 'pipeline.hot_cache'), sh = need(d.shelf, 'pipeline.shelf'), by = need(d.bytes, 'pipeline.bytes'), nk = need(d.napkin, 'pipeline.napkin');
+    const K = n => `${fmt(n / 1000, 1)}K`;
+    const NODES = [
+      { id: 'queries', col: 1, row: 1, nc: 'var(--cat-llm)', page: 'picks-the-bachelor', title: 'the Bachelor’s queries',
+        text: `Qwen 2.5 1.5B, ${q.sequences} coding-agent sequences of ${K(q.tokens_min)}–${K(q.tokens_max)} tokens, ${q.layers} layers`,
+        tip: `<b>${q.sequences} sequences, ${K(q.tokens_min)}–${K(q.tokens_max)} tokens</b><br>keys, values and queries of all ${q.layers} layers: a stand-in LLM’s dataset` },
+      { id: 'indexer', col: 1, row: 2, nc: 'var(--cat-llm)', page: 'picks-the-bachelor', title: 'the stand-in indexer',
+        text: `exact attention, top-${ix.k}: ${pc(ix.top512_mass, 0)} of the non-self mass`,
+        tip: `<b>the top ${ix.k} positions hold ${pc(ix.top512_mass, 0)}</b> of a step’s non-self attention mass (top 64: ${pc(ix.top64_mass, 0)}; top 2048: ${pc(ix.top2048_mass, 0)})` },
+      { id: 'trace', col: 2, row: 1, nc: 'var(--cat-systems)', page: 'picks-a-trace', title: 'the pick trace',
+        text: `consecutive steps share ${pc(tr.repeat, 0)} of their picks (HiSparse ≈ ${pc(tr.hisparse_repeat, 0)})`,
+        tip: `<b>${pc(tr.repeat, 0)} of a step’s picks were picked the step before</b>; ${pc(tr.within_8, 0)} within the last 8 steps (GLM-5.1 on HiSparse: ≈ ${pc(tr.hisparse_repeat, 0)})` },
+      { id: 'hot', col: 2, row: 2, nc: 'var(--cat-systems)', page: 'picks-hot-cache', title: 'the hot cache',
+        text: `an LRU of 2k slots: ${pc(hc.m[1])} of picks miss (HiSparse ${pc(hc.hisparse_m[1])})`,
+        tip: `<b>miss rate ${hc.m.map(v => pc(v)).join(' / ')}</b> at B/k = 1 / 2 / 4 (HiSparse ${hc.hisparse_m.map(v => pc(v)).join(' / ')})<br>${fmt(hc.misses_per_step, 0)} misses per layer per step on average, ${fmt(hc.p99, 0)} at the p99 step` },
+      { id: 'shelf', col: 3, row: 1, nc: 'var(--cat-coding)', page: 'picks-shelf', title: 'the dictionary shelf',
+        text: `4 dictionaries of 4096: f_D ${fmt(sh.pin_4x4096[0], 2)}–${fmt(sh.pin_4x4096[1], 2)} at the Pin (assumed ${sh.assumed})`,
+        tip: `<b>δ-miss fraction ${fmt(sh.pin_4x4096[0], 2)}–${fmt(sh.pin_4x4096[1], 2)}</b> at the Pin’s 100K (extrapolated); ${fmt(sh.bachelor_4x4096, 2)} on the Bachelor, where the same shelf spans ${pc(sh.bachelor_coverage, 0)} of the context` },
+      { id: 'bytes', col: 3, row: 2, nc: 'var(--cat-coding)', page: 'picks-bytes-side', title: 'the bytes of a miss',
+        text: `MDL ratio: solo ${fmt(by.solo, 3)}, light ${fmt(by.light, 3)}, tree ${fmt(by.tree, 3)}`,
+        tip: `<b>MDL ratio of a miss</b>: solo ${fmt(by.solo, 3)} (no dictionary), light ${fmt(by.light, 3)}, reference tree ${fmt(by.tree, 3)}; floors ${by.floors.join(' / ')}` },
+      { id: 'napkin', col: 4, row: 1, nc: 'var(--cat-project)', page: 'picks-slot-price', title: 'the napkin',
+        text: `sequences per GPU at the Pin: solo code ${fmt(nk.solo, 0)}, resized HiSparse ${fmt(nk.resized, 0)}`,
+        tip: `<b>sequences per GPU at the Pin</b>, each design at its best hot-cache size: solo code ${fmt(nk.solo, 0)}, light shelf ${fmt(nk.light[0], 0)}–${fmt(nk.light[1], 0)}, resized HiSparse ${fmt(nk.resized, 0)}, HiSparse as published ${fmt(nk.published, 1)}` },
+    ];
+    const EDGES = [['queries', 'indexer', 'q · k for every past position'], ['indexer', 'trace', `${ix.k} picks per layer and step`],
+      ['trace', 'hot', 'replayed step by step'], ['hot', 'shelf', 'the misses'], ['shelf', 'bytes', 'δ-misses and raw misses'], ['bytes', 'napkin', 'link bytes, GPU memory']];
+    const heads = ['the picks', 'the trace and the cache', 'the misses’ bytes', 'the bill'];
+    const root = h('div', { class: 'cgraph pks-chain', style: `--cols:${heads.length}` },
+      h('div', { class: 'cg-heads' }, heads.map((t, i) => h('div', { class: 'cg-head', style: `--col:${i + 1}`, text: t }))),
+      h('div', { class: 'cg-grid' }, NODES.map(n => {
+        const a = h('a', { class: 'cg-node', 'data-node': n.id, href: pageUrl(n.page), style: `--col:${n.col};--row:${n.row};--nc:${n.nc}` },
+          h('span', { class: 'cg-title', text: n.title }), h('span', { class: 'cg-text', html: n.text }));
+        hover(a, () => n.tip);
+        return a;
+      })),
+      h('script', { type: 'application/json', class: 'cg-edges', text: JSON.stringify(EDGES) }));
+    host.append(root);
+    if (!window.initConceptGraphs) throw new Error('picksPipeline needs cgraph.js (window.initConceptGraphs)');
+    window.initConceptGraphs();
+  };
+
+  // ================================================================== picksRaster — the real trace up close
+  FIG.picksRaster = async (host) => {
+    const d = await data('raster');
+    const n = d.t1 - d.t0, nb = d.n_bins, BIN = d.bin, per = d.stretch_len / BIN;
+    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot inflate the trace (no DecompressionStream)');
+    const packed = Uint8Array.from(atob(need(d.planes_deflate_b64, 'raster.planes')), c => c.charCodeAt(0));
+    const planes = new Uint8Array(await new Response(new Blob([packed]).stream().pipeThrough(new DecompressionStream('deflate'))).arrayBuffer());
+    if (planes.length !== 2 * n * nb) throw new Error(`raster planes: ${planes.length} bytes, expected ${2 * n * nb}`);
+    const PK = planes.subarray(0, n * nb), MS = planes.subarray(n * nb);
+    const shelfAt = new Array(n), kindAt = new Uint8Array(n);
+    d.shelf_runs.forEach(([a, len, ids]) => { for (let i = a; i < a + len; i++) shelfAt[i] = ids; });
+    d.kind_runs.forEach(([a, len, k]) => kindAt.fill(k, a, a + len));
+    const held = i => shelfAt[Math.max(i - 1, 0)];        // a step's δ-misses fall in the stretches held after the step before
+    const ps = d.per_step, pmax = Math.max(...PK);
+    const KIND = { 2: { label: 'reading: a user turn or a tool response', short: 'reading', color: series(3) }, 3: { label: 'writing: assistant text', short: 'assistant text', color: series(4) },
+      4: { label: 'writing: a tool call', short: 'tool call', color: series(5) }, 0: { label: 'chat template', short: 'template', color: 'var(--ink-3)' } };
+    const COL = { pick: 'var(--ink)', raw: series(1), delta: series(2), band: series(0) };
+    let i = 0, zoom = 'all', playing = false;
+    const box = h('div'), boxK = h('div'), boxS = h('div'), ro = readout();
+    const playBtn = btn('▶ play', () => toggle(), { cls: 'sm' });
+    const sl = slider('step t', d.t0, d.t1 - 1, 1, d.t0, v => { stop(); go(v - d.t0); }, v => String(v));
+    const swZ = seg([['all', 'all positions'], ['top', 'the newest 5 120']], zoom, v => { zoom = v; build(); }, 'positions shown');
+    host.append(controls(playBtn, sl, swZ), legend([
+      ['a pick (darker: more picks in the 256 positions)', COL.pick, 'box'], ['a raw miss', COL.raw, 'box'], ['a δ-miss (its stretch is on the shelf)', COL.delta, 'box'],
+      ['a stretch on the shelf', COL.band, 'band'], ...[2, 3, 4, 0].map(k => [KIND[k].label, KIND[k].color, 'box'])], { cls: 'pks-legend' }),
+      box, h('div', { class: 'pks-head', text: 'token kind of each step' }), boxK, h('div', { class: 'pks-head', text: 'misses per step (raw and δ)' }), boxS, ro);
+    const T0 = d.t0;
+    // ---------------------------------------------------------------- colours from the tokens, resolved at draw time
+    const probe = document.createElement('canvas').getContext('2d');
+    function rgb(token) {
+      const v = getComputedStyle(host).getPropertyValue(token.replace(/^var\((.*)\)$/, '$1')).trim();
+      probe.fillStyle = '#000'; probe.fillStyle = v;
+      const s = probe.fillStyle;
+      if (s[0] === '#') return [1, 3, 5].map(j => parseInt(s.slice(j, j + 2), 16));
+      const m = s.match(/[\d.]+/g);
+      if (!m) throw new Error(`raster: cannot read colour ${token}`);
+      return m.slice(0, 3).map(Number);
+    }
+    function image(lo, hi) {                                    // bins lo … hi−1 → a data URL, one pixel per (step, bin)
+      const rows = hi - lo, cv = document.createElement('canvas');
+      cv.width = n; cv.height = rows;
+      const ctx = cv.getContext('2d'), img = ctx.createImageData(n, rows), px = img.data;
+      const ink = rgb(COL.pick), raw = rgb(COL.raw), dl = rgb(COL.delta), Lp = Math.log1p(pmax);
+      for (let s = 0; s < n; s++) {
+        const on = held(s);
+        for (let bI = lo; bI < hi; bI++) {
+          const p = PK[s * nb + bI], m = MS[s * nb + bI];
+          if (!p) continue;
+          const o = ((hi - 1 - bI) * n + s) * 4;               // row 0 is the top: the newest positions
+          let c, a;
+          if (m) { c = on && on.includes(Math.floor(bI / per)) ? dl : raw; a = 0.25 + 0.7 * Math.min(1, (m / 16) ** 0.6); }
+          else { c = ink; a = 0.08 + 0.62 * Math.log1p(p) / Lp; }
+          px[o] = c[0]; px[o + 1] = c[1]; px[o + 2] = c[2]; px[o + 3] = Math.round(255 * a);
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      return cv.toDataURL();
+    }
+    let P, PKd, PS, imgEl, cur = {};
+    function build() {
+      box.replaceChildren(); boxK.replaceChildren(); boxS.replaceChildren();
+      const lo = zoom === 'all' ? 0 : nb - 20, hi = nb;
+      const narrow = narrowOf(box);
+      P = Plot(box, {
+        x: [T0, d.t1], y: [lo * BIN, hi * BIN], ...size(box, narrow ? 460 : 330), xn: narrow ? 4 : 7, xfmt: v => fmt(v, 0), yfmt: v => kfmt(v),
+        xlabel: 'decode step t (the token being written)', ylabel: narrow ? 'position' : 'position of a pick', grid: false, m: { r: 14 },
+        label: 'Raster of one layer’s picks over 600 steps: positions against steps, misses coloured, the shelf’s stretches as bands',
+      });
+      // stretch boundaries every 1024 positions; the shelf's stretches as a wash behind the cells and an outline above them
+      for (let y = Math.ceil(lo * BIN / d.stretch_len) * d.stretch_len; y <= hi * BIN; y += d.stretch_len) {
+        el('line', { x1: P.x(T0), x2: P.x(d.t1), y1: P.y(y), y2: P.y(y), style: 'stroke:var(--rule);stroke-width:1;opacity:.45' }, P.g.bg);
+      }
+      const outl = el('g', {}, P.g.top);
+      d.shelf_runs.forEach(([a, len, ids]) => ids.forEach(id => {
+        const y0 = id * d.stretch_len, y1 = y0 + d.stretch_len;
+        if (y1 <= lo * BIN || y0 >= hi * BIN) return;
+        // the band covers the steps whose misses it classifies: those after the step that put it on the shelf
+        const s0 = a ? a + 1 : 0;
+        const r = { x: P.x(T0 + s0), y: P.y(Math.min(y1, hi * BIN)), width: Math.max(0, P.x(T0 + Math.min(n, a + len + 1)) - P.x(T0 + s0)), height: P.y(Math.max(y0, lo * BIN)) - P.y(Math.min(y1, hi * BIN)) };
+        el('rect', { ...r, style: `fill:${COL.band};fill-opacity:.13` }, P.g.bg);
+        [r.y, r.y + r.height].forEach(yy => el('line', { x1: r.x, x2: r.x + r.width, y1: yy, y2: yy, style: `stroke:${COL.band};stroke-width:1.4;stroke-opacity:.85` }, outl));
+      }));
+      imgEl = el('image', { href: image(lo, hi), x: P.x(T0), y: P.y(hi * BIN), width: P.x(d.t1) - P.x(T0), height: P.y(lo * BIN) - P.y(hi * BIN), preserveAspectRatio: 'none', class: 'pks-raster-img' }, P.g.data);
+      // the newest position: a pick can only be older than the token being written
+      line(P, [[T0, T0], [d.t1, d.t1]], { color: 'var(--ink-3)', width: 1, dash: '3 3' });
+      if (!narrow) el('text', { x: P.x(T0) + 6 * P.fs, y: P.y(T0) - 6 * P.fs, class: 'lbl', style: 'fill:var(--ink-3)', text: 'the newest position, t − 1' }, P.g.top);
+      cur.raster = el('line', { y1: P.m.t, y2: P.H - P.m.b, class: 'pks-cursor' }, P.g.top);
+      const hit = el('rect', { x: P.m.l, y: P.m.t, width: P.pw, height: P.ph, class: 'hit' }, P.g.top);
+      hover(hit, e => {
+        const [x, y] = P.toData(e), s = clamp(Math.floor(x - T0), 0, n - 1), bI = clamp(Math.floor(y / BIN), 0, nb - 1);
+        const p = PK[s * nb + bI], m = MS[s * nb + bI], on = held(s), inShelf = on && on.includes(Math.floor(bI / per));
+        return `<b>step ${T0 + s}</b> · positions ${fmt(bI * BIN, 0)}–${fmt(bI * BIN + BIN - 1, 0)} (stretch ${Math.floor(bI / per)}${inShelf ? ', on the shelf' : ''})<br>${p} picks, ${m} ${inShelf ? 'δ-misses' : 'misses'}<br>click to move the step here`;
+      });
+      hit.addEventListener('click', e => { const [x] = P.toData(e); stop(); go(clamp(Math.floor(x - T0), 0, n - 1)); });
+      // token kinds
+      PKd = Plot(boxK, { x: [T0, d.t1], y: [0, 1], w: P.W, h: 34, m: { l: P.m.l / P.fs, r: P.m.r / P.fs, t: 2, b: 4 }, yticks: [], xticks: [], grid: false, label: 'Token kind of each step' });
+      d.kind_runs.forEach(([a, len, k]) => {
+        const r = el('rect', { x: PKd.x(T0 + a), y: PKd.y(1), width: PKd.x(T0 + a + len) - PKd.x(T0 + a), height: PKd.y(0) - PKd.y(1), style: `fill:${KIND[k] ? KIND[k].color : 'var(--ink-3)'}` }, PKd.g.data);
+        hover(r, () => `<b>${KIND[k] ? KIND[k].label : 'other tokens'}</b><br>steps ${T0 + a}–${T0 + a + len - 1} (${len} tokens)`);
+        if (len > 70 && !narrow) el('text', { x: PKd.x(T0 + a + len / 2), y: PKd.y(0.5) + 4 * PKd.fs, 'text-anchor': 'middle', class: 'lbl', style: 'fill:var(--paper-3);paint-order:normal;stroke:none', text: KIND[k].short }, PKd.g.top);
+      });
+      cur.kind = el('line', { y1: PKd.m.t, y2: PKd.H - PKd.m.b, class: 'pks-cursor' }, PKd.g.top);
+      // misses per step
+      const mmax = Math.max(...ps.misses);
+      PS = Plot(boxS, { x: [T0, d.t1], y: [0, Math.ceil(mmax / 50) * 50], w: P.W, h: 110, m: { l: P.m.l / P.fs, r: P.m.r / P.fs, t: 6, b: 26 }, yn: 3, xn: narrow ? 4 : 7, xfmt: v => fmt(v, 0), grid: 'y', label: 'Misses per step, raw and δ' });
+      const xs = ps.misses.map((_, s) => T0 + s);
+      area(PS, xs.map((x, s) => [x, ps.d_miss[s], ps.misses[s]]), { color: COL.raw, opacity: 0.55 });
+      area(PS, xs.map((x, s) => [x, 0, ps.d_miss[s]]), { color: COL.delta, opacity: 0.55 });
+      cur.spark = el('line', { y1: PS.m.t, y2: PS.H - PS.m.b, class: 'pks-cursor' }, PS.g.top);
+      const hs = el('rect', { x: PS.m.l, y: PS.m.t, width: PS.pw, height: PS.ph, class: 'hit' }, PS.g.top);
+      hover(hs, e => { const s = clamp(Math.round(PS.toData(e)[0] - T0), 0, n - 1); return `<b>step ${T0 + s}</b><br>${ps.misses[s]} misses: ${ps.d_miss[s]} δ, ${ps.misses[s] - ps.d_miss[s]} raw`; });
+      hs.addEventListener('click', e => { stop(); go(clamp(Math.round(PS.toData(e)[0] - T0), 0, n - 1)); });
+      go(i);
+    }
+    function go(s) {
+      i = s;
+      sl.set(T0 + i);
+      [[cur.raster, P], [cur.kind, PKd], [cur.spark, PS]].forEach(([l, Q]) => { const xx = Q.x(T0 + i + 0.5); l.setAttribute('x1', xx); l.setAttribute('x2', xx); });
+      const on = held(i), m = ps.misses[i], dm = ps.d_miss[i], k = KIND[kindAt[i]] || KIND[0];
+      ro.set([
+        [`step ${T0 + i}`, `${k.label}`],
+        ['this step', `${ps.picks[i]} picks · ${m} misses (${pc(m / ps.picks[i])}) · ${dm} δ-misses (${m ? pc(dm / m, 0) : '—'} of the misses)`],
+        ['on the shelf', `stretches ${on.join(', ')}: positions ${on.map(id => `${fmt(id * d.stretch_len, 0)}–${fmt(id * d.stretch_len + d.stretch_len - 1, 0)}`).join(', ')}`],
+        ['the 600 steps', `miss rate ${pc(d.window.miss_rate)} · f_D ${fmt(d.window.f_D, 2)} (the whole layer from t = 8192: ${pc(d.whole_layer.miss_rate_t_ge_8192)}, ${fmt(d.whole_layer.f_D_t_ge_8192, 2)})`],
+      ]);
+    }
+    // ---------------------------------------------------------------- play: about 30 steps a second, looping
+    let raf = 0, last = 0;
+    function frame(ts) {
+      if (!playing) return;
+      if (ts - last > 33) { last = ts; go((i + 1) % n); }
+      raf = requestAnimationFrame(frame);
+    }
+    function toggle() { if (playing) stop(); else { playing = true; playBtn.innerHTML = '❚❚ pause'; playBtn.setAttribute('aria-pressed', 'true'); raf = requestAnimationFrame(frame); } }
+    function stop() { playing = false; cancelAnimationFrame(raf); playBtn.innerHTML = '▶ play'; playBtn.setAttribute('aria-pressed', 'false'); }
+    build();
+    // the cells are a bitmap: repaint them when the theme changes
+    const repaint = () => { if (imgEl) build(); };
+    new MutationObserver(repaint).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', repaint);
+  };
+
+  // ================================================================== picksLadder — the MDL ratio, dictionary share + delta share
+  FIG.picksLadder = async (host) => {
+    const d = await data('bytes');
+    const rows = need(d.ladder, 'bytes.ladder'), floors = need(d.floors, 'bytes.floors');
+    const box = h('div'), ro = readout();
+    host.append(legend([['dictionary share (bytes kept on the GPU per punnet)', SHARE.dict, 'box'], ['delta share (bytes sent per cherry)', SHARE.delta, 'box'],
+      ['the floors: 0.60 at stretches of 16 384, 0.57 for a whole sequence', 'var(--ink-2)', 'dash']], { cls: 'pks-legend' }), box, ro);
+    const narrow = narrowOf(box), n = rows.length, sz = size(box, (narrow ? 46 : 32) * n + 60);
+    const P = Plot(box, {
+      w: sz.w, h: sz.h, ycats: rows.map(r => (narrow ? '' : r.label)), x: [0, 1.08], xticks: [0, 0.2, 0.4, 0.6, 0.8, 1], xfmt: v => fmt(v, 1),
+      xlabel: 'MDL ratio = dictionary share + delta share', grid: 'x', m: narrow ? { l: 12, t: 24 } : { t: 24 },
+      label: 'The MDL ratio of the campaigns’ compressors, each split into its dictionary share and its delta share',
+    });
+    const f = P.fs, slot = Math.abs(P.y(1) - P.y(0));
+    floors.forEach(fl => vline(P, fl.ratio, '', { color: 'var(--ink-2)' }));
+    el('text', { x: P.x((floors[0].ratio + floors[1].ratio) / 2), y: P.m.t - 7 * f, 'text-anchor': 'middle', class: 'lbl rule-lbl', text: 'floors 0.57 · 0.60' }, P.g.top);
+    rows.forEach((r, k) => {
+      const top = P.y(k) - slot / 2, bh = Math.min(narrow ? slot * 0.42 : slot * 0.62, 20 * f);
+      const yb = narrow ? top + slot * 0.5 : P.y(k) - bh / 2;
+      if (narrow) el('text', { x: P.m.l + 2 * f, y: top + slot * 0.36, class: 'lbl', text: r.label }, P.g.top);
+      const g = el('g', {}, P.g.data);
+      const x0 = P.x(0), xd = P.x(r.x), xr = P.x(r.ratio);
+      if (r.y > 0) {
+        if (r.x > 0) el('rect', { x: x0, y: yb, width: Math.max(0, xd - x0 - 1), height: bh, style: `fill:${SHARE.dict}` }, g);
+        el('path', { d: barPath(true, yb, bh, r.x > 0 ? xd + 1 : x0, xr, 4 * f), style: `fill:${SHARE.delta}` }, g);
+      } else el('path', { d: barPath(true, yb, bh, x0, xr, 4 * f), style: `fill:${SHARE.dict}` }, g);
+      let txt = r.id === 'none' ? '1' : `${fmt(r.ratio, 3)}${r.x >= 0.01 && r.y >= 0.01 ? ` = ${fmt(r.x, 2)} + ${fmt(r.y, 2)}` : ''}`;
+      if (xr + 6 * f + txt.length * 7.2 * f > P.W - 2 * f) txt = fmt(r.ratio, 3);     // the split goes to the tooltip where it would not fit
+      el('text', { x: xr + 6 * f, y: yb + bh / 2 + 4 * f, class: 'val', text: txt }, P.g.top);
+      const hit = el('rect', { x: P.m.l, y: top, width: P.pw, height: slot, class: 'pks-row-hit', tabindex: 0 }, P.g.top);
+      hover(hit, () => `<b>${esc(r.label)}</b> · ${r.grade}<br>MDL ratio ${fmt(r.ratio, 4)} = dictionary share ${fmt(r.x, 4)} + delta share ${fmt(r.y, 4)}<br>${esc(r.screen)}${r.trial ? ` · trial ${r.trial}` : ''}${r.coder ? ` · compressor ${r.coder}` : ''}${r.what ? `<br>${esc(r.what)}` : ''}`);
+    });
+    const by = id => rows.find(r => r.id === id);
+    ro.set([
+      ['best verified', `${fmt(by('tree').ratio, 3)}: the reference tree keeps ${pc(by('tree').x / by('tree').ratio, 0)} of its bytes in the dictionary`],
+      ['no dictionary at all', `solo ${fmt(by('solo').ratio, 3)} verified, ${fmt(by('solo-ideal').ratio, 3)} ideal`],
+      ['the floors', floors.map(fl => `${fmt(fl.ratio, 2)} (${fl.grade})`).join(' · ')],
+    ]);
+  };
+  /** Bar outline with a rounded data end and a square base (the kit's shape). */
+  function barPath(horiz, c0, bw, p0, p1, r) {
+    const s = p1 < p0 ? 1 : -1, c1 = c0 + bw;
+    r = Math.min(r, bw / 2, Math.abs(p1 - p0));
+    return horiz
+      ? `M${p0} ${c0}H${p1 + s * r}Q${p1} ${c0} ${p1} ${c0 + r}V${c1 - r}Q${p1} ${c1} ${p1 + s * r} ${c1}H${p0}Z`
+      : `M${c0} ${p0}V${p1 + s * r}Q${c0} ${p1} ${c0 + r} ${p1}H${c1 - r}Q${c1} ${p1} ${c1} ${p1 + s * r}V${p0}Z`;
+  }
+
+  // ================================================================== picksStretchRatio — the MDL ratio against stretch length
+  FIG.picksStretchRatio = async (host) => {
+    const d = await data('bytes');
+    const S = need(d.by_stretch, 'bytes.by_stretch'), floors = need(d.floors, 'bytes.floors');
+    const PANELS = [['c2', 'C2: cherry v[t, l, :, :], six KV layers, leash 293'], ['c1', 'C1: one head of KV layer 0 (L3), no leash']];
+    const boxes = PANELS.map(() => h('div')), ro = readout();
+    host.append(legend([['dictionary share', SHARE.dict, 'box'], ['delta share', SHARE.delta, 'box'], ['the MDL ratio, their sum', 'var(--ink)', 'line'],
+      ['the floors 0.60 / 0.57', 'var(--ink-2)', 'dash']], { cls: 'pks-legend' }),
+      h('div', { class: 'fig-row' }, PANELS.map(([, t], j) => h('div', {}, head(t), boxes[j]))), ro);
+    PANELS.forEach(([key], j) => {
+      const pts = S[key], box = boxes[j];
+      const P = Plot(box, {
+        x: [362, 46341], xlog: 2, xticks: [512, 2048, 8192, 32768], xfmt: kfmt, y: [0, 0.8], yfmt: v => fmt(v, 1), ...size(box, 330),
+        xlabel: 'stretch length b (log scale)', ylabel: 'share of the raw bytes', label: `The MDL ratio of ${key.toUpperCase()} against stretch length, split into dictionary share and delta share`,
+      });
+      const f = P.fs, bw = Math.min(26 * f, (P.x(1024) - P.x(512)) * 0.55);
+      floors.forEach(fl => hline(P, fl.ratio, '', { color: 'var(--ink-2)' }));
+      el('text', { x: P.x(1448), y: P.y(floors[1].ratio) + 15 * f, 'text-anchor': 'middle', class: 'lbl rule-lbl', text: narrowOf(box) ? '0.60 / 0.57' : 'floors 0.60 / 0.57' }, P.g.top);
+      pts.forEach(p => {
+        const X = P.x(p.b) - bw / 2;
+        el('rect', { x: X, y: P.y(p.x), width: bw, height: P.y(0) - P.y(p.x), style: `fill:${SHARE.dict}` }, P.g.data);
+        el('path', { d: barPath(false, X, bw, P.y(p.x) - 1, P.y(p.ratio), 4 * f), style: `fill:${SHARE.delta}` }, P.g.data);
+        el('text', { x: P.x(p.b), y: P.y(p.x / 2) + 4 * f, 'text-anchor': 'middle', class: 'val', text: fmt(p.x, 2) }, P.g.top);
+        const hit = el('rect', { x: X - 4 * f, y: P.m.t, width: bw + 8 * f, height: P.ph, class: 'hit', tabindex: 0 }, P.g.top);
+        hover(hit, () => `<b>${key.toUpperCase()} at stretch ${p.b}</b> · verified<br>MDL ratio ${fmt(p.ratio, 4)} = dictionary share ${fmt(p.x, 4)} + delta share ${fmt(p.y, 4)}<br>trial ${p.trial} · compressor ${p.coder}`);
+      });
+      line(P, pts.map(p => [p.b, p.ratio]), { color: 'var(--ink)', width: 1.8, markers: 3.4 });
+      pts.forEach(p => el('text', { x: P.x(p.b), y: P.y(p.ratio) - 9 * f, 'text-anchor': 'middle', class: 'val', text: fmt(p.ratio, 3) }, P.g.top));
+    });
+    const sumUp = pts => `${pts.map(p => fmt(p.ratio, 3)).join(' → ')} (dictionary share ${pts.map(p => fmt(p.x, 2)).join(' / ')})`;
+    ro.set([['C2, 512 → 4096 → 16 384', sumUp(S.c2)], ['C1, 512 → 4096 → 16 384 → 32 768', sumUp(S.c1)]]);
+  };
+
+  // ================================================================== picksCeiling — the most the bytes side can be worth
+  FIG.picksCeiling = async (host) => {
+    const G = await data('grid');
+    need(G.B_range, 'grid.B_range');
+    const m = BILL.missCurve(G), alpha = G.m_alpha_outside, res = need(G.hisparse_best, 'grid.hisparse_best').N;
+    let r = G.solo_y;
+    const boxA = h('div'), boxB = h('div'), ro = readout();
+    const sl = slider(texify('ratio $\\vrho$ of a global code'), 0.4, 1, 0.005, r, v => { r = v; draw(); }, v => fmt(v, 3));
+    host.append(controls(sl), legend([['N limited by the link', series(0), 'line'], ['N limited by GPU memory', series(2), 'line'], ['the best hot-cache size (their crossing)', 'var(--c)', 'dot'],
+      ['N* at the best size', 'var(--ink)', 'line'], [texify(`the law $\\vN \\propto \\vrho^{-1/(1+\\valpha)}$, $\\valpha$ = ${fmt(alpha, 2)}`), 'var(--ink-2)', 'dash'],
+      ['the same bounds with raw misses (ρ = 1)', 'var(--ink-3)', 'dash']], { cls: 'pks-legend' }),
+      h('div', { class: 'fig-row' }, h('div', {}, head('sequences per GPU against the hot-cache size'), boxA), h('div', {}, head('the best N against the ratio of every miss'), boxB)), ro);
+    const Bs = linspace(Math.log2(2048), Math.log2(12288), 120).map(u => 2 ** u);
+    const rs = linspace(0.4, 1, 121);
+    const Nstar = rs.map(x => BILL.best(G, m, BILL.globalCode(x)));
+    const PA = Plot(boxA, {
+      x: [2048, 12288], xlog: 2, xticks: [2048, 4096, 8192], xfmt: kfmt, y: [40, 260], ...size(boxA, 330),
+      xlabel: 'hot-cache slots per layer B (log scale)', ylabel: 'sequences per GPU', label: 'Sequences per GPU against the hot-cache size: the link bound and the memory bound',
+    });
+    const PB = Plot(boxB, {
+      x: [1.02, 0.38], xticks: [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4], xfmt: v => fmt(v, 1), y: [110, 200], ...size(boxB, 330),
+      xlabel: 'MDL ratio ρ of every miss (no per-sequence bytes)', ylabel: 'best sequences per GPU N*', label: 'Best sequences per GPU against the ratio of a global code',
+    });
+    // right panel, fixed: N*, the law, the landmarks
+    line(PB, rs.map((x, j) => [x, Nstar[j].N]), { color: 'var(--ink)', width: 2.2 });
+    line(PB, rs.map(x => [x, res * x ** (-1 / (1 + alpha))]), { color: 'var(--ink-2)', width: 1.4, dash: '5 4' });
+    hline(PB, res, `resized HiSparse ${fmt(res, 0)}`, { color: 'var(--ink-3)', side: 'left', below: true });
+    const marks = [[G.solo_y, 'solo, verified'], [G.solo_code_length, 'solo, ideal'], [G.floors[0], '16K floor'], [G.floors[1], 'sequence floor']];
+    marks.forEach(([x, lab], j) => {
+      const b = BILL.best(G, m, BILL.globalCode(x));
+      mark(PB, x, b.N, 3.8, 'var(--ink-2)', `<b>${lab}</b>: ratio ${fmt(x, 3)}<br>${fmt(b.N, 1)} sequences per GPU at B = ${b.B} (${fmtS(100 * (b.N / res - 1), 1)}% over the resized cache)`);
+      // the curve rises to the right: above-left and below-right of a point are empty
+      el('text', { x: PB.x(x) + (j % 2 ? 7 : -7) * PB.fs, y: PB.y(b.N) + (j % 2 ? 16 : -9) * PB.fs, 'text-anchor': j % 2 ? 'start' : 'end', class: 'lbl', style: 'fill:var(--ink-3)', text: lab }, PB.g.top);
+    });
+    const knob = el('circle', { class: 'handle', r: 7 * PB.fs }, PB.g.top);
+    draggable(knob, PB, ([x]) => { r = clamp(Math.round(x / 0.005) * 0.005, 0.4, 1); sl.set(r); draw(); }, null, { get: () => [r, 0], step: [-0.005, 0], label: 'ratio of a global code' });
+    hover(knob, () => `<b>ρ = ${fmt(r, 3)}</b>: drag along the curve`);
+    const gA = el('g', {}, PA.g.data), gAt = el('g', {}, PA.g.top);
+    // left panel, the resized HiSparse cache for reference (r = 1)
+    line(PA, Bs.map(B => [B, BILL.at(G, m, B, BILL.globalCode(1)).Nlink]), { color: series(0), width: 1.3, dash: '3 4' });
+    el('text', { x: PA.x(7800), y: PA.y(BILL.at(G, m, 7800, BILL.globalCode(1)).Nlink) + 16 * PA.fs, 'text-anchor': 'start', class: 'lbl', style: 'fill:var(--ink-3)', text: 'raw misses' }, PA.g.top);
+    line(PA, Bs.map(B => [B, BILL.at(G, m, B, BILL.globalCode(1)).Nhbm]), { color: series(2), width: 2.2 });
+    const b1 = BILL.best(G, m, BILL.globalCode(1));
+    mark(PA, b1.B, b1.N, 4.5, 'var(--ink-3)', `<b>HiSparse resized</b> (raw misses, ρ = 1)<br>${fmt(b1.N, 1)} sequences per GPU at B = ${b1.B}`, 'ring');
+    function draw() {
+      gA.replaceChildren(); gAt.replaceChildren();
+      const p = BILL.globalCode(r), b = BILL.best(G, m, p);
+      line(PA, Bs.map(B => [B, BILL.at(G, m, B, p).Nlink]), { parent: gA, color: series(0), width: 2.4 });
+      line(PA, Bs.map(B => [B, BILL.at(G, m, B, p).N]), { parent: gA, color: 'var(--ink)', width: 1.2 });
+      dot(gAt, PA.x(b.B), PA.y(b.N), 6 * PA.fs, 'var(--c)');
+      el('text', { x: PA.x(b.B) + 9 * PA.fs, y: PA.y(b.N) - 9 * PA.fs, class: 'val', text: `B* ${b.B} · N* ${fmt(b.N, 0)}` }, gAt);
+      knob.setAttribute('cx', PB.x(r)); knob.setAttribute('cy', PB.y(b.N));
+      knob.setAttribute('aria-valuenow', fmt(r, 3));
+      const law = res * r ** (-1 / (1 + alpha));
+      ro.set([
+        [`ρ = ${fmt(r, 3)}`, `N* = ${fmt(b.N, 1)} sequences per GPU at B* = ${b.B} (${b.binds === 'link' ? 'the link binds' : 'GPU memory binds'})`],
+        ['over the resized cache', `${fmtS(100 * (b.N / res - 1), 1)}% (resized HiSparse ${fmt(res, 0)} at B = ${G.hisparse_best.B})`],
+        ['the law predicts', `${fmt(law, 1)}: a ratio cut of ${pc(1 - r, 0)} gives ${pc(b.N / res - 1, 0)} more sequences; the best cache shrinks by ${pc(1 - b.B / G.hisparse_best.B, 0)}`],
+      ]);
+    }
+    draw();
+  };
+
+  // ================================================================== picksStretchN — the stretch that is best for the ratio is worst for the shelf
+  FIG.picksStretchN = async (host) => {
+    const G = await data('grid');
+    const best = need(G.best, 'grid.best'), pts = need(G.points, 'grid.points');
+    const IDS = ['light', 'b10', 'b25', 'tree'], BS = [2048, 4096, 8192, 16384];
+    const solo = need(G.global.find(x => Math.abs(x.ratio - G.solo_y) < 1e-3), 'grid.global solo row').N, res = G.hisparse_best.N;
+    let under = 'raw';
+    const box = h('div'), ro = readout();
+    const sw = seg([['raw', 'raw misses sent raw'], ['solo', 'a solo code under the raw misses']], under, v => { under = v; draw(); }, 'what carries the raw misses');
+    const label = id => pts.find(p => p.id === id).label;
+    host.append(controls(sw), legend([...IDS.map(id => [label(id), POINT_COLOR[id], 'band']), ['the high end only (the low end leaves the measured stretches)', 'var(--ink-2)', 'ring'],
+      ['solo code for every miss', 'var(--ink)', 'dash'], ['resized HiSparse', 'var(--ink-3)', 'dash']], { cls: 'pks-legend' }), box, ro);
+    function draw() {
+      box.replaceChildren();
+      const P = Plot(box, {
+        x: [1700, 19700], xlog: 2, xticks: BS, xfmt: kfmt, y: [40, 150], ...size(box, 360),
+        xlabel: 'stretch length b at the Pin (log scale)', ylabel: 'best sequences per GPU',
+        label: 'Best sequences per GPU at the Pin against stretch length, for four dictionary points on a shelf',
+      });
+      hline(P, solo, `solo code for every miss ${fmt(solo, 0)}`, { color: 'var(--ink)', dash: '6 4', side: 'right' });
+      hline(P, res, '', { color: 'var(--ink-3)', dash: '6 4' });
+      el('text', { x: P.x(2400), y: P.y(res) - 6 * P.fs, class: 'lbl rule-lbl', text: `resized HiSparse ${fmt(res, 0)}` }, P.g.top);
+      IDS.forEach(id => {
+        const c = POINT_COLOR[id], cells = BS.map(b => [b, ((best[id] || {})[b] || {})[under]]).filter(([, v]) => v);
+        const both = cells.filter(([, v]) => v.low && v.high);
+        if (both.length > 1) area(P, both.map(([b, v]) => [b, v.low.N, v.high.N]), { color: c, opacity: 0.22 });
+        line(P, both.map(([b, v]) => [b, v.low.N]), { color: c, width: 1.6 });
+        line(P, both.map(([b, v]) => [b, v.high.N]), { color: c, width: 1.6 });
+        const grade = b => pts.find(p => p.id === id).at_b[b][2];
+        const tip = (b, v, end) => `<b>${esc(label(id))}</b> · stretch ${b} · ${end} end of f_D<br>${fmt(v.N, 1)} sequences per GPU: best shelf n_D = ${v.n_D} (f_D ${fmt(v.f_D, 2)}, ${fmt(v.n_load, 3)} loads per step), B = ${v.B}, ${v.binds === 'link' ? 'the link binds' : 'GPU memory binds'}<br>the shares at this stretch: ${grade(b)}`;
+        cells.forEach(([b, v]) => {
+          if (v.low && v.high) { mark(P, b, v.low.N, 3.4, c, tip(b, v.low, 'low')); mark(P, b, v.high.N, 3.4, c, tip(b, v.high, 'high')); }
+          else if (v.high) mark(P, b, v.high.N, 4, c, tip(b, v.high, 'high'), 'ring');
+        });
+      });
+      const rng = (id, b) => { const v = ((best[id] || {})[b] || {})[under]; return v && v.low && v.high ? `${fmt(v.low.N, 0)}–${fmt(v.high.N, 0)}` : v && v.high ? `${fmt(v.high.N, 0)} (high end)` : '—'; };
+      ro.set(IDS.map(id => [label(id), BS.map(b => `${kfmt(b)}: ${rng(id, b)}`).join(' · ')]));
+    }
+    draw();
+  };
+
+  // ================================================================== picksExplorer — the napkin, any point, stretch and shelf
+  FIG.picksExplorer = async (host) => {
+    const G = await data('grid');
+    const pts = need(G.points, 'grid.points'), cells = need(G.cells, 'grid.cells'), m = BILL.missCurve(G);
+    const BS = [2048, 4096, 8192, 16384, 32768], NDS = [1, 2, 4, 8, 16, 32];
+    const hs = BILL.best(G, m, { x: 0, y: 1, b: 0, nD: 0, fD: 0, nload: 0, rhoRaw: 1 });
+    const S = { pt: 'light', b: 4096, nD: 4, end: 'low', under: 'raw' };
+    const SHORT = { light: 'light', b02: 'share ≤ 0.02', b10: 'share ≤ 0.10', b25: 'share ≤ 0.25', free: 'no limit', tree: 'tree' };
+    const box = h('div'), ro = readout(), bars = h('div', { class: 'pks-bars' }), msg = note('');
+    const kp = { N: kpi('sequences per GPU', '—', ''), B: kpi('best hot-cache size', '—', ''), vs: kpi('against resized HiSparse', '—', '') };
+    const ctl = (lab, s) => controls(h('span', { class: 'pks-head', text: lab }), s);
+    const sP = seg(pts.map(p => [p.id, SHORT[p.id]]), S.pt, v => { S.pt = v; draw(); }, 'compressor point');
+    const sB = seg(BS.map(b => [b, kfmt(b)]), S.b, v => { S.b = v; draw(); }, 'stretch length');
+    const sN = seg(NDS.map(n => [n, String(n)]), S.nD, v => { S.nD = v; draw(); }, 'dictionaries on the shelf');
+    const sE = seg([['low', 'low end'], ['high', 'high end']], S.end, v => { S.end = v; draw(); }, 'end of the extrapolated δ-miss fraction');
+    const sU = seg([['raw', 'sent raw'], ['solo', 'solo-coded']], S.under, v => { S.under = v; draw(); }, 'raw misses');
+    const bestBtn = btn('best n_D here', () => {
+      let top = null;
+      NDS.forEach(nD => { const r = run({ ...S, nD }); if (r.ok && (!top || r.best.N > top.N)) top = { nD, N: r.best.N }; });
+      if (top) { S.nD = top.nD; sN.set(top.nD); draw(); }
+    }, { cls: 'sm' });
+    host.append(ctl('compressor', sP), ctl('stretch b', sB), controls(h('span', { class: 'pks-head', text: 'shelf n_D' }), sN, bestBtn), ctl('f_D at the Pin', sE), ctl('raw misses', sU),
+      h('div', { class: 'kpis' }, kp.N, kp.B, kp.vs), legend([['N limited by the link', series(0), 'line'], ['N limited by GPU memory', series(2), 'line'], ['N, the smaller of the two', 'var(--ink)', 'line'],
+        ['the best hot-cache size', 'var(--c)', 'dot'], ['resized HiSparse', 'var(--ink-3)', 'dash']], { cls: 'pks-legend' }), box, msg, bars, ro);
+    function run(s) {
+      const p = pts.find(q => q.id === s.pt), at = p.at_b[s.b], cell = (cells[s.b] || {})[s.nD];
+      if (!at) return { ok: false, why: `${p.label}: no measured shares at stretch ${s.b}` };
+      const fD = cell ? cell[`f_D_${s.end}`] : null;
+      if (!cell || fD == null) return { ok: false, why: `not measured at this stretch length: ${cell ? esc(cell.note) : 'no cell'}` };
+      const q = { x: at[0], y: at[1], b: s.b, nD: s.nD, fD, nload: cell[`n_load_${s.end}`], rhoRaw: s.under === 'solo' ? G.solo_y : 1 };
+      return { ok: true, p, at, cell, q, best: BILL.best(G, m, q) };
+    }
+    function draw() {
+      box.replaceChildren(); bars.replaceChildren();
+      const r = run(S);
+      const P = Plot(box, {
+        x: [2048, 16384], xlog: 2, xticks: [2048, 4096, 8192, 16384], xfmt: kfmt, y: [0, 260], ...size(box, 320),
+        xlabel: 'hot-cache slots per layer B (log scale)', ylabel: 'sequences per GPU', label: 'Sequences per GPU against the hot-cache size for the chosen design',
+      });
+      hline(P, hs.N, `resized HiSparse ${fmt(hs.N, 1)}`, { color: 'var(--ink-3)', dash: '6 4', side: 'left' });
+      if (!r.ok) {
+        msg.innerHTML = r.why;
+        [kp.N, kp.B, kp.vs].forEach(k => k.set('—', 'not measured'));
+        ro.set([['this cell', r.why]]);
+        return;
+      }
+      msg.innerHTML = `${esc(r.p.label)} at stretch ${S.b}: dictionary share ${fmt(r.at[0], 3)}, delta share ${fmt(r.at[1], 3)} (${r.at[2]}); f_D ${fmt(r.q.fD, 2)} and ${fmt(r.q.nload, 3)} loads per step at the Pin (${r.cell.grade}); a dictionary weighs ${fmt(r.at[0] * S.b, 0)} cherries’ worth.`;
+      const Bs = linspace(11, 14, 90).map(u => 2 ** u);
+      const curve = Bs.map(B => BILL.at(G, m, B, r.q));
+      line(P, curve.map(c => [c.B, c.Nlink]), { color: series(0), width: 2, name: 'link bound' });
+      line(P, curve.map(c => [c.B, c.Nhbm]), { color: series(2), width: 2, name: 'memory bound' });
+      line(P, curve.map(c => [c.B, c.N]), { color: 'var(--ink)', width: 1.2 });
+      crosshair(P, { xname: 'B =', xfmt: v => fmt(v, 0), yfmt: v => fmt(v, 1) });
+      const b = r.best;
+      mark(P, b.B, b.N, 6, 'var(--c)', `<b>the best hot-cache size</b>: B = ${b.B}<br>${fmt(b.N, 1)} sequences per GPU (${b.binds === 'link' ? 'the link binds' : 'GPU memory binds'})`);
+      kp.N.set(fmt(b.N, 1), b.binds === 'link' ? 'the link binds' : 'GPU memory binds');
+      kp.B.set(String(b.B), `slots per layer (HiSparse resized: ${hs.B})`);
+      kp.vs.set(`${fmtS(100 * (b.N / hs.N - 1), 1)}%`, `resized HiSparse ${fmt(hs.N, 1)}`);
+      // the two bills at the best B, against resized HiSparse
+      const maxT = Math.max(b.T, hs.T), maxM = Math.max(b.M, hs.M);
+      bars.append(head('link bytes per sequence per step'), stackRows([
+        { label: 'resized HiSparse', parts: [{ v: hs.parts.raw, color: series(1), name: 'raw misses' }], value: MB(hs.T) },
+        { label: 'this design', parts: [{ v: b.parts.delta, color: series(0), name: 'δ-misses (deltas)' }, { v: b.parts.raw, color: series(1), name: S.under === 'solo' ? 'raw misses, solo-coded' : 'raw misses' }, { v: b.parts.loads, color: series(3), name: 'dictionary loads' }], value: MB(b.T) },
+      ], maxT), head('GPU memory per sequence'), stackRows([
+        { label: 'resized HiSparse', parts: [{ v: hs.mem.hot, color: series(2), name: 'hot cache' }], value: MB(hs.M) },
+        { label: 'this design', parts: [{ v: b.mem.hot, color: series(2), name: 'hot cache' }, { v: b.mem.dict, color: series(4), name: 'dictionaries on the shelf' }], value: MB(b.M) },
+      ], maxM));
+      ro.set([
+        ['link bytes per step', `δ-misses ${MB(b.parts.delta)} · raw misses ${MB(b.parts.raw)} · loads ${MB(b.parts.loads)} = ${MB(b.T)}`],
+        ['GPU memory', `hot cache ${MB(b.mem.hot)} · ${S.nD} dictionaries ${MB(b.mem.dict)} = ${MB(b.M)}`],
+        ['miss rate at B*', `${pc(b.m)} (HiSparse’s curve)`],
+      ]);
+    }
+    function stackRows(rows, max) {
+      const wrap = h('div', { class: 'pks-stack-rows' });
+      rows.forEach(rw => {
+        const track = h('span', { class: 'pks-track' });
+        rw.parts.forEach(pt => {
+          if (!(pt.v > 0)) return;
+          const sg = h('span', { class: 'pks-seg', style: `width:${(100 * pt.v / max).toFixed(2)}%;background:${pt.color}` });
+          hover(sg, () => `<b>${pt.name}</b><br>${MB(pt.v)}`);
+          track.append(sg);
+        });
+        wrap.append(h('div', { class: 'pks-srow' }, h('span', { class: 'pks-slabel', html: rw.label }), track, h('span', { class: 'pks-sval', html: rw.value })));
+      });
+      return wrap;
+    }
+    draw();
+  };
 })();

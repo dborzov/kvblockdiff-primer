@@ -59,7 +59,7 @@ supervisor, 169 trials; the leash measured for every cherry since 31 Oct.
 
 ## 3. The pick traces (Part XI; the Bachelor: Qwen 2.5 1.5B, five coding-agent sequences of 24.5K–30K tokens)
 
-Receipts: the research repository bachelor-kv (private, `dborzov/bachelor-kv`) at commit aa89697,
+Receipts: the research repository bachelor-kv (private, `dborzov/bachelor-kv`) at commit 8f5a471,
 `docs/results.md` (the source of every number and its grade); method `docs/design.md`; summaries
 `results/summary/{hotcache,attention,shelf,napkin}.json` computed at commit d3c2b80, each with its own
 receipt (script and input hashes). Grades: measured (exact replay of stored traces, means over 140
@@ -71,25 +71,29 @@ receipt (script and input hashes). Grades: measured (exact replay of stored trac
 |---|---|---|
 | miss rate at B/k = 1 / 2 / 4, pin-scaled (k = 512, W = 0, share ≈ 2 %) | 35.1 [34.4–36.2] / 19.0 [18.2–20.2] / 9.7 [8.7–10.7] %; HiSparse 30 / 13.4 / 6.7 % | measured |
 | the same, pin-absolute (k = 2048) / v4-scaled (128 rows of 4, W = 32) | 28.1 / 10.0 / 2.5 % / 33.4 / 17.9 / 9.6 % | measured |
-| Bélády at B/k = 2; LRU / Bélády | 12.0 % (HiSparse 8.2 %); 1.58 (HiSparse 1.63) | measured |
+| Bélády at B/k = 2; LRU / Bélády | 12.0 % (HiSparse 8.2 %; v4-scaled 11.6 %); 1.58 (HiSparse 1.63) | measured |
 | consecutive-step overlap of picks | 65 % pin-scaled, 72 % pin-absolute, 67 % v4-scaled (HiSparse ≈ 70 %) | measured |
 | reuse-curve slope over B/k ∈ [1, 8] | 0.63 (k = 64), 1.07 [1.01–1.15] (k = 512), 2.2 (k = 2048); HiSparse 1.08 | derived |
 | misses per layer per step, pin-scaled, B/k = 2 | mean 97 [94–104], p50 88, p90 170, p99 263; burst factor 2.9 (2.2–3.8 by layer); pin-absolute mean 205, p99 679 | measured |
 | per-layer miss rate at B/k = 2 | 11–29 % (p10–p90 of layers); in layers 0–11 even 24 %, odd 13 % | measured |
-| resident window 128 / 32 | +13–20 % / +6–7 % on the miss rate | measured |
+| resident window 128 / 32 | +13–20 % / +5–7 % on the miss rate | measured |
 | decode-like steps (token kinds 3, 4) | miss rate +1–9 %; f_D −0.02 to −0.04 | measured |
-| scaling of the miss rate | follows s = k/t: at fixed s, log k adds −0.05 [−0.17, 0.14] (B/k = 2); a curve in s fits 1.8–2.6× better than in k | derived |
-| the Pin's miss rates read at s = 2.04 % | 36 / 21 / 12 % (the count rule: 30 / 12 / 3 %) | derived, extrapolated |
+| scaling of the miss rate | follows φ = k/t: at fixed φ, log k adds −0.05 [−0.17, 0.14] (B/k = 2); a curve in φ fits 1.8–2.6× better (at B/k = 2, 4; 1.2× at B/k = 1) than in k | derived |
+| the Pin's miss rates read at φ = 2.04 % | 36 / 21 / 12 % (the count rule: 30 / 12 / 3 %) | derived, extrapolated |
 | attention mass held by the top k (k = 16 / 64 / 256 / 512 / 1024 / 2048) | 59 / 72 / 82 / 87 / 91 / 95 % of the non-self mass; 4 sink positions 24 %; last 128 positions 40 %; self 8 % of all | measured |
 | indexer noise at recall 0.80 / 0.64 / 0.46, B/k = 2 | per step × 1.35 / 2.04 / 2.83; persistent × 0.95 / 0.85 / 0.71 | measured |
 | heads; layer groups (k = 512) | KV heads share 45 % of picks; one KV head's 6-head selection 71–74 % of the 12-head one, m −1 to +6 %; adjacent layers share 53 % (44 % outside sinks and the last 128) | measured |
 | heavy stretches, b = 1024, pin-scaled, B/k = 2 | heaviest 31 % [29–32] of a step's misses (twin 9 %); heaviest four 71 % (twin 31 %) | measured |
 | shelf, popular P = 32, on the Bachelor | 1 × 1024: f_D 0.21 (twin 0.04), 0.035 loads; 4 × 1024: 0.57 [0.54–0.60] (0.16), 0.089; 8 × 1024: 0.81 (0.31), 0.118; 1 × 4096: 0.46 (0.15), 0.017; 4 × 4096: 0.94 [0.93–0.96] (0.60), 0.018 | measured |
-| scaling of f_D at s = 2 % | collapses on b / t^β, β = 1.27 [0.93–1.44] (logit residual 0.12; absolute b 0.42; b / t 0.15); loads β 1.24; d ln f_D / d ln k = −0.47 | derived |
-| shelf at the Pin, popular P = 32 | n_D 1 / 4 / 8 / 16 at b = 4096: f_D 0.11–0.20 / 0.36–0.54 / 0.56–0.76 / 0.78–0.95, loads 0.04–0.06 / 0.10–0.13 / 0.14–0.20 / 0.15–0.29 | extrapolated |
-| decision rule X.9 | the Bachelor: "affordable" only at coverage 0.73, "partly" (0.52 at 4 × 1024) within the Pin's coverage; the Pin: "partly" at best, "spread" at worst | derived |
-| sequences per GPU at the Pin, best B per design | HiSparse 109.5 (B = 4096), resized 126 (B ≈ 4756); tree shelf 105–107 (56 at 4 × 4096, f_D 0.85); light all resident 116; mid shelf 123; light shelf 127–132 (141 at f_D 0.85); solo + light shelf 140–141; solo on every miss 141 (143 at 0.778); with the stand-in's miss curve every design −8–11 % | derived / extrapolated |
-| slot price: a dictionary beats its memory as slots iff | (1 − ρ)·Δf_D·B/w > α ≈ 1: tree needs Δf_D > 0.5, light > 0.06 (0.015 at b = 1024) | derived |
+| scaling of f_D at φ = 2 % | collapses on b / t^β, β = 1.27 [0.93–1.44] (logit residual 0.12; absolute b 0.42; b / t 0.15); loads β 1.24; d ln f_D / d ln k = −0.47 | derived |
+| shelf at the Pin, popular P = 32 | n_D 1 / 4 / 8 / 16 at b = 4096: f_D 0.11–0.20 / 0.36–0.54 / 0.56–0.76 / 0.78–0.95, loads 0.04–0.06 / 0.10–0.13 / 0.14–0.20 / 0.15–0.29 ; on the measured-range grid (b' between 256 and 4096; b = 1024 refused, 2048 favourable end only): n_D 4 at b = 8192 / 16 384: 0.52–0.73 / 0.71–0.91 (loads 0.06–0.10 / 0.03–0.06); n_D 8 at 8192: 0.75–0.93 | extrapolated |
+| decision rule X.9 | the Bachelor: "affordable" only at coverage 0.73, "partly" (0.52 at 4 × 1024) within the Pin's coverage; the Pin: "partly" at best, "spread" at worst (b = 4096); longer stretches: "affordable" at the favourable end (8 × 8192: 0.93, 0.07 loads), coverage 0.65 | derived |
+| sequences per GPU at the Pin, best B per design | HiSparse 109.5 (B = 4096), resized 127 (B ≈ 4741); tree shelf 88–108 (56 at 4 × 4096, f_D 0.85); light all resident 116; mid shelf 118–124; light shelf 127–133 (141.6 at f_D 0.85); solo + light shelf 140–141; solo on every miss 141 (144 at 0.778); with the stand-in's miss curve every design at its best B −7.6–11.2 %, HiSparse at B = 4096 −22 % (85.6) | derived / extrapolated |
+| sequences per GPU against stretch length (best shelf, best B) | light (0.02): 127–132 / 127–131 / 126–130 at b = 4096 / 8192 / 16 384; C1 0.10: 118–122 / 114–118 / 105–109; C1 0.25: 105–112 / 95–101 / 79–83; tree: 88–97 / 74–81 / 55–59; every stretch resident: 115–116 (0.02), 11 (tree) | derived / extrapolated |
+| the MDL ladder (dictionary share + delta share) | solo 0.804 / 0.778; C1 budgets 0.02 / 0.10 / 0.25 / free: 0.753 / 0.710 / 0.691 / 0.682; light 0.686 = 0.021 + 0.665; tree 0.636 = 0.525 + 0.112; all-dictionary 0.671; floors 0.60 / 0.57; C2 frontier by stretch 0.689 = 0.43 + 0.26 (512), 0.636 (4096), 0.618 = 0.49 + 0.12 (16 384); C1 0.724 / 0.673 / 0.642 / 0.629 at 512 … 32 768, dictionary share ≈ 0.40 | verified (dev screens); floors estimate / extrapolation |
+| the half-gain rule: a global code of ratio ρ on every miss | N* ∝ ρ^(−1/(1+α)) ≈ 1/√ρ; ρ = 1 / 0.90 / 0.804 / 0.778 / 0.70 / 0.60 / 0.57 / 0.50 → 127 / 134 / 141 / 144 / 151 / 162 / 166 / 177; +31 % at 0.57 over the resized cache (126.7 in both scripts) | derived |
+| one window of one trace (sequence 2, layer 9, steps 19 300–19 899) | miss rate 0.191, f_D 0.579 (layer 0.194 / 0.603); step 19 490: 220 misses, 190 δ-misses; misses per step 15–310, p99 / mean 2.7 | measured (an illustration) |
+| slot price: a dictionary beats its memory as slots iff | (1 − ρ)·Δf_D·B/w > α ≈ 1: tree needs Δf_D > 0.5, light > 0.06 (≈ 0.03 at b = 2048) | derived |
 
 ## 4. Information-theory constants used in napkin math
 

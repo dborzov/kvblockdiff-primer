@@ -111,6 +111,7 @@ Term ids in parentheses are the glossary ids (`[[id]]`). Nicknames in quotes are
 | **burst factor** (`burst-factor`) | p99 over mean of one layer's misses per step | plain words for a plain ratio |
 | **shelf coverage** (`shelf-coverage`) | `n_D * stretch_len / t`: the share of the context the shelf's stretches span; the δ-miss fraction of an even spread | "coverage" alone is ambiguous; tied to the shelf |
 | **slot price** (`slot-price`) | the link bytes one more hot-cache slot saves, set by the reuse curve's slope α; what a byte of GPU memory must beat | not "exchange rate", which is variance explained → bits on this site |
+| **half-gain rule** (`half-gain-rule`) | for a code with no bytes per sequence and ratio ρ on every miss, sequences per GPU at the best hot-cache size grow as ρ^(−1/(1+α)) ≈ 1/√ρ: about half of the gain goes into a smaller hot cache | names what the hot cache does to any compression gain; plain words, so it reads as arithmetic, not a slogan |
 
 The exponent of the shelf's scaling rule (`b / t^1.27`) is written as its value, never β (the Laplace
 scale). "Shuffled twin" is the plan's own phrase for the shuffle control of a trace; the sib stage's

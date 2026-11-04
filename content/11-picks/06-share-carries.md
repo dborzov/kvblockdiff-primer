@@ -57,7 +57,11 @@ A fit gives the same result in numbers. Per sequence, the 30 values of $\log \vm
 | 2 | −0.25 | +0.27 [0.14–0.44] | the miss rate grows with the context at a fixed budget |
 | 4 | −0.58 | +0.80 [0.46–1.05] | the same, more strongly |
 
-Two more checks, both derived. At $\vB/\vk$ = 2 and 4, a smooth curve in $\log \vshare$ fits the binned miss rates 1.8 and 2.6 times better (in root-mean-square error of $\log \vm$) than the same curve in $\log \vk$. And at a fixed share, adding $\log \vk$ to the fit changes the miss rate with an exponent of −0.05 [−0.17, 0.14] at $\vB/\vk = 2$ and +0.01 at 4: the count adds nothing once the share is known.
+Two more checks, both derived. At $\vB/\vk$ = 2 and 4, a smooth curve in $\log \vshare$ fits the binned miss rates 1.8 and 2.6 times better (in root-mean-square error of $\log \vm$) than the same curve in $\log \vk$; at $\vB/\vk$ = 1, where both fit well, the ratio is 1.2. And at a fixed share, adding $\log \vk$ to the fit changes the miss rate with an exponent of −0.05 [−0.17, 0.14] at $\vB/\vk = 2$ and +0.01 at 4: the count adds nothing once the share is known.
+
+::: pull
+Budgets of 64 to 2048 picks over contexts of 8K to 30K tokens give one curve of miss rate against the share of the context picked.
+:::
 
 ::: takeaway
 - Miss rates of budgets 64 to 2048 over contexts of 8K to 30K lie on one curve in $\vshare = \vk/\vt$.
@@ -112,7 +116,7 @@ Examples. The Pin: $\vshare$ = 2.0 %, inside the dump's range of shares (0.2 % a
 For the dictionary shelf the same question has a different result. What a stretch catches depends on the stretch length relative to the context, and it falls faster than the share alone predicts ([[#picks-shelf]]).
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697: `docs/results.md` §1 (the scaling rule R3: exponents, the cubic in $\log \vshare$, the Pin prediction 36 / 21 / 12 %, slopes 0.63 / 1.07 / 2.2). Fit details: `results/summary/hotcache.json`, `R3_collapse_fit` (per $\vB/\vk$: `a`, `b`, `flexible.rms_cubic_s` against `rms_cubic_k`, ratios 1.79 at $\vB/\vk = 2$ and 2.64 at 4; `beta_k_at_fixed_s`; `pin_pred_cubic_s` 0.360 / 0.207 / 0.121; `pin_pred_k_only` 0.299 / 0.116 / 0.030) and `R3_slope`, computed at commit d3c2b80. Attention-mass budget: `docs/log.md` R7 ($\vk_x \propto \vt^{0.11 / 0.20 / 0.30}$ for 70 / 80 / 90 % of the mass, per-sequence −0.25 to 0.83). The share range of the dump is arithmetic: 64 / 30 075 and 2048 / 10 240.
+bachelor-kv at commit 8f5a471: `docs/results.md` §1 (the scaling rule R3: exponents, the cubic in $\log \vshare$, the Pin prediction 36 / 21 / 12 %, slopes 0.63 / 1.07 / 2.2). Fit details: `results/summary/hotcache.json`, `R3_collapse_fit` (per $\vB/\vk$: `a`, `b`, `flexible.rms_cubic_s` against `rms_cubic_k`, ratios 1.79 at $\vB/\vk = 2$ and 2.64 at 4; `beta_k_at_fixed_s`; `pin_pred_cubic_s` 0.360 / 0.207 / 0.121; `pin_pred_k_only` 0.299 / 0.116 / 0.030) and `R3_slope`, computed at commit d3c2b80. Attention-mass budget: `docs/log.md` R7 ($\vk_x \propto \vt^{0.11 / 0.20 / 0.30}$ for 70 / 80 / 90 % of the mass, per-sequence −0.25 to 0.83). The share range of the dump is arithmetic: 64 / 30 075 and 2048 / 10 240.
 :::
 
 ::: takeaway

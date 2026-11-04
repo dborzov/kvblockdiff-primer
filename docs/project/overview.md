@@ -30,12 +30,14 @@ side (picks, misses, popularity, decoder speed) has been measured on this data: 
 2026-11-03 on a different dump, *the Bachelor* (Qwen 2.5 1.5B, five coding-agent sequences of 24.5K–30K
 tokens, queries kept; repository bachelor-kv). Exact top-k attention as a stand-in indexer, at the Pin's
 share of the context (512 picks, 2 %), misses 35 / 19 / 9.7 % at B/k = 1 / 2 / 4 against HiSparse's
-30 / 13.4 / 6.7 %, same slope and LRU-to-Bélády gap. Miss rates follow the share s = k/t, not k. Misses
+30 / 13.4 / 6.7 %, same slope and LRU-to-Bélády gap. Miss rates follow the share φ = k/t, not k. Misses
 pile into stretches 3–5× above chance but spread as the context grows (f_D collapses on b / t^1.27): at the
 Pin's 100K, extrapolated, a shelf of 4 × 4096 catches 36–54 % of misses (Part VI assumes 0.85), 0.10–0.13
 loads per step. At equal GPU memory (each design at its best hot-cache size): HiSparse 109.5, resized to
-≈ 4750 slots 126, tree shelf 105–107, light shelf 127–132, a solo code on every miss with no per-sequence
-bytes 141. A dictionary on the GPU must save more link bytes than the hot-cache slots its memory would
+≈ 4740 slots 127, tree shelf 88–108, light shelf 127–133, a solo code on every miss with no per-sequence
+bytes 141; longer stretches make every shelf worse (a dictionary on the GPU is resident, not amortised),
+and by the *half-gain rule* (N ∝ ρ^(−1/(1+α)) ≈ 1/√ρ) no global code can add more than +31 % (166 at the
+floor 0.57). A dictionary on the GPU must save more link bytes than the hot-cache slots its memory would
 hold (the *slot price*).
 
 **What is next (Parts X, XI).** A GPU decode speed test, first: the solo code's 141 needs ≥ 500 GB/s.

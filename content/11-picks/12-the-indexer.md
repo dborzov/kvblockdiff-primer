@@ -82,6 +82,10 @@ A trained indexer whose mistakes are stable is friendlier to the hot cache than 
 2. Switch to $\vB/\vk = 4$. The two lines spread further apart.
 :::
 
+::: pull
+At a recall of 0.64, errors fixed per position multiply the hot cache's misses by 0.85, and errors drawn afresh at every step multiply them by 2.04.
+:::
+
 ::: takeaway
 - At equal recall, per-step errors multiply the miss rate (×1.35 / 2.04 / 2.83 at recall 0.80 / 0.64 / 0.46) and persistent errors lower it (×0.95 / 0.85 / 0.71).
 - For HiSparse-style serving a trained indexer is judged on recall and on stability.
@@ -108,7 +112,7 @@ Two more checks on the stand-in's assumptions.
 2. **Squeezed rows.** The v4-scaled configuration picks 128 rows of 4 positions with a resident window of 32. Its miss rates, 33.4 / 17.9 / 9.6 % at $\vB/\vk$ = 1 / 2 / 4, are within 2 points of pin-scaled's, and 67 % of its picks repeat from step to step. These rows are squeezed scores; DeepSeek-V4 learns its row compression, and its rows may behave differently.
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697: `docs/results.md` §1 (decode-like steps, the v4-scaled row) and §2 (indexer errors R8, heads, layer groups); `docs/design.md` §3.1 (the noise brackets: re-rank the stored top candidates by `log(r + 1) + sigma * N(0, 1)` with `r` the exact rank, iid or persistent; recall = `len(noisy & exact) / k`). Details: `results/summary/hotcache.json` `R8c_probes` (6-head replays: ratios 1.051 / 1.060 / 1.062 for KV head 0) and `results/summary/attention.json` `R8a_aggregator_and_heads`, `R8b_adjacent_layers`, computed at commit d3c2b80; `docs/log.md` 2026-11-03 (233 [224–243], 120–360 by layer; pin-absolute decode-like +32 %). The listing is a toy; the replay re-ranks the stored top candidates of each step.
+bachelor-kv at commit 8f5a471: `docs/results.md` §1 (decode-like steps, the v4-scaled row) and §2 (indexer errors R8, heads, layer groups); `docs/design.md` §3.1 (the noise brackets: re-rank the stored top candidates by `log(r + 1) + sigma * N(0, 1)` with `r` the exact rank, iid or persistent; recall = `len(noisy & exact) / k`). Details: `results/summary/hotcache.json` `R8c_probes` (6-head replays: ratios 1.051 / 1.060 / 1.062 for KV head 0) and `results/summary/attention.json` `R8a_aggregator_and_heads`, `R8b_adjacent_layers`, computed at commit d3c2b80; `docs/log.md` 2026-11-03 (233 [224–243], 120–360 by layer; pin-absolute decode-like +32 %). The listing is a toy; the replay re-ranks the stored top candidates of each step.
 :::
 
 ::: takeaway

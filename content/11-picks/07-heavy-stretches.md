@@ -52,6 +52,9 @@ For a step's picks, rather than its misses, the heaviest stretch holds 44 % agai
 2. Switch the stretch length to 4096. The trace and the twin both rise: each stretch is now a larger slice of the context.
 :::
 
+::: theme controls
+Without its shuffled twin, "the heaviest stretch holds 31 % of the misses" could be chance: with two dozen stretches some stretch always gets more than its share. The twin keeps every hit and miss of the hot cache and destroys only where they sit, so the gap between 31 % and 9 % is the part the shelf can use.
+
 ::: takeaway
 - Stretches of 1024 at the Pin's share: the heaviest stretch holds 31 % of a step's misses (twin 9 %), the heaviest four 71 % (twin 31 %).
 - No trend with depth (22–41 % by layer).
@@ -109,7 +112,7 @@ Popularity over 32 steps changes the shelf only when a stretch has been busier t
 Loads are counted **net**: dictionaries still on the shelf after the step. The loop of [[#plan-hot-cache-replay/loop]] counts a dictionary loaded and dropped within the same step as a load (gross); no implementation would ship a dictionary it is about to drop. For the heaviest and popular policies gross equals net.
 
 ::: aside source Receipts
-bachelor-kv at commit aa89697: `docs/results.md` §3 (heavy stretches R5; policies); `docs/design.md` §3.1 (replay semantics of the three policies, the shuffled twin, net and gross loads); `docs/log.md` 2026-11-03 (heaviest 31 % [29–32], picks 44 % against 6 %, per-layer 0.22–0.41; gross = net for heaviest and popular). Tables: `results/summary/shelf.json` (`R5`, `R6`), computed at commit d3c2b80; grade measured. The ratio 3.3 is 0.308 / 0.094 before rounding (derived). The listing is a re-statement of `bachelor/replay.py`'s popular policy, simplified to one pass.
+bachelor-kv at commit 8f5a471: `docs/results.md` §3 (heavy stretches R5; policies); `docs/design.md` §3.1 (replay semantics of the three policies, the shuffled twin, net and gross loads); `docs/log.md` 2026-11-03 (heaviest 31 % [29–32], picks 44 % against 6 %, per-layer 0.22–0.41; gross = net for heaviest and popular). Tables: `results/summary/shelf.json` (`R5`, `R6`), computed at commit d3c2b80; grade measured. The ratio 3.3 is 0.308 / 0.094 before rounding (derived). The listing is a re-statement of `bachelor/replay.py`'s popular policy, simplified to one pass.
 :::
 
 ::: takeaway

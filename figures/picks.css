@@ -34,3 +34,21 @@ svg.plot .pks-row-hit:hover { fill: color-mix(in srgb, var(--ink) 4%, transparen
 @container fighost (max-width: 44rem) { .pks-row3 { grid-template-columns: minmax(0, 1fr); } }
 /* two panels stacked, sharing the horizontal axis */
 .pks-stack { display: flex; flex-direction: column; gap: .2rem; }
+
+/* the raster: a bitmap of cells, kept sharp; the step cursor in the Part's accent */
+svg.plot .pks-raster-img { image-rendering: pixelated; image-rendering: crisp-edges; }
+svg.plot .pks-cursor { stroke: var(--c); stroke-width: 2px; pointer-events: none; }
+
+/* the chain diagram sits inside a plate: no outer margin, labels on the plate's ground */
+.fig-host .cgraph.pks-chain { margin: .4rem 0 .2rem; --cg-bg: var(--paper-3); }
+.pks-chain .cg-text { font-size: .82rem; }
+
+/* the explorer's two bills (as Part VI's anatomy rows) */
+.pks-bars { display: flex; flex-direction: column; gap: .35rem; }
+.pks-stack-rows { display: flex; flex-direction: column; gap: .4rem; }
+.pks-srow { display: grid; grid-template-columns: 8.5rem 1fr 5.6rem; gap: .6rem; align-items: center; font-family: var(--f-sc); font-size: .9rem; color: var(--ink-2); }
+.pks-track { display: flex; height: 1.25rem; background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 999px; overflow: hidden; }
+.pks-seg { display: block; height: 100%; min-width: 2px; border-right: 1px solid var(--paper-3); }
+.pks-seg:last-child { border-right: 0; }
+.pks-sval { font-family: var(--f-mono); font-size: .82rem; color: var(--ink); text-align: right; }
+@container fighost (max-width: 30rem) { .pks-srow { grid-template-columns: 6.2rem 1fr 4.8rem; font-size: .84rem; } }
