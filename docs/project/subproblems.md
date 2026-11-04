@@ -34,7 +34,10 @@ site teaches each on the page named.
   positions `< t` (prefill-only dumps give decode-like traces if attention is run causally); a stand-in
   selector is not a trained indexer (DSA's lightning indexer picks differently); the caveat travels with
   every number derived from it.
-- **Status**: no trace exists for the Bench (no queries were stored); one script away.
+- **Status**: run on 2026-11-03 on the Bachelor (Qwen 2.5 1.5B, five sequences of 24.5K–30K tokens,
+  queries kept; repository bachelor-kv): exact top-k per layer from the 12-head mean of the causal
+  softmax, ranked to 2304, resident window 0/32/128, squeezed rows of 4 (Part XI.2). No trace exists for
+  the Bench (no queries were stored); Qwen3.5-2B to 225K is the next one.
 
 ## 3. The hot-cache replay (where misses land): Part X.6 `plan-hot-cache-replay`
 
@@ -45,9 +48,11 @@ site teaches each on the page named.
   listing of `notation.md` §3 and §5 is the whole simulator.
 - **Why standalone**: it is a deterministic function of the trace and the policy; it runs in seconds per
   sequence on a laptop; the shuffle-the-trace control says what is luck.
-- **Status**: HiSparse published `m(B)` for GLM-5.1 (30 / 13.4 / 6.7 % at 2048 / 4096 / 8192); nothing
-  on the Bench; nothing anywhere about where misses land per stretch (the Lucky Louis property at stretch
-  level, hypothesis VII.8).
+- **Status**: HiSparse published `m(B)` for GLM-5.1 (30 / 13.4 / 6.7 % at 2048 / 4096 / 8192). Replayed
+  on the Bachelor's traces (Part XI.4–7): calibrated (35 / 19 / 9.7 % at the Pin's share), miss rates
+  carry at equal s = k/t; misses pile into stretches 3–5× above chance; f_D collapses on b / t^1.27, so at
+  the Pin 4 × 4096 extrapolates to f_D 0.36–0.54 at 0.10–0.13 net loads per step; best shelf policy:
+  popularity over 32 steps. Nothing on the Bench; reading 7 (are missed cherries harder) open.
 
 ## 4. The decoder's speed (does a cold decode fit the step): Part X.7 `plan-decoder-speed`
 

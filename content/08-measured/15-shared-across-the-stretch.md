@@ -117,7 +117,7 @@ Each rung of the ladder is the same message with a richer receiver: a furrow's h
 :::
 
 ::: aside source Receipts
-- Ladder: solo 0.778 (6.22 bits) from the `solo_ratio` landmark of the `s-*-b4k` screens ([[#measured-night-one]]; Part XI spec §1.3); coder 129 at 0.6863, r25-t0003 ([[#measured-codebooks-and-rotations]]; §1.7); coder 121 at 0.63639, env-t0096, and coder 120 at 0.61768, env-t0097 ([[#measured-reading-one-cherry]]; §1.9); block floor ≈0.60 and sequence floor ≈0.57, r9 iter-1-6 and r23 iter-1-3 ([[#measured-where-the-bits-come-from]]; §1.10).
+- Ladder: solo 0.778 (6.22 bits) from the `solo_ratio` landmark of the `s-*-b4k` screens ([[#measured-night-one]]; campaigns' spec §1.3); coder 129 at 0.6863, r25-t0003 ([[#measured-codebooks-and-rotations]]; §1.7); coder 121 at 0.63639, env-t0096, and coder 120 at 0.61768, env-t0097 ([[#measured-reading-one-cherry]]; §1.9); block floor ≈0.60 and sequence floor ≈0.57, r9 iter-1-6 and r23 iter-1-3 ([[#measured-where-the-bits-come-from]]; §1.10).
 - Memory table: r23 iter-1-3, journal 18:31 (sequence 0, tokens 40,960 to 43,008; intact 1.35; attention only over the last 16,384 tokens, running state intact, 3.49; state reset and attention only over the last 2,048 tokens 5.16); coder 102's 5.13 = 8 × 0.6407, r23 iter-1-2, 12 blocks (§1.10).
 - The entity: same-window table and the layer groupings, r24 iter-1-3 (20 windows of target 02; 7 sequences for regime against triple); shared bits of the heads, r9 iter-1-2 (4 blocks, bound); layers given the rest, r9; cosine and distance correlation, r7 iter-1-1 (36 blocks) ([[#measured-cutting-the-tensor]]; §1.6).
 - Whole-sequence pool bound 0.26–0.45 bit: r19 iter-1-1 to 1-3, one window (§1.9).

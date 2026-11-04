@@ -1,0 +1,6 @@
+# Symbols of Part XI (the pick traces). Fields as in core.yaml.
+# The letter s also names atoms per vector on papers-lexico (papers-b.yaml); the two never meet on one page.
+share: { tex: "\\varphi", fam: frac, name: budget share, unit: "", home: picks-carrying-numbers,
+         short: "Share of the context one layer's picks cover at step $\\vt$: $\\vshare = \\vk/\\vt$ (`k * g / t` for squeezed rows of `g` positions). 2.0 % on the Pin, 2048 of 100 384." }
+alpha: { tex: "\\alpha", fam: stat, name: reuse-curve slope, unit: "", home: picks-hot-cache,
+         short: "Exponent of the hot cache's miss-rate curve, $\\vm \\propto \\vB^{-\\valpha}$: 1.08 for HiSparse on GLM-5.1, 1.07 for the stand-in indexer at the Pin's budget share. One more slot removes a share of about $\\valpha/\\vB$ of the misses." }

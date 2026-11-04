@@ -60,6 +60,10 @@ Strip the napkin down the way Part IV stripped the scenario ([[#scenario-one-che
 
 **The rule.** The napkin is arithmetic, and arithmetic adds no trust. A result of the napkin carries the grade of its least-trusted input. Today that is the traffic column, so every "1.1×" on this page is an assumed number multiplied by a measured one, and reads as such.
 
+::: note numbers What the replay measured for the traffic inputs
+Since 2026-11-03 the traffic column has values measured on a stand-in LLM (Qwen 2.5 1.5B) and carried to the Pin (Part XI). Misses: 35 / 19 / 9.7 % at 1, 2 and 4 slots per pick, against HiSparse's 30 / 13.4 / 6.7 % ([[#picks-hot-cache]]). Four dictionaries of 4096 positions: $\vfD$ 0.36–0.54 at 0.10–0.13 loads per step, not 0.85 and 0.05 ([[#picks-shelf]]). Run with every design at its best hot-cache size, this napkin gives 56 sequences per GPU for four tree dictionaries at the assumed 0.85, 105–107 for the best tree shelf on the measured counts, and 126 for HiSparse with its hot cache resized to about 4750 slots ([[#picks-slot-price]]). The equations and figures on this page keep the assumed inputs.
+:::
+
 ::: takeaway
 - The economics is one subproblem among five: it takes $\vrho$ and $\vw$ from the scenario, the misses and $\vfD$ from a replay, the decoder's speed from its own test, the rig from a setting.
 - It outputs $\vTstep$, $\vMreq$, $\vN$, then tokens per second and dollars.

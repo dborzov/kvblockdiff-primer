@@ -93,6 +93,10 @@ The curve gives two measured points to price fire with, and they price very diff
 
 Across all states, an average miss moves what [[#app-shelf-and-two-misses]] wrote down, $\ve\,[\vfD\,\vrho + (1 - \vfD)]$, with $\vfD$ the share of misses that land in on-fire stretches. With $\vfD = 0.85$ (assumed) that is 157 bytes at the tree point and 428 at the lighter one, before the loads. The loads are the next page.
 
+::: note numbers What the replay measured for the on-fire rule
+On the pick traces of a stand-in LLM (Qwen 2.5 1.5B, Part XI), popularity over the last 32 steps, with a member replaced only by a strictly more popular stretch, was the best of three shelf policies; an LRU of stretches touched by a miss was the worst, with 0.5–9 loads per step ([[#picks-heavy-stretches/policies]]). Carried to the Pin's 100K, four on-fire stretches of 4096 positions catch 36–54 % of the misses at 0.10–0.13 loads per step, against the 0.85 assumed here ([[#picks-shelf]]).
+:::
+
 ::: note warning The decoder nobody has built
 The 120 cherries' worth per cold decode are reads of GPU memory, which is why the dictionary must be resident. Every compressor of both campaigns is entropy-coded, and no one has measured a GPU decoder that walks a reference tree for one scattered cherry ([[#plan-decoder-speed]]). The bytes on this page are the ledger's bytes.
 :::

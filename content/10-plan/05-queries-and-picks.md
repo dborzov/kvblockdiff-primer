@@ -23,6 +23,10 @@ cards:
 
 Every number on the application side of this site, 274 misses per layer per step, a 13.4 % miss rate at 4096 slots, the δ-miss fraction of the napkin, comes from HiSparse's paper or from an assumption ([[#landscape-derived-numbers]], [[#app-the-napkin]]). None was measured on [[bench|the Bench]], because the Bench never had an [[indexer]]. This page is the cheapest way to give it one.
 
+::: note key Run on 2026-11-03, on a smaller LLM
+This experiment was run on Qwen 2.5 1.5B, not on the Bench: a dump of five coding-agent sequences of 24.5K–30K tokens that kept its queries ([[#picks-the-bachelor]]). The stand-in rule as run differs from the listing below in three details: one selection per layer from the mean of all 12 query heads, not one per KV head; a resident window of 0 or 32 positions; and squeezed rows of 4 positions for DeepSeek-V4-style layers ([[#picks-the-bachelor/stand-in-rule]]). The results are Part XI ([[#picks-dispatch]]). The Bench itself still has no trace.
+:::
+
 ## The subproblem, stated {#subproblem}
 
 The project's goal is to serve a sparse-attention LLM with fewer bytes on the [[link]] and fewer GPU bytes per [[sequence]] than HiSparse, with the LLM's outputs unchanged. The bill of that goal ([[#app-the-napkin]]) has two kinds of term: how many bytes a miss costs, which the compression scenario supplies, and how many misses there are and where they land, which only a record of *which* positions are picked can supply. The second kind can be studied apart from the first, because a cache never looks inside what it holds ([[#hypotheses-two-localities]]).

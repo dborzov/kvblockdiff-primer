@@ -120,7 +120,7 @@ A receiver that knows more pays less, from a punnet's reference cherries, to a t
 :::
 
 ::: aside source Receipts
-Replay and arithmetic paths: researcher r23, pages iter-1-1 and iter-1-3, journal 17:21 and 18:03 (50,331,648 values; 2.48 and 2.73 bits per token; 28 % of cells; 1.39 and 1.35 bits). Memory table: r23 iter-1-3, journal 18:31, per layer. Coder 102 yardstick 5.13 = 8 × 0.6407, r23 iter-1-2, 12 blocks starting at token 40,960. Weights-only rule: r23 iter-1-2 and iter-1-4. Metadata: r23 iter-1-3, 24 blocks; new text 74 % / 75 %: r13 iter-1-2. Floors 0.60 and 0.57: r9 iter-1-6, r23 iter-1-3. Rulings: `docs/concepts/what-the-human-clarified.md`. All as pinned in the Part XI spec, §1.10; r23's raw arrays no longer exist, only its pages and journal.
+Replay and arithmetic paths: researcher r23, pages iter-1-1 and iter-1-3, journal 17:21 and 18:03 (50,331,648 values; 2.48 and 2.73 bits per token; 28 % of cells; 1.39 and 1.35 bits). Memory table: r23 iter-1-3, journal 18:31, per layer. Coder 102 yardstick 5.13 = 8 × 0.6407, r23 iter-1-2, 12 blocks starting at token 40,960. Weights-only rule: r23 iter-1-2 and iter-1-4. Metadata: r23 iter-1-3, 24 blocks; new text 74 % / 75 %: r13 iter-1-2. Floors 0.60 and 0.57: r9 iter-1-6, r23 iter-1-3. Rulings: `docs/concepts/what-the-human-clarified.md`. All as pinned in the campaigns' spec (`PART-XI-SPEC.md`), §1.10; r23's raw arrays no longer exist, only its pages and journal.
 :::
 
 ::: takeaway

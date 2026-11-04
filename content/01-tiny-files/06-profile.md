@@ -1,7 +1,7 @@
 ---
 title: The profile of a dictionary problem
 nav: The profile
-lede: Two conditions turn a pile of data into a dictionary problem. This page states them, maps the Gull Rock story onto the eleven Parts of the site, and puts the old words next to ours.
+lede: Two conditions turn a pile of data into a dictionary problem. This page states them, maps the Gull Rock story onto the twelve Parts of the site, and puts the old words next to ours.
 cards:
   - q: Which two conditions, together, make a dictionary the tool for the job?
     a: The items are alike, and they are fetched as tiny, independent pieces
@@ -131,10 +131,11 @@ Here is where the site goes from here, Part by Part. Each line says what the Gul
 | VIII | [[#measured-dispatch\|The measurements]] | what two campaigns measured on real orchards: which hypotheses held |
 | IX | [[#papers-reading-guide\|Papers]] | what others have done, retold in this site's words |
 | X | [[#plan-where-we-stand\|The research plan]] | what is still open, and the next experiments in order of speed |
-| XI | [[#reference-summary\|Summary and reference]] | the one-page summary, the glossary, the notation, the old words next to the new |
+| XI | [[#picks-dispatch\|The Bachelor: picks and misses, measured]] | which pieces the GPU asks for, and how often its copy of a dictionary is at hand, measured on a stand-in LLM |
+| XII | [[#reference-summary\|Summary and reference]] | the one-page summary, the glossary, the notation, the old words next to the new |
 
 ::: takeaway
-- Each Gull Rock idea has a general form in Part II and an LLM form in Parts III–VI; Parts VII–XI test it, read around it and plan.
+- Each Gull Rock idea has a general form in Part II and an LLM form in Parts III–VI; Parts VII–XI test it, read around it, plan and measure the traffic; Part XII is the reference.
 - Message → cherry of the orchard; radio → the wire to the GPU; dictionary → a dictionary per punnet of neighbouring cherries.
 :::
 

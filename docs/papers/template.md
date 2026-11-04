@@ -40,5 +40,5 @@ only a hint.
 
 1. Add the row to `docs/project/page-plan.md` under Part IX and the page file at the next free number.
 2. New terms the paper needs go in `data/terms/papers.yaml` with `home: papers-<slug>`.
-3. Add the paper to `content/11-reference/08-references.md` and, if it fits, to the prior-art map.
+3. Add the paper to `content/12-reference/08-references.md` and, if it fits, to the prior-art map.
 4. Run `npm run check:words content/09-papers/<file>.md` and a partial build (`ONLY=09-papers`).

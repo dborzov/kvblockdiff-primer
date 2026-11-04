@@ -230,19 +230,39 @@ next result. Source: VIII.1–11, IX.4–15, notes/05.
 | X.9 | `plan-decision-rules` | What each outcome would mean | the table written before the data: per experiment, the readings and the next step. Source: IX.9, IX.12. | `decision-rule` |
 | X.10 | `plan-risks` | Weak spots, risks and pivots | Source: IX.13–15. | — |
 
-## XI. Summary and reference — `content/11-reference/`, slug `reference`, figs `[]`
+## XI. The Bachelor: picks and misses, measured — `content/11-picks/`, slug `picks`, figs `[picks]`
+
+The plan's experiments X.5 and X.6, run on 2026-11-03 in the research repository bachelor-kv (private,
+`dborzov/bachelor-kv`) on a dump of Qwen 2.5 1.5B with queries. Source of every number: its
+`docs/results.md` (grades measured / derived / extrapolated; HiSparse's are their measurement), method in
+`docs/design.md`. Figures in `figures/picks.js`, data in `figures/data/picks-*.json`.
+
+| # | id | title | scope | defines |
+|---|---|---|---|---|
+| XI.1 | `picks-dispatch` | The result on one page | the five readings of results.md; the one plot (`fig-picks-napkin-headline`); what changed elsewhere on the site; how to read the Part (map, grades, caveats). | — |
+| XI.2 | `picks-the-bachelor` | The Bachelor: a dump with queries | Qwen 2.5 1.5B Instruct, five coding-agent sequences of 24.5K–30K tokens, K/V/Q post-RoPE, token kinds (decode-like steps); the stand-in rule as a Python listing (per layer, 12-head mean of the causal softmax, candidates `j <= t - 1`, ranked, resident window `W`, squeezed rows `g = 4`); where the attention mass goes (top-k, sinks, window, self), `fig-picks-mass`. | `bachelor` |
+| XI.3 | `picks-carrying-numbers` | Carrying numbers from a small LLM | every setting scaled by what it serves (share of the context, `B/k`, window share, stretch); the named configurations (pin-scaled, pin-absolute, v4-scaled, sweep); grades; what is measured inside the dump (context, heads, window, indexer error, depth) and what cannot be carried (LLM size; the size ladder and Qwen3.5-2B are next). | `budget-share` |
+| XI.4 | `picks-hot-cache` | The hot cache, replayed | calibration against HiSparse (the pre-registered 2× rule), Bélády, the consecutive-step overlap (Lucky Louis), misses per layer per step and bursts, the resident window, decode-like steps, layers; `fig-picks-reuse`, `fig-picks-layers`. | `burst-factor` |
+| XI.5 | `picks-share-carries` | The share carries, not the budget | the collapse in `s = k/t` (`fig-picks-collapse`), the fit, the Pin prediction 36 / 21 / 12 % against 30 / 13.4 / 6.7 %, the slope rising with `s`, how every number moves to another LLM. | — |
+| XI.6 | `picks-heavy-stretches` | Where misses land | heavy stretches against the shuffled twin (`fig-picks-heavy`); the three shelf policies (touched, heaviest, popular) as a listing; why popularity over 32 steps wins; net and gross loads. | — |
+| XI.7 | `picks-shelf` | The shelf, replayed | `f_D` against coverage with the twin (`fig-picks-shelf`), the `b / t^1.27` rule that overturned "b is absolute" (`fig-picks-shelf-scaling`), the Pin extrapolation table, the decision rule of X.9 read at both contexts. | `shelf-coverage` |
+| XI.8 | `picks-slot-price` | The slot price | GPU memory against hot-cache slots: the inequality `(1 − ρ)·Δf_D·B/w > α`; tree dictionaries lose, light ones barely win, a global solo code comes first; the equal-memory napkin (`fig-picks-napkin`); the resized HiSparse cache (126). | `slot-price` |
+| XI.9 | `picks-the-indexer` | What the indexer can change | the two noise brackets (`fig-picks-noise`): persistent errors lower misses, per-step jitter raises them; heads (two KV heads share 45 %); layer groups (adjacent layers share 53 %); decode-like steps; squeezed rows. | — |
+| XI.10 | `picks-what-it-means` | What it means, and what is next | results.md §5–§6: resize the hot cache; aim the compression search at zero or tiny per-sequence bytes and count dictionary bytes as GPU memory; bursts; indexer stability; next: decoder speed, keys and latents, Qwen3.5-2B to 225K, missed-cherry compression; caveats. | — |
+
+## XII. Summary and reference — `content/12-reference/`, slug `reference`, figs `[]`
 
 | # | id | title |
 |---|---|---|
-| XI.1 | `reference-summary` | The one-page summary |
-| XI.2 | `reference-glossary` | Glossary (generated) |
-| XI.3 | `reference-notation` | Notation: symbols and Python expressions (generated) |
-| XI.4 | `reference-themes` | Running themes (generated) |
-| XI.5 | `reference-numbers` | Grounded numbers and their sources |
-| XI.6 | `reference-fp8-facts` | FP8 E4M3 facts used by compressors |
-| XI.7 | `reference-prior-art-map` | Prior-art map |
-| XI.8 | `reference-references` | References |
-| XI.9 | `reference-old-words` | Old words, new words (the tables of `docs/style/terminology.md` §4) |
+| XII.1 | `reference-summary` | The one-page summary |
+| XII.2 | `reference-glossary` | Glossary (generated) |
+| XII.3 | `reference-notation` | Notation: symbols and Python expressions (generated) |
+| XII.4 | `reference-themes` | Running themes (generated) |
+| XII.5 | `reference-numbers` | Grounded numbers and their sources |
+| XII.6 | `reference-fp8-facts` | FP8 E4M3 facts used by compressors |
+| XII.7 | `reference-prior-art-map` | Prior-art map |
+| XII.8 | `reference-references` | References |
+| XII.9 | `reference-old-words` | Old words, new words (the tables of `docs/style/terminology.md` §4) |
 
 ## Figures
 

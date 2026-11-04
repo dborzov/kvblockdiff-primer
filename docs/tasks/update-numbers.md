@@ -16,7 +16,7 @@ one JSON line per trial into per-agent ledgers. The site quotes only numbers tha
 3. If a figure shows the number: regenerate `figures/data/measured-*.json` with
    `KVCR_REPO=<path> python3 analysis/measured_extract.py` (ledger-derived), or add the page-only number with
    its receipt to `analysis/measured_pages.json`. JSON wins over prose when they disagree.
-4. Update `docs/project/numbers.md` and `content/11-reference/05-numbers.md`; update the page that
+4. Update `docs/project/numbers.md` and `content/12-reference/05-numbers.md`; update the page that
    quotes it, with the receipt in its `::: aside source`; keep the grade word (verified on holdout
    sequences, measured in process on dev screens, quick, code-length estimate, bound) and, for a holdout
    measurement, the sample count and the confidence interval.

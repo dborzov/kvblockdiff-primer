@@ -57,7 +57,7 @@ One line per page, and where each idea does its real work later. Hover a link fo
 | [[#school-clusters]] | [[vq\|VQ]]: name the nearest centroid, send the residual; the index costs $\log_2 \vC$ bits. | [[#toolbox-vq\|V.5]] |
 | [[#school-vq-vs-klt]] | On bell-shaped data a codebook cannot beat a rotation; only clusters let it win. | [[#toolbox-vq\|V.5]], [[#toolbox-bounds\|V.13]], [[#measured-codebooks-and-rotations\|VIII.7]] |
 | [[#school-integers-floats]] | INT8 is an even grid; floats are logarithmic; BF16's low mantissa bits are noise. | [[#papers-float-coders\|IX.5]], [[#toolbox-bit-fields\|V.10 bit fields]] | <!-- old-words -->
-| [[#school-fp8]] | FP8 E4M3: 253 values up to 448. In index space, 0.1 and −0.1 are 58 steps apart. | [[#toolbox-bit-fields\|V.10]], [[#reference-fp8-facts\|XI.6]] |
+| [[#school-fp8]] | FP8 E4M3: 253 values up to 448. In index space, 0.1 and −0.1 are 58 steps apart. | [[#toolbox-bit-fields\|V.10]], [[#reference-fp8-facts\|XII.6]] |
 | [[#school-caches]] | A cache keeps a few items close; LRU evicts the least recently used. | [[#landscape-hisparse\|III.7 HiSparse]], [[#landscape-toy-trace\|III.8]] |
 | [[#school-reuse-distance]] | Reuse distance $\ge \vB$ means an LRU miss; one histogram gives $\vm(\vB)$ for every size; Bélády bounds all policies. | [[#landscape-reuse-curve\|III.10]], [[#hypotheses-stack-distance\|VII.13]] |
 | [[#school-wires]] | Bandwidth vs latency; HBM is about 100× faster to reach than host DRAM over PCIe. | [[#landscape-memory-wall\|III.6]], [[#landscape-reference-settings\|III.11]] |

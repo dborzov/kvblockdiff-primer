@@ -110,7 +110,7 @@ Punnet redundancy is in bits per element, so it converts to bytes on the link th
 :::
 
 ::: aside source Receipts
-- Coder 121 at 0.63639 = 0.525 + 0.112: env-t0096 ([[#measured-reading-one-cherry]]; Part XI spec §1.5, §1.9). Every delta empty for +0.00004 and 5.84 against 5.85 bits: r6 iter-2-2 (12 blocks, in process; the ledger's dictionary share is bytes over raw, so a coder with empty deltas sits at a share equal to its ratio). Coder 109 with every byte in the dictionary: r6-t0004, env-t0009. Good tree coders at 0.43–0.54: spec §1.9.
+- Coder 121 at 0.63639 = 0.525 + 0.112: env-t0096 ([[#measured-reading-one-cherry]]; campaigns' spec (`PART-XI-SPEC.md`) §1.5, §1.9). Every delta empty for +0.00004 and 5.84 against 5.85 bits: r6 iter-2-2 (12 blocks, in process; the ledger's dictionary share is bytes over raw, so a coder with empty deltas sits at a share equal to its ratio). Coder 109 with every byte in the dictionary: r6-t0004, env-t0009. Good tree coders at 0.43–0.54: spec §1.9.
 - Light coder 129 at 0.6863 with a dictionary share of 0.021: r25-t0003 ([[#measured-codebooks-and-rotations]]; spec §1.7). Solo 0.778 (6.22 bits): the `solo_ratio` landmark of the `s-*-b4k` screens ([[#measured-night-one]]; spec §1.3).
 - Block floor ≈0.60 at 16,384 tokens: r9 iter-1-6 and r23 iter-1-3, exact model on 4 blocks ([[#measured-where-the-bits-come-from]]; spec §1.10). Tree and prediction gains and their overlap: r11 iter-1-2 ([[#measured-two-kinds-of-structure]]; spec §1.5).
 - The scatter: every verified point of `figures/data/measured-points.json`, as extracted from the ledgers by `analysis/measured_extract.py`.

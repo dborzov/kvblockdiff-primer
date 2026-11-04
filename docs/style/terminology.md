@@ -102,6 +102,20 @@ Term ids in parentheses are the glossary ids (`[[id]]`). Nicknames in quotes are
 | **global / sequence / stretch scope** (`scope-global`, `scope-sequence`, `scope-stretch`) | what a dictionary is fit on and shared by: all sequences; one sequence; one stretch | request scope, block scope |
 | **the two levers** (`lever`) | cheaper misses; cheaper hot-cache slots | — |
 
+### 2.3b The pick traces, measured (Part XI)
+
+| term | definition | why this word |
+|---|---|---|
+| **the Bachelor** (`bachelor`) | the dump of Qwen 2.5 1.5B with queries (five coding-agent sequences of 24.5K–30K tokens) on which the pick traces were computed; a stand-in LLM's dataset, not a reference setting | the dataset's own name (`03_bachelor`); a name, so it cannot be mistaken for the Bench |
+| **budget share** (`budget-share`), `φ = k * g / t` | the share of the context one layer's picks cover at step `t` | "selectivity" and "sparsity" are taken by other fields; φ because `s` is Lexico's atoms per vector |
+| **burst factor** (`burst-factor`) | p99 over mean of one layer's misses per step | plain words for a plain ratio |
+| **shelf coverage** (`shelf-coverage`) | `n_D * stretch_len / t`: the share of the context the shelf's stretches span; the δ-miss fraction of an even spread | "coverage" alone is ambiguous; tied to the shelf |
+| **slot price** (`slot-price`) | the link bytes one more hot-cache slot saves, set by the reuse curve's slope α; what a byte of GPU memory must beat | not "exchange rate", which is variance explained → bits on this site |
+
+The exponent of the shelf's scaling rule (`b / t^1.27`) is written as its value, never β (the Laplace
+scale). "Shuffled twin" is the plan's own phrase for the shuffle control of a trace; the sib stage's
+nickname "the Twin" is a different thing and is always quoted with its article and capital.
+
 ### 2.4 Hypotheses about the orchard
 
 | term | definition |

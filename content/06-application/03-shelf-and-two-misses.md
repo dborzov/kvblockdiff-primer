@@ -134,6 +134,10 @@ $$ {#eq-app-miss-bytes}
 
 On the Pin, with $\vfD = 0.85$ (assumed) and the light point's $\vrho = 0.665$: $640 \times (0.565 + 0.15) \approx 458$ B per miss; with the tree point's $\vrho = 0.112$: $640 \times (0.095 + 0.15) \approx 157$ B.
 
+::: note numbers What the replay measured for the δ-miss fraction
+On the pick traces of a stand-in LLM (Qwen 2.5 1.5B, Part XI), a shelf of four dictionaries of 4096 positions catches 0.94 of the misses on a 27K-token context, where it spans 60 % of the positions, and 0.36–0.54 when carried to the Pin's 100K ([[#picks-shelf]]). The 0.85 on this page and in the figure below is the assumed value; the figure keeps $\vfD$ as an input.
+:::
+
 ::: figure fig-app-miss-cost missCost
 **What an average miss moves.** Horizontal axis: the δ-miss fraction $\vfD$, from no δ-misses (0 %) to all (100 %). Vertical axis: bytes per miss, for cherries of $\ve = 640$ bytes. The dashed line is HiSparse, where every miss is raw. The solid line is kvblockdiff at the chosen delta share $\vrho$; the handle marks the chosen $\vfD$ (drag it, or use the sliders). Tiles: the average bytes per miss, the bytes per layer per step at the Pin's 274 misses ([[#landscape-derived-numbers]]), and the traffic relative to HiSparse. Dictionary loads are not included here. $\vfD$ is an assumed input; set $\vrho$ to 0.665 or 0.112 for the two measured points.
 :::

@@ -2,7 +2,7 @@
 title: Grounded numbers and their sources
 nav: Grounded numbers
 group: Facts and sources
-lede: Every number this site leans on, in one place, with its grade and its source. The two frozen settings, the campaigns' headline results, the arithmetic of Parts III and VI, and the outside numbers from papers and from our own small checks.
+lede: Every number this site leans on, in one place, with its grade and its source. The two frozen settings, the campaigns' headline results, the pick traces of Part XI, the arithmetic of Parts III and VI, and the outside numbers from papers and from our own small checks.
 cards:
   - q: Which quantities does the Bench lack that the Pin has?
     a: Picks per step, the miss rates and the time per output token; no indexer ever ran on it
@@ -29,6 +29,11 @@ cards:
     wrong: ["3 %, 1.3 % and 0.7 %", "50 %, 40 % and 30 %", "13.4 %, 6.7 % and 3.3 %"]
     why: "Bélády's clairvoyant policy at 4096 misses 8.2 %, so better eviction can win at most about 5 points."
     sec: outside
+  - q: 'Part VI assumes a shelf of 4 dictionaries of 4096 positions catches 85 % of the misses. What does the pick-trace replay give for the Pin?'
+    a: '36–54 %, extrapolated from Qwen 2.5 1.5B, at 0.10–0.13 loads per step'
+    wrong: ["85 %, as assumed", "94 %, measured at the Pin", "4 %"]
+    why: 'On the Bachelor''s 27K context the same shelf catches 94 %, but spans 60 % of the context. What a stretch catches scales as b / t^1.27, so at 100K it catches far less.'
+    sec: picks
 ---
 
 A number without a source is a rumour. This page is the ledger: what each number is, which [[reference-setting]] it belongs to, and how sure we are. Four grades apply to the campaigns' numbers: **verified** (every cherry rebuilt bit for bit in a separate process, [[verified-result]]), **quick** (encoded bytes counted, no separate decode), **code-length estimate** ([[code-length-estimate]]: a probability table's code length on the data, no compressor built) and **bound** (a limit computed from a probability table fit to the data). Outside numbers are *their measurement*; the rest is arithmetic or an assumption, and says so.
@@ -94,6 +99,33 @@ Section numbers refer to `experiment_repos/kv-compress-roofline/PART-XI-SPEC.md`
 ::: takeaway
 - Raw 8 bits → solo 6.2 → 5.1 at 4096 tokens → 4.9 at 16 384; ratios 1 → 0.778 → 0.636 → 0.618.
 - Verified beats quick beats estimate beats bound; the memory table is one window and says so.
+:::
+
+## The pick traces {#picks}
+
+A stand-in indexer (exact top-$\vk$ attention) and a replay of HiSparse's hot cache and of a dictionary shelf, on [[bachelor|the Bachelor]]: Qwen 2.5 1.5B, five coding-agent sequences of 24.5K–30K tokens ([[#picks-dispatch]]). Means over 140 (sequence, layer) pairs. Grades: measured (an exact replay), derived (arithmetic or a fit), extrapolated (carried to the Pin's 100K by a fitted rule); HiSparse's numbers are their measurement.
+
+| number | value | grade | page |
+|---|---|---|---|
+| miss rate at $\vB/\vk$ = 1 / 2 / 4, 512 picks (the Pin's share, 2 %) | 35.1 / 19.0 / 9.7 % (HiSparse 30 / 13.4 / 6.7 %) | measured | [[#picks-hot-cache]] |
+| reuse-curve slope over $\vB/\vk$ = 1 to 8; LRU over Bélády at 2 | 1.07 (HiSparse 1.08); 1.58 (HiSparse 1.63) | derived; measured | [[#picks-hot-cache]] |
+| picks repeated from the previous step | 65 % (HiSparse ≈ 70 %) | measured | [[#picks-hot-cache]] |
+| misses per layer per step at $\vB/\vk$ = 2, 512 picks | mean 97, p99 263; burst factor 2.9 | measured | [[#picks-hot-cache]] |
+| the Pin's miss rates read at its share | 36 / 21 / 12 % | derived, extrapolated in context | [[#picks-share-carries]] |
+| a step's misses in its heaviest stretch of 1024 / its heaviest four | 31 % / 71 % (shuffled twin 9 % / 31 %) | measured | [[#picks-heavy-stretches]] |
+| $\vfD$ of 4 × 4096 on the Bachelor (coverage 0.60) | 0.94 (twin 0.60), 0.018 loads per step | measured | [[#picks-shelf]] |
+| what a stretch catches as the context grows | collapses on $\vb/\vt^{1.27}$ (exponent 0.93–1.44 by sequence) | derived | [[#picks-shelf]] |
+| $\vfD$ of 4 × 4096 at the Pin | 0.36–0.54, 0.10–0.13 loads per step (Part VI assumes 0.85 and 0.05) | extrapolated | [[#picks-shelf]] |
+| sequences per GPU at the Pin, each design at its best hot-cache size | HiSparse 109.5, resized (≈ 4750 slots) 126; tree shelf 105–107; light shelf 127–132; solo code on every miss 141 | derived and extrapolated | [[#picks-slot-price]] |
+| indexer errors at recall 0.80 / 0.64 / 0.46 ($\vB/\vk$ = 2) | per step ×1.35 / 2.04 / 2.83; persistent ×0.95 / 0.85 / 0.71 | measured | [[#picks-the-indexer]] |
+
+::: aside source Receipts
+bachelor-kv (private, `dborzov/bachelor-kv`) at commit aa89697, `docs/results.md` "The answer in five lines" and §1–§4; summaries `results/summary/{hotcache,attention,shelf,napkin}.json` computed at commit d3c2b80.
+:::
+
+::: takeaway
+- The stand-in is calibrated against HiSparse (1.2–1.5×); miss rates carry at equal share of the context.
+- At the Pin, 4 × 4096 catches 36–54 % of misses, not 0.85; a solo code on every miss serves 141 sequences per GPU against 126 for HiSparse resized.
 :::
 
 ## Derived numbers {#derived}

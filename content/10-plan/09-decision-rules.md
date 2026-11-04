@@ -58,6 +58,8 @@ Before a clinical trial starts, its authors register what they will measure and 
 | | only fixed-length ≥ 500 GB/s | the delta format is fixed-length | lever 1 at H5's ratio |
 | | neither, single-cherry latency ≪ TPOT | off the miss path only | the victim tier |
 
+**Read on 2026-11-03.** The replay rows were read on the pick traces of Qwen 2.5 1.5B, a stand-in LLM, with numbers carried to the Pin ([[#picks-shelf]]). Calibration: hit, with miss rates 1.2–1.5× HiSparse's at the Pin's share of the context ([[#picks-hot-cache]]). The δ-miss fraction: on the stand-in's own 27K context, "affordable" only with a shelf spanning 73 % of the context, and "partly" (0.52 at 4 × 1024) within the Pin's coverage; carried to the Pin, "partly" at best (0.54 at 4 × 4096, with 0.10–0.13 loads per step, at the 0.1 limit) and "spread" at worst. The row on missed cherries is not read yet. The table above stays as registered.
+
 Three rows deserve a note on where their numbers come from. The 0.1 loads per step is the Pin's break-even for a 256-cherry dictionary against 274 misses per layer per step ([[#app-the-napkin]]). The 0.8 and 0.5 on $\vfD$ are the old plan's, kept because nothing measured since argues with them. The 500 GB/s is ten times the link ([[#landscape-derived-numbers]]).
 
 ::: theme controls

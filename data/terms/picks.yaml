@@ -1,0 +1,43 @@
+# Part XI's own terms (the pick traces, measured on the Bachelor). Core terms (pick, hot cache, Lucky Louis,
+# heavy stretch, δ-miss fraction, dictionary shelf, popularity, stand-in LLM, trace replay …) live in core.yaml;
+# only what core.yaml lacks is added here. Fields as in core.yaml.
+
+bachelor:
+  label: the Bachelor
+  name: the Bachelor (a dump of Qwen 2.5 1.5B with queries, where the pick traces were computed)
+  cat: llm
+  home: picks-the-bachelor
+  short: >-
+    Five coding-agent sequences of 24 507 to 30 075 tokens run through Qwen 2.5 1.5B Instruct, with keys, values and queries of all 28 layers kept (keys and queries after RoPE). The stand-in indexer and the hot-cache replay of Part XI ran on it. A stand-in LLM's dataset, not a third reference setting: its numbers reach the Pin only through the scaling rules of Part XI.
+
+budget-share:
+  label: budget share
+  name: budget share φ (the share of the context one layer's picks cover)
+  cat: systems
+  home: picks-carrying-numbers
+  short: >-
+    $\vshare = \vk/\vt$: the positions one layer's picks cover at step $\vt$, over the context so far (`share = k * g / t` when a pick is a squeezed row of `g` positions). The Pin: 2048 of 100 384, 2.0 %. On the Bachelor, miss rates at a given $\vB/\vk$ follow $\vshare$, not $\vk$, so numbers move between LLMs at equal $\vshare$.
+
+burst-factor:
+  label: burst factor
+  name: burst factor (p99 over mean misses per layer per step)
+  cat: systems
+  home: picks-hot-cache
+  short: >-
+    The 99th percentile of one layer's misses per decode step, divided by their mean. 2.9 on the Bachelor at the Pin's budget share and $\vB = 2\vk$ (2.2 to 3.8 across layers): a link sized for the mean is late at one step in a hundred unless prefetching smooths the peaks.
+
+shelf-coverage:
+  label: shelf coverage
+  name: shelf coverage (the share of the context the dictionary shelf spans)
+  cat: project
+  home: picks-shelf
+  short: >-
+    `n_D * stretch_len / t`: how many positions the stretches on the dictionary shelf hold, over the context so far. If misses landed evenly, the δ-miss fraction would equal the coverage; the shuffled twin of a trace measures exactly that value.
+
+slot-price:
+  label: slot price
+  name: slot price (the link bytes one more hot-cache slot saves)
+  cat: systems
+  home: picks-slot-price
+  short: >-
+    With misses falling as $\vm \propto \vB^{-\valpha}$, one more hot-cache slot per layer removes about $\valpha\,\vm\,\vk/\vB$ misses per decode step, $\valpha\,\vm\,\vk\,\ve/\vB$ link bytes. A dictionary on the GPU holds the memory of $\vw$ slots, so it helps only if it saves more link bytes than $\vw$ slots would. Not the exchange rate of Part II (variance explained to bits).

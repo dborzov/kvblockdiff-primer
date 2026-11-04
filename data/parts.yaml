@@ -117,7 +117,19 @@
     and a replay of the hot cache.
 
 - id: XI
-  dir: 11-reference
+  dir: 11-picks
+  slug: picks
+  title: "The Bachelor: picks and misses, measured"
+  short: Picks measured
+  emblem: gauge
+  figs: [picks]
+  lede: >
+    The plan's queries and replay, run: exact top-k attention of Qwen 2.5 1.5B over five coding-agent
+    sequences as a stand-in indexer, HiSparse's hot cache and a dictionary shelf replayed on its picks,
+    and what the measured counts do to the napkin.
+
+- id: XII
+  dir: 12-reference
   slug: reference
   title: Summary and reference
   short: Reference

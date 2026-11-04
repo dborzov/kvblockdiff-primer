@@ -28,6 +28,10 @@ cards:
 
 A piano roll records which keys are struck and when, and nothing about how the piano sounds. The pick trace of [[#plan-queries-and-picks]] is the piano roll of sparse attention. Feed it to HiSparse's [[hot-cache]], to a [[dictionary-shelf]] of four dictionaries, to one of sixteen, and count what happens. That counting is this page.
 
+::: note key Run on 2026-11-03, on a smaller LLM
+This replay was run on the pick traces of Qwen 2.5 1.5B ([[#picks-the-bachelor]]), not on the Bench. Reading 1 is a calibration and passed: 35 / 19 / 9.7 % at 1, 2 and 4 slots per pick against HiSparse's 30 / 13.4 / 6.7 % ([[#picks-hot-cache]]). Readings 2, 4, 5 and 6 are measured, with the shuffled control, and carried to the Pin ([[#picks-heavy-stretches]], [[#picks-shelf]]); the lifetime of popularity (reading 3) enters only through the shelf policies; reading 7 needs a trace of the LLM whose cherries were compressed and is open. Two details differ from the loop below: the best shelf policy was popularity over the last 32 steps, and loads are counted net. The results are Part XI ([[#picks-dispatch]]).
+:::
+
 ## The subproblem, stated {#subproblem}
 
 The bill of the application ([[#app-the-napkin]]) multiplies two kinds of number: bytes per miss, from the compression scenario, and counts, how many picks miss, how many of those land in a stretch whose dictionary is on the shelf, and how often a dictionary must be loaded. The counts are a property of the trace alone. They can be studied apart from any compressor because a cache decides on identities, never on contents; and apart from any kernel because the replay keeps no time, only order ([[#hypotheses-two-localities]]).

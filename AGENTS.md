@@ -11,7 +11,8 @@ of the keys and values a sparse-attention LLM keeps in host memory (its *orchard
 static site at https://www.borzov.ca/kvblockdiff-primer/. The site is a primer (Parts I–III), a clean
 statement of the compression problem (Part IV), a catalogue of compressor stages (V), the serving
 application (VI), the hypotheses (VII), the measurements of two autonomous research campaigns (VIII),
-critical paper readings (IX), the research plan (X) and a reference (XI). One-screen overview:
+critical paper readings (IX), the research plan (X), the pick traces measured on a stand-in LLM (XI) and a
+reference (XII). One-screen overview:
 `docs/project/overview.md`.
 
 ## The four things every task depends on

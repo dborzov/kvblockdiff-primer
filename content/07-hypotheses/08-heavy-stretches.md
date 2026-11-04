@@ -2,7 +2,7 @@
 title: Lucky Louis, stretch by stretch
 nav: Heavy stretches
 group: Which, and what
-lede: A dictionary shelf with a handful of slots works only if misses keep landing in the same few stretches, step after step. That is a second, stronger form of the Lucky Louis property, about stretches rather than picks, and nobody has measured it.
+lede: A dictionary shelf with a handful of slots works only if misses keep landing in the same few stretches, step after step. That is a second, stronger form of the Lucky Louis property, about stretches rather than picks. It was first measured in November 2026, on a stand-in LLM.
 cards:
   - q: Misses spread evenly over 25 stretches, and the shelf holds 4 dictionaries. Roughly what is the δ-miss fraction?
     a: About 16 %
@@ -88,9 +88,9 @@ So the heavy-stretch question matters exactly as much as dictionaries are heavy.
 - HiSparse: 87 % hits at $\vB = 4096$.
 - Decides the **hit rate**.
 :::
-::: col Per stretch (unmeasured)
+::: col Per stretch (measured on a stand-in, Part XI)
 - Misses crowd into the same few *stretches* for many steps.
-- Measurable from a pick trace, with no cherry opened.
+- On Qwen 2.5 1.5B with an exact top-k stand-in: the heaviest stretch holds 3.3× its shuffled twin's share, but the crowd spreads as the context grows ([[#picks-shelf]]).
 - Decides **$\vfD$ and the dictionary loads**.
 :::
 ::::
@@ -102,7 +102,11 @@ So the heavy-stretch question matters exactly as much as dictionaries are heavy.
 
 ## Verdict {#verdict}
 
-Unmeasured. On [[bench|the Bench]] no indexer ran: the dump holds values and pre-RoPE keys of 30 sequences and nothing about picks, so there is no $\vk$, no miss rate and no per-stretch count ([[#landscape-reference-settings]]). On the Pin, HiSparse's trace is not ours, and its paper reports hit rates, not where the misses land.
+::: note key Verdict, 2026-11-03: measured on a stand-in LLM
+On the pick traces of Qwen 2.5 1.5B at the Pin's share of the context, misses pile into stretches 3–5× above chance. With stretches of 1024 positions a step's heaviest stretch holds 31 % of its misses, against 9 % when the positions are shuffled ([[#picks-heavy-stretches]]). The pile spreads as the context grows: what a stretch catches collapses on $\vb/\vt^{1.27}$, so the stretch length does not carry in absolute tokens. At the Pin's 100K, extrapolated, a shelf of 4 dictionaries of 4096 positions catches 36–54 % of the misses at 0.10–0.13 loads per step, against the 85 % assumed in the table at the top of this page ([[#picks-shelf]]).
+:::
+
+On [[bench|the Bench]] it is still unmeasured: no indexer ran there, because the dump holds values and pre-RoPE keys of 30 sequences and nothing about picks, so there is no $\vk$, no miss rate and no per-stretch count ([[#landscape-reference-settings]]). On the Pin, HiSparse's trace is not ours, and its paper reports hit rates, not where the misses land.
 
 What a pick trace would show, per sequence, per layer, per step:
 
@@ -117,6 +121,6 @@ Entirely a which-question. It can be answered from positions alone, and its answ
 :::
 
 ::: takeaway
-- Verdict: unmeasured; no pick trace exists for the Bench, and the Pin's is HiSparse's.
+- Verdict: measured on a stand-in LLM, 3–5× above chance and spreading with the context (36–54 % for 4 × 4096 at the Pin, extrapolated); no pick trace exists for the Bench, and the Pin's is HiSparse's.
 - A stand-in indexer on the dump gives concentration, lifetime and the shelf's $\vfD$ and $\vnload$ in one replay.
 :::

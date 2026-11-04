@@ -9,7 +9,7 @@
 4. Relate it explicitly to the scenario (Part IV), the stages (Part V), the hypotheses (Part VII) and the
    measurements (Part VIII): builds on / conflicts with / suggests, each with a `[[#id]]`.
 5. Quote the paper's numbers as "their measurement" with section or figure; put the citation in a
-   `::: aside source Receipts` and in `content/11-reference/08-references.md`; add it to the prior-art map
+   `::: aside source Receipts` and in `content/12-reference/08-references.md`; add it to the prior-art map
    if it fits; add it to the reading guide's concept graph (`papers-reading-guide`).
 6. New terms the paper needs go in `data/terms/papers.yaml` with `home: papers-<slug>`.
 7. Checks: `fix-frontmatter-quotes.py`, `check:words`, `ONLY=09-papers` build, `check.mjs --pages
